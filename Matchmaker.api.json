@@ -1,0 +1,738 @@
+{
+  "name": "Matchmaker",
+  "url": "/Matchmaker",
+  "description": "Use an external Match Making service to handle finding a server for a new player to be dropped into.",
+  "datatypes": {
+    "AuthUserRequest": {
+      "name": "AuthUserRequest",
+      "properties": [
+        {
+          "name": "AuthorizationTicket",
+          "description": "Ticket passed in by user that allows the user to join a game",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "AuthUserResponse": {
+      "name": "AuthUserResponse",
+      "properties": [
+        {
+          "name": "Authorized",
+          "description": "boolean indicating if the user has been authorised to use the external matchmaker API or not",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "unique user id of the account that has been authorised by the game server instance",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserInfoRequest": {
+      "name": "UserInfoRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique account PlayFabId that user info is being asked for for",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "MinCatalogVersion",
+          "description": "Minimum catalog version to return data for - e.g. if we are at catalog version 5, but there are still items from catalog version 3 in the users inventory, setting this to 4 will mean those version 3 items will be filtered out.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
+    },
+    "UserInfoResponse": {
+      "name": "UserInfoResponse",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique account UserID that user info is being asked for for",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "account name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DisplayName",
+          "description": "actual account display name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleDisplayName",
+          "description": "actual game specific display name, if set",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Inventory",
+          "description": "array of users inventory for this game",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "array of amounts of virtual currency the player currently has",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "IsDeveloper",
+          "description": "marker that describes if the user is a developer or not. Set by CSR tools, not game related APIs's",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "SteamId",
+          "description": "Steam ID if the user is associated with a steam account",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ItemInstance": {
+      "name": "ItemInstance",
+      "properties": [
+        {
+          "name": "ItemId",
+          "description": "Object name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemInstanceId",
+          "description": "unique item id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemClass",
+          "description": "class name object belongs to",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PurchaseDate",
+          "description": "date purchased",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Expiration",
+          "description": "date object will expire (optional)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RemainingUses",
+          "description": "number of remaining uses (optional)",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "Annotation",
+          "description": "game specific comment",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version that this item is part of",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundleParent",
+          "description": "Unique ID of the parent of where this item may have come from (e.g. if it comes from a crate or coupon)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "StartGameRequest": {
+      "name": "StartGameRequest",
+      "properties": [
+        {
+          "name": "Build",
+          "description": "which uploaded build of the game server we are starting up",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Region",
+          "description": "the region we want to associate this server with for filtering servers",
+          "jsontype": "String",
+          "actualtype": "Region",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "GameMode",
+          "description": "which user defined game mode this server is going to be running (e.g. Capture The Flag = 0, Deathmatch = 1) - default to 0 if there is only one mode",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Subscriber",
+          "description": "External matchmaker server to post status updates about the game",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "Region": {
+      "name": "Region",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "USWest"
+        },
+        {
+          "name": "USCentral"
+        },
+        {
+          "name": "USEast"
+        },
+        {
+          "name": "EUWest"
+        },
+        {
+          "name": "APSouthEast"
+        },
+        {
+          "name": "APNorthEast"
+        },
+        {
+          "name": "SAEast"
+        },
+        {
+          "name": "Australia"
+        },
+        {
+          "name": "China"
+        },
+        {
+          "name": "UberLan"
+        }
+      ]
+    },
+    "StartGameResponse": {
+      "name": "StartGameResponse",
+      "properties": [
+        {
+          "name": "LobbyID",
+          "description": "unique ID for the lobby of that servers the new game",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Region",
+          "description": "the region we want to associate this server with for filtering servers",
+          "jsontype": "String",
+          "actualtype": "Region",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "GameMode",
+          "description": "which user defined game mode this server is going to be running (e.g. Capture The Flag = 0, Deathmatch = 1) - default to 0 if there is only one mode",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Build",
+          "description": "which uploaded build of the game server we are starting up",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Address",
+          "description": "IP address the server is located at",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Port",
+          "description": "port number to communicate with the server on",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
+    },
+    "PlayerJoinedRequest": {
+      "name": "PlayerJoinedRequest",
+      "properties": [
+        {
+          "name": "ServerId",
+          "description": "Server ID of external match maker we are using for match making",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique account UserID that user info is being asked for for",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "PlayerJoinedResponse": {
+      "name": "PlayerJoinedResponse",
+      "properties": []
+    },
+    "PlayerLeftRequest": {
+      "name": "PlayerLeftRequest",
+      "properties": [
+        {
+          "name": "ServerId",
+          "description": "Server ID of external match maker we are using for match making",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique ID of player that has left the game",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "PlayerLeftResponse": {
+      "name": "PlayerLeftResponse",
+      "properties": []
+    }
+  },
+  "calls": [
+    {
+      "name": "AuthUser",
+      "summary": "Authorize a particular user. This allows the external match making process a way to tell the playfab system which Game Server Instance a player can be added to.",
+      "requestDetails": "This API is what the external match making server would call to inform the Playfab system which server a player has been match maked into.",
+      "subgroup": "Matchmaking APIs",
+      "url": "/Matchmaker/AuthUser",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AuthUserRequest",
+      "result": "AuthUserResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "PlayerJoined",
+      "summary": "External service calls into the Playfab System to indicate that, according to the external service, a player has joined a specific server.",
+      "subgroup": "Matchmaking APIs",
+      "url": "/Matchmaker/PlayerJoined",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "PlayerJoinedRequest",
+      "result": "PlayerJoinedResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "PlayerLeft",
+      "summary": "External service calls into the Playfab System to indicate that, according to the external service,  a player has left a specific server.",
+      "subgroup": "Matchmaking APIs",
+      "url": "/Matchmaker/PlayerLeft",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "PlayerLeftRequest",
+      "result": "PlayerLeftResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "StartGame",
+      "summary": "Allow an external match making service to start a new Game Server Instance, if it has decided it needs to.",
+      "subgroup": "Matchmaking APIs",
+      "url": "/Matchmaker/StartGame",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "StartGameRequest",
+      "result": "StartGameResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UserInfo",
+      "summary": "Get UserInfo for a specific user, so the external system can have data on hand to match make against",
+      "requestDetails": "This allows the external system to ask for specific details on players in a given match, in order to know if it's appropriate to match make a new player against them.",
+      "subgroup": "Matchmaking APIs",
+      "url": "/Matchmaker/UserInfo",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UserInfoRequest",
+      "result": "UserInfoResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    }
+  ],
+  "subgroups": [
+    {
+      "name": "Matchmaking APIs",
+      "methods": [
+        "AuthUser",
+        "PlayerJoined",
+        "PlayerLeft",
+        "StartGame",
+        "UserInfo"
+      ]
+    }
+  ],
+  "errors": {
+    "Success": {
+      "id": 0,
+      "name": "Success"
+    },
+    "InvalidParams": {
+      "id": 1000,
+      "name": "InvalidParams"
+    },
+    "AccountNotFound": {
+      "id": 1001,
+      "name": "AccountNotFound"
+    },
+    "AccountBanned": {
+      "id": 1002,
+      "name": "AccountBanned"
+    },
+    "InvalidUsernameOrPassword": {
+      "id": 1003,
+      "name": "InvalidUsernameOrPassword"
+    },
+    "InvalidTitleId": {
+      "id": 1004,
+      "name": "InvalidTitleId"
+    },
+    "InvalidEmailAddress": {
+      "id": 1005,
+      "name": "InvalidEmailAddress"
+    },
+    "EmailAddressNotAvailable": {
+      "id": 1006,
+      "name": "EmailAddressNotAvailable"
+    },
+    "InvalidUsername": {
+      "id": 1007,
+      "name": "InvalidUsername"
+    },
+    "InvalidPassword": {
+      "id": 1008,
+      "name": "InvalidPassword"
+    },
+    "UsernameNotAvailable": {
+      "id": 1009,
+      "name": "UsernameNotAvailable"
+    },
+    "InvalidSteamTicket": {
+      "id": 1010,
+      "name": "InvalidSteamTicket"
+    },
+    "AccountAlreadyLinked": {
+      "id": 1011,
+      "name": "AccountAlreadyLinked"
+    },
+    "LinkedAccountAlreadyClaimed": {
+      "id": 1012,
+      "name": "LinkedAccountAlreadyClaimed"
+    },
+    "InvalidFacebookToken": {
+      "id": 1013,
+      "name": "InvalidFacebookToken"
+    },
+    "AccountNotLinked": {
+      "id": 1014,
+      "name": "AccountNotLinked"
+    },
+    "FailedByPaymentProvider": {
+      "id": 1015,
+      "name": "FailedByPaymentProvider"
+    },
+    "CouponCodeNotFound": {
+      "id": 1016,
+      "name": "CouponCodeNotFound"
+    },
+    "InvalidContainerItem": {
+      "id": 1017,
+      "name": "InvalidContainerItem"
+    },
+    "ContainerNotOwned": {
+      "id": 1018,
+      "name": "ContainerNotOwned"
+    },
+    "KeyNotOwned": {
+      "id": 1019,
+      "name": "KeyNotOwned"
+    },
+    "InvalidItemIdInTable": {
+      "id": 1020,
+      "name": "InvalidItemIdInTable"
+    },
+    "InvalidReceipt": {
+      "id": 1021,
+      "name": "InvalidReceipt"
+    },
+    "ReceiptAlreadyUsed": {
+      "id": 1022,
+      "name": "ReceiptAlreadyUsed"
+    },
+    "ReceiptCancelled": {
+      "id": 1023,
+      "name": "ReceiptCancelled"
+    },
+    "GameNotFound": {
+      "id": 1024,
+      "name": "GameNotFound"
+    },
+    "GameModeNotFound": {
+      "id": 1025,
+      "name": "GameModeNotFound"
+    },
+    "InvalidGoogleToken": {
+      "id": 1026,
+      "name": "InvalidGoogleToken"
+    },
+    "BuildNotFound": {
+      "id": 1027,
+      "name": "BuildNotFound"
+    },
+    "PlayerNotInGame": {
+      "id": 1028,
+      "name": "PlayerNotInGame"
+    },
+    "InvalidTicket": {
+      "id": 1029,
+      "name": "InvalidTicket"
+    },
+    "InvalidOrderInfo": {
+      "id": 1030,
+      "name": "InvalidOrderInfo"
+    },
+    "RegistrationIncomplete": {
+      "id": 1031,
+      "name": "RegistrationIncomplete"
+    },
+    "InvalidPlatform": {
+      "id": 1032,
+      "name": "InvalidPlatform"
+    },
+    "SteamApplicationNotOwned": {
+      "id": 1033,
+      "name": "SteamApplicationNotOwned"
+    },
+    "WrongSteamAccount": {
+      "id": 1034,
+      "name": "WrongSteamAccount"
+    },
+    "TitleNotActivated": {
+      "id": 1035,
+      "name": "TitleNotActivated"
+    },
+    "RegistrationSessionNotFound": {
+      "id": 1036,
+      "name": "RegistrationSessionNotFound"
+    },
+    "NoSuchMod": {
+      "id": 1037,
+      "name": "NoSuchMod"
+    },
+    "FileNotFound": {
+      "id": 1038,
+      "name": "FileNotFound"
+    },
+    "DuplicateEmail": {
+      "id": 1039,
+      "name": "DuplicateEmail"
+    },
+    "ItemNotFound": {
+      "id": 1040,
+      "name": "ItemNotFound"
+    },
+    "ItemNotOwned": {
+      "id": 1041,
+      "name": "ItemNotOwned"
+    },
+    "ItemNotRecycleable": {
+      "id": 1042,
+      "name": "ItemNotRecycleable"
+    },
+    "ItemNotAffordable": {
+      "id": 1043,
+      "name": "ItemNotAffordable"
+    },
+    "InvalidVirtualCurrency": {
+      "id": 1044,
+      "name": "InvalidVirtualCurrency"
+    },
+    "NonPositiveValue": {
+      "id": 1045,
+      "name": "NonPositiveValue"
+    },
+    "InvalidRegion": {
+      "id": 1046,
+      "name": "InvalidRegion"
+    },
+    "RegionAtCapacity": {
+      "id": 1047,
+      "name": "RegionAtCapacity"
+    },
+    "ServerFailedToStart": {
+      "id": 1048,
+      "name": "ServerFailedToStart"
+    },
+    "NameNotAvailable": {
+      "id": 1049,
+      "name": "NameNotAvailable"
+    },
+    "InsufficientFunds": {
+      "id": 1050,
+      "name": "InsufficientFunds"
+    },
+    "InvalidDeviceID": {
+      "id": 1051,
+      "name": "InvalidDeviceID"
+    },
+    "InvalidPushNotificationToken": {
+      "id": 1052,
+      "name": "InvalidPushNotificationToken"
+    },
+    "NoRemainingUses": {
+      "id": 1053,
+      "name": "NoRemainingUses"
+    },
+    "InvalidPaymentProvider": {
+      "id": 1054,
+      "name": "InvalidPaymentProvider"
+    },
+    "PurchaseInitializationFailure": {
+      "id": 1055,
+      "name": "PurchaseInitializationFailure"
+    },
+    "DuplicateUsername": {
+      "id": 1056,
+      "name": "DuplicateUsername"
+    },
+    "InvalidBuyerInfo": {
+      "id": 1057,
+      "name": "InvalidBuyerInfo"
+    },
+    "NoGameModeParamsSet": {
+      "id": 1058,
+      "name": "NoGameModeParamsSet"
+    }
+  },
+  "errorList": [
+    "Success",
+    "InvalidParams",
+    "AccountNotFound",
+    "AccountBanned",
+    "InvalidUsernameOrPassword",
+    "InvalidTitleId",
+    "InvalidEmailAddress",
+    "EmailAddressNotAvailable",
+    "InvalidUsername",
+    "InvalidPassword",
+    "UsernameNotAvailable",
+    "InvalidSteamTicket",
+    "AccountAlreadyLinked",
+    "LinkedAccountAlreadyClaimed",
+    "InvalidFacebookToken",
+    "AccountNotLinked",
+    "FailedByPaymentProvider",
+    "CouponCodeNotFound",
+    "InvalidContainerItem",
+    "ContainerNotOwned",
+    "KeyNotOwned",
+    "InvalidItemIdInTable",
+    "InvalidReceipt",
+    "ReceiptAlreadyUsed",
+    "ReceiptCancelled",
+    "GameNotFound",
+    "GameModeNotFound",
+    "InvalidGoogleToken",
+    "BuildNotFound",
+    "PlayerNotInGame",
+    "InvalidTicket",
+    "InvalidOrderInfo",
+    "RegistrationIncomplete",
+    "InvalidPlatform",
+    "SteamApplicationNotOwned",
+    "WrongSteamAccount",
+    "TitleNotActivated",
+    "RegistrationSessionNotFound",
+    "NoSuchMod",
+    "FileNotFound",
+    "DuplicateEmail",
+    "ItemNotFound",
+    "ItemNotOwned",
+    "ItemNotRecycleable",
+    "ItemNotAffordable",
+    "InvalidVirtualCurrency",
+    "NonPositiveValue",
+    "InvalidRegion",
+    "RegionAtCapacity",
+    "ServerFailedToStart",
+    "NameNotAvailable",
+    "InsufficientFunds",
+    "InvalidDeviceID",
+    "InvalidPushNotificationToken",
+    "NoRemainingUses",
+    "InvalidPaymentProvider",
+    "PurchaseInitializationFailure",
+    "DuplicateUsername",
+    "InvalidBuyerInfo",
+    "NoGameModeParamsSet"
+  ]
+}
