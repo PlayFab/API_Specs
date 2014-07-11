@@ -1,28 +1,28 @@
 {
   "name": "Server",
   "url": "/Server",
-  "description": "APIs for custom game servers to interact with user inventories and data in a trusted manner and to handle matchmaking and game client connection orchestration",
+  "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
   "datatypes": {
     "RedeemMatchmakerTicketRequest": {
       "name": "RedeemMatchmakerTicketRequest",
       "properties": [
         {
           "name": "Ticket",
-          "description": "authorization ticket passed back from the matchmaker or start server request",
+          "description": "server authorization ticket passed back from a call to Matchmake or StartGame",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "IP",
-          "description": "ip address of the game server instance that is asking for authorization",
+          "description": "IP Address of the Game Server Instance that is asking for validation of the authorization ticket",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "ServerId",
-          "description": "unique ID of this server",
+          "description": "unique identifier of the Game Server Instance that is asking for validation of the authorization ticket",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -34,21 +34,21 @@
       "properties": [
         {
           "name": "TicketIsValid",
-          "description": "value that indicates if the player was authorized by the playfab system",
+          "description": "boolean indicating whether the ticket was validated by the PlayFab service",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
         },
         {
           "name": "Error",
-          "description": "error value if it's not valid",
+          "description": "error value if the ticket was not validated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "UserInfo",
-          "description": "user info of player that has been authorised to enter this game server instance",
+          "description": "user account information for the user validated",
           "jsontype": "Object",
           "actualtype": "UserAccountInfo",
           "isclass": true,
@@ -340,14 +340,14 @@
       "properties": [
         {
           "name": "ServerId",
-          "description": "Server id of server where player is leaving",
+          "description": "unique identifier of the Game Server Instance the user is leaving",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "PlayFabId",
-          "description": "unique ID of userinfo of account that is leaving the current Game Instance",
+          "description": "PlayFab unique identifier of the user that is leaving the Game Server Instance",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -359,7 +359,7 @@
       "properties": [
         {
           "name": "PlayerState",
-          "description": "state of player leaving the game",
+          "description": "state of user leaving the Game Server Instance",
           "jsontype": "String",
           "actualtype": "PlayerConnectionState",
           "isenum": true,
@@ -457,7 +457,7 @@
       "properties": [
         {
           "name": "CatalogVersion",
-          "description": "which catalog we want purchaseable items for",
+          "description": "which catalog is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -469,7 +469,7 @@
       "properties": [
         {
           "name": "Catalog",
-          "description": "array of items that can be purchased",
+          "description": "array of items which can be purchased",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "CatalogItem",
@@ -628,9 +628,9 @@
         },
         {
           "name": "UsagePeriod",
-          "description": "duration of how long this item is viable after player aqquires it (optional)",
-          "jsontype": "String",
-          "actualtype": "TimeSpan",
+          "description": "duration of how long this item is viable after player aqquires it (in seconds) (optional)",
+          "jsontype": "Number",
+          "actualtype": "uint32",
           "optional": true
         },
         {
@@ -712,7 +712,7 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we want the account info for",
+          "description": "PlayFab unique identifier of the user whose information is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -724,7 +724,7 @@
       "properties": [
         {
           "name": "UserInfo",
-          "description": "user info of player that has been authorised to enter this game server instance",
+          "description": "PlayFab unique identifier of the user whose information was requested",
           "jsontype": "Object",
           "actualtype": "UserAccountInfo",
           "isclass": true,
@@ -737,14 +737,14 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we want the inventory for",
+          "description": "PlayFab unique identifier of the user whose inventory is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "CatalogVersion",
-          "description": "catalog version we want inventory items for",
+          "description": "used to limit results to only those from a specific catalog version",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -756,7 +756,7 @@
       "properties": [
         {
           "name": "Inventory",
-          "description": "array of inventory items the player account has",
+          "description": "array of inventory items belonging to the user",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "ItemInstance",
@@ -838,14 +838,14 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are returning getting custom user data for",
+          "description": "PlayFab unique identifier of the user whose custom data is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Keys",
-          "description": "Specific keys to get data for in data blob",
+          "description": "specific keys to search for in the custom user data",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -858,14 +858,14 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are returning getting custom user data for",
+          "description": "PlayFab unique identifier of the user whose custom data is being returned",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Data",
-          "description": "user defined dictionary object containing user specific data for this game",
+          "description": "user defined dictionary object containing user specific data for this title",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -878,14 +878,14 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are updating custom user data for",
+          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Data",
-          "description": "generic JSON blob of data to update custom user data with. NOTE - is additive.",
+          "description": "JSON key-value data pairs to written to the user's custom data",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -902,14 +902,14 @@
       "properties": [
         {
           "name": "CatalogVersion",
-          "description": "catalog version we wish to grant items from",
+          "description": "catalog version from which items are to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "ItemGrants",
-          "description": "array of items to grant, along with players to grant them to",
+          "description": "array of items to grant and the users to whom the items are to be granted",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "ItemGrant",
@@ -923,21 +923,21 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are granting catalog items to",
+          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "ItemId",
-          "description": "name of catalog object to grant to player",
+          "description": "unique identifier of the catalog item to be granted to the user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Annotation",
-          "description": "user defined string detailing conditions of grant",
+          "description": "string detailing any additional information concerning this operation",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -949,7 +949,7 @@
       "properties": [
         {
           "name": "ItemGrantResults",
-          "description": "array of items granted to players",
+          "description": "array of items granted to users",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "ItemGrantResult",
@@ -963,28 +963,28 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are granting catalog items to",
+          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "ItemId",
-          "description": "name of catalog object to grant to player",
+          "description": "unique identifier of the catalog item to be granted to the user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Annotation",
-          "description": "user defined string detailing conditions of grant",
+          "description": "string detailing any additional information concerning this operation",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Result",
-          "description": "result of grant",
+          "description": "result of this operation",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -996,21 +996,21 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are changing a virtual currency balance for",
+          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be incremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "VirtualCurrency",
-          "description": "name of virtual currency we are changing the balance for",
+          "description": "name of the virtual currency which is to be incremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Amount",
-          "description": "amount we want to add to the balance of the chosen virtual currency",
+          "description": "amount to be added to the user balance of the specified virtual currency",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -1022,7 +1022,7 @@
       "properties": [
         {
           "name": "VirtualCurrency",
-          "description": "name of the virtual currency modified",
+          "description": "name of the virtual currency which was modified",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1041,21 +1041,21 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are changing a virtual currency balance for",
+          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be decremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "VirtualCurrency",
-          "description": "name of virtual currency we are changing the balance for",
+          "description": "name of the virtual currency which is to be decremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Amount",
-          "description": "amount we want to subtract from the balance of the chosen virtual currency",
+          "description": "amount to be subtracted from the user balance of the specified virtual currency",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -1066,20 +1066,13 @@
       "name": "AwardSteamAchievementRequest",
       "properties": [
         {
-          "name": "CatalogVersion",
-          "description": "catalog to award achievements against",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
           "name": "Achievements",
-          "description": "Array of achievements we want to grant",
+          "description": "array of achievements to grant and the users to whom they are to be granted",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "AwardSteamAchievementItem",
           "isclass": true,
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -1088,21 +1081,21 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "unique playfab id of player account we are granting steam achievements for",
+          "description": "PlayFab unique identifier of the user who is to be granted the specified Steam achievement",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "AchievementName",
-          "description": "unique steam name for achievement",
+          "description": "unique Steam achievement name",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Result",
-          "description": "result of award (note, only valid on response, not on request)",
+          "description": "result of the award attempt (only valid on response, not on request)",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1127,7 +1120,8 @@
   "calls": [
     {
       "name": "GetUserAccountInfo",
-      "summary": "Get's a player's account info",
+      "summary": "Retrieves the relevant details for a specified user",
+      "requestDetails": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "subgroup": "Account Management",
       "url": "/Server/GetUserAccountInfo",
       "auth": "SecretKey",
@@ -1143,7 +1137,8 @@
     },
     {
       "name": "GetUserData",
-      "summary": "Gets the title-specific custom data for the user that is readable and writable by the game client. The data is an arbitrary JSON object. If the Keys parameter is provided, the custom data object is constrained to properties whose names are in the Keys list.",
+      "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
+      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Server/GetUserData",
       "auth": "SecretKey",
@@ -1163,7 +1158,8 @@
     },
     {
       "name": "GetUserInternalData",
-      "summary": "Gets the title-specific custom data for the user that is not visible to the game client. The data is an arbitrary JSON object. If the Keys parameter is provided, the custom data object is constrained to properties whose names are in the Keys list.",
+      "summary": "Retrieves the title-specific custom data for the user which cannot be accessed by the client",
+      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Server/GetUserInternalData",
       "auth": "SecretKey",
@@ -1183,7 +1179,8 @@
     },
     {
       "name": "GetUserReadOnlyData",
-      "summary": "Gets the title-specific custom data for the user that is read-only accessable from the game client. The data is an arbitrary JSON object. If the Keys parameter is provided, the custom data object is constrained to properties whose names are in the Keys list.",
+      "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
+      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Server/GetUserReadOnlyData",
       "auth": "SecretKey",
@@ -1203,7 +1200,8 @@
     },
     {
       "name": "UpdateUserData",
-      "summary": "Updates the title-specific custom data for the user. The data is an arbitrary JSON object. Only the custom data properties included in the reqeust are updated. To remove a property from the user's existing custom data, specify its value as null.",
+      "summary": "Updates the title-specific custom data for the user which is readable and writable by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
       "url": "/Server/UpdateUserData",
       "auth": "SecretKey",
@@ -1223,7 +1221,8 @@
     },
     {
       "name": "UpdateUserInternalData",
-      "summary": "Updates the game client inaccessible, title-specific custom data for the user. The data is an arbitrary JSON object. Only the custom data properties included in the reqeust are updated. To remove a property from the user's existing custom data, specify its value as null.",
+      "summary": "Updates the title-specific custom data for the user which cannot be accessed by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
       "url": "/Server/UpdateUserInternalData",
       "auth": "SecretKey",
@@ -1243,7 +1242,8 @@
     },
     {
       "name": "UpdateUserReadOnlyData",
-      "summary": "Updates the game client read-only, title-specific custom data for the user. The data is an arbitrary JSON object. Only the custom data properties included in the reqeust are updated. To remove a property from the user's existing custom data, specify its value as null.",
+      "summary": "Updates the title-specific custom data for the user which can only be read by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
       "url": "/Server/UpdateUserReadOnlyData",
       "auth": "SecretKey",
@@ -1263,7 +1263,7 @@
     },
     {
       "name": "GetCatalogItems",
-      "summary": "Gets the specified version of the title's catalog of virtual goods, including purchase options and pricing details",
+      "summary": "Retrieves the specified version of the title's catalog of virtual goods, including all defined properties",
       "subgroup": "Title-Wide Data Management",
       "url": "/Server/GetCatalogItems",
       "auth": "SecretKey",
@@ -1276,7 +1276,8 @@
     },
     {
       "name": "GetTitleData",
-      "summary": "Gets the global title data settings, as configured by the developer API",
+      "summary": "Retrieves the key-value store of custom title settings",
+      "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Server/GetTitleData",
       "auth": "SecretKey",
@@ -1292,8 +1293,8 @@
     },
     {
       "name": "SetTitleData",
-      "summary": "Update key-value store for custom title settings.",
-      "requestDetails": "This API is designed to store game specific values that, if changed, modify the game experience for everyone instantly, without having to put out a new build. For example, storing enemy spawning rates here, or ammo clip sizes, or run speeds - anything that allows you to tweak the experience instantly. Note - this is additive. If a new key/value combo is added it does not disturb what is already there. If a key/value combo is submitted that has the same key value as an existing key, it overwrites that one.",
+      "summary": "Updates the key-value store of custom title settings",
+      "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Server/SetTitleData",
       "auth": "SecretKey",
@@ -1309,7 +1310,7 @@
     },
     {
       "name": "AddUserVirtualCurrency",
-      "summary": "Adds a positive amount to the specified virtual currency",
+      "summary": "Increments the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
       "url": "/Server/AddUserVirtualCurrency",
       "auth": "SecretKey",
@@ -1325,7 +1326,8 @@
     },
     {
       "name": "GetUserInventory",
-      "summary": "Get the user's current inventory of virtual goods that they have acquired via purchasing, grants, coupons, etc. Items that are expired, fully consumed or are no longer valid for whatever reason are not included.",
+      "summary": "Retrieves the specified user's current inventory of virtual goods",
+      "requestDetails": "All items currently in the user inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included.",
       "subgroup": "Player Item Management",
       "url": "/Server/GetUserInventory",
       "auth": "SecretKey",
@@ -1341,7 +1343,8 @@
     },
     {
       "name": "GrantItemsToUsers",
-      "summary": "Adds the specified items to the users' inventories without charging them",
+      "summary": "Adds the specified items to the specified user inventories",
+      "requestDetails": "This function directly adds inventory items to user inventories. As a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item catalog definition.",
       "subgroup": "Player Item Management",
       "url": "/Server/GrantItemsToUsers",
       "auth": "SecretKey",
@@ -1354,7 +1357,7 @@
     },
     {
       "name": "SubtractUserVirtualCurrency",
-      "summary": "Subtracts a positive amount to the specified virtual currency",
+      "summary": "Decrements the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
       "url": "/Server/SubtractUserVirtualCurrency",
       "auth": "SecretKey",
@@ -1370,7 +1373,7 @@
     },
     {
       "name": "NotifyMatchmakerPlayerLeft",
-      "summary": "Inform the matchmaker that a player has left the game",
+      "summary": "Informs the PlayFab match-making service that the user specified has left the Game Server Instance",
       "subgroup": "Matchmaking APIs",
       "url": "/Server/NotifyMatchmakerPlayerLeft",
       "auth": "SecretKey",
@@ -1383,8 +1386,8 @@
     },
     {
       "name": "RedeemMatchmakerTicket",
-      "summary": "Redeem the ticket to the current game from a newly connected user's game client and return details about the user",
-      "requestDetails": "This function is intended to be used by the Game Server Instance, querying the Playfab system, to ask if a player, who has asked to be included on the game, actually is a player the Playfab system intends to be in this server. The idea is that the ticket being passed in can ONLY come from one of two places - either the Start Game request, where the client has asked for a new game to be started, OR from the match maker, who has passed back this ticket. The ticket is how Playfab equates the player being put in the match with the one it recommended. If a ticket is presented from a server that was NOT the one that was started with Game Start or Matchmake, then this function will fail.",
+      "summary": "Validates a Game Server session ticket and returns details about the user",
+      "requestDetails": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been registered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each of which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid for the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "subgroup": "Matchmaking APIs",
       "url": "/Server/RedeemMatchmakerTicket",
       "auth": "SecretKey",
@@ -1397,7 +1400,7 @@
     },
     {
       "name": "AwardSteamAchievement",
-      "summary": "Awards a user the specified Steam achievements",
+      "summary": "Awards the specified users the specified Steam achievements",
       "subgroup": "Steam-Specific APIs",
       "url": "/Server/AwardSteamAchievement",
       "auth": "SecretKey",
