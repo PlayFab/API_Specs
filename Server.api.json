@@ -2,477 +2,83 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
+  "revision": "1.0.0.b1",
   "datatypes": {
-    "RedeemMatchmakerTicketRequest": {
-      "name": "RedeemMatchmakerTicketRequest",
+    "AddUserVirtualCurrencyRequest": {
+      "name": "AddUserVirtualCurrencyRequest",
       "properties": [
         {
-          "name": "Ticket",
-          "description": "server authorization ticket passed back from a call to Matchmake or StartGame",
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be incremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
-          "name": "IP",
-          "description": "IP Address of the Game Server Instance that is asking for validation of the authorization ticket",
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which is to be incremented",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
+          "optional": false
         },
         {
-          "name": "ServerId",
-          "description": "unique identifier of the Game Server Instance that is asking for validation of the authorization ticket",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "Amount",
+          "description": "amount to be added to the user balance of the specified virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
-    "RedeemMatchmakerTicketResult": {
-      "name": "RedeemMatchmakerTicketResult",
+    "AwardSteamAchievementItem": {
+      "name": "AwardSteamAchievementItem",
       "properties": [
         {
-          "name": "TicketIsValid",
-          "description": "boolean indicating whether the ticket was validated by the PlayFab service",
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user who is to be granted the specified Steam achievement",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "AchievementName",
+          "description": "unique Steam achievement name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Result",
+          "description": "result of the award attempt (only valid on response, not on request)",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
-        },
-        {
-          "name": "Error",
-          "description": "error value if the ticket was not validated",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "UserInfo",
-          "description": "user account information for the user validated",
-          "jsontype": "Object",
-          "actualtype": "UserAccountInfo",
-          "isclass": true,
-          "optional": true
         }
       ]
     },
-    "UserAccountInfo": {
-      "name": "UserAccountInfo",
+    "AwardSteamAchievementRequest": {
+      "name": "AwardSteamAchievementRequest",
       "properties": [
         {
-          "name": "PlayFabId",
-          "description": "unique id for account",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Created",
-          "description": "time / date account was created",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "Username",
-          "description": "account name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TitleInfo",
-          "description": "specific game title information",
-          "jsontype": "Object",
-          "actualtype": "UserTitleInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "PrivateInfo",
-          "description": "user's private account into",
-          "jsontype": "Object",
-          "actualtype": "UserPrivateAccountInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "FacebookInfo",
-          "description": "facebook information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserFacebookInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "SteamInfo",
-          "description": "steam information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserSteamInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "GameCenterInfo",
-          "description": "gamecenter information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserGameCenterInfo",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "UserTitleInfo": {
-      "name": "UserTitleInfo",
-      "properties": [
-        {
-          "name": "DisplayName",
-          "description": "displayable game name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Origination",
-          "description": "optional value that details where the user originated",
-          "jsontype": "String",
-          "actualtype": "UserOrigination",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "Created",
-          "description": "When this object was created. Title specific reporting for user creation time should be done against this rather than the User created field since account creation can differ significantly between title registration.",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "LastLogin",
-          "description": "Last time the user logged in to this title",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "FirstLogin",
-          "description": " Time the user first logged in. This can be different from when the UTD was created. For example we create a UTD when issuing a beta key. An arbitrary amount of time can pass before the user actually logs in.",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        }
-      ]
-    },
-    "UserOrigination": {
-      "name": "UserOrigination",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "Organic"
-        },
-        {
-          "name": "Steam"
-        },
-        {
-          "name": "Google"
-        },
-        {
-          "name": "Amazon"
-        },
-        {
-          "name": "Facebook"
-        },
-        {
-          "name": "Kongregate"
-        },
-        {
-          "name": "GamersFirst"
-        },
-        {
-          "name": "Unknown"
-        },
-        {
-          "name": "IOS"
-        },
-        {
-          "name": "LoadTest"
-        },
-        {
-          "name": "Android"
-        }
-      ]
-    },
-    "UserPrivateAccountInfo": {
-      "name": "UserPrivateAccountInfo",
-      "properties": [
-        {
-          "name": "Email",
-          "description": "Email address",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UserFacebookInfo": {
-      "name": "UserFacebookInfo",
-      "properties": [
-        {
-          "name": "FacebookId",
-          "description": "facebook id",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "FacebookUsername",
-          "description": "facebook username",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "FacebookDisplayname",
-          "description": "facebook display name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UserSteamInfo": {
-      "name": "UserSteamInfo",
-      "properties": [
-        {
-          "name": "SteamId",
-          "description": "steam id",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SteamCountry",
-          "description": "if account is linked to steam, this is the country that steam reports the player being in",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SteamCurrency",
-          "description": "Currency set in the user's steam account",
-          "jsontype": "String",
-          "actualtype": "Currency",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "SteamActivationStatus",
-          "description": "STEAM specific - what stage of game ownership is the user at with Steam",
-          "jsontype": "String",
-          "actualtype": "TitleActivationStatus",
-          "isenum": true,
-          "optional": true
-        }
-      ]
-    },
-    "Currency": {
-      "name": "Currency",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "USD"
-        },
-        {
-          "name": "GBP"
-        },
-        {
-          "name": "EUR"
-        },
-        {
-          "name": "RUB"
-        },
-        {
-          "name": "BRL"
-        },
-        {
-          "name": "CIS"
-        },
-        {
-          "name": "CAD"
-        }
-      ]
-    },
-    "TitleActivationStatus": {
-      "name": "TitleActivationStatus",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "None"
-        },
-        {
-          "name": "ActivatedTitleKey"
-        },
-        {
-          "name": "PendingSteam"
-        },
-        {
-          "name": "ActivatedSteam"
-        },
-        {
-          "name": "RevokedSteam"
-        }
-      ]
-    },
-    "UserGameCenterInfo": {
-      "name": "UserGameCenterInfo",
-      "properties": [
-        {
-          "name": "GameCenterId",
-          "description": "gamecenter id if account is linked",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "NotifyMatchmakerPlayerLeftRequest": {
-      "name": "NotifyMatchmakerPlayerLeftRequest",
-      "properties": [
-        {
-          "name": "ServerId",
-          "description": "unique identifier of the Game Server Instance the user is leaving",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user that is leaving the Game Server Instance",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "NotifyMatchmakerPlayerLeftResult": {
-      "name": "NotifyMatchmakerPlayerLeftResult",
-      "properties": [
-        {
-          "name": "PlayerState",
-          "description": "state of user leaving the Game Server Instance",
-          "jsontype": "String",
-          "actualtype": "PlayerConnectionState",
-          "isenum": true,
-          "optional": true
-        }
-      ]
-    },
-    "PlayerConnectionState": {
-      "name": "PlayerConnectionState",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "Unassigned"
-        },
-        {
-          "name": "Connecting"
-        },
-        {
-          "name": "Participating"
-        },
-        {
-          "name": "Participated"
-        },
-        {
-          "name": "Reconnecting"
-        }
-      ]
-    },
-    "GetTitleDataRequest": {
-      "name": "GetTitleDataRequest",
-      "properties": [
-        {
-          "name": "Keys",
-          "description": " array of keys to get back data from the TitleData data blob, set by the admin tools",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "GetTitleDataResult": {
-      "name": "GetTitleDataResult",
-      "properties": [
-        {
-          "name": "Data",
-          "description": "a dictionary object of key / value pairs",
-          "collection": "map",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "SetTitleDataRequest": {
-      "name": "SetTitleDataRequest",
-      "properties": [
-        {
-          "name": "Key",
-          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Value",
-          "description": "new value to set",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "SetTitleDataResult": {
-      "name": "SetTitleDataResult",
-      "properties": [
-        {
-          "name": "Key",
-          "description": "key that was set",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Value",
-          "description": "new value set for key",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetCatalogItemsRequest": {
-      "name": "GetCatalogItemsRequest",
-      "properties": [
-        {
-          "name": "CatalogVersion",
-          "description": "which catalog is being requested",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetCatalogItemsResult": {
-      "name": "GetCatalogItemsResult",
-      "properties": [
-        {
-          "name": "Catalog",
-          "description": "array of items which can be purchased",
+          "name": "Achievements",
+          "description": "array of achievements to grant and the users to whom they are to be granted",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "CatalogItem",
+          "actualtype": "AwardSteamAchievementItem",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "AwardSteamAchievementResult": {
+      "name": "AwardSteamAchievementResult",
+      "properties": [
+        {
+          "name": "AchievementResults",
+          "description": "array of achievements granted",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "AwardSteamAchievementItem",
           "isclass": true,
           "optional": true
         }
@@ -616,6 +222,35 @@
         }
       ]
     },
+    "CatalogItemBundleInfo": {
+      "name": "CatalogItemBundleInfo",
+      "properties": [
+        {
+          "name": "BundledItems",
+          "description": "array of Unique item id's that this item will grant you once you have this item in your inventory",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundledResultTables",
+          "description": "array of result table id's that this item will reference and randomly create items from",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundledVirtualCurrencies",
+          "description": "Virtual currencies contained in this item",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
     "CatalogItemConsumableInfo": {
       "name": "CatalogItemConsumableInfo",
       "properties": [
@@ -678,31 +313,81 @@
         }
       ]
     },
-    "CatalogItemBundleInfo": {
-      "name": "CatalogItemBundleInfo",
+    "Currency": {
+      "name": "Currency",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "USD"
+        },
+        {
+          "name": "GBP"
+        },
+        {
+          "name": "EUR"
+        },
+        {
+          "name": "RUB"
+        },
+        {
+          "name": "BRL"
+        },
+        {
+          "name": "CIS"
+        },
+        {
+          "name": "CAD"
+        }
+      ]
+    },
+    "GetCatalogItemsRequest": {
+      "name": "GetCatalogItemsRequest",
       "properties": [
         {
-          "name": "BundledItems",
-          "description": "array of Unique item id's that this item will grant you once you have this item in your inventory",
-          "collection": "array",
+          "name": "CatalogVersion",
+          "description": "which catalog is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
-        },
+        }
+      ]
+    },
+    "GetCatalogItemsResult": {
+      "name": "GetCatalogItemsResult",
+      "properties": [
         {
-          "name": "BundledResultTables",
-          "description": "array of result table id's that this item will reference and randomly create items from",
+          "name": "Catalog",
+          "description": "array of items which can be purchased",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CatalogItem",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetTitleDataRequest": {
+      "name": "GetTitleDataRequest",
+      "properties": [
+        {
+          "name": "Keys",
+          "description": " array of keys to get back data from the TitleData data blob, set by the admin tools",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
-        },
+          "optional": false
+        }
+      ]
+    },
+    "GetTitleDataResult": {
+      "name": "GetTitleDataResult",
+      "properties": [
         {
-          "name": "BundledVirtualCurrencies",
-          "description": "Virtual currencies contained in this item",
+          "name": "Data",
+          "description": "a dictionary object of key / value pairs",
           "collection": "map",
-          "jsontype": "Number",
-          "actualtype": "uint32",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -728,6 +413,46 @@
           "jsontype": "Object",
           "actualtype": "UserAccountInfo",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetUserDataRequest": {
+      "name": "GetUserDataRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose custom data is being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Keys",
+          "description": "specific keys to search for in the custom user data",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetUserDataResult": {
+      "name": "GetUserDataResult",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose custom data is being returned",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Data",
+          "description": "user specific data for this title",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -762,6 +487,100 @@
           "actualtype": "ItemInstance",
           "isclass": true,
           "optional": true
+        }
+      ]
+    },
+    "GrantItemsToUsersRequest": {
+      "name": "GrantItemsToUsersRequest",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version from which items are to be granted",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemGrants",
+          "description": "array of items to grant and the users to whom the items are to be granted",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemGrant",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GrantItemsToUsersResult": {
+      "name": "GrantItemsToUsersResult",
+      "properties": [
+        {
+          "name": "ItemGrantResults",
+          "description": "array of items granted to users",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemGrantResult",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "ItemGrant": {
+      "name": "ItemGrant",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemId",
+          "description": "unique identifier of the catalog item to be granted to the user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Annotation",
+          "description": "string detailing any additional information concerning this operation",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ItemGrantResult": {
+      "name": "ItemGrantResult",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemId",
+          "description": "unique identifier of the catalog item to be granted to the user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Annotation",
+          "description": "string detailing any additional information concerning this operation",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Result",
+          "description": "result of this operation",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         }
       ]
     },
@@ -833,190 +652,6 @@
         }
       ]
     },
-    "GetUserDataRequest": {
-      "name": "GetUserDataRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being requested",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Keys",
-          "description": "specific keys to search for in the custom user data",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetUserDataResult": {
-      "name": "GetUserDataResult",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being returned",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Data",
-          "description": "user specific data for this title",
-          "collection": "map",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UpdateUserDataRequest": {
-      "name": "UpdateUserDataRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being updated",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Data",
-          "description": "data to be written to the user's custom data",
-          "collection": "map",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UpdateUserDataResult": {
-      "name": "UpdateUserDataResult",
-      "properties": []
-    },
-    "GrantItemsToUsersRequest": {
-      "name": "GrantItemsToUsersRequest",
-      "properties": [
-        {
-          "name": "CatalogVersion",
-          "description": "catalog version from which items are to be granted",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "ItemGrants",
-          "description": "array of items to grant and the users to whom the items are to be granted",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "ItemGrant",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "ItemGrant": {
-      "name": "ItemGrant",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "ItemId",
-          "description": "unique identifier of the catalog item to be granted to the user",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Annotation",
-          "description": "string detailing any additional information concerning this operation",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GrantItemsToUsersResult": {
-      "name": "GrantItemsToUsersResult",
-      "properties": [
-        {
-          "name": "ItemGrantResults",
-          "description": "array of items granted to users",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "ItemGrantResult",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "ItemGrantResult": {
-      "name": "ItemGrantResult",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "ItemId",
-          "description": "unique identifier of the catalog item to be granted to the user",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Annotation",
-          "description": "string detailing any additional information concerning this operation",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Result",
-          "description": "result of this operation",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        }
-      ]
-    },
-    "AddUserVirtualCurrencyRequest": {
-      "name": "AddUserVirtualCurrencyRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be incremented",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "VirtualCurrency",
-          "description": "name of the virtual currency which is to be incremented",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Amount",
-          "description": "amount to be added to the user balance of the specified virtual currency",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        }
-      ]
-    },
     "ModifyUserVirtualCurrencyResult": {
       "name": "ModifyUserVirtualCurrencyResult",
       "properties": [
@@ -1033,6 +668,150 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        }
+      ]
+    },
+    "NotifyMatchmakerPlayerLeftRequest": {
+      "name": "NotifyMatchmakerPlayerLeftRequest",
+      "properties": [
+        {
+          "name": "ServerId",
+          "description": "unique identifier of the Game Server Instance the user is leaving",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user that is leaving the Game Server Instance",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "NotifyMatchmakerPlayerLeftResult": {
+      "name": "NotifyMatchmakerPlayerLeftResult",
+      "properties": [
+        {
+          "name": "PlayerState",
+          "description": "state of user leaving the Game Server Instance",
+          "jsontype": "String",
+          "actualtype": "PlayerConnectionState",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "PlayerConnectionState": {
+      "name": "PlayerConnectionState",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Unassigned"
+        },
+        {
+          "name": "Connecting"
+        },
+        {
+          "name": "Participating"
+        },
+        {
+          "name": "Participated"
+        },
+        {
+          "name": "Reconnecting"
+        }
+      ]
+    },
+    "RedeemMatchmakerTicketRequest": {
+      "name": "RedeemMatchmakerTicketRequest",
+      "properties": [
+        {
+          "name": "Ticket",
+          "description": "server authorization ticket passed back from a call to Matchmake or StartGame",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IP",
+          "description": "IP Address of the Game Server Instance that is asking for validation of the authorization ticket",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerId",
+          "description": "unique identifier of the Game Server Instance that is asking for validation of the authorization ticket",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RedeemMatchmakerTicketResult": {
+      "name": "RedeemMatchmakerTicketResult",
+      "properties": [
+        {
+          "name": "TicketIsValid",
+          "description": "boolean indicating whether the ticket was validated by the PlayFab service",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "Error",
+          "description": "error value if the ticket was not validated",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UserInfo",
+          "description": "user account information for the user validated",
+          "jsontype": "Object",
+          "actualtype": "UserAccountInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "SetTitleDataRequest": {
+      "name": "SetTitleDataRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Value",
+          "description": "new value to set",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SetTitleDataResult": {
+      "name": "SetTitleDataResult",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "key that was set",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "new value set for key",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -1062,56 +841,278 @@
         }
       ]
     },
-    "AwardSteamAchievementRequest": {
-      "name": "AwardSteamAchievementRequest",
-      "properties": [
+    "TitleActivationStatus": {
+      "name": "TitleActivationStatus",
+      "isenum": true,
+      "enumvalues": [
         {
-          "name": "Achievements",
-          "description": "array of achievements to grant and the users to whom they are to be granted",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "AwardSteamAchievementItem",
-          "isclass": true,
-          "optional": false
+          "name": "None"
+        },
+        {
+          "name": "ActivatedTitleKey"
+        },
+        {
+          "name": "PendingSteam"
+        },
+        {
+          "name": "ActivatedSteam"
+        },
+        {
+          "name": "RevokedSteam"
         }
       ]
     },
-    "AwardSteamAchievementItem": {
-      "name": "AwardSteamAchievementItem",
+    "UpdateUserDataRequest": {
+      "name": "UpdateUserDataRequest",
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user who is to be granted the specified Steam achievement",
+          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
-          "name": "AchievementName",
-          "description": "unique Steam achievement name",
+          "name": "Data",
+          "description": "data to be written to the user's custom data",
+          "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Result",
-          "description": "result of the award attempt (only valid on response, not on request)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
-    "AwardSteamAchievementResult": {
-      "name": "AwardSteamAchievementResult",
+    "UpdateUserDataResult": {
+      "name": "UpdateUserDataResult",
+      "properties": []
+    },
+    "UserAccountInfo": {
+      "name": "UserAccountInfo",
       "properties": [
         {
-          "name": "AchievementResults",
-          "description": "array of achievements granted",
-          "collection": "array",
+          "name": "PlayFabId",
+          "description": "unique id for account",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "time / date account was created",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "account name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleInfo",
+          "description": "specific game title information",
           "jsontype": "Object",
-          "actualtype": "AwardSteamAchievementItem",
+          "actualtype": "UserTitleInfo",
           "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PrivateInfo",
+          "description": "user's private account into",
+          "jsontype": "Object",
+          "actualtype": "UserPrivateAccountInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "FacebookInfo",
+          "description": "facebook information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserFacebookInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "SteamInfo",
+          "description": "steam information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserSteamInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "GameCenterInfo",
+          "description": "gamecenter information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserGameCenterInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UserFacebookInfo": {
+      "name": "UserFacebookInfo",
+      "properties": [
+        {
+          "name": "FacebookId",
+          "description": "facebook id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FacebookUsername",
+          "description": "facebook username",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FacebookDisplayname",
+          "description": "facebook display name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserGameCenterInfo": {
+      "name": "UserGameCenterInfo",
+      "properties": [
+        {
+          "name": "GameCenterId",
+          "description": "gamecenter id if account is linked",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserOrigination": {
+      "name": "UserOrigination",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Organic"
+        },
+        {
+          "name": "Steam"
+        },
+        {
+          "name": "Google"
+        },
+        {
+          "name": "Amazon"
+        },
+        {
+          "name": "Facebook"
+        },
+        {
+          "name": "Kongregate"
+        },
+        {
+          "name": "GamersFirst"
+        },
+        {
+          "name": "Unknown"
+        },
+        {
+          "name": "IOS"
+        },
+        {
+          "name": "LoadTest"
+        },
+        {
+          "name": "Android"
+        }
+      ]
+    },
+    "UserPrivateAccountInfo": {
+      "name": "UserPrivateAccountInfo",
+      "properties": [
+        {
+          "name": "Email",
+          "description": "Email address",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserSteamInfo": {
+      "name": "UserSteamInfo",
+      "properties": [
+        {
+          "name": "SteamId",
+          "description": "steam id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SteamCountry",
+          "description": "if account is linked to steam, this is the country that steam reports the player being in",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SteamCurrency",
+          "description": "Currency set in the user's steam account",
+          "jsontype": "String",
+          "actualtype": "Currency",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SteamActivationStatus",
+          "description": "STEAM specific - what stage of game ownership is the user at with Steam",
+          "jsontype": "String",
+          "actualtype": "TitleActivationStatus",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "UserTitleInfo": {
+      "name": "UserTitleInfo",
+      "properties": [
+        {
+          "name": "DisplayName",
+          "description": "displayable game name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Origination",
+          "description": "optional value that details where the user originated",
+          "jsontype": "String",
+          "actualtype": "UserOrigination",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "When this object was created. Title specific reporting for user creation time should be done against this rather than the User created field since account creation can differ significantly between title registration.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "LastLogin",
+          "description": "Last time the user logged in to this title",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "FirstLogin",
+          "description": " Time the user first logged in. This can be different from when the UTD was created. For example we create a UTD when issuing a beta key. An arbitrary amount of time can pass before the user actually logs in.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
           "optional": true
         }
       ]
@@ -1646,60 +1647,68 @@
       "id": 1044,
       "name": "InvalidVirtualCurrency"
     },
-    "NonPositiveValue": {
+    "WrongVirtualCurrency": {
       "id": 1045,
+      "name": "WrongVirtualCurrency"
+    },
+    "WrongPrice": {
+      "id": 1046,
+      "name": "WrongPrice"
+    },
+    "NonPositiveValue": {
+      "id": 1047,
       "name": "NonPositiveValue"
     },
     "InvalidRegion": {
-      "id": 1046,
+      "id": 1048,
       "name": "InvalidRegion"
     },
     "RegionAtCapacity": {
-      "id": 1047,
+      "id": 1049,
       "name": "RegionAtCapacity"
     },
     "ServerFailedToStart": {
-      "id": 1048,
+      "id": 1050,
       "name": "ServerFailedToStart"
     },
     "NameNotAvailable": {
-      "id": 1049,
+      "id": 1051,
       "name": "NameNotAvailable"
     },
     "InsufficientFunds": {
-      "id": 1050,
+      "id": 1052,
       "name": "InsufficientFunds"
     },
     "InvalidDeviceID": {
-      "id": 1051,
+      "id": 1053,
       "name": "InvalidDeviceID"
     },
     "InvalidPushNotificationToken": {
-      "id": 1052,
+      "id": 1054,
       "name": "InvalidPushNotificationToken"
     },
     "NoRemainingUses": {
-      "id": 1053,
+      "id": 1055,
       "name": "NoRemainingUses"
     },
     "InvalidPaymentProvider": {
-      "id": 1054,
+      "id": 1056,
       "name": "InvalidPaymentProvider"
     },
     "PurchaseInitializationFailure": {
-      "id": 1055,
+      "id": 1057,
       "name": "PurchaseInitializationFailure"
     },
     "DuplicateUsername": {
-      "id": 1056,
+      "id": 1058,
       "name": "DuplicateUsername"
     },
     "InvalidBuyerInfo": {
-      "id": 1057,
+      "id": 1059,
       "name": "InvalidBuyerInfo"
     },
     "NoGameModeParamsSet": {
-      "id": 1058,
+      "id": 1060,
       "name": "NoGameModeParamsSet"
     }
   },
@@ -1750,6 +1759,8 @@
     "ItemNotRecycleable",
     "ItemNotAffordable",
     "InvalidVirtualCurrency",
+    "WrongVirtualCurrency",
+    "WrongPrice",
     "NonPositiveValue",
     "InvalidRegion",
     "RegionAtCapacity",

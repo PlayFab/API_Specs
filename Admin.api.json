@@ -2,29 +2,100 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
+  "revision": "1.0.0.b1",
   "datatypes": {
-    "GetCatalogItemsRequest": {
-      "name": "GetCatalogItemsRequest",
+    "AddServerBuildRequest": {
+      "name": "AddServerBuildRequest",
       "properties": [
         {
-          "name": "CatalogVersion",
-          "description": "which catalog is being requested",
+          "name": "BuildId",
+          "description": "unique identifier for the build executable",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Timestamp",
+          "description": "date and time to apply (stamp) to this build (usually current time/date)",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Active",
+          "description": "is this build currently allowed to be used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "DedicatedServerEligible",
+          "description": "is this build intended to run on dedicated (\"bare metal\") servers",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ActiveRegions",
+          "description": "Server host regions in which this build can be used",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "developer comment(s) for this build",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         }
       ]
     },
-    "GetCatalogItemsResult": {
-      "name": "GetCatalogItemsResult",
+    "AddServerBuildResult": {
+      "name": "AddServerBuildResult",
       "properties": [
         {
-          "name": "Catalog",
-          "description": "array of items which can be purchased",
+          "name": "BuildId",
+          "description": "unique identifier for this build executable",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Active",
+          "description": "is this build currently allowed to be used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ActiveRegions",
+          "description": "array of regions where this build can used, when it is active",
           "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "CatalogItem",
-          "isclass": true,
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "developer comment(s) for this build",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Timestamp",
+          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -167,6 +238,35 @@
         }
       ]
     },
+    "CatalogItemBundleInfo": {
+      "name": "CatalogItemBundleInfo",
+      "properties": [
+        {
+          "name": "BundledItems",
+          "description": "array of Unique item id's that this item will grant you once you have this item in your inventory",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundledResultTables",
+          "description": "array of result table id's that this item will reference and randomly create items from",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundledVirtualCurrencies",
+          "description": "Virtual currencies contained in this item",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
     "CatalogItemConsumableInfo": {
       "name": "CatalogItemConsumableInfo",
       "properties": [
@@ -229,448 +329,30 @@
         }
       ]
     },
-    "CatalogItemBundleInfo": {
-      "name": "CatalogItemBundleInfo",
-      "properties": [
+    "Currency": {
+      "name": "Currency",
+      "isenum": true,
+      "enumvalues": [
         {
-          "name": "BundledItems",
-          "description": "array of Unique item id's that this item will grant you once you have this item in your inventory",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "USD"
         },
         {
-          "name": "BundledResultTables",
-          "description": "array of result table id's that this item will reference and randomly create items from",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "GBP"
         },
         {
-          "name": "BundledVirtualCurrencies",
-          "description": "Virtual currencies contained in this item",
-          "collection": "map",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": true
-        }
-      ]
-    },
-    "UpdateCatalogItemsRequest": {
-      "name": "UpdateCatalogItemsRequest",
-      "properties": [
-        {
-          "name": "CatalogVersion",
-          "description": "which catalog is being updated",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "EUR"
         },
         {
-          "name": "CatalogItems",
-          "description": "array of catalog items to be submitted",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "CatalogItem",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "UpdateCatalogItemsResult": {
-      "name": "UpdateCatalogItemsResult",
-      "properties": []
-    },
-    "SetTitleDataRequest": {
-      "name": "SetTitleDataRequest",
-      "properties": [
-        {
-          "name": "Key",
-          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
+          "name": "RUB"
         },
         {
-          "name": "Value",
-          "description": "new value to set",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "SetTitleDataResult": {
-      "name": "SetTitleDataResult",
-      "properties": [
-        {
-          "name": "Key",
-          "description": "key that was set",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "BRL"
         },
         {
-          "name": "Value",
-          "description": "new value set for key",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetPublicTitleDataRequest": {
-      "name": "GetPublicTitleDataRequest",
-      "properties": [
-        {
-          "name": "TitleId",
-          "description": "is the specific game ID granted by PlayFab via the website, found on the end of the URL once you are logged in and looking at a specific game",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "name": "CIS"
         },
         {
-          "name": "Keys",
-          "description": " array of keys to get back data from the TitleData data blob, set by the admin tools",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "GetPublicTitleDataResult": {
-      "name": "GetPublicTitleDataResult",
-      "properties": [
-        {
-          "name": "TitleId",
-          "description": "is the specific game ID granted by PlayFab via the website, found on the end of the URL once you are logged in and looking at a specific game",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Data",
-          "description": "a dictionary object of key / value pairs",
-          "collection": "map",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "AddServerBuildRequest": {
-      "name": "AddServerBuildRequest",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier for the build executable",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Timestamp",
-          "description": "date and time to apply (stamp) to this build (usually current time/date)",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "DedicatedServerEligible",
-          "description": "is this build intended to run on dedicated (\"bare metal\") servers",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "ActiveRegions",
-          "description": "Server host regions in which this build can be used",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Comment",
-          "description": "developer comment(s) for this build",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "AddServerBuildResult": {
-      "name": "AddServerBuildResult",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier for this build executable",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "ActiveRegions",
-          "description": "array of regions where this build can used, when it is active",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Comment",
-          "description": "developer comment(s) for this build",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Timestamp",
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "TitleId",
-          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "RemoveServerBuildRequest": {
-      "name": "RemoveServerBuildRequest",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier of the previously uploaded build executable to be removed",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "RemoveServerBuildResult": {
-      "name": "RemoveServerBuildResult",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier of the previously uploaded build executable to be removed",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "ListBuildsRequest": {
-      "name": "ListBuildsRequest",
-      "properties": []
-    },
-    "ListBuildsResult": {
-      "name": "ListBuildsResult",
-      "properties": [
-        {
-          "name": "Builds",
-          "description": "array of uploaded builds",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "GetServerBuildInfoResult",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "GetServerBuildInfoResult": {
-      "name": "GetServerBuildInfoResult",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier for this build executable",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "ActiveRegions",
-          "description": "array of regions where this build can used, when it is active",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Comment",
-          "description": "developer comment(s) for this build",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Timestamp",
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "TitleId",
-          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetServerBuildInfoRequest": {
-      "name": "GetServerBuildInfoRequest",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier of the previously uploaded build executable for which information is being requested",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "ModifyServerBuildRequest": {
-      "name": "ModifyServerBuildRequest",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier of the previously uploaded build executable to be updated",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Timestamp",
-          "description": "new timestamp",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "ActiveRegions",
-          "description": "array of regions where this build can used, when it is active",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Comment",
-          "description": "developer comment(s) for this build",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "ModifyServerBuildResult": {
-      "name": "ModifyServerBuildResult",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier for this build executable",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "ActiveRegions",
-          "description": "array of regions where this build can used, when it is active",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Comment",
-          "description": "developer comment(s) for this build",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Timestamp",
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "TitleId",
-          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetMatchmakerGameModesRequest": {
-      "name": "GetMatchmakerGameModesRequest",
-      "properties": [
-        {
-          "name": "BuildVersion",
-          "description": "previously uploaded build version for which game modes are being requested",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "GetMatchmakerGameModesResult": {
-      "name": "GetMatchmakerGameModesResult",
-      "properties": [
-        {
-          "name": "GameModes",
-          "description": "array of game modes available for the specified build",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "GameModeInfo",
-          "isclass": true,
-          "optional": true
+          "name": "CAD"
         }
       ]
     },
@@ -707,587 +389,28 @@
         }
       ]
     },
-    "ModifyMatchmakerGameModesRequest": {
-      "name": "ModifyMatchmakerGameModesRequest",
+    "GetCatalogItemsRequest": {
+      "name": "GetCatalogItemsRequest",
       "properties": [
-        {
-          "name": "BuildVersion",
-          "description": "previously uploaded build version for which game modes are being specified",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "GameModes",
-          "description": "array of game modes (Note: this will replace all game modes for the indicated build version)",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "GameModeInfo",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "ModifyMatchmakerGameModesResult": {
-      "name": "ModifyMatchmakerGameModesResult",
-      "properties": []
-    },
-    "UpdateRandomResultTablesRequest": {
-      "name": "UpdateRandomResultTablesRequest",
-      "properties": [
-        {
-          "name": "Tables",
-          "description": "array of random result tables to make available (Note: specifying an existing TableId will result in overwriting that table, while any others will be added to the available set)",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "RandomResultTable",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "TitleId",
-          "description": "unique identifier of the title for which the tables are to be added",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "RandomResultTable": {
-      "name": "RandomResultTable",
-      "properties": [
-        {
-          "name": "TableId",
-          "description": "Unique name for this drop table",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Nodes",
-          "description": "Child nodes that indicate what kind of drop table item this actually is.",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "ResultTableNode",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "ResultTableNode": {
-      "name": "ResultTableNode",
-      "properties": [
-        {
-          "name": "ResultItemType",
-          "description": "Whether this entry in the table is an item or a link to another table",
-          "jsontype": "String",
-          "actualtype": "ResultTableNodeType",
-          "isenum": true,
-          "optional": false
-        },
-        {
-          "name": "ResultItem",
-          "description": "Either an ItemId, or the TableId of another random result table",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Weight",
-          "description": "How likely this is to be rolled - larger numbers add more weight",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        }
-      ]
-    },
-    "ResultTableNodeType": {
-      "name": "ResultTableNodeType",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "ItemId"
-        },
-        {
-          "name": "TableId"
-        }
-      ]
-    },
-    "UpdateRandomResultTablesResult": {
-      "name": "UpdateRandomResultTablesResult",
-      "properties": []
-    },
-    "GetRandomResultTablesRequest": {
-      "name": "GetRandomResultTablesRequest",
-      "properties": []
-    },
-    "GetRandomResultTablesResult": {
-      "name": "GetRandomResultTablesResult",
-      "properties": [
-        {
-          "name": "Tables",
-          "description": "array of random result tables currently available",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "RandomResultTable",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "GetUserAccountInfoRequest": {
-      "name": "GetUserAccountInfoRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier to match against existing user accounts",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Email",
-          "description": "email address to match against existing user accounts",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Username",
-          "description": "PlayFab username to match against existing user accounts",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TitleDisplayName",
-          "description": "title-specific username to match against existing user accounts",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetUserAccountInfoResult": {
-      "name": "GetUserAccountInfoResult",
-      "properties": [
-        {
-          "name": "UserInfo",
-          "description": "user info for the user matching the request",
-          "jsontype": "Object",
-          "actualtype": "UserAccountInfo",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "UserAccountInfo": {
-      "name": "UserAccountInfo",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "unique id for account",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Created",
-          "description": "time / date account was created",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "Username",
-          "description": "account name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TitleInfo",
-          "description": "specific game title information",
-          "jsontype": "Object",
-          "actualtype": "UserTitleInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "PrivateInfo",
-          "description": "user's private account into",
-          "jsontype": "Object",
-          "actualtype": "UserPrivateAccountInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "FacebookInfo",
-          "description": "facebook information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserFacebookInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "SteamInfo",
-          "description": "steam information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserSteamInfo",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "GameCenterInfo",
-          "description": "gamecenter information (if linked)",
-          "jsontype": "Object",
-          "actualtype": "UserGameCenterInfo",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "UserTitleInfo": {
-      "name": "UserTitleInfo",
-      "properties": [
-        {
-          "name": "DisplayName",
-          "description": "displayable game name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Origination",
-          "description": "optional value that details where the user originated",
-          "jsontype": "String",
-          "actualtype": "UserOrigination",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "Created",
-          "description": "When this object was created. Title specific reporting for user creation time should be done against this rather than the User created field since account creation can differ significantly between title registration.",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "LastLogin",
-          "description": "Last time the user logged in to this title",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "FirstLogin",
-          "description": " Time the user first logged in. This can be different from when the UTD was created. For example we create a UTD when issuing a beta key. An arbitrary amount of time can pass before the user actually logs in.",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        }
-      ]
-    },
-    "UserOrigination": {
-      "name": "UserOrigination",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "Organic"
-        },
-        {
-          "name": "Steam"
-        },
-        {
-          "name": "Google"
-        },
-        {
-          "name": "Amazon"
-        },
-        {
-          "name": "Facebook"
-        },
-        {
-          "name": "Kongregate"
-        },
-        {
-          "name": "GamersFirst"
-        },
-        {
-          "name": "Unknown"
-        },
-        {
-          "name": "IOS"
-        },
-        {
-          "name": "LoadTest"
-        },
-        {
-          "name": "Android"
-        }
-      ]
-    },
-    "UserPrivateAccountInfo": {
-      "name": "UserPrivateAccountInfo",
-      "properties": [
-        {
-          "name": "Email",
-          "description": "Email address",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UserFacebookInfo": {
-      "name": "UserFacebookInfo",
-      "properties": [
-        {
-          "name": "FacebookId",
-          "description": "facebook id",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "FacebookUsername",
-          "description": "facebook username",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "FacebookDisplayname",
-          "description": "facebook display name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UserSteamInfo": {
-      "name": "UserSteamInfo",
-      "properties": [
-        {
-          "name": "SteamId",
-          "description": "steam id",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SteamCountry",
-          "description": "if account is linked to steam, this is the country that steam reports the player being in",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SteamCurrency",
-          "description": "Currency set in the user's steam account",
-          "jsontype": "String",
-          "actualtype": "Currency",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "SteamActivationStatus",
-          "description": "STEAM specific - what stage of game ownership is the user at with Steam",
-          "jsontype": "String",
-          "actualtype": "TitleActivationStatus",
-          "isenum": true,
-          "optional": true
-        }
-      ]
-    },
-    "Currency": {
-      "name": "Currency",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "USD"
-        },
-        {
-          "name": "GBP"
-        },
-        {
-          "name": "EUR"
-        },
-        {
-          "name": "RUB"
-        },
-        {
-          "name": "BRL"
-        },
-        {
-          "name": "CIS"
-        },
-        {
-          "name": "CAD"
-        }
-      ]
-    },
-    "TitleActivationStatus": {
-      "name": "TitleActivationStatus",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "None"
-        },
-        {
-          "name": "ActivatedTitleKey"
-        },
-        {
-          "name": "PendingSteam"
-        },
-        {
-          "name": "ActivatedSteam"
-        },
-        {
-          "name": "RevokedSteam"
-        }
-      ]
-    },
-    "UserGameCenterInfo": {
-      "name": "UserGameCenterInfo",
-      "properties": [
-        {
-          "name": "GameCenterId",
-          "description": "gamecenter id if account is linked",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetUserInventoryRequest": {
-      "name": "GetUserInventoryRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose inventory is being requested",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
         {
           "name": "CatalogVersion",
-          "description": "used to limit results to only those from a specific catalog version",
+          "description": "which catalog is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         }
       ]
     },
-    "GetUserInventoryResult": {
-      "name": "GetUserInventoryResult",
+    "GetCatalogItemsResult": {
+      "name": "GetCatalogItemsResult",
       "properties": [
         {
-          "name": "Inventory",
-          "description": "array of inventory items belonging to the user",
+          "name": "Catalog",
+          "description": "array of items which can be purchased",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "ItemInstance",
+          "actualtype": "CatalogItem",
           "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "ItemInstance": {
-      "name": "ItemInstance",
-      "properties": [
-        {
-          "name": "ItemId",
-          "description": "Object name",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ItemInstanceId",
-          "description": "unique item id",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ItemClass",
-          "description": "class name object belongs to",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "PurchaseDate",
-          "description": "date purchased",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Expiration",
-          "description": "date object will expire (optional)",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "RemainingUses",
-          "description": "number of remaining uses (optional)",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": true
-        },
-        {
-          "name": "Annotation",
-          "description": "game specific comment",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CatalogVersion",
-          "description": "catalog version that this item is part of",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "BundleParent",
-          "description": "Unique ID of the parent of where this item may have come from (e.g. if it comes from a crate or coupon)",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UpdateUserTitleDisplayNameRequest": {
-      "name": "UpdateUserTitleDisplayNameRequest",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose title specific display name is to be changed",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "DisplayName",
-          "description": "new title display name for the user - must be between 3 and 25 characters",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "UpdateUserTitleDisplayNameResult": {
-      "name": "UpdateUserTitleDisplayNameResult",
-      "properties": [
-        {
-          "name": "DisplayName",
-          "description": "current title display name for the user (this will be the original display name if the rename attempt failed)",
-          "jsontype": "String",
-          "actualtype": "String",
           "optional": true
         }
       ]
@@ -1395,6 +518,429 @@
         }
       ]
     },
+    "GetMatchmakerGameModesRequest": {
+      "name": "GetMatchmakerGameModesRequest",
+      "properties": [
+        {
+          "name": "BuildVersion",
+          "description": "previously uploaded build version for which game modes are being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetMatchmakerGameModesResult": {
+      "name": "GetMatchmakerGameModesResult",
+      "properties": [
+        {
+          "name": "GameModes",
+          "description": "array of game modes available for the specified build",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GameModeInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetRandomResultTablesRequest": {
+      "name": "GetRandomResultTablesRequest",
+      "properties": []
+    },
+    "GetRandomResultTablesResult": {
+      "name": "GetRandomResultTablesResult",
+      "properties": [
+        {
+          "name": "Tables",
+          "description": "array of random result tables currently available",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "RandomResultTable",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetServerBuildInfoRequest": {
+      "name": "GetServerBuildInfoRequest",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier of the previously uploaded build executable for which information is being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetServerBuildInfoResult": {
+      "name": "GetServerBuildInfoResult",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier for this build executable",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Active",
+          "description": "is this build currently allowed to be used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ActiveRegions",
+          "description": "array of regions where this build can used, when it is active",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "developer comment(s) for this build",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Timestamp",
+          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetTitleDataRequest": {
+      "name": "GetTitleDataRequest",
+      "properties": [
+        {
+          "name": "Keys",
+          "description": " array of keys to get back data from the TitleData data blob, set by the admin tools",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetTitleDataResult": {
+      "name": "GetTitleDataResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "a dictionary object of key / value pairs",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetUserAccountInfoRequest": {
+      "name": "GetUserAccountInfoRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier to match against existing user accounts",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Email",
+          "description": "email address to match against existing user accounts",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "PlayFab username to match against existing user accounts",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleDisplayName",
+          "description": "title-specific username to match against existing user accounts",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetUserAccountInfoResult": {
+      "name": "GetUserAccountInfoResult",
+      "properties": [
+        {
+          "name": "UserInfo",
+          "description": "user info for the user matching the request",
+          "jsontype": "Object",
+          "actualtype": "UserAccountInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetUserInventoryRequest": {
+      "name": "GetUserInventoryRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose inventory is being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetUserInventoryResult": {
+      "name": "GetUserInventoryResult",
+      "properties": [
+        {
+          "name": "Inventory",
+          "description": "array of inventory items belonging to the user",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "ItemInstance": {
+      "name": "ItemInstance",
+      "properties": [
+        {
+          "name": "ItemId",
+          "description": "Object name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemInstanceId",
+          "description": "unique item id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemClass",
+          "description": "class name object belongs to",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PurchaseDate",
+          "description": "date purchased",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Expiration",
+          "description": "date object will expire (optional)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RemainingUses",
+          "description": "number of remaining uses (optional)",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "Annotation",
+          "description": "game specific comment",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version that this item is part of",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundleParent",
+          "description": "Unique ID of the parent of where this item may have come from (e.g. if it comes from a crate or coupon)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ListBuildsRequest": {
+      "name": "ListBuildsRequest",
+      "properties": []
+    },
+    "ListBuildsResult": {
+      "name": "ListBuildsResult",
+      "properties": [
+        {
+          "name": "Builds",
+          "description": "array of uploaded builds",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GetServerBuildInfoResult",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "ModifyMatchmakerGameModesRequest": {
+      "name": "ModifyMatchmakerGameModesRequest",
+      "properties": [
+        {
+          "name": "BuildVersion",
+          "description": "previously uploaded build version for which game modes are being specified",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "GameModes",
+          "description": "array of game modes (Note: this will replace all game modes for the indicated build version)",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GameModeInfo",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "ModifyMatchmakerGameModesResult": {
+      "name": "ModifyMatchmakerGameModesResult",
+      "properties": []
+    },
+    "ModifyServerBuildRequest": {
+      "name": "ModifyServerBuildRequest",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier of the previously uploaded build executable to be updated",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Timestamp",
+          "description": "new timestamp",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Active",
+          "description": "is this build currently allowed to be used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "ActiveRegions",
+          "description": "array of regions where this build can used, when it is active",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "developer comment(s) for this build",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ModifyServerBuildResult": {
+      "name": "ModifyServerBuildResult",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier for this build executable",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Active",
+          "description": "is this build currently allowed to be used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ActiveRegions",
+          "description": "array of regions where this build can used, when it is active",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "developer comment(s) for this build",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Timestamp",
+          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "the unique identifier for the title, found in the URL on the PlayFab developer site as \"TitleId=[n]\" when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RandomResultTable": {
+      "name": "RandomResultTable",
+      "properties": [
+        {
+          "name": "TableId",
+          "description": "Unique name for this drop table",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Nodes",
+          "description": "Child nodes that indicate what kind of drop table item this actually is.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ResultTableNode",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
     "Region": {
       "name": "Region",
       "isenum": true,
@@ -1428,6 +974,69 @@
         },
         {
           "name": "UberLan"
+        }
+      ]
+    },
+    "RemoveServerBuildRequest": {
+      "name": "RemoveServerBuildRequest",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier of the previously uploaded build executable to be removed",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "RemoveServerBuildResult": {
+      "name": "RemoveServerBuildResult",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier of the previously uploaded build executable to be removed",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ResultTableNode": {
+      "name": "ResultTableNode",
+      "properties": [
+        {
+          "name": "ResultItemType",
+          "description": "Whether this entry in the table is an item or a link to another table",
+          "jsontype": "String",
+          "actualtype": "ResultTableNodeType",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "ResultItem",
+          "description": "Either an ItemId, or the TableId of another random result table",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Weight",
+          "description": "How likely this is to be rolled - larger numbers add more weight",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ResultTableNodeType": {
+      "name": "ResultTableNodeType",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "ItemId"
+        },
+        {
+          "name": "TableId"
         }
       ]
     },
@@ -1469,6 +1078,377 @@
     "SendAccountRecoveryEmailResult": {
       "name": "SendAccountRecoveryEmailResult",
       "properties": []
+    },
+    "SetTitleDataRequest": {
+      "name": "SetTitleDataRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Value",
+          "description": "new value to set",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SetTitleDataResult": {
+      "name": "SetTitleDataResult",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "key that was set",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "new value set for key",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "TitleActivationStatus": {
+      "name": "TitleActivationStatus",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "None"
+        },
+        {
+          "name": "ActivatedTitleKey"
+        },
+        {
+          "name": "PendingSteam"
+        },
+        {
+          "name": "ActivatedSteam"
+        },
+        {
+          "name": "RevokedSteam"
+        }
+      ]
+    },
+    "UpdateCatalogItemsRequest": {
+      "name": "UpdateCatalogItemsRequest",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "which catalog is being updated",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogItems",
+          "description": "array of catalog items to be submitted",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CatalogItem",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "UpdateCatalogItemsResult": {
+      "name": "UpdateCatalogItemsResult",
+      "properties": []
+    },
+    "UpdateRandomResultTablesRequest": {
+      "name": "UpdateRandomResultTablesRequest",
+      "properties": [
+        {
+          "name": "Tables",
+          "description": "array of random result tables to make available (Note: specifying an existing TableId will result in overwriting that table, while any others will be added to the available set)",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "RandomResultTable",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "unique identifier of the title for which the tables are to be added",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UpdateRandomResultTablesResult": {
+      "name": "UpdateRandomResultTablesResult",
+      "properties": []
+    },
+    "UpdateUserTitleDisplayNameRequest": {
+      "name": "UpdateUserTitleDisplayNameRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose title specific display name is to be changed",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "DisplayName",
+          "description": "new title display name for the user - must be between 3 and 25 characters",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UpdateUserTitleDisplayNameResult": {
+      "name": "UpdateUserTitleDisplayNameResult",
+      "properties": [
+        {
+          "name": "DisplayName",
+          "description": "current title display name for the user (this will be the original display name if the rename attempt failed)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserAccountInfo": {
+      "name": "UserAccountInfo",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "unique id for account",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "time / date account was created",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "account name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleInfo",
+          "description": "specific game title information",
+          "jsontype": "Object",
+          "actualtype": "UserTitleInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PrivateInfo",
+          "description": "user's private account into",
+          "jsontype": "Object",
+          "actualtype": "UserPrivateAccountInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "FacebookInfo",
+          "description": "facebook information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserFacebookInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "SteamInfo",
+          "description": "steam information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserSteamInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "GameCenterInfo",
+          "description": "gamecenter information (if linked)",
+          "jsontype": "Object",
+          "actualtype": "UserGameCenterInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UserFacebookInfo": {
+      "name": "UserFacebookInfo",
+      "properties": [
+        {
+          "name": "FacebookId",
+          "description": "facebook id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FacebookUsername",
+          "description": "facebook username",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FacebookDisplayname",
+          "description": "facebook display name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserGameCenterInfo": {
+      "name": "UserGameCenterInfo",
+      "properties": [
+        {
+          "name": "GameCenterId",
+          "description": "gamecenter id if account is linked",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserOrigination": {
+      "name": "UserOrigination",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Organic"
+        },
+        {
+          "name": "Steam"
+        },
+        {
+          "name": "Google"
+        },
+        {
+          "name": "Amazon"
+        },
+        {
+          "name": "Facebook"
+        },
+        {
+          "name": "Kongregate"
+        },
+        {
+          "name": "GamersFirst"
+        },
+        {
+          "name": "Unknown"
+        },
+        {
+          "name": "IOS"
+        },
+        {
+          "name": "LoadTest"
+        },
+        {
+          "name": "Android"
+        }
+      ]
+    },
+    "UserPrivateAccountInfo": {
+      "name": "UserPrivateAccountInfo",
+      "properties": [
+        {
+          "name": "Email",
+          "description": "Email address",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserSteamInfo": {
+      "name": "UserSteamInfo",
+      "properties": [
+        {
+          "name": "SteamId",
+          "description": "steam id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SteamCountry",
+          "description": "if account is linked to steam, this is the country that steam reports the player being in",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SteamCurrency",
+          "description": "Currency set in the user's steam account",
+          "jsontype": "String",
+          "actualtype": "Currency",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SteamActivationStatus",
+          "description": "STEAM specific - what stage of game ownership is the user at with Steam",
+          "jsontype": "String",
+          "actualtype": "TitleActivationStatus",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "UserTitleInfo": {
+      "name": "UserTitleInfo",
+      "properties": [
+        {
+          "name": "DisplayName",
+          "description": "displayable game name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Origination",
+          "description": "optional value that details where the user originated",
+          "jsontype": "String",
+          "actualtype": "UserOrigination",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "When this object was created. Title specific reporting for user creation time should be done against this rather than the User created field since account creation can differ significantly between title registration.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "LastLogin",
+          "description": "Last time the user logged in to this title",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "FirstLogin",
+          "description": " Time the user first logged in. This can be different from when the UTD was created. For example we create a UTD when issuing a beta key. An arbitrary amount of time can pass before the user actually logs in.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        }
+      ]
     }
   },
   "calls": [
@@ -1558,10 +1538,10 @@
       "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/GetTitleData",
-      "auth": "None",
+      "auth": "SecretKey",
       "method": "POST",
-      "request": "GetPublicTitleDataRequest",
-      "result": "GetPublicTitleDataResult",
+      "request": "GetTitleDataRequest",
+      "result": "GetTitleDataResult",
       "seeAlso": [
         "SetTitleData"
       ],
@@ -1589,7 +1569,7 @@
     },
     {
       "name": "SetTitleData",
-      "summary": "Updates the key-value store of custom title settings",
+      "summary": "Creates and updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/SetTitleData",
@@ -2058,60 +2038,68 @@
       "id": 1044,
       "name": "InvalidVirtualCurrency"
     },
-    "NonPositiveValue": {
+    "WrongVirtualCurrency": {
       "id": 1045,
+      "name": "WrongVirtualCurrency"
+    },
+    "WrongPrice": {
+      "id": 1046,
+      "name": "WrongPrice"
+    },
+    "NonPositiveValue": {
+      "id": 1047,
       "name": "NonPositiveValue"
     },
     "InvalidRegion": {
-      "id": 1046,
+      "id": 1048,
       "name": "InvalidRegion"
     },
     "RegionAtCapacity": {
-      "id": 1047,
+      "id": 1049,
       "name": "RegionAtCapacity"
     },
     "ServerFailedToStart": {
-      "id": 1048,
+      "id": 1050,
       "name": "ServerFailedToStart"
     },
     "NameNotAvailable": {
-      "id": 1049,
+      "id": 1051,
       "name": "NameNotAvailable"
     },
     "InsufficientFunds": {
-      "id": 1050,
+      "id": 1052,
       "name": "InsufficientFunds"
     },
     "InvalidDeviceID": {
-      "id": 1051,
+      "id": 1053,
       "name": "InvalidDeviceID"
     },
     "InvalidPushNotificationToken": {
-      "id": 1052,
+      "id": 1054,
       "name": "InvalidPushNotificationToken"
     },
     "NoRemainingUses": {
-      "id": 1053,
+      "id": 1055,
       "name": "NoRemainingUses"
     },
     "InvalidPaymentProvider": {
-      "id": 1054,
+      "id": 1056,
       "name": "InvalidPaymentProvider"
     },
     "PurchaseInitializationFailure": {
-      "id": 1055,
+      "id": 1057,
       "name": "PurchaseInitializationFailure"
     },
     "DuplicateUsername": {
-      "id": 1056,
+      "id": 1058,
       "name": "DuplicateUsername"
     },
     "InvalidBuyerInfo": {
-      "id": 1057,
+      "id": 1059,
       "name": "InvalidBuyerInfo"
     },
     "NoGameModeParamsSet": {
-      "id": 1058,
+      "id": 1060,
       "name": "NoGameModeParamsSet"
     }
   },
@@ -2162,6 +2150,8 @@
     "ItemNotRecycleable",
     "ItemNotAffordable",
     "InvalidVirtualCurrency",
+    "WrongVirtualCurrency",
+    "WrongPrice",
     "NonPositiveValue",
     "InvalidRegion",
     "RegionAtCapacity",
