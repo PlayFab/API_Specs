@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.0.0.b6",
+  "revision": "1.0.0.b8",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -45,6 +45,25 @@
           "description": "was the friend request processed successfully",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "AddUserVirtualCurrencyRequest": {
+      "name": "AddUserVirtualCurrencyRequest",
+      "properties": [
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which is to be incremented",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "amount to be added to the user balance of the specified virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": false
         }
       ]
@@ -812,7 +831,7 @@
           "description": "maximum number of entries to retrieve",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -852,7 +871,7 @@
           "description": "maximum number of entries to retrieve",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -927,11 +946,11 @@
       "properties": [
         {
           "name": "Keys",
-          "description": "specific keys to search for in the custom user data",
+          "description": "specific keys to search for in the custom user data. Leave null to get all keys.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         },
         {
           "name": "PlayFabId",
@@ -1030,14 +1049,14 @@
           "name": "PurchaseDate",
           "description": "timestamp for when this instance was purchased",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "DateTime",
           "optional": true
         },
         {
           "name": "Expiration",
           "description": "timestamp for when this instance will expire",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "DateTime",
           "optional": true
         },
         {
@@ -1494,6 +1513,25 @@
         },
         {
           "name": "GameNotFound"
+        }
+      ]
+    },
+    "ModifyUserVirtualCurrencyResult": {
+      "name": "ModifyUserVirtualCurrencyResult",
+      "properties": [
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which was modified",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Balance",
+          "description": "balance of the virtual currency after modification",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
@@ -2247,6 +2285,25 @@
         }
       ]
     },
+    "SubtractUserVirtualCurrencyRequest": {
+      "name": "SubtractUserVirtualCurrencyRequest",
+      "properties": [
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which is to be decremented",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "amount to be subtracted from the user balance of the specified virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "TitleActivationStatus": {
       "name": "TitleActivationStatus",
       "isenum": true,
@@ -2482,6 +2539,30 @@
     },
     "UpdateUserDataResult": {
       "name": "UpdateUserDataResult",
+      "properties": []
+    },
+    "UpdateUserStatisticsRequest": {
+      "name": "UpdateUserStatisticsRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "user whose statistics are to be updated",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "UserStatistics",
+          "description": "statistics to be updated with the provided values",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "UpdateUserStatisticsResult": {
+      "name": "UpdateUserStatisticsResult",
       "properties": []
     },
     "UpdateUserTitleDisplayNameRequest": {
@@ -3202,7 +3283,9 @@
       "result": "UpdateUserTitleDisplayNameResult",
       "errors": [
         "InvalidParams",
-        "UsernameNotAvailable"
+        "UsernameNotAvailable",
+        "InsufficientFunds",
+        "DisplayNameUpdatesNotEnabledForTitle"
       ]
     },
     {
@@ -3314,6 +3397,29 @@
       ]
     },
     {
+      "name": "UpdateUserStatistics",
+      "summary": "Updates the values of the specified title-specific statistics for the user",
+      "requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged. This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "subgroup": "Player Data Management",
+      "url": "/Client/UpdateUserStatistics",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UpdateUserStatisticsRequest",
+      "result": "UpdateUserStatisticsResult",
+      "seeAlso": [
+        "GetLeaderboard",
+        "GetLeaderboardAroundCurrentUser",
+        "GetUserStatistics"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound",
+        "InvalidUserStatistics",
+        "APINotEnabledForGameClientAccess"
+      ]
+    },
+    {
       "name": "GetCatalogItems",
       "summary": "Retrieves the specified version of the title's catalog of virtual goods, including all defined properties",
       "resultDetails": "If CatalogVersion is not specified, only inventory items associated with the most recent version of the catalog will be returned.",
@@ -3355,6 +3461,24 @@
       "result": "GetTitleNewsResult",
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "AddUserVirtualCurrency",
+      "summary": "Increments the user's balance of the specified virtual currency by the stated amount",
+      "requestDetails": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "subgroup": "Player Item Management",
+      "url": "/Client/AddUserVirtualCurrency",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "AddUserVirtualCurrencyRequest",
+      "result": "ModifyUserVirtualCurrencyResult",
+      "seeAlso": [
+        "SubtractUserVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams",
+        "APINotEnabledForGameClientAccess"
       ]
     },
     {
@@ -3475,6 +3599,24 @@
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "SubtractUserVirtualCurrency",
+      "summary": "Decrements the user's balance of the specified virtual currency by the stated amount",
+      "requestDetails": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "subgroup": "Player Item Management",
+      "url": "/Client/SubtractUserVirtualCurrency",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "SubtractUserVirtualCurrencyRequest",
+      "result": "ModifyUserVirtualCurrencyResult",
+      "seeAlso": [
+        "AddUserVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams",
+        "APINotEnabledForGameClientAccess"
       ]
     },
     {
@@ -3750,7 +3892,8 @@
         "GetUserData",
         "GetUserReadOnlyData",
         "GetUserStatistics",
-        "UpdateUserData"
+        "UpdateUserData",
+        "UpdateUserStatistics"
       ]
     },
     {
@@ -3764,6 +3907,7 @@
     {
       "name": "Player Item Management",
       "methods": [
+        "AddUserVirtualCurrency",
         "ConfirmPurchase",
         "ConsumeItem",
         "GetUserInventory",
@@ -3771,6 +3915,7 @@
         "PurchaseItem",
         "RedeemCoupon",
         "StartPurchase",
+        "SubtractUserVirtualCurrency",
         "UnlockContainerItem"
       ]
     },
@@ -4114,6 +4259,42 @@
     "InvalidUserStatistics": {
       "id": 1073,
       "name": "InvalidUserStatistics"
+    },
+    "NotAuthenticated": {
+      "id": 1074,
+      "name": "NotAuthenticated"
+    },
+    "StreamAlreadyExists": {
+      "id": 1075,
+      "name": "StreamAlreadyExists"
+    },
+    "ErrorCreatingStream": {
+      "id": 1076,
+      "name": "ErrorCreatingStream"
+    },
+    "StreamNotFound": {
+      "id": 1077,
+      "name": "StreamNotFound"
+    },
+    "InvalidAccount": {
+      "id": 1078,
+      "name": "InvalidAccount"
+    },
+    "DisplayNameUpdatesNotEnabledForTitle": {
+      "id": 1079,
+      "name": "DisplayNameUpdatesNotEnabledForTitle"
+    },
+    "PurchaseDoesNotExist": {
+      "id": 1080,
+      "name": "PurchaseDoesNotExist"
+    },
+    "InvalidPurchaseTransactionStatus": {
+      "id": 1081,
+      "name": "InvalidPurchaseTransactionStatus"
+    },
+    "APINotEnabledForGameClientAccess": {
+      "id": 1082,
+      "name": "APINotEnabledForGameClientAccess"
     }
   },
   "errorList": [
@@ -4191,6 +4372,15 @@
     "InvalidBodyValue",
     "InvalidRequest",
     "ReservedEvent",
-    "InvalidUserStatistics"
+    "InvalidUserStatistics",
+    "NotAuthenticated",
+    "StreamAlreadyExists",
+    "ErrorCreatingStream",
+    "StreamNotFound",
+    "InvalidAccount",
+    "DisplayNameUpdatesNotEnabledForTitle",
+    "PurchaseDoesNotExist",
+    "InvalidPurchaseTransactionStatus",
+    "APINotEnabledForGameClientAccess"
   ]
 }
