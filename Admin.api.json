@@ -53,13 +53,6 @@
           "optional": false
         },
         {
-          "name": "Timestamp",
-          "description": "date and time to apply (stamp) to this build (usually current time/date)",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
           "name": "Active",
           "description": "is this build currently allowed to be used",
           "jsontype": "Boolean",
@@ -134,6 +127,14 @@
           "description": "the unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Status",
+          "description": "the current status of the build validation and processing steps",
+          "jsontype": "String",
+          "actualtype": "GameBuildStatus",
+          "isenum": true,
           "optional": true
         }
       ]
@@ -445,6 +446,27 @@
         }
       ]
     },
+    "GameBuildStatus": {
+      "name": "GameBuildStatus",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Available"
+        },
+        {
+          "name": "Validating"
+        },
+        {
+          "name": "InvalidBuildPackage"
+        },
+        {
+          "name": "Processing"
+        },
+        {
+          "name": "FailedToProcess"
+        }
+      ]
+    },
     "GameModeInfo": {
       "name": "GameModeInfo",
       "properties": [
@@ -710,6 +732,38 @@
         {
           "name": "TitleId",
           "description": "the unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Status",
+          "description": "the current status of the build validation and processing steps",
+          "jsontype": "String",
+          "actualtype": "GameBuildStatus",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetServerBuildUploadURLRequest": {
+      "name": "GetServerBuildUploadURLRequest",
+      "properties": [
+        {
+          "name": "BuildId",
+          "description": "unique identifier of the game server build to upload",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetServerBuildUploadURLResult": {
+      "name": "GetServerBuildUploadURLResult",
+      "properties": [
+        {
+          "name": "URL",
+          "description": "pre-authorized URL for uploading the game server build package",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1193,6 +1247,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "Status",
+          "description": "the current status of the build validation and processing steps",
+          "jsontype": "String",
+          "actualtype": "GameBuildStatus",
+          "isenum": true,
+          "optional": true
         }
       ]
     },
@@ -1286,15 +1348,7 @@
     },
     "RemoveServerBuildResult": {
       "name": "RemoveServerBuildResult",
-      "properties": [
-        {
-          "name": "BuildId",
-          "description": "unique identifier of the previously uploaded build executable to be removed",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
+      "properties": []
     },
     "ResetUserStatisticsRequest": {
       "name": "ResetUserStatisticsRequest",
@@ -1418,30 +1472,35 @@
       "properties": [
         {
           "name": "Name",
+          "description": "name of the application sending the messsage (application names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, hyphens, and periods, and must be between 1 and 256 characters long)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Platform",
+          "description": "supported ARN platforms are Apple Push Notification Service (APNS and APNS_SANDBOX) for iOS and Google Cloud Messaging (GCM) for Android",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Key",
+          "description": "for APNS, this is the PlatformPrincipal (SSL Certificate)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Credential",
+          "description": "Credential is the Private Key for APNS/APNS_SANDBOX, and the API Key for GCM",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "OverwriteOldARN",
+          "description": "replace any existing ARN with the newly generated one",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1899,6 +1958,13 @@
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": true
+        },
+        {
+          "name": "isBanned",
+          "description": "boolean indicating whether or not the user is currently banned for a title",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     }
@@ -1954,7 +2020,7 @@
     {
       "name": "GetUserData",
       "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
-      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Admin/GetUserData",
       "auth": "SecretKey",
@@ -1975,7 +2041,7 @@
     {
       "name": "GetUserInternalData",
       "summary": "Retrieves the title-specific custom data for the user which cannot be accessed by the client",
-      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Admin/GetUserInternalData",
       "auth": "SecretKey",
@@ -1996,7 +2062,7 @@
     {
       "name": "GetUserReadOnlyData",
       "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
-      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Admin/GetUserReadOnlyData",
       "auth": "SecretKey",
@@ -2408,7 +2474,9 @@
         "ModifyServerBuild"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "BuildAlreadyExists",
+        "BuildPackageDoesNotExist"
       ]
     },
     {
@@ -2429,6 +2497,26 @@
       "errors": [
         "InvalidParams",
         "BuildNotFound"
+      ]
+    },
+    {
+      "name": "GetServerBuildUploadUrl",
+      "summary": "Retrieves the pre-authorized URL for uploading the game server package for a new build",
+      "subgroup": "Custom Server Management",
+      "url": "/Admin/GetServerBuildUploadUrl",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetServerBuildUploadURLRequest",
+      "result": "GetServerBuildUploadURLResult",
+      "seeAlso": [
+        "RemoveServerBuild",
+        "ListServerBuilds",
+        "AddServerBuild",
+        "ModifyServerBuild"
+      ],
+      "errors": [
+        "InvalidParams",
+        "BuildAlreadyExists"
       ]
     },
     {
@@ -2486,7 +2574,8 @@
         "ModifyServerBuild"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "BuildIsActive"
       ]
     }
   ],
@@ -2549,6 +2638,7 @@
       "methods": [
         "AddServerBuild",
         "GetServerBuildInfo",
+        "GetServerBuildUploadUrl",
         "ListServerBuilds",
         "ModifyServerBuild",
         "RemoveServerBuild"
@@ -2832,25 +2922,25 @@
       "id": 1067,
       "name": "NoGameModeParamsSet"
     },
-    "TooLong": {
+    "BodyTooLarge": {
       "id": 1068,
-      "name": "TooLong"
+      "name": "BodyTooLarge"
     },
-    "ReservedWord": {
+    "ReservedWordInBody": {
       "id": 1069,
-      "name": "ReservedWord"
+      "name": "ReservedWordInBody"
     },
-    "InvalidBodyValue": {
+    "InvalidTypeInBody": {
       "id": 1070,
-      "name": "InvalidBodyValue"
+      "name": "InvalidTypeInBody"
     },
     "InvalidRequest": {
       "id": 1071,
       "name": "InvalidRequest"
     },
-    "ReservedEvent": {
+    "ReservedEventName": {
       "id": 1072,
-      "name": "ReservedEvent"
+      "name": "ReservedEventName"
     },
     "InvalidUserStatistics": {
       "id": 1073,
@@ -2876,10 +2966,6 @@
       "id": 1078,
       "name": "InvalidAccount"
     },
-    "DisplayNameUpdatesNotEnabledForTitle": {
-      "id": 1079,
-      "name": "DisplayNameUpdatesNotEnabledForTitle"
-    },
     "PurchaseDoesNotExist": {
       "id": 1080,
       "name": "PurchaseDoesNotExist"
@@ -2891,6 +2977,26 @@
     "APINotEnabledForGameClientAccess": {
       "id": 1082,
       "name": "APINotEnabledForGameClientAccess"
+    },
+    "NoPushNotificationARNForTitle": {
+      "id": 1083,
+      "name": "NoPushNotificationARNForTitle"
+    },
+    "BuildAlreadyExists": {
+      "id": 1084,
+      "name": "BuildAlreadyExists"
+    },
+    "BuildPackageDoesNotExist": {
+      "id": 1085,
+      "name": "BuildPackageDoesNotExist"
+    },
+    "BuildIsActive": {
+      "id": 1086,
+      "name": "BuildIsActive"
+    },
+    "CustomAnalyticsEventsNotEnabledForTitle": {
+      "id": 1087,
+      "name": "CustomAnalyticsEventsNotEnabledForTitle"
     }
   },
   "errorList": [
@@ -2963,20 +3069,24 @@
     "DuplicateUsername",
     "InvalidBuyerInfo",
     "NoGameModeParamsSet",
-    "TooLong",
-    "ReservedWord",
-    "InvalidBodyValue",
+    "BodyTooLarge",
+    "ReservedWordInBody",
+    "InvalidTypeInBody",
     "InvalidRequest",
-    "ReservedEvent",
+    "ReservedEventName",
     "InvalidUserStatistics",
     "NotAuthenticated",
     "StreamAlreadyExists",
     "ErrorCreatingStream",
     "StreamNotFound",
     "InvalidAccount",
-    "DisplayNameUpdatesNotEnabledForTitle",
     "PurchaseDoesNotExist",
     "InvalidPurchaseTransactionStatus",
-    "APINotEnabledForGameClientAccess"
+    "APINotEnabledForGameClientAccess",
+    "NoPushNotificationARNForTitle",
+    "BuildAlreadyExists",
+    "BuildPackageDoesNotExist",
+    "BuildIsActive",
+    "CustomAnalyticsEventsNotEnabledForTitle"
   ]
 }

@@ -77,6 +77,18 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "SendPushNotificationConfirmation",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "ConfirmationMessege",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -831,7 +843,7 @@
           "description": "maximum number of entries to retrieve",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -871,7 +883,7 @@
           "description": "maximum number of entries to retrieve",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -936,6 +948,125 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "TitleNewsItem",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetUserCombinedInfoRequest": {
+      "name": "GetUserCombinedInfoRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFabId of the user to load info about. Defaults to yourself if not set.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GetAccountInfo",
+          "description": "If set to false, account info will not be returned (defaults to true)",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "GetInventory",
+          "description": "If set to false, inventory will not be returned (defaults to true). Inventory will never be returned for users other than yourself.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "GetVirtualCurrency",
+          "description": "If set to false, virtual currency balances will not be returned (defaults to true). Currency balances will never be returned for users other than yourself.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "GetUserData",
+          "description": "If set to false, custom user data will not be returned (defaults to true).",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "UserDataKeys",
+          "description": "User custom data keys to return. Leave null to get all keys. For users other than yourself, only public data will be returned.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GetReadOnlyData",
+          "description": "If set to false, read-only user data will not be returned (defaults to true).",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "ReadOnlyDataKeys",
+          "description": "User read-only custom data keys to return. Leave null to get all keys. For users other than yourself, only public data will be returned.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetUserCombinedInfoResult": {
+      "name": "GetUserCombinedInfoResult",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFabId of the owner of the combined info",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AccountInfo",
+          "description": "account information for the user",
+          "jsontype": "Object",
+          "actualtype": "UserAccountInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Inventory",
+          "description": "array of inventory items in the user's current inventory",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "array of virtual currency balance(s) belonging to the user",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Data",
+          "description": "user specific custom data",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "UserDataRecord",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ReadOnlyData",
+          "description": "user specific read-only data",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "UserDataRecord",
           "isclass": true,
           "optional": true
         }
@@ -1176,14 +1307,14 @@
       "properties": [
         {
           "name": "eventName",
-          "description": "A unique event name which will be used as the table name in the Redshift database. The name will be made lower case, and cannot not contain spaces. The use of underscores is recommended, for readability. Events also cannot match reserved terms. The PlayFab reserved terms are 'log_in' and 'purchase', while the Redshift reserved terms can be found here: http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html.",
+          "description": "A unique event name which will be used as the table name in the Redshift database. The name will be made lower case, and cannot not contain spaces. The use of underscores is recommended, for readability. Events also cannot match reserved terms. The PlayFab reserved terms are 'log_in' and 'purchase', 'create' and 'request', while the Redshift reserved terms can be found here: http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Body",
-          "description": "Contains all the data for this event. Event Values can be numerics (float, double, integer, long) or strings, and must be consistent on a per-event basis (if the Value for Key 'A' in Event 'Foo' is an integer the first time it is sent, it must be an integer in all subsequent 'Foo' events). As with event names, Keys must also not use reserved words (see above). Finally, the Body for an event must be less than 32KB of serialized data.",
+          "description": "Contains all the data for this event. Event Values can be strings, booleans or numerics (float, double, integer, long) and must be consistent on a per-event basis (if the Value for Key 'A' in Event 'Foo' is an integer the first time it is sent, it must be an integer in all subsequent 'Foo' events). As with event names, Keys must also not use reserved words (see above). Finally, the size of the Body for an event must be less than 32KB (UTF-8 format).",
           "collection": "map",
           "jsontype": "Object",
           "actualtype": "object",
@@ -1193,15 +1324,7 @@
     },
     "LogEventResult": {
       "name": "LogEventResult",
-      "properties": [
-        {
-          "name": "errors",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
+      "properties": []
     },
     "LoginResult": {
       "name": "LoginResult",
@@ -1286,12 +1409,14 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "AccessToken",
+          "description": "unique token from Google Play for the user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2002,6 +2127,18 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "SendPushNotificationConfirmation",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "ConfirmationMessege",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2423,6 +2560,10 @@
     },
     "UnlinkGameCenterAccountResult": {
       "name": "UnlinkGameCenterAccountResult",
+      "properties": []
+    },
+    "UnlinkSteamAccountRequest": {
+      "name": "UnlinkSteamAccountRequest",
       "properties": []
     },
     "UnlinkSteamAccountResult": {
@@ -2849,6 +2990,13 @@
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": true
+        },
+        {
+          "name": "isBanned",
+          "description": "boolean indicating whether or not the user is currently banned for a title",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     },
@@ -2857,25 +3005,28 @@
       "properties": [
         {
           "name": "packageName",
+          "description": "packageName as defined in the Google Play marketplace",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "productId",
+          "description": "productId defined in the Google Play marketplace for the catalog item (must match the ItemId in the PlayFab catalog)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "purchaseToken",
+          "description": "receipt returned from the Google Play service for the in-app purchase",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "accessToken",
-          "description": "OAuth 2.0 token retrieved from Google",
+          "description": "OAuth 2.0 session token for the user retrieved from Google",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2887,30 +3038,35 @@
       "properties": [
         {
           "name": "kind",
+          "description": "type of purchase, as defined by Google Play",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "purchaseTime",
+          "description": "timestamp of the purchase in the Google Play marketplace",
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": false
         },
         {
           "name": "puchaseState",
+          "description": "whether the purchase was successful, cancelled, or revoked, as defined by Google Play",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
         },
         {
           "name": "consumptionState",
+          "description": "whether the purchased item has been consumed in Google Play",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
         },
         {
           "name": "developerPayload",
+          "description": "developer defined string in Google Play to be returned on any purchase",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2929,7 +3085,7 @@
         },
         {
           "name": "ObjectName",
-          "description": "name of the object purchased",
+          "description": "name of the object purchased from the App store (must match the ItemId in the PlayFab catalog)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3124,7 +3280,24 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "GetAccountInfoRequest",
-      "result": "GetAccountInfoResult"
+      "result": "GetAccountInfoResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetUserCombinedInfo",
+      "summary": "Retrieves all requested data for a user in one unified request. By default, this API returns all  data for the locally signed-in user. The input parameters may be used to limit the data retrieved any any subset of the available data, as well as retrieve the available data for a different user. Note that certain data, including inventory, virtual currency balances, and personally identifying information, may only be retrieved for the locally signed-in user. In the example below, a request is made for the account details, virtual currency balances, and specified user data for the locally signed-in user.",
+      "resultDetails": "This API retrieves details regarding the user in the PlayFab service. Note that data returned for the locally signed-in user may contain Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for the user, the recommendation is to not store this data locally.",
+      "subgroup": "Account Management",
+      "url": "/Client/GetUserCombinedInfo",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetUserCombinedInfoRequest",
+      "result": "GetUserCombinedInfoResult",
+      "errors": [
+        "AccountNotFound"
+      ]
     },
     {
       "name": "LinkFacebookAccount",
@@ -3225,7 +3398,7 @@
       "url": "/Client/UnlinkSteamAccount",
       "auth": "SessionTicket",
       "method": "POST",
-      "request": "LinkSteamAccountRequest",
+      "request": "UnlinkSteamAccountRequest",
       "result": "UnlinkSteamAccountResult",
       "seeAlso": [
         "LinkSteamAccount"
@@ -3277,8 +3450,7 @@
       "errors": [
         "InvalidParams",
         "UsernameNotAvailable",
-        "InsufficientFunds",
-        "DisplayNameUpdatesNotEnabledForTitle"
+        "InsufficientFunds"
       ]
     },
     {
@@ -3320,7 +3492,7 @@
     {
       "name": "GetUserData",
       "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
-      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetUserData",
       "auth": "SessionTicket",
@@ -3338,7 +3510,7 @@
     {
       "name": "GetUserReadOnlyData",
       "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
-      "requestDetails": "Data is stored as an arbitrary JSON object of key-value pairs. If the Keys parameter is provided, the custom data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetUserReadOnlyData",
       "auth": "SessionTicket",
@@ -3720,7 +3892,8 @@
     },
     {
       "name": "ValidateIOSReceipt",
-      "summary": "Validates with the iTunes store that the receipt for an iOS in-app purchase is valid and that it matches the purchased catalog item",
+      "summary": "Validates with the Apple store that the receipt for an iOS in-app purchase is valid and that it matches the purchased catalog item",
+      "requestDetails": "The ObjectName, CurrecncyCode, and PurcahsePrice are defined in the Apple store. The ObjectName must match the ItemId of the inventory item in the PlayFab catalog for the title. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
       "resultDetails": "Once verified, the catalog item matching the iTunes item name will be added to the user's inventory.",
       "subgroup": "IOS-Specific APIs",
       "url": "/Client/ValidateIOSReceipt",
@@ -3816,7 +3989,8 @@
     {
       "name": "ValidateGooglePlayPurchase",
       "summary": "Validates with the GooglePlay store that the receipt for an in-app purchase is valid and that it matches the purchased catalog item",
-      "resultDetails": "Once verified, the catalog item matching the GooglePlay store item name will be added to the user's inventory.",
+      "requestDetails": "The packageName and productId are defined in the GooglePlay store. The productId must match the ItemId of the inventory item in the PlayFab catalog for the title. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
+      "resultDetails": "Once verified, the catalog item (ItemId) matching the GooglePlay store item (productId) will be added to the user's inventory.",
       "subgroup": "Android-Specific APIs",
       "url": "/Client/ValidateGooglePlayPurchase",
       "auth": "SessionTicket",
@@ -3833,7 +4007,7 @@
     {
       "name": "LogEvent",
       "summary": "Logs a custom analytics event",
-      "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique event name will create a distinct table within the database. For each event, a column will be created for every unique key. Any key in the table which does not have a distinct value in the event data will recorded as NULL. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. In this case, the eventName could be 'headshot', while the Body may contain information on the PlayFab ID of the victim, the weapon used, the location on the map, and the total damage. In that case, the body would look like so: {     'victim' : 'B76543AEAE65'     'gun' : 'big_bad_sniper'     'x_coord' : 10     'y_coord' : 20     'z_coord' : 1     'damage' : 1000 } Timestamps and user ids are automically added as 'ts' and 'user_id'. The 'headshot' table will then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage' and the row corresponding to the above event will look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000. As illustrated, User ID and timestamp are automatically added to all events recorded, and so do not need to be logged. Similarly, Title ID is part of the database name, and so does not need to be logged. Finally, the PlayFab service automatically creates events for all logins and purchases, meaning these also do not require distinct events. This API is intended for game specific events only.",
+      "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only.",
       "subgroup": "Analytics",
       "url": "/Client/LogEvent",
       "auth": "SessionTicket",
@@ -3841,10 +4015,11 @@
       "request": "LogEventRequest",
       "result": "LogEventResult",
       "errors": [
-        "TooLong",
-        "ReservedWord",
-        "ReservedEvent",
-        "InvalidRequest"
+        "BodyTooLarge",
+        "ReservedWordInBody",
+        "ReservedEventName",
+        "InvalidRequest",
+        "InvalidTypeInBody"
       ]
     }
   ],
@@ -3866,6 +4041,7 @@
       "name": "Account Management",
       "methods": [
         "GetAccountInfo",
+        "GetUserCombinedInfo",
         "LinkFacebookAccount",
         "LinkGameCenterAccount",
         "LinkSteamAccount",
@@ -4229,25 +4405,25 @@
       "id": 1067,
       "name": "NoGameModeParamsSet"
     },
-    "TooLong": {
+    "BodyTooLarge": {
       "id": 1068,
-      "name": "TooLong"
+      "name": "BodyTooLarge"
     },
-    "ReservedWord": {
+    "ReservedWordInBody": {
       "id": 1069,
-      "name": "ReservedWord"
+      "name": "ReservedWordInBody"
     },
-    "InvalidBodyValue": {
+    "InvalidTypeInBody": {
       "id": 1070,
-      "name": "InvalidBodyValue"
+      "name": "InvalidTypeInBody"
     },
     "InvalidRequest": {
       "id": 1071,
       "name": "InvalidRequest"
     },
-    "ReservedEvent": {
+    "ReservedEventName": {
       "id": 1072,
-      "name": "ReservedEvent"
+      "name": "ReservedEventName"
     },
     "InvalidUserStatistics": {
       "id": 1073,
@@ -4273,10 +4449,6 @@
       "id": 1078,
       "name": "InvalidAccount"
     },
-    "DisplayNameUpdatesNotEnabledForTitle": {
-      "id": 1079,
-      "name": "DisplayNameUpdatesNotEnabledForTitle"
-    },
     "PurchaseDoesNotExist": {
       "id": 1080,
       "name": "PurchaseDoesNotExist"
@@ -4288,6 +4460,26 @@
     "APINotEnabledForGameClientAccess": {
       "id": 1082,
       "name": "APINotEnabledForGameClientAccess"
+    },
+    "NoPushNotificationARNForTitle": {
+      "id": 1083,
+      "name": "NoPushNotificationARNForTitle"
+    },
+    "BuildAlreadyExists": {
+      "id": 1084,
+      "name": "BuildAlreadyExists"
+    },
+    "BuildPackageDoesNotExist": {
+      "id": 1085,
+      "name": "BuildPackageDoesNotExist"
+    },
+    "BuildIsActive": {
+      "id": 1086,
+      "name": "BuildIsActive"
+    },
+    "CustomAnalyticsEventsNotEnabledForTitle": {
+      "id": 1087,
+      "name": "CustomAnalyticsEventsNotEnabledForTitle"
     }
   },
   "errorList": [
@@ -4360,20 +4552,24 @@
     "DuplicateUsername",
     "InvalidBuyerInfo",
     "NoGameModeParamsSet",
-    "TooLong",
-    "ReservedWord",
-    "InvalidBodyValue",
+    "BodyTooLarge",
+    "ReservedWordInBody",
+    "InvalidTypeInBody",
     "InvalidRequest",
-    "ReservedEvent",
+    "ReservedEventName",
     "InvalidUserStatistics",
     "NotAuthenticated",
     "StreamAlreadyExists",
     "ErrorCreatingStream",
     "StreamNotFound",
     "InvalidAccount",
-    "DisplayNameUpdatesNotEnabledForTitle",
     "PurchaseDoesNotExist",
     "InvalidPurchaseTransactionStatus",
-    "APINotEnabledForGameClientAccess"
+    "APINotEnabledForGameClientAccess",
+    "NoPushNotificationARNForTitle",
+    "BuildAlreadyExists",
+    "BuildPackageDoesNotExist",
+    "BuildIsActive",
+    "CustomAnalyticsEventsNotEnabledForTitle"
   ]
 }
