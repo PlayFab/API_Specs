@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.0.0.b8",
+  "revision": "1.0.0",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -308,7 +308,7 @@
         },
         {
           "name": "Container",
-          "description": "defines the container properties for the item - containers are items which include contain other items, including random drop tables and virtual currencies, and which require a \"key\" item to open",
+          "description": "defines the container properties for the item - what items it contains, including random drop tables and virtual currencies, and what item (if any) is required to open it via the UnlockContainerItem API",
           "jsontype": "Object",
           "actualtype": "CatalogItemContainerInfo",
           "isclass": true,
@@ -383,10 +383,11 @@
     },
     "CatalogItemContainerInfo": {
       "name": "CatalogItemContainerInfo",
+      "description": "Containers are inventory items that can hold other items defined in the catalog, as well as virtual currency, which is added to the player inventory when the container is unlocked, using the UnlockContainerItem API. The items can be anything defined in the catalog, as well as RandomResultTable objects which will be resolved when the container is unlocked. Containers and their keys should be defined as Consumable (having a limited number of uses) in their catalog defintiions, unless the intent is for the player to be able to re-use them infinitely.",
       "properties": [
         {
           "name": "KeyItemId",
-          "description": "unique ItemId which is required to unlock the container (items in the container will not be added to the player inventory until it is unlocked)",
+          "description": "ItemId for the catalog item used to unlock the container, if any (if not specified, a call to UnlockContainerItem will open the container, adding the contents to the player inventory and currency balances)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -614,20 +615,6 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
-        },
-        {
-          "name": "StdOutLog",
-          "description": "output log from this Game Server Instance",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "StdErrLog",
-          "description": "error log from this Game Server Instance",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
         }
       ]
     },
@@ -766,6 +753,33 @@
           "description": "pre-authorized URL for uploading the game server build package",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetStoreItemsRequest": {
+      "name": "GetStoreItemsRequest",
+      "properties": [
+        {
+          "name": "StoreId",
+          "description": "which store is being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetStoreItemsResult": {
+      "name": "GetStoreItemsResult",
+      "properties": [
+        {
+          "name": "Store",
+          "description": "array of items which can be purchased from this store",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "StoreItem",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -1449,7 +1463,7 @@
       "properties": [
         {
           "name": "Key",
-          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name",
+          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name.) Keys are trimmed of whitespace. Keys may not begin with the '!' character.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1479,7 +1493,7 @@
         },
         {
           "name": "Platform",
-          "description": "supported ARN platforms are Apple Push Notification Service (APNS and APNS_SANDBOX) for iOS and Google Cloud Messaging (GCM) for Android",
+          "description": "supported notification platforms are Apple Push Notification Service (APNS and APNS_SANDBOX) for iOS and Google Cloud Messaging (GCM) for Android",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1500,7 +1514,7 @@
         },
         {
           "name": "OverwriteOldARN",
-          "description": "replace any existing ARN with the newly generated one",
+          "description": "replace any existing ARN with the newly generated one. If this is set to false, an error will be returned if notifactions have already setup for this platform.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1512,8 +1526,46 @@
       "properties": [
         {
           "name": "ARN",
+          "description": "Amazon Resource Name for the created notification topic.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "StoreItem": {
+      "name": "StoreItem",
+      "description": "A store entry that list a catalog item at a particular price",
+      "sortKey": "ItemId",
+      "properties": [
+        {
+          "name": "ItemId",
+          "description": "ItemId of the item for sale in the store",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the item. Leave null to always use the most recent version.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrencyPrices",
+          "description": "price of this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "RealCurrencyPrices",
+          "description": "override prices for this item for specific currencies",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
           "optional": true
         }
       ]
@@ -1582,7 +1634,7 @@
           "jsontype": "Object",
           "actualtype": "CatalogItem",
           "isclass": true,
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1608,6 +1660,31 @@
       "name": "UpdateRandomResultTablesResult",
       "properties": []
     },
+    "UpdateStoreItemsRequest": {
+      "name": "UpdateStoreItemsRequest",
+      "properties": [
+        {
+          "name": "StoreId",
+          "description": "which store is being updated",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Store",
+          "description": "array of store items to be submitted",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StoreItem",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateStoreItemsResult": {
+      "name": "UpdateStoreItemsResult",
+      "properties": []
+    },
     "UpdateUserDataRequest": {
       "name": "UpdateUserDataRequest",
       "properties": [
@@ -1620,7 +1697,7 @@
         },
         {
           "name": "Data",
-          "description": "data to be written to the user's custom data",
+          "description": "data to be written to the user's custom data. Keys are trimmed of whitespace. Keys may not begin with a '!' character.",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -2221,6 +2298,23 @@
       ]
     },
     {
+      "name": "GetStoreItems",
+      "summary": "Gets all items in the specified virtual store",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Admin/GetStoreItems",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetStoreItemsRequest",
+      "result": "GetStoreItemsResult",
+      "seeAlso": [
+        "SetStoreItems",
+        "UpdateStoreItems"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetTitleData",
       "summary": "Retrieves the key-value store of custom title settings",
       "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build.",
@@ -2266,6 +2360,24 @@
       "seeAlso": [
         "GetCatalogItems",
         "UpdateCatalogItems"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SetStoreItems",
+      "summary": "Sets all the items in one virtual store",
+      "requestDetails": "This operation is not additive. Using it will cause the indicated virtual store to be created from scratch. If there is an existing store with the same storeId, it will be deleted and replaced with only the items specified in this call.",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Admin/SetStoreItems",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateStoreItemsRequest",
+      "result": "UpdateStoreItemsResult",
+      "seeAlso": [
+        "GetStoreItems",
+        "UpdateStoreItems"
       ],
       "errors": [
         "InvalidParams"
@@ -2318,6 +2430,24 @@
       "result": "UpdateRandomResultTablesResult",
       "seeAlso": [
         "GetRandomResultTables"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateStoreItems",
+      "summary": "Updates an existing virtual item store with new or modified items",
+      "requestDetails": "This operation is additive. Items with ItemId values not currently in the store will be added, while those with ItemId values matching items currently in the catalog will overwrite those items with the given values.",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Admin/UpdateStoreItems",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateStoreItemsRequest",
+      "result": "UpdateStoreItemsResult",
+      "seeAlso": [
+        "GetStoreItems",
+        "SetStoreItems"
       ],
       "errors": [
         "InvalidParams"
@@ -2607,12 +2737,15 @@
         "AddVirtualCurrencyTypes",
         "GetCatalogItems",
         "GetRandomResultTables",
+        "GetStoreItems",
         "GetTitleData",
         "ListVirualCurrencyTypes",
         "SetCatalogItems",
+        "SetStoreItems",
         "SetTitleData",
         "UpdateCatalogItems",
-        "UpdateRandomResultTables"
+        "UpdateRandomResultTables",
+        "UpdateStoreItems"
       ]
     },
     {
@@ -2997,6 +3130,18 @@
     "CustomAnalyticsEventsNotEnabledForTitle": {
       "id": 1087,
       "name": "CustomAnalyticsEventsNotEnabledForTitle"
+    },
+    "InvalidSharedGroupId": {
+      "id": 1088,
+      "name": "InvalidSharedGroupId"
+    },
+    "NotAuthorized": {
+      "id": 1089,
+      "name": "NotAuthorized"
+    },
+    "MissingTitleGoogleProperties": {
+      "id": 1090,
+      "name": "MissingTitleGoogleProperties"
     }
   },
   "errorList": [
@@ -3087,6 +3232,9 @@
     "BuildAlreadyExists",
     "BuildPackageDoesNotExist",
     "BuildIsActive",
-    "CustomAnalyticsEventsNotEnabledForTitle"
+    "CustomAnalyticsEventsNotEnabledForTitle",
+    "InvalidSharedGroupId",
+    "NotAuthorized",
+    "MissingTitleGoogleProperties"
   ]
 }

@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.0.0.b8",
+  "revision": "1.0.0",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -49,6 +49,30 @@
         }
       ]
     },
+    "AddSharedGroupMembersRequest": {
+      "name": "AddSharedGroupMembersRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier for the shared group.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabIds",
+          "description": "list of PlayFabIds of users to add as members of the shared group",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "AddSharedGroupMembersResult": {
+      "name": "AddSharedGroupMembersResult",
+      "properties": []
+    },
     "AddUserVirtualCurrencyRequest": {
       "name": "AddUserVirtualCurrencyRequest",
       "properties": [
@@ -80,12 +104,14 @@
         },
         {
           "name": "SendPushNotificationConfirmation",
+          "description": "If true, send a test push message immediately after sucessful registration. Defaults to false.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
         },
         {
           "name": "ConfirmationMessege",
+          "description": "Message to display when confirming push notification.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -286,7 +312,7 @@
         },
         {
           "name": "Container",
-          "description": "defines the container properties for the item - containers are items which include contain other items, including random drop tables and virtual currencies, and which require a \"key\" item to open",
+          "description": "defines the container properties for the item - what items it contains, including random drop tables and virtual currencies, and what item (if any) is required to open it via the UnlockContainerItem API",
           "jsontype": "Object",
           "actualtype": "CatalogItemContainerInfo",
           "isclass": true,
@@ -361,10 +387,11 @@
     },
     "CatalogItemContainerInfo": {
       "name": "CatalogItemContainerInfo",
+      "description": "Containers are inventory items that can hold other items defined in the catalog, as well as virtual currency, which is added to the player inventory when the container is unlocked, using the UnlockContainerItem API. The items can be anything defined in the catalog, as well as RandomResultTable objects which will be resolved when the container is unlocked. Containers and their keys should be defined as Consumable (having a limited number of uses) in their catalog defintiions, unless the intent is for the player to be able to re-use them infinitely.",
       "properties": [
         {
           "name": "KeyItemId",
-          "description": "unique ItemId which is required to unlock the container (items in the container will not be added to the player inventory until it is unlocked)",
+          "description": "ItemId for the catalog item used to unlock the container, if any (if not specified, a call to UnlockContainerItem will open the container, adding the contents to the player inventory and currency balances)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -459,6 +486,30 @@
     "ConsumeItemResult": {
       "name": "ConsumeItemResult",
       "properties": []
+    },
+    "CreateSharedGroupRequest": {
+      "name": "CreateSharedGroupRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier for the shared group. Leave null to have a random ID assigned",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "CreateSharedGroupResult": {
+      "name": "CreateSharedGroupResult",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier assigned to the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "Currency": {
       "name": "Currency",
@@ -642,13 +693,6 @@
         {
           "name": "GameMode",
           "description": "game mode this server is running",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Map",
-          "description": "level name this server is running, if applicable",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -896,6 +940,82 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "PlayerLeaderboardEntry",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetSharedGroupDataRequest": {
+      "name": "GetSharedGroupDataRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier for the shared group to load data from",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Keys",
+          "description": "specific keys to search for in the shared group's user data. Leave null to get all keys. Set to an empty array to get no keys.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GetMembers",
+          "description": "if true, also return the list of member of the shared group. Defaults to false if not specified",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "GetSharedGroupDataResult": {
+      "name": "GetSharedGroupDataResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "data for this shared data group",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "SharedGroupDataRecord",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Members",
+          "description": "List of PlayFabIds of the members of this group, if requested",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetStoreItemsRequest": {
+      "name": "GetStoreItemsRequest",
+      "properties": [
+        {
+          "name": "StoreId",
+          "description": "which store is being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetStoreItemsResult": {
+      "name": "GetStoreItemsResult",
+      "properties": [
+        {
+          "name": "Store",
+          "description": "array of store items",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "StoreItem",
           "isclass": true,
           "optional": true
         }
@@ -1923,7 +2043,7 @@
         },
         {
           "name": "Price",
-          "description": "price the client expects to pay for the item (in case a new catalog was uploaded, with new prices)",
+          "description": "price the client expects to pay for the item (in case a new catalog or store was uploaded, with new prices)",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -1931,6 +2051,13 @@
         {
           "name": "CatalogVersion",
           "description": "catalog version for the items to be purchased (defaults to most recent version",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StoreId",
+          "description": "store to buy this item through. If not set, prices default to those in the catalog.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2130,12 +2257,14 @@
         },
         {
           "name": "SendPushNotificationConfirmation",
+          "description": "If true, send a test push message immediately after sucessful registration. Defaults to false.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
         },
         {
           "name": "ConfirmationMessege",
+          "description": "Message to display when confirming push notification.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2228,6 +2357,30 @@
       "name": "RemoveFriendResult",
       "properties": []
     },
+    "RemoveSharedGroupMembersRequest": {
+      "name": "RemoveSharedGroupMembersRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier for the shared group.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabIds",
+          "description": "list of PlayFabIds of users to remove from the shared group",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RemoveSharedGroupMembersResult": {
+      "name": "RemoveSharedGroupMembersResult",
+      "properties": []
+    },
     "SendAccountRecoveryEmailRequest": {
       "name": "SendAccountRecoveryEmailRequest",
       "properties": [
@@ -2275,6 +2428,40 @@
       "name": "SetFriendTagsResult",
       "properties": []
     },
+    "SharedGroupDataRecord": {
+      "name": "SharedGroupDataRecord",
+      "properties": [
+        {
+          "name": "Value",
+          "description": "data stored for the specified group data key",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastUpdatedBy",
+          "description": "PlayFabId of the user to last update this value",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastUpdated",
+          "description": "timestamp for when this data was last updated",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "Permission",
+          "description": "Permissions on this data key",
+          "jsontype": "String",
+          "actualtype": "UserDataPermission",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
     "StartGameRequest": {
       "name": "StartGameRequest",
       "properties": [
@@ -2308,8 +2495,8 @@
           "optional": false
         },
         {
-          "name": "ReplayLobbyId",
-          "description": "the identifier of the lobby the user came from within the match maker service",
+          "name": "CustomCommandLineData",
+          "description": "custom command line argument when starting game server process",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2368,10 +2555,17 @@
       "properties": [
         {
           "name": "CatalogVersion",
-          "description": "catalog version for the items to be purchased",
+          "description": "catalog version for the items to be purchased. Defaults to most recent catalog.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "StoreId",
+          "description": "store through which to purchase items. If not set, prices will be pulled from the catalog itself.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "Items",
@@ -2418,6 +2612,43 @@
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "StoreItem": {
+      "name": "StoreItem",
+      "description": "A store entry that list a catalog item at a particular price",
+      "sortKey": "ItemId",
+      "properties": [
+        {
+          "name": "ItemId",
+          "description": "ItemId of the item for sale in the store",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the item. Leave null to always use the most recent version.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrencyPrices",
+          "description": "price of this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "RealCurrencyPrices",
+          "description": "override prices for this item for specific currencies",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
           "optional": true
         }
       ]
@@ -2655,6 +2886,38 @@
     },
     "UpdatePasswordResult": {
       "name": "UpdatePasswordResult",
+      "properties": []
+    },
+    "UpdateSharedGroupDataRequest": {
+      "name": "UpdateSharedGroupDataRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "Unique identifier for the shared group.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Data",
+          "description": "data to be written to the shared group. A key with a null value will be removed, rather than being set to null. Keys are trimmed of whitespace and must not begin with a '!' character.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Permission",
+          "description": "Permission to be applied to all user data keys written in this request. Defaults to \"private\" if not set.",
+          "jsontype": "String",
+          "actualtype": "UserDataPermission",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateSharedGroupDataResult": {
+      "name": "UpdateSharedGroupDataResult",
       "properties": []
     },
     "UpdateUserDataRequest": {
@@ -3004,74 +3267,24 @@
       "name": "ValidateGooglePlayPurchaseRequest",
       "properties": [
         {
-          "name": "packageName",
-          "description": "packageName as defined in the Google Play marketplace",
+          "name": "ReceiptJson",
+          "description": "The original json string returned by the Google Play IAB api",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
-          "name": "productId",
-          "description": "productId defined in the Google Play marketplace for the catalog item (must match the ItemId in the PlayFab catalog)",
+          "name": "Signature",
+          "description": "The signature returned by the Google Play IAB api",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
-        },
-        {
-          "name": "purchaseToken",
-          "description": "receipt returned from the Google Play service for the in-app purchase",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "accessToken",
-          "description": "OAuth 2.0 session token for the user retrieved from Google",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
         }
       ]
     },
     "ValidateGooglePlayPurchaseResult": {
       "name": "ValidateGooglePlayPurchaseResult",
-      "properties": [
-        {
-          "name": "kind",
-          "description": "type of purchase, as defined by Google Play",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "purchaseTime",
-          "description": "timestamp of the purchase in the Google Play marketplace",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": false
-        },
-        {
-          "name": "puchaseState",
-          "description": "whether the purchase was successful, cancelled, or revoked, as defined by Google Play",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "consumptionState",
-          "description": "whether the purchased item has been consumed in Google Play",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "developerPayload",
-          "description": "developer defined string in Google Play to be returned on any purchase",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
+      "properties": []
     },
     "ValidateIOSReceiptRequest": {
       "name": "ValidateIOSReceiptRequest",
@@ -3595,7 +3808,24 @@
       "request": "GetCatalogItemsRequest",
       "result": "GetCatalogItemsResult",
       "seeAlso": [
-        "GetUserInventory"
+        "GetUserInventory",
+        "GetStoreItems"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetStoreItems",
+      "summary": "Retrieves the list of catalog items for sale in a particular virutal store, including that store's pricing.",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Client/GetStoreItems",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetStoreItemsRequest",
+      "result": "GetStoreItemsResult",
+      "seeAlso": [
+        "GetCatalogItems"
       ],
       "errors": [
         "InvalidParams"
@@ -3988,8 +4218,8 @@
     },
     {
       "name": "ValidateGooglePlayPurchase",
-      "summary": "Validates with the GooglePlay store that the receipt for an in-app purchase is valid and that it matches the purchased catalog item",
-      "requestDetails": "The packageName and productId are defined in the GooglePlay store. The productId must match the ItemId of the inventory item in the PlayFab catalog for the title. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
+      "summary": "Validates a Google Play purchase and gives the corresponding item to the player.",
+      "requestDetails": "The packageName and productId are defined in the GooglePlay store. The productId must match the ItemId of the inventory item in the PlayFab catalog for the title. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example). Each receipt may be validated only once to avoid granting the same item over and over from a single purchase.",
       "resultDetails": "Once verified, the catalog item (ItemId) matching the GooglePlay store item (productId) will be added to the user's inventory.",
       "subgroup": "Android-Specific APIs",
       "url": "/Client/ValidateGooglePlayPurchase",
@@ -4020,6 +4250,75 @@
         "ReservedEventName",
         "InvalidRequest",
         "InvalidTypeInBody"
+      ]
+    },
+    {
+      "name": "AddSharedGroupMembers",
+      "summary": "Adds new members to the group. Only existing group members can add new members",
+      "subgroup": "Shared Group Data",
+      "url": "/Client/AddSharedGroupMembers",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "AddSharedGroupMembersRequest",
+      "result": "AddSharedGroupMembersResult",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "CreateSharedGroup",
+      "summary": "Requests the creation of a shared group object. It will be created with the current user as its only member.",
+      "requestDetails": "If you specify an ID for the object, you will get an error back if that ID is already in use. If you do not specify an ID, a random one will be used.",
+      "subgroup": "Shared Group Data",
+      "url": "/Client/CreateSharedGroup",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "CreateSharedGroupRequest",
+      "result": "CreateSharedGroupResult",
+      "errors": [
+        "InvalidParams",
+        "InvalidSharedGroupId"
+      ]
+    },
+    {
+      "name": "GetSharedGroupData",
+      "summary": "Gets data in a shared group object. You may load data, the member list, or both at once. Non-members of the group may use this to load group data, including membership, but will not get data keys marked as private.",
+      "subgroup": "Shared Group Data",
+      "url": "/Client/GetSharedGroupData",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetSharedGroupDataRequest",
+      "result": "GetSharedGroupDataResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "RemoveSharedGroupMembers",
+      "summary": "Removes members from the group. Only existing group members can remove members. Removing all members (including yourself) deletes the group completely.",
+      "subgroup": "Shared Group Data",
+      "url": "/Client/RemoveSharedGroupMembers",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "RemoveSharedGroupMembersRequest",
+      "result": "RemoveSharedGroupMembersResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateSharedGroupData",
+      "summary": "Adds or updates data keys to a shared group object. Data written to the group is readable only by members of the group unless marked public. Only group members can update data.",
+      "subgroup": "Shared Group Data",
+      "url": "/Client/UpdateSharedGroupData",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UpdateSharedGroupDataRequest",
+      "result": "UpdateSharedGroupDataResult",
+      "errors": [
+        "InvalidParams",
+        "NotAuthorized"
       ]
     }
   ],
@@ -4069,6 +4368,7 @@
       "name": "Title-Wide Data Management",
       "methods": [
         "GetCatalogItems",
+        "GetStoreItems",
         "GetTitleData",
         "GetTitleNews"
       ]
@@ -4125,6 +4425,16 @@
       "name": "Analytics",
       "methods": [
         "LogEvent"
+      ]
+    },
+    {
+      "name": "Shared Group Data",
+      "methods": [
+        "AddSharedGroupMembers",
+        "CreateSharedGroup",
+        "GetSharedGroupData",
+        "RemoveSharedGroupMembers",
+        "UpdateSharedGroupData"
       ]
     }
   ],
@@ -4480,6 +4790,18 @@
     "CustomAnalyticsEventsNotEnabledForTitle": {
       "id": 1087,
       "name": "CustomAnalyticsEventsNotEnabledForTitle"
+    },
+    "InvalidSharedGroupId": {
+      "id": 1088,
+      "name": "InvalidSharedGroupId"
+    },
+    "NotAuthorized": {
+      "id": 1089,
+      "name": "NotAuthorized"
+    },
+    "MissingTitleGoogleProperties": {
+      "id": 1090,
+      "name": "MissingTitleGoogleProperties"
     }
   },
   "errorList": [
@@ -4570,6 +4892,9 @@
     "BuildAlreadyExists",
     "BuildPackageDoesNotExist",
     "BuildIsActive",
-    "CustomAnalyticsEventsNotEnabledForTitle"
+    "CustomAnalyticsEventsNotEnabledForTitle",
+    "InvalidSharedGroupId",
+    "NotAuthorized",
+    "MissingTitleGoogleProperties"
   ]
 }
