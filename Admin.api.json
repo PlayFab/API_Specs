@@ -53,13 +53,6 @@
           "optional": false
         },
         {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
           "name": "DedicatedServerEligible",
           "description": "is this build intended to run on dedicated (\"bare metal\") servers",
           "jsontype": "Boolean",
@@ -71,7 +64,8 @@
           "description": "Server host regions in which this build can be used",
           "collection": "array",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "Region",
+          "isenum": true,
           "optional": true
         },
         {
@@ -94,18 +88,12 @@
           "optional": true
         },
         {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
           "name": "ActiveRegions",
           "description": "array of regions where this build can used, when it is active",
           "collection": "array",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "Region",
+          "isenum": true,
           "optional": true
         },
         {
@@ -169,11 +157,12 @@
       "name": "AddVirtualCurrencyTypesRequest",
       "properties": [
         {
-          "name": "VirtualCurrencyIds",
+          "name": "VirtualCurrencies",
           "description": "List of virtual currency names to add as valid virtual currencies for this title",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
+          "jsontype": "Object",
+          "actualtype": "VirtualCurrencyData",
+          "isclass": true,
           "optional": false
         }
       ]
@@ -687,19 +676,13 @@
           "optional": true
         },
         {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
           "name": "ActiveRegions",
           "description": "array of regions where this build can used, when it is active",
           "collection": "array",
           "isUnordered": true,
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "Region",
+          "isenum": true,
           "optional": true
         },
         {
@@ -729,6 +712,13 @@
           "jsontype": "String",
           "actualtype": "GameBuildStatus",
           "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "ErrorMessage",
+          "description": "error message, if any, about this build",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -762,7 +752,7 @@
       "properties": [
         {
           "name": "StoreId",
-          "description": "which store is being requested",
+          "description": "unqiue identifier for the store which is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1094,12 +1084,13 @@
       "name": "ListVirtualCurrencyTypesResult",
       "properties": [
         {
-          "name": "VirtualCurrencyIds",
+          "name": "VirtualCurrencies",
           "description": "List of virtual currency names defined for this title",
           "collection": "array",
           "isUnordered": true,
-          "jsontype": "String",
-          "actualtype": "String",
+          "jsontype": "Object",
+          "actualtype": "VirtualCurrencyData",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -1193,18 +1184,12 @@
           "optional": true
         },
         {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
           "name": "ActiveRegions",
           "description": "array of regions where this build can used, when it is active",
           "collection": "array",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "Region",
+          "isenum": true,
           "optional": true
         },
         {
@@ -1227,18 +1212,12 @@
           "optional": true
         },
         {
-          "name": "Active",
-          "description": "is this build currently allowed to be used",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
           "name": "ActiveRegions",
           "description": "array of regions where this build can used, when it is active",
           "collection": "array",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "Region",
+          "isenum": true,
           "optional": true
         },
         {
@@ -1342,9 +1321,6 @@
         },
         {
           "name": "China"
-        },
-        {
-          "name": "UberLan"
         }
       ]
     },
@@ -1540,14 +1516,14 @@
       "properties": [
         {
           "name": "ItemId",
-          "description": "ItemId of the item for sale in the store",
+          "description": "unique identifier of the item as it exists in the catalog - note that this must exactly match the ItemId from the catalog",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "CatalogVersion",
-          "description": "Catalog version of the item. Leave null to always use the most recent version.",
+          "description": "catalog version for this item",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1665,14 +1641,14 @@
       "properties": [
         {
           "name": "StoreId",
-          "description": "which store is being updated",
+          "description": "unqiue identifier for the store which is to be updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Store",
-          "description": "array of store items to be submitted",
+          "description": "array of store items - references to catalog items, with specific pricing - to be added",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "StoreItem",
@@ -2002,7 +1978,7 @@
       "properties": [
         {
           "name": "DisplayName",
-          "description": "name of the game, as it is displayed in-game",
+          "description": "name of the user, as it is displayed in-game",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2041,6 +2017,53 @@
           "description": "boolean indicating whether or not the user is currently banned for a title",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "VirtualCurrencyData": {
+      "name": "VirtualCurrencyData",
+      "properties": [
+        {
+          "name": "CurrencyCode",
+          "description": "unique id for this currency type",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "DisplayName",
+          "description": "friendly name to show in the developer portal, reports, etc.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InitialDeposit",
+          "description": "Users receive this amount upon first login to the title. Defaults to 0.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "MaxAmount",
+          "description": "Maximum amount of this currency the user can have. Defaults to 0.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "RechargeRate",
+          "description": "Rate at which the currency accumulates over time, in units per day. Defaults to 0.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "RechargeMax",
+          "description": "Maximum amount the currency will recharge to. Defaults to 0.",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         }
       ]
@@ -2258,7 +2281,7 @@
       "request": "AddVirtualCurrencyTypesRequest",
       "result": "BlankResult",
       "seeAlso": [
-        "ListVirualCurrencyTypes"
+        "ListVirtualCurrencyTypes"
       ],
       "errors": [
         "InvalidParams"
@@ -2299,7 +2322,8 @@
     },
     {
       "name": "GetStoreItems",
-      "summary": "Gets all items in the specified virtual store",
+      "summary": "Retrieves the set of items defined for the specified store, including all prices defined",
+      "requestDetails": "A store contains an array of references to items defined in one or more catalog versions of the game, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/GetStoreItems",
       "auth": "SecretKey",
@@ -2332,10 +2356,10 @@
       ]
     },
     {
-      "name": "ListVirualCurrencyTypes",
+      "name": "ListVirtualCurrencyTypes",
       "summary": "Retuns a list of all defined virtual currencies for this title",
       "subgroup": "Title-Wide Data Management",
-      "url": "/Admin/ListVirualCurrencyTypes",
+      "url": "/Admin/ListVirtualCurrencyTypes",
       "auth": "SecretKey",
       "method": "POST",
       "request": "ListVirtualCurrencyTypesRequest",
@@ -2368,7 +2392,7 @@
     {
       "name": "SetStoreItems",
       "summary": "Sets all the items in one virtual store",
-      "requestDetails": "This operation is not additive. Using it will cause the indicated virtual store to be created from scratch. If there is an existing store with the same storeId, it will be deleted and replaced with only the items specified in this call.",
+      "requestDetails": "This operation is not additive. Using it will cause the indicated virtual store to be created from scratch. If there is an existing store with the same storeId, it will be deleted and replaced with only the items specified in this call. A store contains an array of references to items defined in one or more catalog versions of the game, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/SetStoreItems",
       "auth": "SecretKey",
@@ -2438,7 +2462,7 @@
     {
       "name": "UpdateStoreItems",
       "summary": "Updates an existing virtual item store with new or modified items",
-      "requestDetails": "This operation is additive. Items with ItemId values not currently in the store will be added, while those with ItemId values matching items currently in the catalog will overwrite those items with the given values.",
+      "requestDetails": "This operation is additive. Items with ItemId values not currently in the store will be added, while those with ItemId values matching items currently in the catalog will overwrite those items with the given values. A store contains an array of references to items defined in one or more catalog versions of the game, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/UpdateStoreItems",
       "auth": "SecretKey",
@@ -2739,7 +2763,7 @@
         "GetRandomResultTables",
         "GetStoreItems",
         "GetTitleData",
-        "ListVirualCurrencyTypes",
+        "ListVirtualCurrencyTypes",
         "SetCatalogItems",
         "SetStoreItems",
         "SetTitleData",
@@ -3142,6 +3166,10 @@
     "MissingTitleGoogleProperties": {
       "id": 1090,
       "name": "MissingTitleGoogleProperties"
+    },
+    "InvalidItemProperties": {
+      "id": 1091,
+      "name": "InvalidItemProperties"
     }
   },
   "errorList": [
@@ -3235,6 +3263,7 @@
     "CustomAnalyticsEventsNotEnabledForTitle",
     "InvalidSharedGroupId",
     "NotAuthorized",
-    "MissingTitleGoogleProperties"
+    "MissingTitleGoogleProperties",
+    "InvalidItemProperties"
   ]
 }
