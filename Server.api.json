@@ -763,7 +763,7 @@
           "name": "RemainingUses",
           "description": "total number of remaining uses, if this is a consumable item",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -946,6 +946,29 @@
           "optional": true
         }
       ]
+    },
+    "SendPushNotificationRequest": {
+      "name": "SendPushNotificationRequest",
+      "properties": [
+        {
+          "name": "Recipient",
+          "description": "PlayFabId of the recipient of the push notification",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Message",
+          "description": "Text of message to send",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SendPushNotificationResult": {
+      "name": "SendPushNotificationResult",
+      "properties": []
     },
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
@@ -1272,6 +1295,9 @@
         },
         {
           "name": "Android"
+        },
+        {
+          "name": "PSN"
         }
       ]
     },
@@ -1387,6 +1413,21 @@
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "SendPushNotification",
+      "summary": "Sends an iOS/Android push notification to a specific user, if they they have a device that they have setup for push notifications. If a user has linked both Android and iOS devices, both will be notified.",
+      "subgroup": "Account Management",
+      "url": "/Server/SendPushNotification",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SendPushNotificationRequest",
+      "result": "SendPushNotificationResult",
+      "errors": [
+        "InvalidParams",
+        "PushNotEnabledForAccount",
+        "PushServiceError"
       ]
     },
     {
@@ -1751,7 +1792,8 @@
     {
       "name": "Account Management",
       "methods": [
-        "GetUserAccountInfo"
+        "GetUserAccountInfo",
+        "SendPushNotification"
       ]
     },
     {
@@ -2168,6 +2210,22 @@
     "InvalidItemProperties": {
       "id": 1091,
       "name": "InvalidItemProperties"
+    },
+    "InvalidPSNAuthCode": {
+      "id": 1092,
+      "name": "InvalidPSNAuthCode"
+    },
+    "InvalidItemId": {
+      "id": 1093,
+      "name": "InvalidItemId"
+    },
+    "PushNotEnabledForAccount": {
+      "id": 1094,
+      "name": "PushNotEnabledForAccount"
+    },
+    "PushServiceError": {
+      "id": 1095,
+      "name": "PushServiceError"
     }
   },
   "errorList": [
@@ -2262,6 +2320,10 @@
     "InvalidSharedGroupId",
     "NotAuthorized",
     "MissingTitleGoogleProperties",
-    "InvalidItemProperties"
+    "InvalidItemProperties",
+    "InvalidPSNAuthCode",
+    "InvalidItemId",
+    "PushNotEnabledForAccount",
+    "PushServiceError"
   ]
 }

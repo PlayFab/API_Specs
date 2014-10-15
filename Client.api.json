@@ -73,6 +73,44 @@
       "name": "AddSharedGroupMembersResult",
       "properties": []
     },
+    "AddUsernamePasswordRequest": {
+      "name": "AddUsernamePasswordRequest",
+      "properties": [
+        {
+          "name": "Username",
+          "description": "PlayFab username for the account to be signed in (3-24 characters)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Email",
+          "description": "user email address, used for account password recovery",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Password",
+          "description": "password for the account to be signed in (6-24 characters)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "AddUsernamePasswordResult": {
+      "name": "AddUsernamePasswordResult",
+      "properties": [
+        {
+          "name": "Username",
+          "description": "PlayFab unique user name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "AddUserVirtualCurrencyRequest": {
       "name": "AddUserVirtualCurrencyRequest",
       "properties": [
@@ -813,6 +851,32 @@
         }
       ]
     },
+    "GetFriendLeaderboardRequest": {
+      "name": "GetFriendLeaderboardRequest",
+      "properties": [
+        {
+          "name": "StatisticName",
+          "description": "statistic used to rank friends for this leaderboard",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "StartPosition",
+          "description": "position in the leaderboard to start this listing (defaults to the first entry)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "MaxResultsCount",
+          "description": "maximum number of entries to retrieve",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "GetFriendsListRequest": {
       "name": "GetFriendsListRequest",
       "properties": [
@@ -1281,7 +1345,7 @@
           "name": "RemainingUses",
           "description": "total number of remaining uses, if this is a consumable item",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -1418,10 +1482,24 @@
       "properties": [
         {
           "name": "SessionTicket",
-          "description": "a unique token identifying the user and game at the server level, for the current session",
+          "description": "a unique token authorizing the user and game at the server level, for the current session",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "player's unique PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "NewlyCreated",
+          "description": "true if the account was newly created on this login",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         }
       ]
     },
@@ -1636,7 +1714,7 @@
         },
         {
           "name": "EnableQueue",
-          "description": "used to allow the user to wait in a queue to join the server, if it is full (only valid if LobbyId is specified)",
+          "description": "[deprecated]",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -1664,14 +1742,14 @@
           "name": "ServerPort",
           "description": "port number to use for non-http communications with the server",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
           "name": "WebSocketPort",
           "description": "port number to use for http communications with the server",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -1692,7 +1770,7 @@
           "name": "PollWaitTimeMS",
           "description": "time in milliseconds the application is configured to wait on matchmaking results",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -1705,7 +1783,7 @@
         },
         {
           "name": "Queue",
-          "description": "queue of unique user identifiers of players waiting to join this game (the current user will be at the end of this list)",
+          "description": "[deprecated]",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -2057,9 +2135,6 @@
       "isenum": true,
       "enumvalues": [
         {
-          "name": "USWest"
-        },
-        {
           "name": "USCentral"
         },
         {
@@ -2069,19 +2144,16 @@
           "name": "EUWest"
         },
         {
-          "name": "APSouthEast"
+          "name": "Singapore"
         },
         {
-          "name": "APNorthEast"
+          "name": "Japan"
         },
         {
-          "name": "SAEast"
+          "name": "Brazil"
         },
         {
           "name": "Australia"
-        },
-        {
-          "name": "China"
         }
       ]
     },
@@ -2398,7 +2470,7 @@
           "name": "ServerPort",
           "description": "port on the server to be used for communication",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -3039,6 +3111,9 @@
         },
         {
           "name": "Android"
+        },
+        {
+          "name": "PSN"
         }
       ]
     },
@@ -3171,13 +3246,6 @@
           "optional": false
         },
         {
-          "name": "ObjectName",
-          "description": "name of the object purchased from the App store (must match the ItemId in the PlayFab catalog)",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
           "name": "CurrencyCode",
           "description": "currency used for the purchase",
           "jsontype": "String",
@@ -3188,7 +3256,7 @@
           "name": "PurchasePrice",
           "description": "amount of the stated currency paid for the object",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": false
         }
       ]
@@ -3200,9 +3268,32 @@
   },
   "calls": [
     {
+      "name": "AddUsernamePassword",
+      "summary": "Adds playfab username/password auth to an existing semi-anonymous account created via a 3rd party auth method.",
+      "resultDetails": "Each account must have a unique email address in the PlayFab service. Once created, the account may be associated with additional accounts (Steam, Facebook, Game Center, etc.), allowing for added social network lists and achievements systems.",
+      "subgroup": "Authentication",
+      "url": "/Client/AddUsernamePassword",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "AddUsernamePasswordRequest",
+      "result": "AddUsernamePasswordResult",
+      "seeAlso": [
+        "LoginWithPlayFab"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "EmailAddressNotAvailable",
+        "InvalidEmailAddress",
+        "UsernameNotAvailable",
+        "InvalidUsername",
+        "InvalidPassword"
+      ]
+    },
+    {
       "name": "LoginWithAndroidDeviceID",
       "summary": "Signs the user in using the Android device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "If this is the first time a user has signed in with the Android device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithAndroidDeviceID",
       "auth": "None",
@@ -3222,7 +3313,7 @@
     {
       "name": "LoginWithFacebook",
       "summary": "Signs the user in using a Facebook access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "If this is the first time a user has signed in with the Facebook account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithFacebook",
       "auth": "None",
@@ -3244,7 +3335,7 @@
     {
       "name": "LoginWithGoogleAccount",
       "summary": "Signs the user in using a Google account access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "If this is the first time a user has signed in with the Google account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Google ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Google account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Google sign-in is accomplished with the Google OAuth 2.0 Access Token. More information on the Token can be  found in the Google developer documentation (https://developers.google.com/accounts/docs/OAuth2) and in the Quick Start sample applications (https://developers.google.com/+/quickstart/). If this is the first time a user has signed in with the Google account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Google ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Google account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithGoogleAccount",
       "auth": "None",
@@ -3260,7 +3351,7 @@
     {
       "name": "LoginWithIOSDeviceID",
       "summary": "Signs the user in using the vendor-specific iOS device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "If this is the first time a user has signed in with the iOS device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the vendor-specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the vendor- specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithIOSDeviceID",
       "auth": "None",
@@ -3301,7 +3392,7 @@
     {
       "name": "LoginWithSteam",
       "summary": "Signs the user in using a Steam authentication ticket, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "If this is the first time a user has signed in with the Steam account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Steam sign-in is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). If this is the first time a user has signed in with the Steam account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithSteam",
       "auth": "None",
@@ -3538,6 +3629,24 @@
         "InvalidParams",
         "UsernameNotAvailable",
         "InsufficientFunds"
+      ]
+    },
+    {
+      "name": "GetFriendLeaderboard",
+      "summary": "Retrieves a list of ranked friends of the current player for the given statistic, starting from the indicated point in the leaderboard",
+      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "subgroup": "Player Data Management",
+      "url": "/Client/GetFriendLeaderboard",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetFriendLeaderboardRequest",
+      "result": "GetLeaderboardResult",
+      "seeAlso": [
+        "GetLeaderboardAroundCurrentUser",
+        "GetUserStatistics"
+      ],
+      "errors": [
+        "InvalidParams"
       ]
     },
     {
@@ -4040,7 +4149,7 @@
     },
     {
       "name": "Matchmake",
-      "summary": "Assign the current player to an existing or new game server matching the given parameters and return the connection information.",
+      "summary": "Attempts to locate a game session matching the given parameters. Note that parameters specified in the search are required (they are not weighting factors). If a slot is found in a server instance matching the parameters, the slot will be assigned to that player, removing it from the availabe set. In that case, the information on the game session will be returned, otherwise the Status returned will be GameNotFound. Note that EnableQueue is deprecated at this time.",
       "subgroup": "Matchmaking APIs",
       "url": "/Client/Matchmake",
       "auth": "SessionTicket",
@@ -4145,7 +4254,7 @@
     },
     {
       "name": "GetSharedGroupData",
-      "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. Non-members of the group may use this to retrieve group data, including membership, but will not get retrieve data for keys marked as private.",
+      "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. Non-members of the group may use this to retrieve group data, including membership, but they will not receive data for keys marked as private.",
       "subgroup": "Shared Group Data",
       "url": "/Client/GetSharedGroupData",
       "auth": "SessionTicket",
@@ -4189,6 +4298,7 @@
     {
       "name": "Authentication",
       "methods": [
+        "AddUsernamePassword",
         "LoginWithAndroidDeviceID",
         "LoginWithFacebook",
         "LoginWithGoogleAccount",
@@ -4218,6 +4328,7 @@
     {
       "name": "Player Data Management",
       "methods": [
+        "GetFriendLeaderboard",
         "GetLeaderboard",
         "GetLeaderboardAroundCurrentUser",
         "GetUserData",
@@ -4668,6 +4779,22 @@
     "InvalidItemProperties": {
       "id": 1091,
       "name": "InvalidItemProperties"
+    },
+    "InvalidPSNAuthCode": {
+      "id": 1092,
+      "name": "InvalidPSNAuthCode"
+    },
+    "InvalidItemId": {
+      "id": 1093,
+      "name": "InvalidItemId"
+    },
+    "PushNotEnabledForAccount": {
+      "id": 1094,
+      "name": "PushNotEnabledForAccount"
+    },
+    "PushServiceError": {
+      "id": 1095,
+      "name": "PushServiceError"
     }
   },
   "errorList": [
@@ -4762,6 +4889,10 @@
     "InvalidSharedGroupId",
     "NotAuthorized",
     "MissingTitleGoogleProperties",
-    "InvalidItemProperties"
+    "InvalidItemProperties",
+    "InvalidPSNAuthCode",
+    "InvalidItemId",
+    "PushNotEnabledForAccount",
+    "PushServiceError"
   ]
 }
