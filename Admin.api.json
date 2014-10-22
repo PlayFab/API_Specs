@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.0.1",
+  "revision": "1.0.2",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -61,7 +61,7 @@
         },
         {
           "name": "ActiveRegions",
-          "description": "regions in which this build should be running / available",
+          "description": "server host regions in which this build should be running and available",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "Region",
@@ -179,7 +179,7 @@
       "properties": [
         {
           "name": "VirtualCurrencies",
-          "description": "List of virtual currency names to add as valid virtual currencies for this title",
+          "description": "List of virtual currencies and their initial deposits (the amount a user is granted when signing in for the first time) to the title",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "VirtualCurrencyData",
@@ -679,7 +679,7 @@
     },
     "GetServerBuildInfoResult": {
       "name": "GetServerBuildInfoResult",
-      "description": "Information about particular server build",
+      "description": "Information about a particular server build",
       "sortKey": "BuildId",
       "properties": [
         {
@@ -1087,7 +1087,7 @@
       "properties": [
         {
           "name": "Builds",
-          "description": "array of uploaded builds",
+          "description": "array of uploaded game server builds",
           "collection": "array",
           "isUnordered": true,
           "jsontype": "Object",
@@ -1969,6 +1969,9 @@
         },
         {
           "name": "PSN"
+        },
+        {
+          "name": "GameCenter"
         }
       ]
     },
@@ -2072,7 +2075,7 @@
       "properties": [
         {
           "name": "CurrencyCode",
-          "description": "unique id for this currency type",
+          "description": "unique two-character identifier for this currency type (e.g.: \"CC\", \"GC\")",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2086,21 +2089,21 @@
         },
         {
           "name": "InitialDeposit",
-          "description": "Users receive this amount upon first login to the title. Defaults to 0.",
+          "description": "amount to automaticalyl grant users upon first login to the tilte",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "RechargeRate",
-          "description": "Rate at which the currency accumulates over time, in units per day. Defaults to 0.",
+          "description": "rate at which the currency automatically be added to over time, in units per day (24 hours)",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "RechargeMax",
-          "description": "Maximum amount the currency will recharge to. Defaults to 0.",
+          "description": "maximum amount to which the currency will recharge (cannot exceed MaxAmount, but can be less)",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
@@ -2313,7 +2316,8 @@
     },
     {
       "name": "AddVirtualCurrencyTypes",
-      "summary": "Adds a list of virtual currencies to this title",
+      "summary": "Adds one or more virtual currencies to the set defined for the title",
+      "requestDetails": "This operation is additive. Any new currencies defined in the array will be added to the set of those available for the title, while any CurrencyCode identifiers matching existing ones in the game will be overwritten with the new values.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/AddVirtualCurrencyTypes",
       "auth": "SecretKey",
@@ -2397,7 +2401,7 @@
     },
     {
       "name": "ListVirtualCurrencyTypes",
-      "summary": "Retuns a list of all defined virtual currencies for this title",
+      "summary": "Retuns the list of all defined virtual currencies for the title",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/ListVirtualCurrencyTypes",
       "auth": "SecretKey",
@@ -2654,7 +2658,7 @@
     },
     {
       "name": "AddServerBuild",
-      "summary": "Adds the game server executable specified to the set of those a client is permitted to request in a call to StartGame",
+      "summary": "Adds the game server executable specified (previously uploaded - see GetServerBuildUploadUrl) to the set of those a client is permitted to request in a call to StartGame",
       "subgroup": "Custom Server Management",
       "url": "/Admin/AddServerBuild",
       "auth": "SecretKey",
@@ -2695,7 +2699,7 @@
     },
     {
       "name": "GetServerBuildUploadUrl",
-      "summary": "Retrieves the pre-authorized URL for uploading the game server package for a new build",
+      "summary": "Retrieves the pre-authorized URL for uploading a game server package containing a build (does not enable the build for use - see AddServerBuild)",
       "subgroup": "Custom Server Management",
       "url": "/Admin/GetServerBuildUploadUrl",
       "auth": "SecretKey",
@@ -2754,7 +2758,7 @@
     },
     {
       "name": "RemoveServerBuild",
-      "summary": "Remove the game server executable specified from the set of those a client is permitted to request in a call to StartGame",
+      "summary": "Removes the game server executable specified from the set of those a client is permitted to request in a call to StartGame",
       "subgroup": "Custom Server Management",
       "url": "/Admin/RemoveServerBuild",
       "auth": "SecretKey",

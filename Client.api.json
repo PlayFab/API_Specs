@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.0.1",
+  "revision": "1.0.2",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -1569,6 +1569,32 @@
         }
       ]
     },
+    "LoginWithGameCenterRequest": {
+      "name": "LoginWithGameCenterRequest",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayerId",
+          "description": "unique Game Center player id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "automatically create a PlayFab account if one is not currently linked to this Game Center id",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
     "LoginWithGoogleAccountRequest": {
       "name": "LoginWithGoogleAccountRequest",
       "properties": [
@@ -3114,6 +3140,9 @@
         },
         {
           "name": "PSN"
+        },
+        {
+          "name": "GameCenter"
         }
       ]
     },
@@ -3328,6 +3357,26 @@
         "InvalidParams",
         "InvalidTitleId",
         "InvalidFacebookToken",
+        "AccountNotFound",
+        "AccountBanned"
+      ]
+    },
+    {
+      "name": "LoginWithGameCenter",
+      "summary": "Signs the user in using an iOS GameCenter player Id, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "This log method is inescure and vulnerable to spoofing. If your game uses Game Center player ids as a login method, be aware that a technically sophisticated player could obtain and use another player's Game Center id to login as that player and vandalize their account. The risk can be mitigated never exposing a player's Game Center PlayerID to the end users, but with enough dedication a hacker could still obtain and use other player's Game Center Ids.",
+      "subgroup": "Authentication",
+      "url": "/Client/LoginWithGameCenter",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithGameCenterRequest",
+      "result": "LoginResult",
+      "seeAlso": [
+        "LoginWithIOSDeviceID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
         "AccountNotFound",
         "AccountBanned"
       ]
@@ -4107,7 +4156,7 @@
     {
       "name": "ValidateIOSReceipt",
       "summary": "Validates with the Apple store that the receipt for an iOS in-app purchase is valid and that it matches the purchased catalog item",
-      "requestDetails": "The ObjectName, CurrecncyCode, and PurcahsePrice are defined in the Apple store. The ObjectName must match the ItemId of the inventory item in the PlayFab catalog for the title. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
+      "requestDetails": "The CurrecncyCode and PurcahsePrice must match the price which was set up for the item in the Apple store. In addition, The ItemId of the inventory in the PlayFab Catalog must match the Product ID as it was set up in the Apple store. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
       "resultDetails": "Once verified, the catalog item matching the iTunes item name will be added to the user's inventory.",
       "subgroup": "IOS-Specific APIs",
       "url": "/Client/ValidateIOSReceipt",
@@ -4301,6 +4350,7 @@
         "AddUsernamePassword",
         "LoginWithAndroidDeviceID",
         "LoginWithFacebook",
+        "LoginWithGameCenter",
         "LoginWithGoogleAccount",
         "LoginWithIOSDeviceID",
         "LoginWithPlayFab",
