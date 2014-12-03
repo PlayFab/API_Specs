@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.0.2",
+  "revision": "1.1.0",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -281,41 +281,6 @@
           "optional": true
         },
         {
-          "name": "ReleaseDate",
-          "description": "the date this item becomes available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "ExpirationDate",
-          "description": "the date this item will no longer be available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "IsFree",
-          "description": "(deprecated)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForSale",
-          "description": "can this item be purchased (if not, it can still be granted by a server-based operation, such as a loot drop from a monster)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForTrade",
-          "description": "can an instance of this item be exchanged between players?",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
           "name": "Tags",
           "description": "list of item tags",
           "collection": "array",
@@ -523,7 +488,15 @@
     },
     "ConsumeItemResult": {
       "name": "ConsumeItemResult",
-      "properties": []
+      "properties": [
+        {
+          "name": "RemainingUses",
+          "description": "number of uses remaining on the item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
     },
     "CreateSharedGroupRequest": {
       "name": "CreateSharedGroupRequest",
@@ -628,12 +601,24 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        }
+      ]
+    },
+    "FacebookPlayFabIdPair": {
+      "name": "FacebookPlayFabIdPair",
+      "properties": [
+        {
+          "name": "FacebookId",
+          "description": "unique Facebook identifier for a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
-          "name": "IncompleteResult",
-          "description": "indicates there are servers for which there was no response",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
+          "name": "PlayFabId",
+          "description": "unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Facebook identifier",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -740,10 +725,10 @@
           "description": "maximum players this server can support",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         },
         {
-          "name": "PlayerUsernames",
+          "name": "PlayerUserIds",
           "description": "array of strings of current player names on this server (note that these are PlayFab usernames, as opposed to title display names)",
           "collection": "array",
           "jsontype": "String",
@@ -971,6 +956,64 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "PlayerLeaderboardEntry",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetLogicServerUrlRequest": {
+      "name": "GetLogicServerUrlRequest",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Server version to use. The most recent production version will be returned if this is left null",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Testing",
+          "description": "If true, run against the latest test revision of server logic. Defaults to false if left null",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "GetLogicServerUrlResult": {
+      "name": "GetLogicServerUrlResult",
+      "properties": [
+        {
+          "name": "Url",
+          "description": "Url of the custom server logic server for this title",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromFacebookIDsRequest": {
+      "name": "GetPlayFabIDsFromFacebookIDsRequest",
+      "properties": [
+        {
+          "name": "FacebookIDs",
+          "description": "array of unique Facebook identifiers for which the title needs to get PlayFab identifiers",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromFacebookIDsResult": {
+      "name": "GetPlayFabIDsFromFacebookIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "mapping of Facebook identifiers to PlayFab identifiers",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "FacebookPlayFabIdPair",
           "isclass": true,
           "optional": true
         }
@@ -1442,7 +1485,7 @@
       "properties": [
         {
           "name": "SteamTicket",
-          "description": "unique identifier from Steam for the user",
+          "description": "authentication token for the user, returned as a byte array from Steam, and converted to a string (for example, the byte 0x08 should become \"08\")",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1539,7 +1582,7 @@
           "description": "automatically create a PlayFab account if one is not currently linked to this iOS device",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1565,7 +1608,7 @@
           "description": "automatically create a PlayFab account if one is not currently linked to this Facebook account",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1591,7 +1634,7 @@
           "description": "automatically create a PlayFab account if one is not currently linked to this Game Center id",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1611,6 +1654,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "automatically create a PlayFab account if one is not currently linked to this Google account",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     },
@@ -1650,7 +1700,7 @@
           "description": "automatically create a PlayFab account if one is not currently linked to this iOS device",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1692,7 +1742,7 @@
         },
         {
           "name": "SteamTicket",
-          "description": "unique identifier from Steam for the user",
+          "description": "authentication token for the user, returned as a byte array from Steam, and converted to a string (for example, the byte 0x08 should become \"08\")",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1702,7 +1752,7 @@
           "description": "automatically create a PlayFab account if one is not currently linked to this Steam account",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -2375,6 +2425,58 @@
     "SendAccountRecoveryEmailResult": {
       "name": "SendAccountRecoveryEmailResult",
       "properties": []
+    },
+    "ServerActionRequest": {
+      "name": "ServerActionRequest",
+      "properties": [
+        {
+          "name": "ActionId",
+          "description": "server action to trigger",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Params",
+          "description": "parameters to pass into the action (If you use this, don't use ParamsEncoded)",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "ParamsEncoded",
+          "description": "json-encoded parameters to pass into the action (If you use this, don't use Params)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ServerActionResult": {
+      "name": "ServerActionResult",
+      "properties": [
+        {
+          "name": "Results",
+          "description": "return values from the server action as a dynamic object",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "ResultsEncoded",
+          "description": "return values from the server action as a json encoded string",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ActionLog",
+          "description": "any log statements generated during the run of this action",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "SetFriendTagsRequest": {
       "name": "SetFriendTagsRequest",
@@ -3297,32 +3399,9 @@
   },
   "calls": [
     {
-      "name": "AddUsernamePassword",
-      "summary": "Adds playfab username/password auth to an existing semi-anonymous account created via a 3rd party auth method.",
-      "resultDetails": "Each account must have a unique email address in the PlayFab service. Once created, the account may be associated with additional accounts (Steam, Facebook, Game Center, etc.), allowing for added social network lists and achievements systems.",
-      "subgroup": "Authentication",
-      "url": "/Client/AddUsernamePassword",
-      "auth": "SessionTicket",
-      "method": "POST",
-      "request": "AddUsernamePasswordRequest",
-      "result": "AddUsernamePasswordResult",
-      "seeAlso": [
-        "LoginWithPlayFab"
-      ],
-      "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
-        "EmailAddressNotAvailable",
-        "InvalidEmailAddress",
-        "UsernameNotAvailable",
-        "InvalidUsername",
-        "InvalidPassword"
-      ]
-    },
-    {
       "name": "LoginWithAndroidDeviceID",
       "summary": "Signs the user in using the Android device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device and CreateAccount is set to true, a new PlayFab account will be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithAndroidDeviceID",
       "auth": "None",
@@ -3342,7 +3421,7 @@
     {
       "name": "LoginWithFacebook",
       "summary": "Signs the user in using a Facebook access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithFacebook",
       "auth": "None",
@@ -3363,8 +3442,8 @@
     },
     {
       "name": "LoginWithGameCenter",
-      "summary": "Signs the user in using an iOS GameCenter player Id, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "This log method is inescure and vulnerable to spoofing. If your game uses Game Center player ids as a login method, be aware that a technically sophisticated player could obtain and use another player's Game Center id to login as that player and vandalize their account. The risk can be mitigated never exposing a player's Game Center PlayerID to the end users, but with enough dedication a hacker could still obtain and use other player's Game Center Ids.",
+      "summary": "Signs the user in using an iOS Game Center player identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "The Game Center player identifier (https://developer.apple.com/library/ios/documentation/Accounts/Reference/ACAccountClassRef/index.html#//apple_ref/occ/instp/ACAccount/identifier) is a generated string which is stored on the local device. As with device identifiers, care must be taken to never expose a player's Game Center identifier to end users, as that could result in a user's account being compromised. If this is the first time a user has signed in with Game Center and CreateAccount is set to true, a new PlayFab account will be created and linked to the Game Center identifier. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Game Center account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithGameCenter",
       "auth": "None",
@@ -3384,7 +3463,7 @@
     {
       "name": "LoginWithGoogleAccount",
       "summary": "Signs the user in using a Google account access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "Google sign-in is accomplished with the Google OAuth 2.0 Access Token. More information on the Token can be  found in the Google developer documentation (https://developers.google.com/accounts/docs/OAuth2) and in the Quick Start sample applications (https://developers.google.com/+/quickstart/). If this is the first time a user has signed in with the Google account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Google ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Google account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Google sign-in is accomplished with the Google OAuth 2.0 Access Token. More information on the Token can be  found in the Google developer documentation (https://developers.google.com/accounts/docs/OAuth2) and in the Quick Start sample applications (https://developers.google.com/+/quickstart/). If this is the first time a user has signed in with the Google account and CreateAccount is set to true, a new PlayFab account will be created and linked to the Google account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Google account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithGoogleAccount",
       "auth": "None",
@@ -3400,7 +3479,7 @@
     {
       "name": "LoginWithIOSDeviceID",
       "summary": "Signs the user in using the vendor-specific iOS device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the vendor- specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device and CreateAccount is set to true, a new PlayFab account will be created and linked to the vendor-specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithIOSDeviceID",
       "auth": "None",
@@ -3441,7 +3520,7 @@
     {
       "name": "LoginWithSteam",
       "summary": "Signs the user in using a Steam authentication ticket, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "Steam sign-in is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). If this is the first time a user has signed in with the Steam account, the CreateAccount flag will be used to determine whether a new PlayFab account should be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. If CreateAccount is set to false and no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "requestDetails": "Steam sign-in is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties). Information on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here: https://partner.steamgames.com/documentation/webapi#publisherkey. If this is the first time a user has signed in with the Steam account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "subgroup": "Authentication",
       "url": "/Client/LoginWithSteam",
       "auth": "None",
@@ -3484,18 +3563,26 @@
       ]
     },
     {
-      "name": "SendAccountRecoveryEmail",
-      "summary": "Forces an email to be sent to the registered email address for the user's account, with a link allowing the user to change the password",
-      "requestDetails": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
-      "subgroup": "Authentication",
-      "url": "/Client/SendAccountRecoveryEmail",
-      "auth": "None",
+      "name": "AddUsernamePassword",
+      "summary": "Adds playfab username/password auth to an existing semi-anonymous account created via a 3rd party auth method.",
+      "resultDetails": "Each account must have a unique email address in the PlayFab service. Once created, the account may be associated with additional accounts (Steam, Facebook, Game Center, etc.), allowing for added social network lists and achievements systems.",
+      "subgroup": "Account Management",
+      "url": "/Client/AddUsernamePassword",
+      "auth": "SessionTicket",
       "method": "POST",
-      "request": "SendAccountRecoveryEmailRequest",
-      "result": "SendAccountRecoveryEmailResult",
+      "request": "AddUsernamePasswordRequest",
+      "result": "AddUsernamePasswordResult",
+      "seeAlso": [
+        "LoginWithPlayFab"
+      ],
       "errors": [
         "InvalidParams",
-        "AccountNotFound"
+        "InvalidTitleId",
+        "EmailAddressNotAvailable",
+        "InvalidEmailAddress",
+        "UsernameNotAvailable",
+        "InvalidUsername",
+        "InvalidPassword"
       ]
     },
     {
@@ -3508,6 +3595,20 @@
       "method": "POST",
       "request": "GetAccountInfoRequest",
       "result": "GetAccountInfoResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromFacebookIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Facebook identifiers.",
+      "resultDetails": "For Facebook identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Client/GetPlayFabIDsFromFacebookIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromFacebookIDsRequest",
+      "result": "GetPlayFabIDsFromFacebookIDsResult",
       "errors": [
         "AccountNotFound"
       ]
@@ -3567,6 +3668,7 @@
     {
       "name": "LinkSteamAccount",
       "summary": "Links the Steam account associated with the provided Steam authentication ticket to the user's PlayFab account",
+      "requestDetails": "Steam authentication is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties). Information on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here: https://partner.steamgames.com/documentation/webapi#publisherkey.",
       "subgroup": "Account Management",
       "url": "/Client/LinkSteamAccount",
       "auth": "SessionTicket",
@@ -3582,6 +3684,21 @@
         "InvalidSteamTicket",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
+      ]
+    },
+    {
+      "name": "SendAccountRecoveryEmail",
+      "summary": "Forces an email to be sent to the registered email address for the user's account, with a link allowing the user to change the password",
+      "requestDetails": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
+      "subgroup": "Account Management",
+      "url": "/Client/SendAccountRecoveryEmail",
+      "auth": "None",
+      "method": "POST",
+      "request": "SendAccountRecoveryEmailRequest",
+      "result": "SendAccountRecoveryEmailResult",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
       ]
     },
     {
@@ -3773,7 +3890,7 @@
     {
       "name": "GetUserStatistics",
       "summary": "Retrieves the details of all title-specific statistics for the user",
-      "resultDetails": "User statistics are numeric values which may only be updated by a server opeartion, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetUserStatistics",
       "auth": "SessionTicket",
@@ -4167,7 +4284,10 @@
       "errors": [
         "InvalidParams",
         "InvalidReceipt",
-        "ReceiptAlreadyUsed"
+        "ReceiptAlreadyUsed",
+        "ReceiptDoesNotContainInAppItems",
+        "ReceiptContainsMultipleInAppItems",
+        "InvalidBundleID"
       ]
     },
     {
@@ -4257,7 +4377,7 @@
     {
       "name": "LogEvent",
       "summary": "Logs a custom analytics event",
-      "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only.",
+      "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
       "subgroup": "Analytics",
       "url": "/Client/LogEvent",
       "auth": "SessionTicket",
@@ -4341,13 +4461,40 @@
         "InvalidParams",
         "NotAuthorized"
       ]
+    },
+    {
+      "name": "GetLogicServerUrl",
+      "summary": "Gets the title-specific url for game logic servers. Must be called before making any calls to server-side logic.",
+      "requestDetails": "PlayFab supplied SDKs will automatically save the results of this call. Other users must save it themselves.",
+      "subgroup": "Server-Side Game Logic",
+      "url": "/Client/GetLogicServerUrl",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetLogicServerUrlRequest",
+      "result": "GetLogicServerUrlResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "ServerAction",
+      "summary": "Triggers a particular server action",
+      "subgroup": "Server-Side Game Logic",
+      "url": "/Client/ServerAction",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ServerActionRequest",
+      "result": "ServerActionResult",
+      "serverType": "logic",
+      "errors": [
+        "InvalidParams"
+      ]
     }
   ],
   "subgroups": [
     {
       "name": "Authentication",
       "methods": [
-        "AddUsernamePassword",
         "LoginWithAndroidDeviceID",
         "LoginWithFacebook",
         "LoginWithGameCenter",
@@ -4355,18 +4502,20 @@
         "LoginWithIOSDeviceID",
         "LoginWithPlayFab",
         "LoginWithSteam",
-        "RegisterPlayFabUser",
-        "SendAccountRecoveryEmail"
+        "RegisterPlayFabUser"
       ]
     },
     {
       "name": "Account Management",
       "methods": [
+        "AddUsernamePassword",
         "GetAccountInfo",
+        "GetPlayFabIDsFromFacebookIDs",
         "GetUserCombinedInfo",
         "LinkFacebookAccount",
         "LinkGameCenterAccount",
         "LinkSteamAccount",
+        "SendAccountRecoveryEmail",
         "UnlinkFacebookAccount",
         "UnlinkGameCenterAccount",
         "UnlinkSteamAccount",
@@ -4458,6 +4607,13 @@
         "GetSharedGroupData",
         "RemoveSharedGroupMembers",
         "UpdateSharedGroupData"
+      ]
+    },
+    {
+      "name": "Server-Side Game Logic",
+      "methods": [
+        "GetLogicServerUrl",
+        "ServerAction"
       ]
     }
   ],
@@ -4845,6 +5001,34 @@
     "PushServiceError": {
       "id": 1095,
       "name": "PushServiceError"
+    },
+    "ReceiptDoesNotContainInAppItems": {
+      "id": 1096,
+      "name": "ReceiptDoesNotContainInAppItems"
+    },
+    "ReceiptContainsMultipleInAppItems": {
+      "id": 1097,
+      "name": "ReceiptContainsMultipleInAppItems"
+    },
+    "InvalidBundleID": {
+      "id": 1098,
+      "name": "InvalidBundleID"
+    },
+    "JavascriptException": {
+      "id": 1099,
+      "name": "JavascriptException"
+    },
+    "InvalidSessionTicket": {
+      "id": 1100,
+      "name": "InvalidSessionTicket"
+    },
+    "UnableToConnectToDatabase": {
+      "id": 1101,
+      "name": "UnableToConnectToDatabase"
+    },
+    "InternalServerError": {
+      "id": 1110,
+      "name": "InternalServerError"
     }
   },
   "errorList": [
@@ -4943,6 +5127,13 @@
     "InvalidPSNAuthCode",
     "InvalidItemId",
     "PushNotEnabledForAccount",
-    "PushServiceError"
+    "PushServiceError",
+    "ReceiptDoesNotContainInAppItems",
+    "ReceiptContainsMultipleInAppItems",
+    "InvalidBundleID",
+    "JavascriptException",
+    "InvalidSessionTicket",
+    "UnableToConnectToDatabase",
+    "InternalServerError"
   ]
 }

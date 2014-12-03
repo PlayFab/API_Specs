@@ -2,8 +2,32 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
-  "revision": "1.0.2",
+  "revision": "1.1.0",
   "datatypes": {
+    "AddSharedGroupMembersRequest": {
+      "name": "AddSharedGroupMembersRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabIds",
+          "description": "list of PlayFabId identifiers of users to add as members of the shared group",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "AddSharedGroupMembersResult": {
+      "name": "AddSharedGroupMembersResult",
+      "properties": []
+    },
     "AddUserVirtualCurrencyRequest": {
       "name": "AddUserVirtualCurrencyRequest",
       "properties": [
@@ -27,6 +51,31 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        }
+      ]
+    },
+    "AuthenticateSessionTicketRequest": {
+      "name": "AuthenticateSessionTicketRequest",
+      "properties": [
+        {
+          "name": "SessionTicket",
+          "description": "Session ticket as issued by a PlayFab client login API",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "AuthenticateSessionTicketResult": {
+      "name": "AuthenticateSessionTicketResult",
+      "properties": [
+        {
+          "name": "UserInfo",
+          "description": "account info for the user whose session ticket was supplied",
+          "jsontype": "Object",
+          "actualtype": "UserAccountInfo",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -138,41 +187,6 @@
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
-          "optional": true
-        },
-        {
-          "name": "ReleaseDate",
-          "description": "the date this item becomes available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "ExpirationDate",
-          "description": "the date this item will no longer be available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "IsFree",
-          "description": "(deprecated)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForSale",
-          "description": "can this item be purchased (if not, it can still be granted by a server-based operation, such as a loot drop from a monster)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForTrade",
-          "description": "can an instance of this item be exchanged between players?",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
           "optional": true
         },
         {
@@ -322,6 +336,30 @@
         }
       ]
     },
+    "CreateSharedGroupRequest": {
+      "name": "CreateSharedGroupRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group (a random identifier will be assigned, if one is not specified)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "CreateSharedGroupResult": {
+      "name": "CreateSharedGroupResult",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "Currency": {
       "name": "Currency",
       "isenum": true,
@@ -348,6 +386,22 @@
           "name": "CAD"
         }
       ]
+    },
+    "DeleteSharedGroupRequest": {
+      "name": "DeleteSharedGroupRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "EmptyResult": {
+      "name": "EmptyResult",
+      "properties": []
     },
     "GetCatalogItemsRequest": {
       "name": "GetCatalogItemsRequest",
@@ -456,6 +510,55 @@
         }
       ]
     },
+    "GetSharedGroupDataRequest": {
+      "name": "GetSharedGroupDataRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Keys",
+          "description": "specific keys to retrieve from the shared group (if not specified, all keys will be returned, while an empty array indicates that no keys should be returned)",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GetMembers",
+          "description": "if true, return the list of all members of the shared group",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "GetSharedGroupDataResult": {
+      "name": "GetSharedGroupDataResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "data for the requested keys",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "SharedGroupDataRecord",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Members",
+          "description": "list of PlayFabId identifiers for the members of this group, if requested",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GetTitleDataRequest": {
       "name": "GetTitleDataRequest",
       "properties": [
@@ -499,7 +602,7 @@
       "properties": [
         {
           "name": "UserInfo",
-          "description": "PlayFab unique identifier of the user whose information was requested",
+          "description": "account info for the user whose information was requested",
           "jsontype": "Object",
           "actualtype": "UserAccountInfo",
           "isclass": true,
@@ -789,6 +892,44 @@
         }
       ]
     },
+    "ModifyItemUsesRequest": {
+      "name": "ModifyItemUsesRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose item is being modified",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "description": "unique instance identifier of the item to be modified",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "UsesToAdd",
+          "description": "number of uses to add to the item. Can be negative to remove uses.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ModifyItemUsesResult": {
+      "name": "ModifyItemUsesResult",
+      "properties": [
+        {
+          "name": "RemainingUses",
+          "description": "number of uses remaining on the item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "ModifyUserVirtualCurrencyResult": {
       "name": "ModifyUserVirtualCurrencyResult",
       "properties": [
@@ -947,6 +1088,30 @@
         }
       ]
     },
+    "RemoveSharedGroupMembersRequest": {
+      "name": "RemoveSharedGroupMembersRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabIds",
+          "description": "list of PlayFabId identifiers of users to remove from the shared group",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RemoveSharedGroupMembersResult": {
+      "name": "RemoveSharedGroupMembersResult",
+      "properties": []
+    },
     "SendPushNotificationRequest": {
       "name": "SendPushNotificationRequest",
       "properties": [
@@ -992,6 +1157,40 @@
     "SetTitleDataResult": {
       "name": "SetTitleDataResult",
       "properties": []
+    },
+    "SharedGroupDataRecord": {
+      "name": "SharedGroupDataRecord",
+      "properties": [
+        {
+          "name": "Value",
+          "description": "data stored for the specified group data key",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastUpdatedBy",
+          "description": "PlayFabId of the user to last update this value",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastUpdated",
+          "description": "timestamp for when this data was last updated",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "Permission",
+          "description": "indicates whether this data can be read by all users (public) or only members of the group (private)",
+          "jsontype": "String",
+          "actualtype": "UserDataPermission",
+          "isenum": true,
+          "optional": true
+        }
+      ]
     },
     "SubtractUserVirtualCurrencyRequest": {
       "name": "SubtractUserVirtualCurrencyRequest",
@@ -1039,6 +1238,38 @@
           "name": "RevokedSteam"
         }
       ]
+    },
+    "UpdateSharedGroupDataRequest": {
+      "name": "UpdateSharedGroupDataRequest",
+      "properties": [
+        {
+          "name": "SharedGroupId",
+          "description": "unique identifier for the shared group",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Data",
+          "description": "key value pairs to be stored in the shared group - note that keys will be trimmed of whitespace, must not begin with a '!' character, and that null values will result in the removal of the key from the data set",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Permission",
+          "description": "permission to be applied to all user data keys in this request",
+          "jsontype": "String",
+          "actualtype": "UserDataPermission",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateSharedGroupDataResult": {
+      "name": "UpdateSharedGroupDataResult",
+      "properties": []
     },
     "UpdateUserDataRequest": {
       "name": "UpdateUserDataRequest",
@@ -1402,6 +1633,21 @@
   },
   "calls": [
     {
+      "name": "AuthenticateSessionTicket",
+      "summary": "Validated a client's session ticket, and if successful, returns details for that user",
+      "requestDetails": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
+      "subgroup": "Authentication",
+      "url": "/Server/AuthenticateSessionTicket",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AuthenticateSessionTicketRequest",
+      "result": "AuthenticateSessionTicketResult",
+      "errors": [
+        "InvalidParams",
+        "InvalidSessionTicket"
+      ]
+    },
+    {
       "name": "GetUserAccountInfo",
       "summary": "Retrieves the relevant details for a specified user",
       "requestDetails": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
@@ -1735,6 +1981,20 @@
       ]
     },
     {
+      "name": "ModifyItemUses",
+      "summary": "Modifies the number of remaining uses of a player's inventory item",
+      "requestDetails": "This function can both add and remove uses of an inventory item. If the number of uses drops below zero, the item will be removed from active inventory.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/ModifyItemUses",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ModifyItemUsesRequest",
+      "result": "ModifyItemUsesResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "SubtractUserVirtualCurrency",
       "summary": "Decrements the user's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
@@ -1789,9 +2049,98 @@
       "errors": [
         "InvalidParams"
       ]
+    },
+    {
+      "name": "AddSharedGroupMembers",
+      "summary": "Adds users to the set of those able to update both the shared data, as well as the set of users in the group. Only users in the group (and the server) can add new members.",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/AddSharedGroupMembers",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AddSharedGroupMembersRequest",
+      "result": "AddSharedGroupMembersResult",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "CreateSharedGroup",
+      "summary": "Requests the creation of a shared group object, containing key/value pairs which may be updated by all members of the group. When created by a server, the group will initially have no members.",
+      "requestDetails": "If SharedGroupId is specified, the service will attempt to create a group with that identifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/CreateSharedGroup",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "CreateSharedGroupRequest",
+      "result": "CreateSharedGroupResult",
+      "errors": [
+        "InvalidParams",
+        "InvalidSharedGroupId"
+      ]
+    },
+    {
+      "name": "DeleteSharedGroup",
+      "summary": "Deletes a shared group, freeing up the shared group ID to be reused for a new group",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/DeleteSharedGroup",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteSharedGroupRequest",
+      "result": "EmptyResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetSharedGroupData",
+      "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. The server can access all public and private group data.",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/GetSharedGroupData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetSharedGroupDataRequest",
+      "result": "GetSharedGroupDataResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "RemoveSharedGroupMembers",
+      "summary": "Removes users from the set of those able to update the shared data and the set of users in the group. Only users in the group can remove members. If as a result of the call, zero users remain with access, the group and its associated data will be deleted.",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/RemoveSharedGroupMembers",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RemoveSharedGroupMembersRequest",
+      "result": "RemoveSharedGroupMembersResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateSharedGroupData",
+      "summary": "Adds, updates, and removes data keys for a shared group object. If the permission is set to Public, all fields updated or added in this call will be readable by users not in the group. By default, data permissions are set to Private. Regardless of the permission setting, only members of the group (and the server) can update the data.",
+      "requestDetails": "Note that in the case of multiple calls to write to the same shared group data keys, the last write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios requiring coordination of data updates, it is recommended that titles make use of user data with read permission set to public, or a combination of user data and shared group data.",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/UpdateSharedGroupData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateSharedGroupDataRequest",
+      "result": "UpdateSharedGroupDataResult",
+      "errors": [
+        "InvalidParams",
+        "NotAuthorized"
+      ]
     }
   ],
   "subgroups": [
+    {
+      "name": "Authentication",
+      "methods": [
+        "AuthenticateSessionTicket"
+      ]
+    },
     {
       "name": "Account Management",
       "methods": [
@@ -1828,6 +2177,7 @@
         "AddUserVirtualCurrency",
         "GetUserInventory",
         "GrantItemsToUsers",
+        "ModifyItemUses",
         "SubtractUserVirtualCurrency"
       ]
     },
@@ -1842,6 +2192,17 @@
       "name": "Steam-Specific APIs",
       "methods": [
         "AwardSteamAchievement"
+      ]
+    },
+    {
+      "name": "Shared Group Data",
+      "methods": [
+        "AddSharedGroupMembers",
+        "CreateSharedGroup",
+        "DeleteSharedGroup",
+        "GetSharedGroupData",
+        "RemoveSharedGroupMembers",
+        "UpdateSharedGroupData"
       ]
     }
   ],
@@ -2229,6 +2590,34 @@
     "PushServiceError": {
       "id": 1095,
       "name": "PushServiceError"
+    },
+    "ReceiptDoesNotContainInAppItems": {
+      "id": 1096,
+      "name": "ReceiptDoesNotContainInAppItems"
+    },
+    "ReceiptContainsMultipleInAppItems": {
+      "id": 1097,
+      "name": "ReceiptContainsMultipleInAppItems"
+    },
+    "InvalidBundleID": {
+      "id": 1098,
+      "name": "InvalidBundleID"
+    },
+    "JavascriptException": {
+      "id": 1099,
+      "name": "JavascriptException"
+    },
+    "InvalidSessionTicket": {
+      "id": 1100,
+      "name": "InvalidSessionTicket"
+    },
+    "UnableToConnectToDatabase": {
+      "id": 1101,
+      "name": "UnableToConnectToDatabase"
+    },
+    "InternalServerError": {
+      "id": 1110,
+      "name": "InternalServerError"
     }
   },
   "errorList": [
@@ -2327,6 +2716,13 @@
     "InvalidPSNAuthCode",
     "InvalidItemId",
     "PushNotEnabledForAccount",
-    "PushServiceError"
+    "PushServiceError",
+    "ReceiptDoesNotContainInAppItems",
+    "ReceiptContainsMultipleInAppItems",
+    "InvalidBundleID",
+    "JavascriptException",
+    "InvalidSessionTicket",
+    "UnableToConnectToDatabase",
+    "InternalServerError"
   ]
 }

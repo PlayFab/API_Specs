@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.0.2",
+  "revision": "1.1.0",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -53,8 +53,15 @@
           "optional": false
         },
         {
-          "name": "AdditionalCommandLineArguments",
+          "name": "CommandLineTemplate",
           "description": "appended to the end of the command line when starting game servers",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExecutablePath",
+          "description": "path to the game server executable. Defaults to gameserver.exe",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -111,8 +118,15 @@
           "optional": false
         },
         {
-          "name": "AdditionalCommandLineArguments",
+          "name": "CommandLineTemplate",
           "description": "appended to the end of the command line when starting game servers",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExecutablePath",
+          "description": "path to the game server executable. Defaults to gameserver.exe",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -246,41 +260,6 @@
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
-          "optional": true
-        },
-        {
-          "name": "ReleaseDate",
-          "description": "the date this item becomes available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "ExpirationDate",
-          "description": "the date this item will no longer be available for purchase",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "IsFree",
-          "description": "(deprecated)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForSale",
-          "description": "can this item be purchased (if not, it can still be granted by a server-based operation, such as a loot drop from a monster)",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "NotForTrade",
-          "description": "can an instance of this item be exchanged between players?",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
           "optional": true
         },
         {
@@ -1221,8 +1200,15 @@
           "optional": false
         },
         {
-          "name": "AdditionalCommandLineArguments",
+          "name": "CommandLineTemplate",
           "description": "appended to the end of the command line when starting game servers",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExecutablePath",
+          "description": "path to the game server executable. Defaults to gameserver.exe",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1263,8 +1249,15 @@
           "optional": false
         },
         {
-          "name": "AdditionalCommandLineArguments",
+          "name": "CommandLineTemplate",
           "description": "appended to the end of the command line when starting game servers",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExecutablePath",
+          "description": "path to the game server executable. Defaults to gameserver.exe",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1382,6 +1375,20 @@
     "RemoveServerBuildResult": {
       "name": "RemoveServerBuildResult",
       "properties": []
+    },
+    "ResetUsersRequest": {
+      "name": "ResetUsersRequest",
+      "properties": [
+        {
+          "name": "Users",
+          "description": "Array of users to reset",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UserCredentials",
+          "isclass": true,
+          "optional": false
+        }
+      ]
     },
     "ResetUserStatisticsRequest": {
       "name": "ResetUserStatisticsRequest",
@@ -1505,7 +1512,7 @@
       "properties": [
         {
           "name": "Name",
-          "description": "name of the application sending the messsage (application names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, hyphens, and periods, and must be between 1 and 256 characters long)",
+          "description": "name of the application sending the message (application names must be made up of only uppercase and lowercase ASCII letters, numbers, underscores, hyphens, and periods, and must be between 1 and 256 characters long)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1533,7 +1540,7 @@
         },
         {
           "name": "OverwriteOldARN",
-          "description": "replace any existing ARN with the newly generated one. If this is set to false, an error will be returned if notifactions have already setup for this platform.",
+          "description": "replace any existing ARN with the newly generated one. If this is set to false, an error will be returned if notifications have already setup for this platform.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1853,6 +1860,25 @@
         }
       ]
     },
+    "UserCredentials": {
+      "name": "UserCredentials",
+      "properties": [
+        {
+          "name": "Username",
+          "description": "Username of user to reset",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Password",
+          "description": "Password of user to reset",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "UserDataPermission": {
       "name": "UserDataPermission",
       "isenum": true,
@@ -2089,7 +2115,7 @@
         },
         {
           "name": "InitialDeposit",
-          "description": "amount to automaticalyl grant users upon first login to the tilte",
+          "description": "amount to automatically grant users upon first login to the tilte",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
@@ -2129,6 +2155,20 @@
         "InvalidParams",
         "AccountNotFound",
         "NotAuthorized"
+      ]
+    },
+    {
+      "name": "ResetUsers",
+      "summary": "Resets all title-specific information about a particular account, including user data, virtual currency balances, inventory, purchase history, and statistics",
+      "requestDetails": "This method is intended for use with test accounts, to allow a developer to reset and test a game experience from the start. Note that in order to reset an account, you must know the username and password. If the account does not have a username and password, you must add one with AddUsernamePassword in the client API prior to calling this method.",
+      "subgroup": "Account Management",
+      "url": "/Admin/ResetUsers",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ResetUsersRequest",
+      "result": "BlankResult",
+      "errors": [
+        "InvalidParams"
       ]
     },
     {
@@ -2225,8 +2265,8 @@
     },
     {
       "name": "ResetUserStatistics",
-      "summary": "Completely removes all statistics of the specified user, for this title",
-      "requestDetails": "Note that this action cannot be un-done. All statistics for this user will be deleted, removing the user from all leaderboards for the title.",
+      "summary": "Completely removes all statistics for the specified user, for the current game",
+      "requestDetails": "Note that this action cannot be un-done. All statistics for this user will be deleted, removing the user from all leaderboards for the game.",
       "subgroup": "Player Data Management",
       "url": "/Admin/ResetUserStatistics",
       "auth": "SecretKey",
@@ -2782,6 +2822,7 @@
       "name": "Account Management",
       "methods": [
         "GetUserAccountInfo",
+        "ResetUsers",
         "SendAccountRecoveryEmail",
         "UpdateUserTitleDisplayName"
       ]
@@ -3230,6 +3271,34 @@
     "PushServiceError": {
       "id": 1095,
       "name": "PushServiceError"
+    },
+    "ReceiptDoesNotContainInAppItems": {
+      "id": 1096,
+      "name": "ReceiptDoesNotContainInAppItems"
+    },
+    "ReceiptContainsMultipleInAppItems": {
+      "id": 1097,
+      "name": "ReceiptContainsMultipleInAppItems"
+    },
+    "InvalidBundleID": {
+      "id": 1098,
+      "name": "InvalidBundleID"
+    },
+    "JavascriptException": {
+      "id": 1099,
+      "name": "JavascriptException"
+    },
+    "InvalidSessionTicket": {
+      "id": 1100,
+      "name": "InvalidSessionTicket"
+    },
+    "UnableToConnectToDatabase": {
+      "id": 1101,
+      "name": "UnableToConnectToDatabase"
+    },
+    "InternalServerError": {
+      "id": 1110,
+      "name": "InternalServerError"
     }
   },
   "errorList": [
@@ -3328,6 +3397,13 @@
     "InvalidPSNAuthCode",
     "InvalidItemId",
     "PushNotEnabledForAccount",
-    "PushServiceError"
+    "PushServiceError",
+    "ReceiptDoesNotContainInAppItems",
+    "ReceiptContainsMultipleInAppItems",
+    "InvalidBundleID",
+    "JavascriptException",
+    "InvalidSessionTicket",
+    "UnableToConnectToDatabase",
+    "InternalServerError"
   ]
 }
