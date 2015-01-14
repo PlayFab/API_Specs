@@ -84,7 +84,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user who is to be granted the specified Steam achievement",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -442,7 +441,6 @@
         },
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to be centered in the list of entries",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -506,6 +504,32 @@
           "jsontype": "Object",
           "actualtype": "PlayerLeaderboardEntry",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPublisherDataRequest": {
+      "name": "GetPublisherDataRequest",
+      "properties": [
+        {
+          "name": "Keys",
+          "description": " array of keys to get back data from the Publisher data blob, set by the admin tools",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPublisherDataResult": {
+      "name": "GetPublisherDataResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "a dictionary object of key / value pairs",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -590,7 +614,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose information is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1016,7 +1039,6 @@
         },
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user that is leaving the Game Server Instance",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1183,6 +1205,29 @@
       "name": "SendPushNotificationResult",
       "properties": []
     },
+    "SetPublisherDataRequest": {
+      "name": "SetPublisherDataRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name.) Keys are trimmed of whitespace. Keys may not begin with the '!' character.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Value",
+          "description": "new value to set. Set to null to remove a value",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SetPublisherDataResult": {
+      "name": "SetPublisherDataResult",
+      "properties": []
+    },
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "properties": [
@@ -1195,10 +1240,10 @@
         },
         {
           "name": "Value",
-          "description": "new value to set",
+          "description": "new value to set. Set to null to remove a value",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1809,6 +1854,69 @@
       ]
     },
     {
+      "name": "GetUserPublisherData",
+      "summary": "Retrieves the publisher-specific custom data for the user which is readable and writable by the client",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/GetUserPublisherData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetUserDataRequest",
+      "result": "GetUserDataResult",
+      "seeAlso": [
+        "UpdateUserPublisherData",
+        "GetUserPublisherReadOnlyData",
+        "UpdateUserPublisherReadOnlyData",
+        "GetUserPublisherInternalData",
+        "UpdateUserPublisherInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetUserPublisherInternalData",
+      "summary": "Retrieves the publisher-specific custom data for the user which cannot be accessed by the client",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/GetUserPublisherInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetUserDataRequest",
+      "result": "GetUserDataResult",
+      "seeAlso": [
+        "GetUserPublisherData",
+        "UpdateUserPublisherData",
+        "GetUserPublisherReadOnlyData",
+        "UpdateUserPublisherReadOnlyData",
+        "UpdateUserPublisherInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetUserPublisherReadOnlyData",
+      "summary": "Retrieves the publisher-specific custom data for the user which can only be read by the client",
+      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/GetUserPublisherReadOnlyData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetUserDataRequest",
+      "result": "GetUserDataResult",
+      "seeAlso": [
+        "GetUserPublisherData",
+        "UpdateUserPublisherData",
+        "UpdateUserPublisherReadOnlyData",
+        "GetUserPublisherInternalData",
+        "UpdateUserPublisherInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetUserReadOnlyData",
       "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
@@ -1886,6 +1994,69 @@
         "GetUserReadOnlyData",
         "UpdateUserReadOnlyData",
         "GetUserInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateUserPublisherData",
+      "summary": "Updates the publisher-specific custom data for the user which is readable and writable by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/UpdateUserPublisherData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateUserDataRequest",
+      "result": "UpdateUserDataResult",
+      "seeAlso": [
+        "GetUserPublisherData",
+        "GetUserPublisherReadOnlyData",
+        "UpdateUserPublisherReadOnlyData",
+        "GetUserPublisherInternalData",
+        "UpdateUserPublisherInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateUserPublisherInternalData",
+      "summary": "Updates the publisher-specific custom data for the user which cannot be accessed by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/UpdateUserPublisherInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateUserInternalDataRequest",
+      "result": "UpdateUserDataResult",
+      "seeAlso": [
+        "GetUserPublisherData",
+        "UpdateUserPublisherData",
+        "GetUserPublisherReadOnlyData",
+        "UpdateUserPublisherReadOnlyData",
+        "GetUserPublisherInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateUserPublisherReadOnlyData",
+      "summary": "Updates the publisher-specific custom data for the user which can only be read by the client",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/UpdateUserPublisherReadOnlyData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateUserDataRequest",
+      "result": "UpdateUserDataResult",
+      "seeAlso": [
+        "GetUserPublisherData",
+        "UpdateUserPublisherData",
+        "GetUserPublisherReadOnlyData",
+        "GetUserPublisherInternalData",
+        "UpdateUserPublisherInternalData"
       ],
       "errors": [
         "InvalidParams"
@@ -2162,6 +2333,24 @@
       ]
     },
     {
+      "name": "GetPublisherData",
+      "summary": "Retrieves the key-value store of custom publisher settings",
+      "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. For more information email devrel@playfab.com",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/GetPublisherData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPublisherDataRequest",
+      "result": "GetPublisherDataResult",
+      "seeAlso": [
+        "SetPublisherData"
+      ],
+      "errors": [
+        "InvalidParams",
+        "PublisherNotSet"
+      ]
+    },
+    {
       "name": "GetSharedGroupData",
       "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. The server can access all public and private group data.",
       "subgroup": "Shared Group Data",
@@ -2185,6 +2374,24 @@
       "result": "RemoveSharedGroupMembersResult",
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "SetPublisherData",
+      "summary": "Updates the key-value store of custom publisher settings",
+      "requestDetails": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.  If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
+      "subgroup": "Shared Group Data",
+      "url": "/Server/SetPublisherData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetPublisherDataRequest",
+      "result": "SetPublisherDataResult",
+      "seeAlso": [
+        "GetPublisherData"
+      ],
+      "errors": [
+        "InvalidParams",
+        "PublisherNotSet"
       ]
     },
     {
@@ -2224,10 +2431,16 @@
         "GetLeaderboardAroundUser",
         "GetUserData",
         "GetUserInternalData",
+        "GetUserPublisherData",
+        "GetUserPublisherInternalData",
+        "GetUserPublisherReadOnlyData",
         "GetUserReadOnlyData",
         "GetUserStatistics",
         "UpdateUserData",
         "UpdateUserInternalData",
+        "UpdateUserPublisherData",
+        "UpdateUserPublisherInternalData",
+        "UpdateUserPublisherReadOnlyData",
         "UpdateUserReadOnlyData",
         "UpdateUserStatistics"
       ]
@@ -2270,8 +2483,10 @@
         "AddSharedGroupMembers",
         "CreateSharedGroup",
         "DeleteSharedGroup",
+        "GetPublisherData",
         "GetSharedGroupData",
         "RemoveSharedGroupMembers",
+        "SetPublisherData",
         "UpdateSharedGroupData"
       ]
     }
@@ -2732,6 +2947,10 @@
     "PartialFailure": {
       "id": 1121,
       "name": "PartialFailure"
+    },
+    "PublisherNotSet": {
+      "id": 1122,
+      "name": "PublisherNotSet"
     }
   },
   "errorList": [
@@ -2848,6 +3067,7 @@
     "LinkedDeviceAlreadyClaimed",
     "DeviceAlreadyLinked",
     "DeviceNotLinked",
-    "PartialFailure"
+    "PartialFailure",
+    "PublisherNotSet"
   ]
 }
