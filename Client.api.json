@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.1.0",
+  "revision": "1.2.0",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -2473,6 +2473,65 @@
       "name": "RemoveSharedGroupMembersResult",
       "properties": []
     },
+    "ReportPlayerClientRequest": {
+      "name": "ReportPlayerClientRequest",
+      "properties": [
+        {
+          "name": "ReporteeId",
+          "description": "PlayFabId of the reported player",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TitleId",
+          "description": "title player was reported in, optional if report not for specific title",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Comment",
+          "description": "Optional additional comment by reporting player",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ReportPlayerClientResult": {
+      "name": "ReportPlayerClientResult",
+      "properties": [
+        {
+          "name": "Updated",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "SubmissionsRemaining",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "RestoreIOSPurchasesRequest": {
+      "name": "RestoreIOSPurchasesRequest",
+      "properties": [
+        {
+          "name": "ReceiptData",
+          "description": "base64 encoded receipt data, passed back by the App Store as a result of a successful purchase",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "RestoreIOSPurchasesResult": {
+      "name": "RestoreIOSPurchasesResult",
+      "properties": []
+    },
     "RunCloudScriptRequest": {
       "name": "RunCloudScriptRequest",
       "properties": [
@@ -2503,6 +2562,27 @@
       "name": "RunCloudScriptResult",
       "properties": [
         {
+          "name": "ActionId",
+          "description": "id of Cloud Script run",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Version",
+          "description": "version of Cloud Script run",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Revision",
+          "description": "revision of Cloud Script run",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
           "name": "Results",
           "description": "return values from the server action as a dynamic object",
           "jsontype": "Object",
@@ -2522,6 +2602,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "ExecutionTime",
+          "description": "time this script took to run, in seconds",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
         }
       ]
     },
@@ -4344,6 +4431,19 @@
       ]
     },
     {
+      "name": "ReportPlayer",
+      "summary": "Report a player",
+      "subgroup": "Player Item Management",
+      "url": "/Client/ReportPlayer",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ReportPlayerClientRequest",
+      "result": "ReportPlayerClientResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "StartPurchase",
       "summary": "Creates an order for a list of items from the title catalog",
       "requestDetails": "This is the first step in the purchasing process. For security purposes, once the order (or \"cart\") has been created, additional inventory objects may no longer be added. In addition, inventory objects will be locked to the current prices, regardless of any subsequent changes at the catalog level which may occur during the next two steps.",
@@ -4487,6 +4587,26 @@
       ]
     },
     {
+      "name": "RestoreIOSPurchases",
+      "summary": "Restores all in-app purchases based on the given refresh receipt.",
+      "requestDetails": "Iterates through every purchase in the receipt and restores the items if they still exist in the catalog and can be validated. ",
+      "resultDetails": "Once verified, the valid items will be restored into the user's inventory.",
+      "subgroup": "IOS-Specific APIs",
+      "url": "/Client/RestoreIOSPurchases",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "RestoreIOSPurchasesRequest",
+      "result": "RestoreIOSPurchasesResult",
+      "errors": [
+        "InvalidParams",
+        "InvalidReceipt",
+        "ReceiptAlreadyUsed",
+        "ReceiptDoesNotContainInAppItems",
+        "ReceiptContainsMultipleInAppItems",
+        "InvalidBundleID"
+      ]
+    },
+    {
       "name": "ValidateIOSReceipt",
       "summary": "Validates with the Apple store that the receipt for an iOS in-app purchase is valid and that it matches the purchased catalog item",
       "requestDetails": "The CurrecncyCode and PurcahsePrice must match the price which was set up for the item in the Apple store. In addition, The ItemId of the inventory in the PlayFab Catalog must match the Product ID as it was set up in the Apple store. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
@@ -4562,7 +4682,7 @@
     {
       "name": "AndroidDevicePushNotificationRegistration",
       "summary": "Registers the Android device to receive push notifications",
-      "requestDetails": "More infomration can be found on configuring your game for the Google Cloud Messaging service in the Google developer documentation, here:  http://developer.android.com/google/gcm/client.html.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
+      "requestDetails": "More information can be found on configuring your game for the Google Cloud Messaging service in the Google developer documentation, here:  http://developer.android.com/google/gcm/client.html.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
       "subgroup": "Android-Specific APIs",
       "url": "/Client/AndroidDevicePushNotificationRegistration",
       "auth": "SessionTicket",
@@ -4808,6 +4928,7 @@
         "PayForPurchase",
         "PurchaseItem",
         "RedeemCoupon",
+        "ReportPlayer",
         "StartPurchase",
         "SubtractUserVirtualCurrency",
         "UnlockContainerItem"
@@ -4826,6 +4947,7 @@
       "name": "IOS-Specific APIs",
       "methods": [
         "RegisterForIOSPushNotification",
+        "RestoreIOSPurchases",
         "ValidateIOSReceipt"
       ]
     },
