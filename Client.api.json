@@ -841,14 +841,14 @@
       "properties": [
         {
           "name": "Version",
-          "description": "Server version to use. Defaults to 1 if left null",
+          "description": "the Cloud Script Version to use (defaults to 1)",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "Testing",
-          "description": "If true, run against the latest test revision of server logic. Defaults to false if left null",
+          "description": "specifies whether the URL returned should be the one for the most recently uploaded Revision of the Cloud Script (true), or the Revision most recently set to live (false - the default)",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -860,7 +860,7 @@
       "properties": [
         {
           "name": "Url",
-          "description": "Url of the Cloud Script logic server for this title",
+          "description": "URL of the Cloud Script logic server",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1796,6 +1796,7 @@
         },
         {
           "name": "Username",
+          "description": "PlayFab username for the account (3-24 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1805,6 +1806,12 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "PublisherId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2404,6 +2411,12 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "PublisherId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2591,7 +2604,7 @@
         },
         {
           "name": "ResultsEncoded",
-          "description": "return values from the server action as a json encoded string",
+          "description": "return values from the server action as a JSON encoded string",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3114,21 +3127,6 @@
     },
     "UpdateEmailAddressResult": {
       "name": "UpdateEmailAddressResult",
-      "properties": []
-    },
-    "UpdatePasswordRequest": {
-      "name": "UpdatePasswordRequest",
-      "properties": [
-        {
-          "name": "Password",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "UpdatePasswordResult": {
-      "name": "UpdatePasswordResult",
       "properties": []
     },
     "UpdateSharedGroupDataRequest": {
@@ -4013,20 +4011,6 @@
       ]
     },
     {
-      "name": "UpdatePassword",
-      "summary": "Updates the local user's password in PlayFab",
-      "requestDetails": "Passwords are required to be between 6 and 20 characters in length.",
-      "subgroup": "Account Management",
-      "url": "/Client/UpdatePassword",
-      "auth": "SessionTicket",
-      "method": "POST",
-      "request": "UpdatePasswordRequest",
-      "result": "UpdatePasswordResult",
-      "errors": [
-        "InvalidParams"
-      ]
-    },
-    {
       "name": "UpdateUserTitleDisplayName",
       "summary": "Updates the title specific display name for the user",
       "requestDetails": "In addition to the PlayFab username, titles can make use of a DisplayName which is also a unique identifier, but specific to the title. This allows for unique names which more closely match the theme or genre of a title, for example.",
@@ -4631,7 +4615,7 @@
       "summary": "Get details about all current running game servers matching the given parameters.",
       "subgroup": "Matchmaking APIs",
       "url": "/Client/GetCurrentGames",
-      "auth": "None",
+      "auth": "SessionTicket",
       "method": "POST",
       "request": "CurrentGamesRequest",
       "result": "CurrentGamesResult",
@@ -4829,21 +4813,27 @@
     },
     {
       "name": "GetCloudScriptUrl",
-      "summary": "Gets the title-specific url for Cloud Script servers. Must be called before making any calls to RunCloudScript.",
-      "requestDetails": "PlayFab supplied SDKs will automatically save the results of this call. Other users must save it themselves.",
+      "summary": "Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript.",
+      "requestDetails": "Cloud Scripts in PlayFab have both Versions and Revisions. Each time a new script is  uploaded against a Version, this creates a new Revision. If Testing is set to true, the URL returned will be for the Cloud Script Revision which was most recently uploaded. If Testing is set to false, the URL returned will be for the  Cloud Script Revision which was most recently deployed to live.",
+      "resultDetails": "The URL returned is the one which must be used by the title to call into a handler in  Cloud Script. PlayFab-supplied SDKs will automatically save the results of this call, for use with any calls to  RunCloudScript.",
       "subgroup": "Server-Side Cloud Script",
       "url": "/Client/GetCloudScriptUrl",
       "auth": "SessionTicket",
       "method": "POST",
       "request": "GetCloudScriptUrlRequest",
       "result": "GetCloudScriptUrlResult",
+      "seeAlso": [
+        "RunCloudScript"
+      ],
       "errors": [
         "InvalidParams"
       ]
     },
     {
       "name": "RunCloudScript",
-      "summary": "Triggers a particular server action",
+      "summary": "Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript.",
+      "requestDetails": "Inputs to the Cloud Script may be specified either using Params, which is an object containing one or more parameters, or ParamsEncoded, which is a string containing the parameters encoded into JSON. Titles should only specify the parameters in one of these inputs - if both are specified, the ParamsEncoded will be used.",
+      "resultDetails": "As part of the returned values, both Results and ResultsEncoded will be provided. As with Params and ParamsEncoded, these are respectively an object containing the returned values, and a string containing the returned values encoded into JSON. In addition, the Cloud Script may additionally generate a log, using log.info(), in order to provide additional debugging information.",
       "subgroup": "Server-Side Cloud Script",
       "url": "/Client/RunCloudScript",
       "auth": "SessionTicket",
@@ -4851,6 +4841,9 @@
       "request": "RunCloudScriptRequest",
       "result": "RunCloudScriptResult",
       "serverType": "logic",
+      "seeAlso": [
+        "GetCloudScriptUrl"
+      ],
       "errors": [
         "InvalidParams"
       ]
@@ -4889,7 +4882,6 @@
         "UnlinkIOSDeviceID",
         "UnlinkSteamAccount",
         "UpdateEmailAddress",
-        "UpdatePassword",
         "UpdateUserTitleDisplayName"
       ]
     },
@@ -5458,6 +5450,22 @@
     "PublisherNotSet": {
       "id": 1122,
       "name": "PublisherNotSet"
+    },
+    "ServiceUnavailable": {
+      "id": 1123,
+      "name": "ServiceUnavailable"
+    },
+    "VersionNotFound": {
+      "id": 1124,
+      "name": "VersionNotFound"
+    },
+    "RevisionNotFound": {
+      "id": 1125,
+      "name": "RevisionNotFound"
+    },
+    "InvalidPublisherId": {
+      "id": 1126,
+      "name": "InvalidPublisherId"
     }
   },
   "errorList": [
@@ -5575,6 +5583,10 @@
     "DeviceAlreadyLinked",
     "DeviceNotLinked",
     "PartialFailure",
-    "PublisherNotSet"
+    "PublisherNotSet",
+    "ServiceUnavailable",
+    "VersionNotFound",
+    "RevisionNotFound",
+    "InvalidPublisherId"
   ]
 }

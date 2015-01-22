@@ -408,6 +408,51 @@
         }
       ]
     },
+    "CloudScriptFile": {
+      "name": "CloudScriptFile",
+      "properties": [
+        {
+          "name": "Filename",
+          "description": "Name of the javascript file. These names are not used internally by the server, they are only for developer organizational purposes.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "FileContents",
+          "description": "Contents of the Cloud Script javascript. Must be string-escaped javascript.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CloudScriptVersionStatus": {
+      "name": "CloudScriptVersionStatus",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Version number",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "PublishedRevision",
+          "description": "Published code revision for this Cloud Script version",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "LatestRevision",
+          "description": "Most recent revision for this Cloud Script version",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "Currency": {
       "name": "Currency",
       "isenum": true,
@@ -504,6 +549,85 @@
           "isUnordered": true,
           "jsontype": "Object",
           "actualtype": "CatalogItem",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetCloudScriptRevisionRequest": {
+      "name": "GetCloudScriptRevisionRequest",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Version number. If left null, defaults to the latest version",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Revision",
+          "description": "Revision number. If left null, defaults to the latest revision",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GetCloudScriptRevisionResult": {
+      "name": "GetCloudScriptRevisionResult",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Version number.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Revision",
+          "description": "Revision number.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "CreatedAt",
+          "description": "Time this revision was created",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "Files",
+          "description": "List of Cloud Script files in this revision.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CloudScriptFile",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "IsPublished",
+          "description": "True if this is the currently published revision",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "GetCloudScriptVersionsRequest": {
+      "name": "GetCloudScriptVersionsRequest",
+      "properties": []
+    },
+    "GetCloudScriptVersionsResult": {
+      "name": "GetCloudScriptVersionsResult",
+      "properties": [
+        {
+          "name": "Versions",
+          "description": "List of versions",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CloudScriptVersionStatus",
           "isclass": true,
           "optional": true
         }
@@ -1550,6 +1674,29 @@
       "name": "SendAccountRecoveryEmailResult",
       "properties": []
     },
+    "SetPublishedRevisionRequest": {
+      "name": "SetPublishedRevisionRequest",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Version number",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Revision",
+          "description": "Revision to make the current published revision",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "SetPublishedRevisionResult": {
+      "name": "SetPublishedRevisionResult",
+      "properties": []
+    },
     "SetPublisherDataRequest": {
       "name": "SetPublisherDataRequest",
       "properties": [
@@ -1756,6 +1903,46 @@
     "UpdateCatalogItemsResult": {
       "name": "UpdateCatalogItemsResult",
       "properties": []
+    },
+    "UpdateCloudScriptRequest": {
+      "name": "UpdateCloudScriptRequest",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Cloud Script version to update. If null, defaults to most recent version",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Files",
+          "description": "List of Cloud Script files to upload to create the new revision. Must have at least one file.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CloudScriptFile",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "UpdateCloudScriptResult": {
+      "name": "UpdateCloudScriptResult",
+      "properties": [
+        {
+          "name": "Version",
+          "description": "Cloud Script version updated",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Revision",
+          "description": "New revision number created",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
     },
     "UpdateRandomResultTablesRequest": {
       "name": "UpdateRandomResultTablesRequest",
@@ -3081,6 +3268,59 @@
         "InvalidParams",
         "PublisherNotSet"
       ]
+    },
+    {
+      "name": "GetCloudScriptRevision",
+      "summary": "Gets the contents and information of a specific Cloud Script revision.",
+      "subgroup": "Server-Side Cloud Script",
+      "url": "/Admin/GetCloudScriptRevision",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetCloudScriptRevisionRequest",
+      "result": "GetCloudScriptRevisionResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetCloudScriptVersions",
+      "summary": "Lists all the current cloud script versions. For each version, information about the current published and latest revisions is also listed.",
+      "subgroup": "Server-Side Cloud Script",
+      "url": "/Admin/GetCloudScriptVersions",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetCloudScriptVersionsRequest",
+      "result": "GetCloudScriptVersionsResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SetPublishedRevision",
+      "summary": "Sets the currently published revision of a title Cloud Script",
+      "subgroup": "Server-Side Cloud Script",
+      "url": "/Admin/SetPublishedRevision",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetPublishedRevisionRequest",
+      "result": "SetPublishedRevisionResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "UpdateCloudScript",
+      "summary": "Creates a new Cloud Script revision and uploads source code to it.",
+      "subgroup": "Server-Side Cloud Script",
+      "url": "/Admin/UpdateCloudScript",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateCloudScriptRequest",
+      "result": "UpdateCloudScriptResult",
+      "errors": [
+        "InvalidParams",
+        "JavascriptException"
+      ]
     }
   ],
   "subgroups": [
@@ -3164,6 +3404,15 @@
       "methods": [
         "GetPublisherData",
         "SetPublisherData"
+      ]
+    },
+    {
+      "name": "Server-Side Cloud Script",
+      "methods": [
+        "GetCloudScriptRevision",
+        "GetCloudScriptVersions",
+        "SetPublishedRevision",
+        "UpdateCloudScript"
       ]
     }
   ],
@@ -3627,6 +3876,22 @@
     "PublisherNotSet": {
       "id": 1122,
       "name": "PublisherNotSet"
+    },
+    "ServiceUnavailable": {
+      "id": 1123,
+      "name": "ServiceUnavailable"
+    },
+    "VersionNotFound": {
+      "id": 1124,
+      "name": "VersionNotFound"
+    },
+    "RevisionNotFound": {
+      "id": 1125,
+      "name": "RevisionNotFound"
+    },
+    "InvalidPublisherId": {
+      "id": 1126,
+      "name": "InvalidPublisherId"
     }
   },
   "errorList": [
@@ -3744,6 +4009,10 @@
     "DeviceAlreadyLinked",
     "DeviceNotLinked",
     "PartialFailure",
-    "PublisherNotSet"
+    "PublisherNotSet",
+    "ServiceUnavailable",
+    "VersionNotFound",
+    "RevisionNotFound",
+    "InvalidPublisherId"
   ]
 }
