@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.2.1",
+  "revision": "1.2.2",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -873,6 +873,30 @@
         {
           "name": "Url",
           "description": "URL of the Cloud Script logic server",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetContentDownloadUrlRequest": {
+      "name": "GetContentDownloadUrlRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key of the content item to fetch, usually formatted as a path, e.g. images/a.png",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetContentDownloadUrlResult": {
+      "name": "GetContentDownloadUrlResult",
+      "properties": [
+        {
+          "name": "URL",
+          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in 1 hour.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2609,13 +2633,6 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
-        },
-        {
-          "name": "TitleId",
-          "description": "title player was reported in, optional if report not for specific title",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
         },
         {
           "name": "Comment",
@@ -4504,7 +4521,7 @@
     },
     {
       "name": "ReportPlayer",
-      "summary": "Submit a report for another player (due to bad bahavior, etc.), so that customer service representatives for the title can take action concerning potentially poxic players.",
+      "summary": "Submit a report for another player (due to bad bahavior, etc.), so that customer service representatives for the title can take action concerning potentially toxic players.",
       "resultDetails": "Players are currently limited to five reports per day. Attempts by a single user account to submit reports beyond five will result in Updated being returned as false.",
       "subgroup": "Player Item Management",
       "url": "/Client/ReportPlayer",
@@ -4592,8 +4609,7 @@
     {
       "name": "GetFriendsList",
       "summary": "Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts",
-      "requestDetails": "This operations refreshes the friend list of the local user, including querying all linked accounts.",
-      "resultDetails": "The list returned can be a mixture of friends from Steam, Facebook and PlayFab, though  Facebook friends will only be those who signed info the game via Facebook.",
+      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results.",
       "subgroup": "Friend List Management",
       "url": "/Client/GetFriendsList",
       "auth": "SessionTicket",
@@ -4936,6 +4952,16 @@
       "errors": [
         "InvalidParams"
       ]
+    },
+    {
+      "name": "GetContentDownloadUrl",
+      "summary": "Retrieves the pre-authorized URL for accessing a content file for the title. A subsequent HTTP GET to the returned URL downloads the content; or a HEAD query to the returned URL retrieves the metadata of the content. This API only generates a pre-signed URL to access the content. A success result does not guarantee the existence of the content.",
+      "subgroup": "Content",
+      "url": "/Client/GetContentDownloadUrl",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetContentDownloadUrlRequest",
+      "result": "GetContentDownloadUrlResult"
     }
   ],
   "subgroups": [
@@ -5076,6 +5102,12 @@
       "methods": [
         "GetCloudScriptUrl",
         "RunCloudScript"
+      ]
+    },
+    {
+      "name": "Content",
+      "methods": [
+        "GetContentDownloadUrl"
       ]
     }
   ],
@@ -5579,6 +5611,14 @@
     "ConcurrentEditError": {
       "id": 1133,
       "name": "ConcurrentEditError"
+    },
+    "ContentNotFound": {
+      "id": 1134,
+      "name": "ContentNotFound"
+    },
+    "CharacterNotFound": {
+      "id": 1135,
+      "name": "CharacterNotFound"
     }
   },
   "errorList": [
@@ -5706,6 +5746,8 @@
     "APIRequestLimitExceeded",
     "InvalidAPIEndpoint",
     "BuildNotAvailable",
-    "ConcurrentEditError"
+    "ConcurrentEditError",
+    "ContentNotFound",
+    "CharacterNotFound"
   ]
 }

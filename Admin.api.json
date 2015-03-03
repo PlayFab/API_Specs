@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.2.1",
+  "revision": "1.2.2",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -453,6 +453,32 @@
         }
       ]
     },
+    "ContentInfo": {
+      "name": "ContentInfo",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key of the content",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Size",
+          "description": "Size of the content in bytes",
+          "jsontype": "Number",
+          "actualtype": "int64",
+          "optional": false
+        },
+        {
+          "name": "LastModified",
+          "description": "Last modified time",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        }
+      ]
+    },
     "Currency": {
       "name": "Currency",
       "isenum": true,
@@ -477,6 +503,18 @@
         },
         {
           "name": "CAD"
+        }
+      ]
+    },
+    "DeleteContentRequest": {
+      "name": "DeleteContentRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key of the content item to be deleted",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
         }
       ]
     },
@@ -629,6 +667,76 @@
           "jsontype": "Object",
           "actualtype": "CloudScriptVersionStatus",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetContentListRequest": {
+      "name": "GetContentListRequest",
+      "properties": [
+        {
+          "name": "Prefix",
+          "description": "Limits the response to keys that begin with the specified prefix. You can use prefixes to list contents under a folder, or for a specified version, etc.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetContentListResult": {
+      "name": "GetContentListResult",
+      "properties": [
+        {
+          "name": "ItemCount",
+          "description": "Number of content items returned. We currently have a maximum of 1000 items limit.",
+          "jsontype": "Number",
+          "actualtype": "int64",
+          "optional": false
+        },
+        {
+          "name": "TotalSize",
+          "description": "The total size of listed contents in bytes",
+          "jsontype": "Number",
+          "actualtype": "int64",
+          "optional": false
+        },
+        {
+          "name": "Contents",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ContentInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetContentUploadUrlRequest": {
+      "name": "GetContentUploadUrlRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key of the content item to upload, usually formatted as a path, e.g. images/a.png",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ContentType",
+          "description": "A standard MIME type describing the format of the contents. The same MIME type has to be set in the header when uploading the content.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetContentUploadUrlResult": {
+      "name": "GetContentUploadUrlResult",
+      "properties": [
+        {
+          "name": "URL",
+          "description": "URL for uploading content via HTTP PUT method. The URL will expire in 1 hour.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -997,7 +1105,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1093,7 +1200,7 @@
           "jsontype": "Object",
           "actualtype": "ItemGrant",
           "isclass": true,
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -1116,7 +1223,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1144,7 +1250,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1595,7 +1700,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose statistics are to be reset",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1845,7 +1949,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be decremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2000,7 +2103,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2032,7 +2134,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3315,6 +3416,46 @@
         "InvalidParams",
         "JavascriptException"
       ]
+    },
+    {
+      "name": "DeleteContent",
+      "summary": "Delete a content file from the title",
+      "subgroup": "Content",
+      "url": "/Admin/DeleteContent",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteContentRequest",
+      "result": "BlankResult",
+      "errors": [
+        "InvalidParams",
+        "ContentNotFound"
+      ]
+    },
+    {
+      "name": "GetContentList",
+      "summary": "List all contents of the title and get statistics such as size",
+      "subgroup": "Content",
+      "url": "/Admin/GetContentList",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetContentListRequest",
+      "result": "GetContentListResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetContentUploadUrl",
+      "summary": "Retrieves the pre-signed URL for uploading a content file. A subsequent HTTP PUT to the returned URL uploads the content.",
+      "subgroup": "Content",
+      "url": "/Admin/GetContentUploadUrl",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetContentUploadUrlRequest",
+      "result": "GetContentUploadUrlResult",
+      "errors": [
+        "InvalidParams"
+      ]
     }
   ],
   "subgroups": [
@@ -3407,6 +3548,14 @@
         "GetCloudScriptVersions",
         "SetPublishedRevision",
         "UpdateCloudScript"
+      ]
+    },
+    {
+      "name": "Content",
+      "methods": [
+        "DeleteContent",
+        "GetContentList",
+        "GetContentUploadUrl"
       ]
     }
   ],
@@ -3910,6 +4059,14 @@
     "ConcurrentEditError": {
       "id": 1133,
       "name": "ConcurrentEditError"
+    },
+    "ContentNotFound": {
+      "id": 1134,
+      "name": "ContentNotFound"
+    },
+    "CharacterNotFound": {
+      "id": 1135,
+      "name": "CharacterNotFound"
     }
   },
   "errorList": [
@@ -4037,6 +4194,8 @@
     "APIRequestLimitExceeded",
     "InvalidAPIEndpoint",
     "BuildNotAvailable",
-    "ConcurrentEditError"
+    "ConcurrentEditError",
+    "ContentNotFound",
+    "CharacterNotFound"
   ]
 }

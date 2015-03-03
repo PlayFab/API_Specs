@@ -2,7 +2,7 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
-  "revision": "1.2.1",
+  "revision": "1.2.2",
   "datatypes": {
     "AddSharedGroupMembersRequest": {
       "name": "AddSharedGroupMembersRequest",
@@ -429,6 +429,30 @@
         }
       ]
     },
+    "GetContentDownloadUrlRequest": {
+      "name": "GetContentDownloadUrlRequest",
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key of the content item to fetch, usually formatted as a path, e.g. images/a.png",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetContentDownloadUrlResult": {
+      "name": "GetContentDownloadUrlResult",
+      "properties": [
+        {
+          "name": "URL",
+          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in 1 hour.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GetLeaderboardAroundUserRequest": {
       "name": "GetLeaderboardAroundUserRequest",
       "properties": [
@@ -638,7 +662,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -753,7 +776,6 @@
         },
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog items are to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -807,7 +829,7 @@
           "jsontype": "Object",
           "actualtype": "ItemGrant",
           "isclass": true,
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -830,7 +852,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -858,7 +879,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user to whom the catalog item is to be granted",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1347,7 +1367,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be decremented",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1426,7 +1445,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1458,7 +1476,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose custom data is being updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1478,7 +1495,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "user whose statistics are to be updated",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1983,7 +1999,7 @@
     {
       "name": "GetUserStatistics",
       "summary": "Retrieves the details of all title-specific statistics for the user",
-      "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "resultDetails": "User statistics are numeric values which may only be updated by a  server operation, in order to minimize the opportunity for unauthorized changes. In addition to  being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
       "url": "/Server/GetUserStatistics",
       "auth": "SecretKey",
@@ -2465,6 +2481,19 @@
         "InvalidParams",
         "NotAuthorized"
       ]
+    },
+    {
+      "name": "GetContentDownloadUrl",
+      "summary": "Retrieves the pre-authorized URL for accessing a content file for the title. A subsequent HTTP GET to the returned URL downloads the content; or a HEAD query to the returned URL retrieves the metadata of the content. This API only generates a pre-signed URL to access the content. A success result does not guarantee the existence of the content.",
+      "subgroup": "Content",
+      "url": "/Server/GetContentDownloadUrl",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetContentDownloadUrlRequest",
+      "result": "GetContentDownloadUrlResult",
+      "errors": [
+        "InvalidParams"
+      ]
     }
   ],
   "subgroups": [
@@ -2546,6 +2575,12 @@
         "RemoveSharedGroupMembers",
         "SetPublisherData",
         "UpdateSharedGroupData"
+      ]
+    },
+    {
+      "name": "Content",
+      "methods": [
+        "GetContentDownloadUrl"
       ]
     }
   ],
@@ -3049,6 +3084,14 @@
     "ConcurrentEditError": {
       "id": 1133,
       "name": "ConcurrentEditError"
+    },
+    "ContentNotFound": {
+      "id": 1134,
+      "name": "ContentNotFound"
+    },
+    "CharacterNotFound": {
+      "id": 1135,
+      "name": "CharacterNotFound"
     }
   },
   "errorList": [
@@ -3176,6 +3219,8 @@
     "APIRequestLimitExceeded",
     "InvalidAPIEndpoint",
     "BuildNotAvailable",
-    "ConcurrentEditError"
+    "ConcurrentEditError",
+    "ContentNotFound",
+    "CharacterNotFound"
   ]
 }
