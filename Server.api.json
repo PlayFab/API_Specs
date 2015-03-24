@@ -437,6 +437,20 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "HttpMethod",
+          "description": "HTTP method to fetch item - GET or HEAD. Use HEAD when only fetching metadata. Default is GET.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ThruCDN",
+          "description": "True if download through CDN. CDN provides better download bandwidth and time. However, if you want latest, non-cached version of the content, set this to false. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     },
@@ -763,6 +777,59 @@
         }
       ]
     },
+    "GrantItemsToCharacterRequest": {
+      "name": "GrantItemsToCharacterRequest",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version from which items are to be granted",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Annotation",
+          "description": "string detailing any additional information concerning this operation",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemIds",
+          "description": "array of itemIds to grant to the user",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GrantItemsToCharacterResult": {
+      "name": "GrantItemsToCharacterResult",
+      "properties": [
+        {
+          "name": "ItemGrantResults",
+          "description": "array of items granted to users",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemGrantResult",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GrantItemsToUserRequest": {
       "name": "GrantItemsToUserRequest",
       "properties": [
@@ -868,6 +935,12 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -909,6 +982,12 @@
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -982,6 +1061,43 @@
         }
       ]
     },
+    "LogEventRequest": {
+      "name": "LogEventRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "eventName",
+          "description": "A unique event name which will be used as the table name in the Redshift database. The name will be made lower case, and cannot not contain spaces. The use of underscores is recommended, for readability. Events also cannot match reserved terms. The PlayFab reserved terms are 'log_in' and 'purchase', 'create' and 'request', while the Redshift reserved terms can be found here: http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Body",
+          "description": "Contains all the data for this event. Event Values can be strings, booleans or numerics (float, double, integer, long) and must be consistent on a per-event basis (if the Value for Key 'A' in Event 'Foo' is an integer the first time it is sent, it must be an integer in all subsequent 'Foo' events). As with event names, Keys must also not use reserved words (see above). Finally, the size of the Body for an event must be less than 32KB (UTF-8 format).",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "ProfileSetEvent",
+          "description": "Flag to set event Body as profile details in the Redshift database as well as a standard event.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "LogEventResult": {
+      "name": "LogEventResult",
+      "properties": []
+    },
     "ModifyItemUsesRequest": {
       "name": "ModifyItemUsesRequest",
       "properties": [
@@ -1045,6 +1161,95 @@
           "optional": false
         }
       ]
+    },
+    "MoveItemToCharacterFromCharacterRequest": {
+      "name": "MoveItemToCharacterFromCharacterRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "GivingCharacterId",
+          "description": "the hex ID of the character that currently has the item",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ReceivingCharacterId",
+          "description": "the hex ID of the character that will be receiving the item",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "MoveItemToCharacterFromCharacterResult": {
+      "name": "MoveItemToCharacterFromCharacterResult",
+      "properties": []
+    },
+    "MoveItemToCharacterFromUserRequest": {
+      "name": "MoveItemToCharacterFromUserRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "MoveItemToCharacterFromUserResult": {
+      "name": "MoveItemToCharacterFromUserResult",
+      "properties": []
+    },
+    "MoveItemToUserFromCharacterRequest": {
+      "name": "MoveItemToUserFromCharacterRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "MoveItemToUserFromCharacterResult": {
+      "name": "MoveItemToUserFromCharacterResult",
+      "properties": []
     },
     "NotifyMatchmakerPlayerLeftRequest": {
       "name": "NotifyMatchmakerPlayerLeftRequest",
@@ -2243,6 +2448,22 @@
       ]
     },
     {
+      "name": "GrantItemsToCharacter",
+      "summary": "Adds the specified items to the specified character's inventory",
+      "requestDetails": "This function directly adds inventory items to the character's inventories. As  a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item  catalog definition.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/GrantItemsToCharacter",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GrantItemsToCharacterRequest",
+      "result": "GrantItemsToCharacterResult",
+      "errors": [
+        "InvalidParams",
+        "CharacterNotFound",
+        "UserisNotValid"
+      ]
+    },
+    {
       "name": "GrantItemsToUser",
       "summary": "Adds the specified items to the specified user's inventory",
       "requestDetails": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item catalog definition.",
@@ -2282,6 +2503,70 @@
       "result": "ModifyItemUsesResult",
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "MoveItemToCharacterFromCharacter",
+      "summary": "Moves an item from a character's inventory into another of the users's character's inventory.",
+      "requestDetails": "Transfers an item from a character to another character that is owned by the same user. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the other character to make use of the item instead.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/MoveItemToCharacterFromCharacter",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "MoveItemToCharacterFromCharacterRequest",
+      "result": "MoveItemToCharacterFromCharacterResult",
+      "seeAlso": [
+        "GrantItemsToCharacter",
+        "MoveItemToCharacterFromUser",
+        "MoveItemToUserFromCharacter"
+      ],
+      "errors": [
+        "InvalidParams",
+        "UserisNotValid",
+        "CharacterNotFound",
+        "ItemNotOwned"
+      ]
+    },
+    {
+      "name": "MoveItemToCharacterFromUser",
+      "summary": "Moves an item from a user's inventory into their character's inventory.",
+      "requestDetails": "Transfers an item from a user to a character she owns. This will remove the item from the user's inventory (until and unless it is moved back), and will enable the character to make use of the item instead.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/MoveItemToCharacterFromUser",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "MoveItemToCharacterFromUserRequest",
+      "result": "MoveItemToCharacterFromUserResult",
+      "seeAlso": [
+        "GrantItemsToCharacter",
+        "MoveItemToUserFromCharacter"
+      ],
+      "errors": [
+        "InvalidParams",
+        "UserisNotValid",
+        "CharacterNotFound",
+        "ItemNotOwned"
+      ]
+    },
+    {
+      "name": "MoveItemToUserFromCharacter",
+      "summary": "Moves an item from a character's inventory into the owning user's inventory.",
+      "requestDetails": "Transfers an item from a character to the owning user. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the user to make use of the item instead.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/MoveItemToUserFromCharacter",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "MoveItemToUserFromCharacterRequest",
+      "result": "MoveItemToUserFromCharacterResult",
+      "seeAlso": [
+        "GrantItemsToCharacter",
+        "MoveItemToCharacterFromUser"
+      ],
+      "errors": [
+        "InvalidParams",
+        "UserisNotValid",
+        "CharacterNotFound",
+        "ItemNotOwned"
       ]
     },
     {
@@ -2359,6 +2644,24 @@
       "result": "AwardSteamAchievementResult",
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "LogEvent",
+      "summary": "Logs a custom analytics event",
+      "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automatically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
+      "subgroup": "Analytics",
+      "url": "/Server/LogEvent",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LogEventRequest",
+      "result": "LogEventResult",
+      "errors": [
+        "BodyTooLarge",
+        "ReservedWordInBody",
+        "ReservedEventName",
+        "InvalidRequest",
+        "InvalidTypeInBody"
       ]
     },
     {
@@ -2542,9 +2845,13 @@
       "methods": [
         "AddUserVirtualCurrency",
         "GetUserInventory",
+        "GrantItemsToCharacter",
         "GrantItemsToUser",
         "GrantItemsToUsers",
         "ModifyItemUses",
+        "MoveItemToCharacterFromCharacter",
+        "MoveItemToCharacterFromUser",
+        "MoveItemToUserFromCharacter",
         "ReportPlayer",
         "SubtractUserVirtualCurrency"
       ]
@@ -2560,6 +2867,12 @@
       "name": "Steam-Specific APIs",
       "methods": [
         "AwardSteamAchievement"
+      ]
+    },
+    {
+      "name": "Analytics",
+      "methods": [
+        "LogEvent"
       ]
     },
     {
@@ -3090,6 +3403,18 @@
     "CharacterNotFound": {
       "id": 1135,
       "name": "CharacterNotFound"
+    },
+    "CloudScriptNotFound": {
+      "id": 1136,
+      "name": "CloudScriptNotFound"
+    },
+    "ContentQuotaExceeded": {
+      "id": 1137,
+      "name": "ContentQuotaExceeded"
+    },
+    "InvalidCharacterStatistics": {
+      "id": 1138,
+      "name": "InvalidCharacterStatistics"
     }
   },
   "errorList": [
@@ -3219,6 +3544,9 @@
     "BuildNotAvailable",
     "ConcurrentEditError",
     "ContentNotFound",
-    "CharacterNotFound"
+    "CharacterNotFound",
+    "CloudScriptNotFound",
+    "ContentQuotaExceeded",
+    "InvalidCharacterStatistics"
   ]
 }
