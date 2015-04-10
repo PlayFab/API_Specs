@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.2.3",
+  "revision": "1.2.4",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -942,12 +942,6 @@
       "name": "GetCharacterLeaderboardRequest",
       "properties": [
         {
-          "name": "CharacterId",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
           "name": "CharacterType",
           "description": "optional character type on which to filter the leaderboard entries",
           "jsontype": "String",
@@ -1091,7 +1085,14 @@
       "properties": [
         {
           "name": "IncludeSteamFriends",
-          "description": "indicates whether Steam service friends should also be included in the response",
+          "description": "indicates whether Steam service friends should be included in the response. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IncludeFacebookFriends",
+          "description": "indicates whether Facebook friends should be included in the response. Default is true.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -1679,12 +1680,6 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
-        },
-        {
-          "name": "PlayFabId",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
         },
         {
           "name": "ItemId",
@@ -2412,11 +2407,25 @@
       "name": "ModifyUserVirtualCurrencyResult",
       "properties": [
         {
+          "name": "PlayFabId",
+          "description": "user currency was subtracted from",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "VirtualCurrency",
           "description": "name of the virtual currency which was modified",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "BalanceChange",
+          "description": "amount added or subtracted from the user's virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         },
         {
           "name": "Balance",
@@ -3798,6 +3807,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "FullName",
+          "description": "Facebook full name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -4064,7 +4080,7 @@
         "InvalidTitleId",
         "AccountNotFound",
         "AccountBanned",
-        "InvalidUsernameOrPassword"
+        "InvalidEmailOrPassword"
       ]
     },
     {
@@ -4086,7 +4102,8 @@
         "InvalidTitleId",
         "InvalidFacebookToken",
         "AccountNotFound",
-        "AccountBanned"
+        "AccountBanned",
+        "FacebookAPIError"
       ]
     },
     {
@@ -4953,8 +4970,8 @@
     },
     {
       "name": "GetFriendsList",
-      "summary": "Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts",
-      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results.",
+      "summary": "Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts. Friends from linked accounts (Facebook, Steam) are also included. You may optionally exclude some linked services' friends.",
+      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included.",
       "subgroup": "Friend List Management",
       "url": "/Client/GetFriendsList",
       "auth": "SessionTicket",
@@ -4966,7 +4983,8 @@
         "RemoveFriend"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "FacebookAPIError"
       ]
     },
     {
@@ -6162,6 +6180,14 @@
     "PhotonApplicationNotAssociatedWithTitle": {
       "id": 1141,
       "name": "PhotonApplicationNotAssociatedWithTitle"
+    },
+    "InvalidEmailOrPassword": {
+      "id": 1142,
+      "name": "InvalidEmailOrPassword"
+    },
+    "FacebookAPIError": {
+      "id": 1143,
+      "name": "FacebookAPIError"
     }
   },
   "errorList": [
@@ -6297,6 +6323,8 @@
     "InvalidCharacterStatistics",
     "PhotonNotEnabledForTitle",
     "PhotonApplicationNotFound",
-    "PhotonApplicationNotAssociatedWithTitle"
+    "PhotonApplicationNotAssociatedWithTitle",
+    "InvalidEmailOrPassword",
+    "FacebookAPIError"
   ]
 }
