@@ -336,6 +336,13 @@
           "actualtype": "CatalogItemBundleInfo",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "CanBecomeCharacter",
+          "description": "if true, then this item instance can be used to grant a character to a user.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         }
       ]
     },
@@ -934,6 +941,53 @@
           "name": "CharacterId",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetCharacterInventoryRequest": {
+      "name": "GetCharacterInventoryRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "used to limit results to only those from a specific catalog version",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetCharacterInventoryResult": {
+      "name": "GetCharacterInventoryResult",
+      "properties": [
+        {
+          "name": "Inventory",
+          "description": "array of inventory items belonging to the character",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "array of virtual currency balance(s) belonging to the character",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         }
       ]
@@ -4813,6 +4867,23 @@
       ]
     },
     {
+      "name": "GetCharacterInventory",
+      "summary": "Retrieves the specified character's current inventory of virtual goods",
+      "requestDetails": "All items currently in the character inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
+      "subgroup": "Player Item Management",
+      "url": "/Client/GetCharacterInventory",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetCharacterInventoryRequest",
+      "result": "GetCharacterInventoryResult",
+      "seeAlso": [
+        "GetUserInventory"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetUserInventory",
       "summary": "Retrieves the user's current inventory of virtual goods",
       "resultDetails": "All items currently in the user inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included.",
@@ -5417,7 +5488,8 @@
       "errors": [
         "InvalidParams",
         "ItemNotOwned",
-        "InternalServerError"
+        "InternalServerError",
+        "InvalidItemProperties"
       ]
     },
     {
@@ -5551,6 +5623,7 @@
         "AddUserVirtualCurrency",
         "ConfirmPurchase",
         "ConsumeItem",
+        "GetCharacterInventory",
         "GetUserInventory",
         "PayForPurchase",
         "PurchaseItem",

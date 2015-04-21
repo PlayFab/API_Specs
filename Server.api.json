@@ -4,6 +4,38 @@
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
   "revision": "1.2.4",
   "datatypes": {
+    "AddCharacterVirtualCurrencyRequest": {
+      "name": "AddCharacterVirtualCurrencyRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose virtual currency balance is to be incremented",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which is to be incremented",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "amount to be added to the user balance of the specified virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "AddSharedGroupMembersRequest": {
       "name": "AddSharedGroupMembersRequest",
       "properties": [
@@ -235,6 +267,13 @@
           "actualtype": "CatalogItemBundleInfo",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "CanBecomeCharacter",
+          "description": "if true, then this item instance can be used to grant a character to a user.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         }
       ]
     },
@@ -574,6 +613,53 @@
           "jsontype": "Object",
           "actualtype": "UserDataRecord",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetCharacterInventoryRequest": {
+      "name": "GetCharacterInventoryRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "used to limit results to only those from a specific catalog version",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetCharacterInventoryResult": {
+      "name": "GetCharacterInventoryResult",
+      "properties": [
+        {
+          "name": "Inventory",
+          "description": "array of inventory items belonging to the character",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "array of virtual currency balance(s) belonging to the character",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         }
       ]
@@ -1039,7 +1125,6 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose inventory is being requested",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1504,6 +1589,25 @@
     "LogEventResult": {
       "name": "LogEventResult",
       "properties": []
+    },
+    "ModifyCharacterVirtualCurrencyResult": {
+      "name": "ModifyCharacterVirtualCurrencyResult",
+      "properties": [
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which was modified",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Balance",
+          "description": "balance of the virtual currency after modification",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
     },
     "ModifyItemUsesRequest": {
       "name": "ModifyItemUsesRequest",
@@ -1983,6 +2087,37 @@
           "actualtype": "UserDataPermission",
           "isenum": true,
           "optional": true
+        }
+      ]
+    },
+    "SubtractCharacterVirtualCurrencyRequest": {
+      "name": "SubtractCharacterVirtualCurrencyRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "name of the virtual currency which is to be decremented",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "amount to be subtracted from the user balance of the specified virtual currency",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
@@ -2910,6 +3045,23 @@
       ]
     },
     {
+      "name": "AddCharacterVirtualCurrency",
+      "summary": "Increments  the character's balance of the specified virtual currency by the stated amount",
+      "subgroup": "Player Item Management",
+      "url": "/Server/AddCharacterVirtualCurrency",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AddCharacterVirtualCurrencyRequest",
+      "result": "ModifyCharacterVirtualCurrencyResult",
+      "seeAlso": [
+        "AddUserVirtualCurrency",
+        "SubtractCharacterVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "AddUserVirtualCurrency",
       "summary": "Increments  the user's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
@@ -2920,6 +3072,23 @@
       "result": "ModifyUserVirtualCurrencyResult",
       "seeAlso": [
         "SubtractUserVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetCharacterInventory",
+      "summary": "Retrieves the specified character's current inventory of virtual goods",
+      "requestDetails": "All items currently in the character inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
+      "subgroup": "Player Item Management",
+      "url": "/Server/GetCharacterInventory",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetCharacterInventoryRequest",
+      "result": "GetCharacterInventoryResult",
+      "seeAlso": [
+        "GetUserInventory"
       ],
       "errors": [
         "InvalidParams"
@@ -3074,6 +3243,23 @@
       "method": "POST",
       "request": "ReportPlayerServerRequest",
       "result": "ReportPlayerServerResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SubtractCharacterVirtualCurrency",
+      "summary": "Decrements the character's balance of the specified virtual currency by the stated amount",
+      "subgroup": "Player Item Management",
+      "url": "/Server/SubtractCharacterVirtualCurrency",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SubtractCharacterVirtualCurrencyRequest",
+      "result": "ModifyCharacterVirtualCurrencyResult",
+      "seeAlso": [
+        "SubtractUserVirtualCurrency",
+        "AddCharacterVirtualCurrency"
+      ],
       "errors": [
         "InvalidParams"
       ]
@@ -3607,7 +3793,9 @@
     {
       "name": "Player Item Management",
       "methods": [
+        "AddCharacterVirtualCurrency",
         "AddUserVirtualCurrency",
+        "GetCharacterInventory",
         "GetUserInventory",
         "GrantItemsToCharacter",
         "GrantItemsToUser",
@@ -3617,6 +3805,7 @@
         "MoveItemToCharacterFromUser",
         "MoveItemToUserFromCharacter",
         "ReportPlayer",
+        "SubtractCharacterVirtualCurrency",
         "SubtractUserVirtualCurrency"
       ]
     },
