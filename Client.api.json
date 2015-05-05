@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.2.4",
+  "revision": "1.2.5",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -340,6 +340,13 @@
         {
           "name": "CanBecomeCharacter",
           "description": "if true, then this item instance can be used to grant a character to a user.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "IsStackable",
+          "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1870,6 +1877,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "a set of custom key-value pairs on the inventory item",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -1985,6 +2000,28 @@
     },
     "LinkGameCenterAccountResult": {
       "name": "LinkGameCenterAccountResult",
+      "properties": []
+    },
+    "LinkGoogleAccountRequest": {
+      "name": "LinkGoogleAccountRequest",
+      "properties": [
+        {
+          "name": "AccessToken",
+          "description": "Unique token from Google Play for the user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PublisherId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "LinkGoogleAccountResult": {
+      "name": "LinkGoogleAccountResult",
       "properties": []
     },
     "LinkIOSDeviceIDRequest": {
@@ -2401,20 +2438,6 @@
         {
           "name": "LobbyId",
           "description": "lobby identifier to match make against (used to select a specific server)",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "StatisticName",
-          "description": "player statistic to use in finding a match. May be null for no stat-based matching",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CharacterId",
-          "description": "character to use for stats based matching. Leave null to use account stats",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3289,20 +3312,6 @@
           "optional": false
         },
         {
-          "name": "StatisticName",
-          "description": "player statistic for others to use in finding this game. May be null for no stat-based matching",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CharacterId",
-          "description": "character to use for stats based matching. Leave null to use account stats",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "CustomCommandLineData",
           "description": "custom command line argument when starting game server process",
           "jsontype": "String",
@@ -3571,6 +3580,12 @@
           "name": "Upgraded"
         },
         {
+          "name": "StackPending"
+        },
+        {
+          "name": "Stacked"
+        },
+        {
           "name": "Other"
         },
         {
@@ -3600,6 +3615,14 @@
     },
     "UnlinkGameCenterAccountResult": {
       "name": "UnlinkGameCenterAccountResult",
+      "properties": []
+    },
+    "UnlinkGoogleAccountRequest": {
+      "name": "UnlinkGoogleAccountRequest",
+      "properties": []
+    },
+    "UnlinkGoogleAccountResult": {
+      "name": "UnlinkGoogleAccountResult",
       "properties": []
     },
     "UnlinkIOSDeviceIDRequest": {
@@ -4464,6 +4487,28 @@
       ]
     },
     {
+      "name": "LinkGoogleAccount",
+      "summary": "Links the currently signed-in user account to the Google account specified by the Google account access token",
+      "requestDetails": "Google sign-in is accomplished with the Google OAuth 2.0 Access Token. More information on the Token can be  found in the Google developer documentation (https://developers.google.com/accounts/docs/OAuth2) and in the Quick Start sample applications (https://developers.google.com/+/quickstart/).",
+      "subgroup": "Account Management",
+      "url": "/Client/LinkGoogleAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkGoogleAccountRequest",
+      "result": "LinkGoogleAccountResult",
+      "seeAlso": [
+        "UnlinkGoogleAccount",
+        "LoginWithGoogleAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidGoogleToken",
+        "AccountBanned",
+        "LinkedAccountAlreadyClaimed",
+        "AccountAlreadyLinked"
+      ]
+    },
+    {
       "name": "LinkIOSDeviceID",
       "summary": "Links the vendor-specific iOS device identifier to the user's PlayFab account",
       "subgroup": "Account Management",
@@ -4564,6 +4609,24 @@
       "result": "UnlinkGameCenterAccountResult",
       "seeAlso": [
         "LinkGameCenterAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked"
+      ]
+    },
+    {
+      "name": "UnlinkGoogleAccount",
+      "summary": "Unlinks the related Google account from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "url": "/Client/UnlinkGoogleAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkGoogleAccountRequest",
+      "result": "UnlinkGoogleAccountResult",
+      "seeAlso": [
+        "LinkGoogleAccount",
+        "LoginWithGoogleAccount"
       ],
       "errors": [
         "InvalidParams",
@@ -5212,7 +5275,7 @@
     {
       "name": "ValidateIOSReceipt",
       "summary": "Validates with the Apple store that the receipt for an iOS in-app purchase is valid and that it matches the purchased catalog item",
-      "requestDetails": "The CurrecncyCode and PurcahsePrice must match the price which was set up for the item in the Apple store. In addition, The ItemId of the inventory in the PlayFab Catalog must match the Product ID as it was set up in the Apple store. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
+      "requestDetails": "The CurrencyCode and PurchasePrice must match the price which was set up for the item in the Apple store. In addition, The ItemId of the inventory in the PlayFab Catalog must match the Product ID as it was set up in the Apple store. This enables the PlayFab service to securely validate that the purchase is for the correct item, in order to prevent uses from passing valid receipts as being for more expensive items (passing a receipt for a 99-cent purchase as being for a $19.99 purchase, for example).",
       "resultDetails": "Once verified, the catalog item matching the iTunes item name will be added to the user's inventory.",
       "subgroup": "IOS-Specific APIs",
       "url": "/Client/ValidateIOSReceipt",
@@ -5663,12 +5726,14 @@
         "LinkAndroidDeviceID",
         "LinkFacebookAccount",
         "LinkGameCenterAccount",
+        "LinkGoogleAccount",
         "LinkIOSDeviceID",
         "LinkSteamAccount",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
         "UnlinkFacebookAccount",
         "UnlinkGameCenterAccount",
+        "UnlinkGoogleAccount",
         "UnlinkIOSDeviceID",
         "UnlinkSteamAccount",
         "UpdateUserTitleDisplayName"
@@ -6355,6 +6420,10 @@
     "DataLengthExceeded": {
       "id": 1146,
       "name": "DataLengthExceeded"
+    },
+    "TooManyKeys": {
+      "id": 1147,
+      "name": "TooManyKeys"
     }
   },
   "errorList": [
@@ -6495,6 +6564,7 @@
     "FacebookAPIError",
     "InvalidContentType",
     "KeyLengthExceeded",
-    "DataLengthExceeded"
+    "DataLengthExceeded",
+    "TooManyKeys"
   ]
 }

@@ -2,7 +2,7 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
-  "revision": "1.2.4",
+  "revision": "1.2.5",
   "datatypes": {
     "AddCharacterVirtualCurrencyRequest": {
       "name": "AddCharacterVirtualCurrencyRequest",
@@ -271,6 +271,13 @@
         {
           "name": "CanBecomeCharacter",
           "description": "if true, then this item instance can be used to grant a character to a user.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "IsStackable",
+          "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1513,6 +1520,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "a set of custom key-value pairs on the inventory item",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2325,6 +2340,35 @@
         }
       ]
     },
+    "UpdateUserInventoryItemDataRequest": {
+      "name": "UpdateUserInventoryItemDataRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Data",
+          "description": "Data to be written to the item's custom data. Note that keys are trimmed of whitespace.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UpdateUserInventoryItemDataResult": {
+      "name": "UpdateUserInventoryItemDataResult",
+      "properties": []
+    },
     "UpdateUserStatisticsRequest": {
       "name": "UpdateUserStatisticsRequest",
       "properties": [
@@ -2924,6 +2968,26 @@
       ]
     },
     {
+      "name": "UpdateUserInventoryItemCustomData",
+      "summary": "Updates the key-value pair data tagged to the specified item, which is read-only from the client.",
+      "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance which belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while  keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "subgroup": "Player Data Management",
+      "url": "/Server/UpdateUserInventoryItemCustomData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateUserInventoryItemDataRequest",
+      "result": "UpdateUserInventoryItemDataResult",
+      "seeAlso": [
+        "GetUserInventory",
+        "UpdateUserInternalData"
+      ],
+      "errors": [
+        "InvalidParams",
+        "KeyLengthExceeded",
+        "DataLengthExceeded"
+      ]
+    },
+    {
       "name": "UpdateUserPublisherData",
       "summary": "Updates the publisher-specific custom data for the user which is readable and writable by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
@@ -3068,6 +3132,23 @@
       ]
     },
     {
+      "name": "GetTitleInternalData",
+      "summary": "Retrieves the key-value store of custom internal title settings",
+      "requestDetails": "This API is designed to return title specific values which are accessible only to the server. This can be used to tweak settings on game servers and Cloud Scripts without needed to update and re-deploy them.",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Server/GetTitleInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetTitleDataRequest",
+      "result": "GetTitleDataResult",
+      "seeAlso": [
+        "SetTitleInternalData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "SetTitleData",
       "summary": "Updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
@@ -3079,6 +3160,23 @@
       "result": "SetTitleDataResult",
       "seeAlso": [
         "GetTitleData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SetTitleInternalData",
+      "summary": "Updates the key-value store of custom title settings",
+      "requestDetails": "This API is designed to store title specific values which are accessible only to the server. This can be used to tweak settings on game servers and Cloud Scripts without needed to update and re-deploy them.. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Server/SetTitleInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetTitleDataRequest",
+      "result": "SetTitleDataResult",
+      "seeAlso": [
+        "GetTitleInternalData"
       ],
       "errors": [
         "InvalidParams"
@@ -3815,6 +3913,7 @@
         "GetUserStatistics",
         "UpdateUserData",
         "UpdateUserInternalData",
+        "UpdateUserInventoryItemCustomData",
         "UpdateUserPublisherData",
         "UpdateUserPublisherInternalData",
         "UpdateUserPublisherReadOnlyData",
@@ -3827,7 +3926,9 @@
       "methods": [
         "GetCatalogItems",
         "GetTitleData",
-        "SetTitleData"
+        "GetTitleInternalData",
+        "SetTitleData",
+        "SetTitleInternalData"
       ]
     },
     {
@@ -4464,6 +4565,10 @@
     "DataLengthExceeded": {
       "id": 1146,
       "name": "DataLengthExceeded"
+    },
+    "TooManyKeys": {
+      "id": 1147,
+      "name": "TooManyKeys"
     }
   },
   "errorList": [
@@ -4604,6 +4709,7 @@
     "FacebookAPIError",
     "InvalidContentType",
     "KeyLengthExceeded",
-    "DataLengthExceeded"
+    "DataLengthExceeded",
+    "TooManyKeys"
   ]
 }
