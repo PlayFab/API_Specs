@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.2.6",
+  "revision": "1.2.7",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -637,6 +637,20 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "GameMode",
+          "description": "game mode to look for (optional)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StatisticName",
+          "description": "statistic name to find statistic-based matches (optional)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -789,6 +803,13 @@
           "optional": true
         },
         {
+          "name": "StatisticName",
+          "description": "stastic used to match this game in player statistic matchmaking",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "MaxPlayers",
           "description": "maximum players this server can support",
           "jsontype": "Number",
@@ -856,7 +877,28 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "Unique PlayFab identifier of the user whose info is being requested. Optional, defaults to the authenticated user if not set.",
+          "description": "Unique PlayFab identifier of the user whose info is being requested. Optional, defaults to the authenticated user if no other lookup identifier set.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "PlayFab Username for the account to find (if no PlayFabId is specified).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Email",
+          "description": "User email address for the account to find (if no Username is specified).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleDisplayName",
+          "description": "Title-specific username for the account to find (if no Email is set).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1531,7 +1573,28 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "Unique PlayFab identifier of the user to load info about. Defaults to yourself if not set.",
+          "description": "Unique PlayFab identifier of the user whose info is being requested. Optional, defaults to the authenticated user if no other lookup identifier set.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "PlayFab Username for the account to find (if no PlayFabId is specified).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Email",
+          "description": "User email address for the account to find (if no Username is specified).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleDisplayName",
+          "description": "Title-specific username for the account to find (if no Email is set).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2327,6 +2390,20 @@
         {
           "name": "LobbyId",
           "description": "lobby identifier to match make against (used to select a specific server)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StatisticName",
+          "description": "player statistic to use in finding a match. May be null for no stat-based matching",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "description": "character to use for stats based matching. Leave null to use account stats",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3195,6 +3272,20 @@
           "optional": false
         },
         {
+          "name": "StatisticName",
+          "description": "player statistic for others to use in finding this game. May be null for no stat-based matching",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "description": "character to use for stats based matching. Leave null to use account stats",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "CustomCommandLineData",
           "description": "custom command line argument when starting game server process",
           "jsontype": "String",
@@ -3478,7 +3569,15 @@
     },
     "UnlinkAndroidDeviceIDRequest": {
       "name": "UnlinkAndroidDeviceIDRequest",
-      "properties": []
+      "properties": [
+        {
+          "name": "AndroidDeviceId",
+          "description": "Android device identifier for the user's device. If not specified, the most recently signed in Android Device ID will be used.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "UnlinkAndroidDeviceIDResult": {
       "name": "UnlinkAndroidDeviceIDResult",
@@ -3510,7 +3609,15 @@
     },
     "UnlinkIOSDeviceIDRequest": {
       "name": "UnlinkIOSDeviceIDRequest",
-      "properties": []
+      "properties": [
+        {
+          "name": "DeviceId",
+          "description": "Vendor-specific iOS identifier for the user's device. If not specified, the most recently signed in iOS Device ID will be used.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "UnlinkIOSDeviceIDResult": {
       "name": "UnlinkIOSDeviceIDResult",
@@ -4280,7 +4387,7 @@
     {
       "name": "GetAccountInfo",
       "summary": "Retrieves the user's PlayFab account details",
-      "resultDetails": "This API retrieves details regarding the user in the PlayFab service. Note that data returned may contain Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for the user, the recommendation is to not store this data locally.",
+      "resultDetails": "This API retrieves details regarding the user in the PlayFab service. Note that data returned may contain Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for the user, the recommendation is to not store this data locally. The user account returned will be based on the identifier provided in priority order: PlayFabId, Username, Email, then TitleDisplayName. If no identifier is specified, the currently signed in user's information will be returned.",
       "subgroup": "Account Management",
       "url": "/Client/GetAccountInfo",
       "auth": "SessionTicket",
@@ -6315,6 +6422,10 @@
     "TooManyKeys": {
       "id": 1147,
       "name": "TooManyKeys"
+    },
+    "FreeTierCannotHaveVirtualCurrency": {
+      "id": 1148,
+      "name": "FreeTierCannotHaveVirtualCurrency"
     }
   },
   "errorList": [
@@ -6456,6 +6567,7 @@
     "InvalidContentType",
     "KeyLengthExceeded",
     "DataLengthExceeded",
-    "TooManyKeys"
+    "TooManyKeys",
+    "FreeTierCannotHaveVirtualCurrency"
   ]
 }
