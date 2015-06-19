@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.2.7",
+  "revision": "1.3.20150618",
   "datatypes": {
     "AddFriendRequest": {
       "name": "AddFriendRequest",
@@ -770,6 +770,25 @@
         }
       ]
     },
+    "GameCenterPlayFabIdPair": {
+      "name": "GameCenterPlayFabIdPair",
+      "properties": [
+        {
+          "name": "GameCenterId",
+          "description": "Unique Game Center identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Game Center identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GameInfo": {
       "name": "GameInfo",
       "properties": [
@@ -968,6 +987,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "IfChangedFromDataVersion",
+          "description": "The version that currently exists according to the caller. The call will return the data for all of the keys if the version in the system is greater than this.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         }
       ]
     },
@@ -982,12 +1008,18 @@
         },
         {
           "name": "Data",
-          "description": "Character specific data for this title.",
+          "description": "User specific data for this title.",
           "collection": "map",
           "jsontype": "Object",
           "actualtype": "UserDataRecord",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "DataVersion",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -1177,6 +1209,20 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        },
+        {
+          "name": "IncludeSteamFriends",
+          "description": "Indicates whether Steam service friends should be included in the response. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IncludeFacebookFriends",
+          "description": "Indicates whether Facebook friends should be included in the response. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     },
@@ -1414,6 +1460,121 @@
         }
       ]
     },
+    "GetPlayFabIDsFromGameCenterIDsRequest": {
+      "name": "GetPlayFabIDsFromGameCenterIDsRequest",
+      "properties": [
+        {
+          "name": "GameCenterIDs",
+          "description": "Array of unique Game Center identifiers (the Player Identifier) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromGameCenterIDsResult": {
+      "name": "GetPlayFabIDsFromGameCenterIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Game Center identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GameCenterPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromGoogleIDsRequest": {
+      "name": "GetPlayFabIDsFromGoogleIDsRequest",
+      "properties": [
+        {
+          "name": "GoogleIDs",
+          "description": "Array of unique Google identifiers (Google+ user IDs) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromGoogleIDsResult": {
+      "name": "GetPlayFabIDsFromGoogleIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Google identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GooglePlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromPSNAccountIDsRequest": {
+      "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
+      "properties": [
+        {
+          "name": "PSNAccountIDs",
+          "description": "Array of unique PlayStation Network identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromPSNAccountIDsResult": {
+      "name": "GetPlayFabIDsFromPSNAccountIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PSNAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromSteamIDsRequest": {
+      "name": "GetPlayFabIDsFromSteamIDsRequest",
+      "properties": [
+        {
+          "name": "SteamIDs",
+          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromSteamIDsResult": {
+      "name": "GetPlayFabIDsFromSteamIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Steam identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "SteamPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "properties": [
@@ -1498,6 +1659,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version for the requested store items. If null, defaults to most recent catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -1707,6 +1875,13 @@
           "optional": true
         },
         {
+          "name": "DataVersion",
+          "description": "The version of the UserData that was returned.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
           "name": "ReadOnlyData",
           "description": "User specific read-only data.",
           "collection": "map",
@@ -1714,6 +1889,13 @@
           "actualtype": "UserDataRecord",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "ReadOnlyDataVersion",
+          "description": "The version of the Read-Only UserData that was returned.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -1734,6 +1916,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "IfChangedFromDataVersion",
+          "description": "The version that currently exists according to the caller. The call will return the data for all of the keys if the version in the system is greater than this.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         }
       ]
     },
@@ -1748,6 +1937,12 @@
           "actualtype": "UserDataRecord",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "DataVersion",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -1800,6 +1995,25 @@
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GooglePlayFabIdPair": {
+      "name": "GooglePlayFabIdPair",
+      "properties": [
+        {
+          "name": "GoogleId",
+          "description": "Unique Google identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Google identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -2683,6 +2897,25 @@
         }
       ]
     },
+    "PSNAccountPlayFabIdPair": {
+      "name": "PSNAccountPlayFabIdPair",
+      "properties": [
+        {
+          "name": "PSNAccountId",
+          "description": "Unique PlayStation Network identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation Network identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "PurchasedItem": {
       "name": "PurchasedItem",
       "properties": [
@@ -2834,6 +3067,20 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         }
       ]
     },
@@ -3407,6 +3654,25 @@
         }
       ]
     },
+    "SteamPlayFabIdPair": {
+      "name": "SteamPlayFabIdPair",
+      "properties": [
+        {
+          "name": "SteamId",
+          "description": "Unique Steam identifier for a user.",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "StoreItem": {
       "name": "StoreItem",
       "description": "A store entry that list a catalog item at a particular price",
@@ -3715,7 +3981,15 @@
     },
     "UpdateCharacterDataResult": {
       "name": "UpdateCharacterDataResult",
-      "properties": []
+      "properties": [
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
     },
     "UpdateSharedGroupDataRequest": {
       "name": "UpdateSharedGroupDataRequest",
@@ -3772,7 +4046,15 @@
     },
     "UpdateUserDataResult": {
       "name": "UpdateUserDataResult",
-      "properties": []
+      "properties": [
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
     },
     "UpdateUserStatisticsRequest": {
       "name": "UpdateUserStatisticsRequest",
@@ -4091,6 +4373,50 @@
         }
       ]
     },
+    "ValidateAmazonReceiptRequest": {
+      "name": "ValidateAmazonReceiptRequest",
+      "properties": [
+        {
+          "name": "ReceiptId",
+          "description": "ReceiptId returned by the Amazon App Store in-app purchase API",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "UserId",
+          "description": "AmazonId of the user making the purchase as returned by the Amazon App Store in-app purchase API",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version to use when granting receipt item. If null, defaults to primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CurrencyCode",
+          "description": "Currency used for the purchase.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PurchasePrice",
+          "description": "Amount of the stated currency paid for the object.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ValidateAmazonReceiptResult": {
+      "name": "ValidateAmazonReceiptResult",
+      "properties": []
+    },
     "ValidateGooglePlayPurchaseRequest": {
       "name": "ValidateGooglePlayPurchaseRequest",
       "properties": [
@@ -4408,6 +4734,48 @@
       "method": "POST",
       "request": "GetPlayFabIDsFromFacebookIDsRequest",
       "result": "GetPlayFabIDsFromFacebookIDsResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromGameCenterIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Game Center identifiers (referenced in the Game Center Programming Guide as the Player Identifier).",
+      "resultDetails": "For Game Center identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Client/GetPlayFabIDsFromGameCenterIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromGameCenterIDsRequest",
+      "result": "GetPlayFabIDsFromGameCenterIDsResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromGoogleIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Google identifiers. The Google identifiers are the IDs for the user accounts, available as \"id\" in the Google+ People API calls.",
+      "resultDetails": "For Google identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Client/GetPlayFabIDsFromGoogleIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromGoogleIDsRequest",
+      "result": "GetPlayFabIDsFromGoogleIDsResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromSteamIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Steam identifiers. The Steam identifiers  are the profile IDs for the user accounts, available as SteamId in the Steamworks Community API calls.",
+      "resultDetails": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Client/GetPlayFabIDsFromSteamIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromSteamIDsRequest",
+      "result": "GetPlayFabIDsFromSteamIDsResult",
       "errors": [
         "AccountNotFound"
       ]
@@ -4738,7 +5106,7 @@
     {
       "name": "GetUserData",
       "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
-      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. Every time the data is updated via any source, the version counter is incremented. If the Version parameter is provided, then this call will only return data if the current version on the system is greater than the value provided. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetUserData",
       "auth": "SessionTicket",
@@ -4794,7 +5162,7 @@
     {
       "name": "GetUserReadOnlyData",
       "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
-      "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
+      "requestDetails": "Data is stored as JSON key-value pairs. Every time the data is updated via any source, the version counter is incremented. If the Version parameter is provided, then this call will only return data if the current version on the system is greater than the value provided. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetUserReadOnlyData",
       "auth": "SessionTicket",
@@ -5503,19 +5871,6 @@
       ]
     },
     {
-      "name": "RefreshPSNAuthToken",
-      "summary": "Uses the supplied OAuth code to refresh the internally cached player PSN auth token",
-      "subgroup": "Sony-specific APIs",
-      "url": "/Client/RefreshPSNAuthToken",
-      "auth": "SessionTicket",
-      "method": "POST",
-      "request": "RefreshPSNAuthTokenRequest",
-      "result": "EmptyResult",
-      "errors": [
-        "InvalidParams"
-      ]
-    },
-    {
       "name": "GetCloudScriptUrl",
       "summary": "Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript.",
       "requestDetails": "Cloud Scripts in PlayFab have both Versions and Revisions. Each time a new script is  uploaded against a Version, this creates a new Revision. If Testing is set to true, the URL returned will be for the Cloud Script Revision which was most recently uploaded. If Testing is set to false, the URL returned will be for the  Cloud Script Revision which was most recently deployed to live.",
@@ -5720,6 +6075,9 @@
         "AddUsernamePassword",
         "GetAccountInfo",
         "GetPlayFabIDsFromFacebookIDs",
+        "GetPlayFabIDsFromGameCenterIDs",
+        "GetPlayFabIDsFromGoogleIDs",
+        "GetPlayFabIDsFromSteamIDs",
         "GetUserCombinedInfo",
         "LinkAndroidDeviceID",
         "LinkFacebookAccount",
@@ -5831,9 +6189,7 @@
     },
     {
       "name": "Sony-specific APIs",
-      "methods": [
-        "RefreshPSNAuthToken"
-      ]
+      "methods": []
     },
     {
       "name": "Server-Side Cloud Script",
@@ -5864,6 +6220,10 @@
         "GetCharacterReadOnlyData",
         "UpdateCharacterData"
       ]
+    },
+    {
+      "name": "Amazon-Specific APIs",
+      "methods": []
     }
   ],
   "errors": {
@@ -6426,6 +6786,34 @@
     "FreeTierCannotHaveVirtualCurrency": {
       "id": 1148,
       "name": "FreeTierCannotHaveVirtualCurrency"
+    },
+    "MissingAmazonSharedKey": {
+      "id": 1149,
+      "name": "MissingAmazonSharedKey"
+    },
+    "AmazonValidationError": {
+      "id": 1150,
+      "name": "AmazonValidationError"
+    },
+    "InvalidPSNIssuerId": {
+      "id": 1151,
+      "name": "InvalidPSNIssuerId"
+    },
+    "PSNInaccessible": {
+      "id": 1152,
+      "name": "PSNInaccessible"
+    },
+    "ExpiredAuthToken": {
+      "id": 1153,
+      "name": "ExpiredAuthToken"
+    },
+    "FailedToGetEntitlements": {
+      "id": 1154,
+      "name": "FailedToGetEntitlements"
+    },
+    "FailedToConsumeEntitlement": {
+      "id": 1155,
+      "name": "FailedToConsumeEntitlement"
     }
   },
   "errorList": [
@@ -6568,6 +6956,13 @@
     "KeyLengthExceeded",
     "DataLengthExceeded",
     "TooManyKeys",
-    "FreeTierCannotHaveVirtualCurrency"
+    "FreeTierCannotHaveVirtualCurrency",
+    "MissingAmazonSharedKey",
+    "AmazonValidationError",
+    "InvalidPSNIssuerId",
+    "PSNInaccessible",
+    "ExpiredAuthToken",
+    "FailedToGetEntitlements",
+    "FailedToConsumeEntitlement"
   ]
 }

@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.2.7",
+  "revision": "1.3.20150618",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -943,7 +943,15 @@
     },
     "GetRandomResultTablesRequest": {
       "name": "GetRandomResultTablesRequest",
-      "properties": []
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version to fetch tables from. Use default catalog version if null",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "GetRandomResultTablesResult": {
       "name": "GetRandomResultTablesResult",
@@ -953,7 +961,7 @@
           "description": "array of random result tables currently available",
           "collection": "map",
           "jsontype": "Object",
-          "actualtype": "RandomResultTable",
+          "actualtype": "RandomResultTableListing",
           "isclass": true,
           "optional": true
         }
@@ -1065,6 +1073,13 @@
       "name": "GetStoreItemsRequest",
       "properties": [
         {
+          "name": "CatalogVersion",
+          "description": "catalog version to store items from. Use default catalog version if null",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "StoreId",
           "description": "Unqiue identifier for the store which is being requested.",
           "jsontype": "String",
@@ -1130,6 +1145,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "IfChangedFromDataVersion",
+          "description": "The version that currently exists according to the caller. The call will return the data for all of the keys if the version in the system is greater than this.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         }
       ]
     },
@@ -1142,6 +1164,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         },
         {
           "name": "Data",
@@ -1682,6 +1711,18 @@
         }
       ]
     },
+    "RandomResultTableListing": {
+      "name": "RandomResultTableListing",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version this table is associated with",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "Region": {
       "name": "Region",
       "isenum": true,
@@ -2098,6 +2139,13 @@
       "name": "UpdateRandomResultTablesRequest",
       "properties": [
         {
+          "name": "CatalogVersion",
+          "description": "which catalog is being updated. If null, update the current default catalog version",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Tables",
           "description": "array of random result tables to make available (Note: specifying an existing TableId will result in overwriting that table, while any others will be added to the available set)",
           "collection": "array",
@@ -2115,6 +2163,13 @@
     "UpdateStoreItemsRequest": {
       "name": "UpdateStoreItemsRequest",
       "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "catalog version of the store to update. Use default catalog version if null",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
         {
           "name": "StoreId",
           "description": "unqiue identifier for the store which is to be updated",
@@ -2166,7 +2221,15 @@
     },
     "UpdateUserDataResult": {
       "name": "UpdateUserDataResult",
-      "properties": []
+      "properties": [
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
     },
     "UpdateUserInternalDataRequest": {
       "name": "UpdateUserInternalDataRequest",
@@ -4222,6 +4285,34 @@
     "FreeTierCannotHaveVirtualCurrency": {
       "id": 1148,
       "name": "FreeTierCannotHaveVirtualCurrency"
+    },
+    "MissingAmazonSharedKey": {
+      "id": 1149,
+      "name": "MissingAmazonSharedKey"
+    },
+    "AmazonValidationError": {
+      "id": 1150,
+      "name": "AmazonValidationError"
+    },
+    "InvalidPSNIssuerId": {
+      "id": 1151,
+      "name": "InvalidPSNIssuerId"
+    },
+    "PSNInaccessible": {
+      "id": 1152,
+      "name": "PSNInaccessible"
+    },
+    "ExpiredAuthToken": {
+      "id": 1153,
+      "name": "ExpiredAuthToken"
+    },
+    "FailedToGetEntitlements": {
+      "id": 1154,
+      "name": "FailedToGetEntitlements"
+    },
+    "FailedToConsumeEntitlement": {
+      "id": 1155,
+      "name": "FailedToConsumeEntitlement"
     }
   },
   "errorList": [
@@ -4364,6 +4455,13 @@
     "KeyLengthExceeded",
     "DataLengthExceeded",
     "TooManyKeys",
-    "FreeTierCannotHaveVirtualCurrency"
+    "FreeTierCannotHaveVirtualCurrency",
+    "MissingAmazonSharedKey",
+    "AmazonValidationError",
+    "InvalidPSNIssuerId",
+    "PSNInaccessible",
+    "ExpiredAuthToken",
+    "FailedToGetEntitlements",
+    "FailedToConsumeEntitlement"
   ]
 }
