@@ -4,6 +4,45 @@
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
   "revision": "1.3.20150618",
   "datatypes": {
+    "AcceptTradeRequest": {
+      "name": "AcceptTradeRequest",
+      "properties": [
+        {
+          "name": "OfferingPlayerId",
+          "description": "Player who opened trade.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TradeId",
+          "description": "Trade identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "AcceptedInventoryInstanceIds",
+          "description": "Items from the accepting player's inventory in exchange for the offered items in the trade. In the case of a gift, this will be null.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "AcceptTradeResponse": {
+      "name": "AcceptTradeResponse",
+      "properties": [
+        {
+          "name": "Trade",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "AddFriendRequest": {
       "name": "AddFriendRequest",
       "properties": [
@@ -64,7 +103,7 @@
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -155,6 +194,30 @@
     "AndroidDevicePushNotificationRegistrationResult": {
       "name": "AndroidDevicePushNotificationRegistrationResult",
       "properties": []
+    },
+    "CancelTradeRequest": {
+      "name": "CancelTradeRequest",
+      "properties": [
+        {
+          "name": "TradeId",
+          "description": "Trade identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CancelTradeResponse": {
+      "name": "CancelTradeResponse",
+      "properties": [
+        {
+          "name": "Trade",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "CartItem": {
       "name": "CartItem",
@@ -681,10 +744,6 @@
           "optional": false
         }
       ]
-    },
-    "EmptyResult": {
-      "name": "EmptyResult",
-      "properties": []
     },
     "FacebookPlayFabIdPair": {
       "name": "FacebookPlayFabIdPair",
@@ -1433,6 +1492,40 @@
         }
       ]
     },
+    "GetPlayerTradesRequest": {
+      "name": "GetPlayerTradesRequest",
+      "properties": [
+        {
+          "name": "StatusFilter",
+          "description": "Returns only trades with the given status. If null, returns all trades.",
+          "jsontype": "String",
+          "actualtype": "TradeStatus",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerTradesResponse": {
+      "name": "GetPlayerTradesResponse",
+      "properties": [
+        {
+          "name": "OpenedTrades",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "AcceptedTrades",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPlayFabIDsFromFacebookIDsRequest": {
       "name": "GetPlayFabIDsFromFacebookIDsRequest",
       "properties": [
@@ -1509,40 +1602,6 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "GooglePlayFabIdPair",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "GetPlayFabIDsFromPSNAccountIDsRequest": {
-      "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
-      "properties": [
-        {
-          "name": "PSNAccountIDs",
-          "description": "Array of unique PlayStation Network identifiers for which the title needs to get PlayFab identifiers.",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "IssuerId",
-          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        }
-      ]
-    },
-    "GetPlayFabIDsFromPSNAccountIDsResult": {
-      "name": "GetPlayFabIDsFromPSNAccountIDsResult",
-      "properties": [
-        {
-          "name": "Data",
-          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "PSNAccountPlayFabIdPair",
           "isclass": true,
           "optional": true
         }
@@ -1731,6 +1790,37 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "TitleNewsItem",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetTradeStatusRequest": {
+      "name": "GetTradeStatusRequest",
+      "properties": [
+        {
+          "name": "OfferingPlayerId",
+          "description": "Player who opened trade.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TradeId",
+          "description": "Trade identifier as returned by OpenTradeOffer.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetTradeStatusResponse": {
+      "name": "GetTradeStatusResponse",
+      "properties": [
+        {
+          "name": "Trade",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
           "isclass": true,
           "optional": true
         }
@@ -2734,6 +2824,47 @@
         }
       ]
     },
+    "OpenTradeRequest": {
+      "name": "OpenTradeRequest",
+      "properties": [
+        {
+          "name": "OfferedInventoryInstanceIds",
+          "description": "Player inventory items offered for trade. If not set, the trade is effectively a gift request",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RequestedCatalogItemIds",
+          "description": "Catalog items accepted for the trade. If not set, the trade is effectively a gift.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AllowedPlayerIds",
+          "description": "Players who are allowed to accept the trade. If null, the trade may be accepted by any player.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "OpenTradeResponse": {
+      "name": "OpenTradeResponse",
+      "properties": [
+        {
+          "name": "Trade",
+          "jsontype": "Object",
+          "actualtype": "TradeInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "PayForPurchaseRequest": {
       "name": "PayForPurchaseRequest",
       "properties": [
@@ -2897,25 +3028,6 @@
         }
       ]
     },
-    "PSNAccountPlayFabIdPair": {
-      "name": "PSNAccountPlayFabIdPair",
-      "properties": [
-        {
-          "name": "PSNAccountId",
-          "description": "Unique PlayStation Network identifier for a user.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "PlayFabId",
-          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation Network identifier.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
     "PurchasedItem": {
       "name": "PurchasedItem",
       "properties": [
@@ -3054,32 +3166,6 @@
           "jsontype": "Object",
           "actualtype": "ItemInstance",
           "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "RefreshPSNAuthTokenRequest": {
-      "name": "RefreshPSNAuthTokenRequest",
-      "properties": [
-        {
-          "name": "AuthCode",
-          "description": "Auth code returned by PSN OAuth system.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "RedirectUri",
-          "description": "Redirect URI supplied to PSN when requesting an auth code",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "IssuerId",
-          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
-          "jsontype": "Number",
-          "actualtype": "int32",
           "optional": true
         }
       ]
@@ -3268,7 +3354,7 @@
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -3776,6 +3862,122 @@
         }
       ]
     },
+    "TradeInfo": {
+      "name": "TradeInfo",
+      "properties": [
+        {
+          "name": "Status",
+          "jsontype": "String",
+          "actualtype": "TradeStatus",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "TradeId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OfferingPlayerId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OfferedInventoryInstanceIds",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OfferedCatalogItemIds",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RequestedCatalogItemIds",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AllowedPlayerIds",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AcceptedPlayerId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AcceptedInventoryInstanceIds",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OpenedAt",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "FilledAt",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "CancelledAt",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "InvalidatedAt",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        }
+      ]
+    },
+    "TradeStatus": {
+      "name": "TradeStatus",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Invalid"
+        },
+        {
+          "name": "Opening"
+        },
+        {
+          "name": "Open"
+        },
+        {
+          "name": "Accepting"
+        },
+        {
+          "name": "Accepted"
+        },
+        {
+          "name": "Filled"
+        },
+        {
+          "name": "Cancelled"
+        }
+      ]
+    },
     "TransactionStatus": {
       "name": "TransactionStatus",
       "isenum": true,
@@ -3815,6 +4017,9 @@
         },
         {
           "name": "TradePending"
+        },
+        {
+          "name": "Traded"
         },
         {
           "name": "Upgraded"
@@ -4500,8 +4705,7 @@
   "calls": [
     {
       "name": "GetPhotonAuthenticationToken",
-      "summary": "Gets a Photon custom authentication token that can be used to securely join the player into a Photon room.",
-      "requestDetails": "See https://playfab.com/using-photon-playfab for more details.",
+      "summary": "Gets a Photon custom authentication token that can be used to securely join the player into a Photon room. See https://playfab.com/using-photon-playfab for more details.",
       "subgroup": "Authentication",
       "url": "/Client/GetPhotonAuthenticationToken",
       "auth": "SessionTicket",
@@ -5052,7 +5256,7 @@
     {
       "name": "GetFriendLeaderboard",
       "summary": "Retrieves a list of ranked friends of the current player for the given statistic, starting from the indicated point in the leaderboard",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
       "subgroup": "Player Data Management",
       "url": "/Client/GetFriendLeaderboard",
       "auth": "SessionTicket",
@@ -5064,7 +5268,8 @@
         "GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "FacebookAPIError"
       ]
     },
     {
@@ -5445,7 +5650,7 @@
     },
     {
       "name": "RedeemCoupon",
-      "summary": "Adds the virtual goods associated with the coupon to the user's inventory",
+      "summary": "Adds the virtual goods associated with the coupon to the user's inventory. Coupons can be generated  via the Promotions->Coupons tab in the PlayFab Game Manager. See this post for more information on coupons:  https://playfab.com/blog/2015/06/18/using-stores-and-coupons-game-manager",
       "requestDetails": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This operation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already consumed code, or a code which has not yet been created in the service, will result in an error.",
       "subgroup": "Player Item Management",
       "url": "/Client/RedeemCoupon",
@@ -5605,7 +5810,7 @@
     {
       "name": "RegisterForIOSPushNotification",
       "summary": "Registers the iOS device to receive push notifications",
-      "requestDetails": "More infomration can be found on configuring your game for the Apple Push Notification service in the  Apple documentation, here:  https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
+      "requestDetails": "More information can be found on configuring your game for the Apple Push Notification service in the  Apple documentation, here:  https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
       "subgroup": "IOS-Specific APIs",
       "url": "/Client/RegisterForIOSPushNotification",
       "auth": "SessionTicket",
@@ -5909,7 +6114,7 @@
     },
     {
       "name": "GetContentDownloadUrl",
-      "summary": "Retrieves the pre-authorized URL for accessing a content file for the title. A subsequent HTTP GET to the returned URL downloads the content; or a HEAD query to the returned URL retrieves the metadata of the content. This API only generates a pre-signed URL to access the content. A success result does not guarantee the existence of the content.",
+      "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent  HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to  retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content -  if it has not been uploaded, the query to retrieve the data will fail. See this post for more information:  https://support.playfab.com/support/discussions/topics/1000059929",
       "subgroup": "Content",
       "url": "/Client/GetContentDownloadUrl",
       "auth": "SessionTicket",
@@ -6052,6 +6257,97 @@
         "KeyLengthExceeded",
         "DataLengthExceeded"
       ]
+    },
+    {
+      "name": "AcceptTrade",
+      "summary": "Accepts an open trade. If the call is successful, the offered and accepted items will be swapped between the two players' inventories.",
+      "subgroup": "Trading",
+      "url": "/Client/AcceptTrade",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "AcceptTradeRequest",
+      "result": "AcceptTradeResponse",
+      "errors": [
+        "InvalidParams",
+        "TradeStatusNotValidForAccepting",
+        "TradeAcceptedCatalogItemInvalid",
+        "TradeAllowedUsersInvalid",
+        "TradeInventoryItemDoesNotExist",
+        "TradeInventoryItemInvalidStatus",
+        "TradeInventoryItemIsConsumed",
+        "TradeInventoryItemIsStackable",
+        "TradeInventoryItemIsAssignedToCharacter",
+        "TradeInventoryItemIsBundle",
+        "TradeAcceptedItemsMismatch",
+        "TradeAcceptingUserNotAllowed",
+        "TradeCancelled",
+        "TradeAlreadyFilled",
+        "TradeInventoryItemExpired"
+      ]
+    },
+    {
+      "name": "CancelTrade",
+      "summary": "Cancels an open trade.",
+      "subgroup": "Trading",
+      "url": "/Client/CancelTrade",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "CancelTradeRequest",
+      "result": "CancelTradeResponse",
+      "errors": [
+        "InvalidParams",
+        "TradeCancelled",
+        "TradeAlreadyFilled"
+      ]
+    },
+    {
+      "name": "GetPlayerTrades",
+      "summary": "Gets all trades the player has either opened or accepted, optionally filtered by trade status.",
+      "subgroup": "Trading",
+      "url": "/Client/GetPlayerTrades",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayerTradesRequest",
+      "result": "GetPlayerTradesResponse",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetTradeStatus",
+      "summary": "Gets the current status of an existing trade.",
+      "subgroup": "Trading",
+      "url": "/Client/GetTradeStatus",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetTradeStatusRequest",
+      "result": "GetTradeStatusResponse",
+      "errors": [
+        "InvalidParams",
+        "TradeDoesNotExist"
+      ]
+    },
+    {
+      "name": "OpenTrade",
+      "summary": "Opens a new outstanding trade.",
+      "subgroup": "Trading",
+      "url": "/Client/OpenTrade",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "OpenTradeRequest",
+      "result": "OpenTradeResponse",
+      "errors": [
+        "InvalidParams",
+        "TradeAcceptedCatalogItemInvalid",
+        "TradeAllowedUsersInvalid",
+        "TradeInventoryItemDoesNotExist",
+        "TradeInventoryItemInvalidStatus",
+        "TradeInventoryItemIsConsumed",
+        "TradeInventoryItemIsStackable",
+        "TradeInventoryItemIsAssignedToCharacter",
+        "TradeInventoryItemIsBundle",
+        "TradeInventoryItemExpired"
+      ]
     }
   ],
   "subgroups": [
@@ -6188,10 +6484,6 @@
       ]
     },
     {
-      "name": "Sony-specific APIs",
-      "methods": []
-    },
-    {
       "name": "Server-Side Cloud Script",
       "methods": [
         "GetCloudScriptUrl",
@@ -6224,6 +6516,16 @@
     {
       "name": "Amazon-Specific APIs",
       "methods": []
+    },
+    {
+      "name": "Trading",
+      "methods": [
+        "AcceptTrade",
+        "CancelTrade",
+        "GetPlayerTrades",
+        "GetTradeStatus",
+        "OpenTrade"
+      ]
     }
   ],
   "errors": {
@@ -6814,6 +7116,86 @@
     "FailedToConsumeEntitlement": {
       "id": 1155,
       "name": "FailedToConsumeEntitlement"
+    },
+    "TradeAcceptingUserNotAllowed": {
+      "id": 1156,
+      "name": "TradeAcceptingUserNotAllowed"
+    },
+    "TradeInventoryItemIsAssignedToCharacter": {
+      "id": 1157,
+      "name": "TradeInventoryItemIsAssignedToCharacter"
+    },
+    "TradeInventoryItemIsBundle": {
+      "id": 1158,
+      "name": "TradeInventoryItemIsBundle"
+    },
+    "TradeStatusNotValidForCancelling": {
+      "id": 1159,
+      "name": "TradeStatusNotValidForCancelling"
+    },
+    "TradeStatusNotValidForAccepting": {
+      "id": 1160,
+      "name": "TradeStatusNotValidForAccepting"
+    },
+    "TradeDoesNotExist": {
+      "id": 1161,
+      "name": "TradeDoesNotExist"
+    },
+    "TradeCancelled": {
+      "id": 1162,
+      "name": "TradeCancelled"
+    },
+    "TradeAlreadyFilled": {
+      "id": 1163,
+      "name": "TradeAlreadyFilled"
+    },
+    "TradeWaitForStatusTimeout": {
+      "id": 1164,
+      "name": "TradeWaitForStatusTimeout"
+    },
+    "TradeInventoryItemExpired": {
+      "id": 1165,
+      "name": "TradeInventoryItemExpired"
+    },
+    "TradeMissingOfferedAndAcceptedItems": {
+      "id": 1166,
+      "name": "TradeMissingOfferedAndAcceptedItems"
+    },
+    "TradeAcceptedItemIsBundle": {
+      "id": 1167,
+      "name": "TradeAcceptedItemIsBundle"
+    },
+    "TradeAcceptedItemIsStackable": {
+      "id": 1168,
+      "name": "TradeAcceptedItemIsStackable"
+    },
+    "TradeInventoryItemInvalidStatus": {
+      "id": 1169,
+      "name": "TradeInventoryItemInvalidStatus"
+    },
+    "TradeAcceptedCatalogItemInvalid": {
+      "id": 1170,
+      "name": "TradeAcceptedCatalogItemInvalid"
+    },
+    "TradeAllowedUsersInvalid": {
+      "id": 1171,
+      "name": "TradeAllowedUsersInvalid"
+    },
+    "TradeInventoryItemDoesNotExist": {
+      "id": 1172,
+      "name": "TradeInventoryItemDoesNotExist"
+    },
+    "TradeInventoryItemIsConsumed": {
+      "id": 1173,
+      "name": "TradeInventoryItemIsConsumed"
+    },
+    "TradeInventoryItemIsStackable": {
+      "id": 1174,
+      "name": "TradeInventoryItemIsStackable"
+    },
+    "TradeAcceptedItemsMismatch": {
+      "id": 1175,
+      "name": "TradeAcceptedItemsMismatch"
     }
   },
   "errorList": [
@@ -6963,6 +7345,26 @@
     "PSNInaccessible",
     "ExpiredAuthToken",
     "FailedToGetEntitlements",
-    "FailedToConsumeEntitlement"
+    "FailedToConsumeEntitlement",
+    "TradeAcceptingUserNotAllowed",
+    "TradeInventoryItemIsAssignedToCharacter",
+    "TradeInventoryItemIsBundle",
+    "TradeStatusNotValidForCancelling",
+    "TradeStatusNotValidForAccepting",
+    "TradeDoesNotExist",
+    "TradeCancelled",
+    "TradeAlreadyFilled",
+    "TradeWaitForStatusTimeout",
+    "TradeInventoryItemExpired",
+    "TradeMissingOfferedAndAcceptedItems",
+    "TradeAcceptedItemIsBundle",
+    "TradeAcceptedItemIsStackable",
+    "TradeInventoryItemInvalidStatus",
+    "TradeAcceptedCatalogItemInvalid",
+    "TradeAllowedUsersInvalid",
+    "TradeInventoryItemDoesNotExist",
+    "TradeInventoryItemIsConsumed",
+    "TradeInventoryItemIsStackable",
+    "TradeAcceptedItemsMismatch"
   ]
 }
