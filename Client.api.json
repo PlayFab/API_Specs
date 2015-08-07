@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.3.20150707",
+  "revision": "1.3.20150807",
   "datatypes": {
     "AcceptTradeRequest": {
       "name": "AcceptTradeRequest",
@@ -100,6 +100,7 @@
         },
         {
           "name": "PlayFabIds",
+          "description": "an array of unique playfab-assigned numerical ID of the user on whom the operation will be performed.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -116,18 +117,21 @@
       "properties": [
         {
           "name": "Username",
+          "description": "PlayFab username for the account (3-20 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Email",
+          "description": "user email address attached to their account",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Password",
+          "description": "password for the PlayFab account (6-30 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -356,15 +360,6 @@
           "optional": true
         },
         {
-          "name": "GrantedIfPlayerHas",
-          "description": "array of ItemId values which are evaluated when any item is added to the player inventory - if all items in this array are present, the this item will also be added to the player inventory",
-          "collection": "array",
-          "isUnordered": true,
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "Consumable",
           "description": "defines the consumable properties (number of uses, timeout) for the item",
           "jsontype": "Object",
@@ -390,7 +385,7 @@
         },
         {
           "name": "CanBecomeCharacter",
-          "description": "if true, then this item instance can be used to grant a character to a user.",
+          "description": "if true, then an item instance of this type can be used to grant a character to a user.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -398,6 +393,13 @@
         {
           "name": "IsStackable",
           "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "IsTradable",
+          "description": "if true, then an item instance of this type can be traded between players using the trading APIs",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -588,7 +590,7 @@
           "description": "Array of items purchased.",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "PurchasedItem",
+          "actualtype": "ItemInstance",
           "isclass": true,
           "optional": true
         }
@@ -629,6 +631,40 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        }
+      ]
+    },
+    "ConsumePSNEntitlementsRequest": {
+      "name": "ConsumePSNEntitlementsRequest",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Which catalog to match granted entitlements against. If null, defaults to title default catalog",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServiceLabel",
+          "description": "Id of the PSN service label to consume entitlements from",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ConsumePSNEntitlementsResult": {
+      "name": "ConsumePSNEntitlementsResult",
+      "properties": [
+        {
+          "name": "ItemsGranted",
+          "description": "Array of items granted to the player as a result of consuming entitlements.",
+          "collection": "array",
+          "isUnordered": true,
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -744,6 +780,10 @@
           "optional": false
         }
       ]
+    },
+    "EmptyResult": {
+      "name": "EmptyResult",
+      "properties": []
     },
     "FacebookPlayFabIdPair": {
       "name": "FacebookPlayFabIdPair",
@@ -930,6 +970,7 @@
         },
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1035,6 +1076,7 @@
         },
         {
           "name": "CharacterId",
+          "description": "unique playfab-assigned numerical ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1061,6 +1103,7 @@
       "properties": [
         {
           "name": "CharacterId",
+          "description": "unique playfab-assigned numerical ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1076,6 +1119,7 @@
         },
         {
           "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -1087,12 +1131,14 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "unique playfab-assigned numerical ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "CharacterId",
+          "description": "unique playfab-assigned numerical ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1330,6 +1376,7 @@
         },
         {
           "name": "CharacterId",
+          "description": "unique playfab-assigned numerical ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1607,6 +1654,40 @@
         }
       ]
     },
+    "GetPlayFabIDsFromPSNAccountIDsRequest": {
+      "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
+      "properties": [
+        {
+          "name": "PSNAccountIDs",
+          "description": "Array of unique PlayStation Network identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromPSNAccountIDsResult": {
+      "name": "GetPlayFabIDsFromPSNAccountIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PSNAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "name": "GetPlayFabIDsFromSteamIDsRequest",
       "properties": [
@@ -1656,6 +1737,67 @@
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPurchaseRequest": {
+      "name": "GetPurchaseRequest",
+      "properties": [
+        {
+          "name": "OrderId",
+          "description": "Purchase order identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPurchaseResult": {
+      "name": "GetPurchaseResult",
+      "properties": [
+        {
+          "name": "OrderId",
+          "description": "Purchase order identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PaymentProvider",
+          "description": "Payment provider used for transaction (If not VC)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TransactionId",
+          "description": "Provider transaction ID (If not VC)",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TransactionStatus",
+          "description": "PlayFab transaction status",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PurchaseDate",
+          "description": "Date and time of the purchase.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "Items",
+          "description": "Array of items purchased.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -2030,6 +2172,7 @@
         },
         {
           "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -2207,6 +2350,13 @@
           "optional": true
         },
         {
+          "name": "UsesIncrementedBy",
+          "description": "The number of uses that were added or removed to this item in this call.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
           "name": "Annotation",
           "description": "Game specific comment associated with this instance when it was added to the user inventory.",
           "jsontype": "String",
@@ -2223,6 +2373,34 @@
         {
           "name": "BundleParent",
           "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DisplayName",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitCurrency",
+          "description": "Currency type for the cost of the catalog item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitPrice",
+          "description": "Cost of the catalog item in the given currency.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "BundleContents",
+          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2379,6 +2557,59 @@
       "name": "LinkIOSDeviceIDResult",
       "properties": []
     },
+    "LinkKongregateAccountRequest": {
+      "name": "LinkKongregateAccountRequest",
+      "properties": [
+        {
+          "name": "KongregateId",
+          "description": "Numeric user ID assigned by Kongregate",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": false
+        },
+        {
+          "name": "AuthTicket",
+          "description": "Valid session auth ticket issued by Kongregate",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "LinkKongregateAccountResult": {
+      "name": "LinkKongregateAccountResult",
+      "properties": []
+    },
+    "LinkPSNAccountRequest": {
+      "name": "LinkPSNAccountRequest",
+      "properties": [
+        {
+          "name": "AuthCode",
+          "description": "Authentication code provided by the PlayStation Network.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "LinkPSNAccountResult": {
+      "name": "LinkPSNAccountResult",
+      "properties": []
+    },
     "LinkSteamAccountRequest": {
       "name": "LinkSteamAccountRequest",
       "properties": [
@@ -2464,6 +2695,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2503,6 +2735,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2516,6 +2749,7 @@
         },
         {
           "name": "Password",
+          "description": "password for the PlayFab account (6-30 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2527,6 +2761,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2552,6 +2787,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2583,6 +2819,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2617,11 +2854,45 @@
         }
       ]
     },
+    "LoginWithKongregateRequest": {
+      "name": "LoginWithKongregateRequest",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "KongregateId",
+          "description": "Unique identifier from Kongregate for the user.",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": false
+        },
+        {
+          "name": "AuthTicket",
+          "description": "Token issued by Kongregate's client API for the user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this Kongregate account.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
     "LoginWithPlayFabRequest": {
       "name": "LoginWithPlayFabRequest",
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2635,9 +2906,50 @@
         },
         {
           "name": "Password",
+          "description": "password for the PlayFab account (6-30 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        }
+      ]
+    },
+    "LoginWithPSNRequest": {
+      "name": "LoginWithPSNRequest",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "AuthCode",
+          "description": "Auth code provided by the PSN OAuth provider.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this PSN account.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
         }
       ]
     },
@@ -2646,6 +2958,7 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3028,55 +3341,19 @@
         }
       ]
     },
-    "PurchasedItem": {
-      "name": "PurchasedItem",
+    "PSNAccountPlayFabIdPair": {
+      "name": "PSNAccountPlayFabIdPair",
       "properties": [
         {
-          "name": "ItemInstanceId",
-          "description": "Unique instance identifier for this catalog item.",
+          "name": "PSNAccountId",
+          "description": "Unique PlayStation Network identifier for a user.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
-          "name": "ItemId",
-          "description": "Unique identifier for the catalog item.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CatalogVersion",
-          "description": "Catalog version for the item purchased.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "DisplayName",
-          "description": "Display name for the catalog item.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "UnitCurrency",
-          "description": "Currency type for the cost of the catalog item.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "UnitPrice",
-          "description": "Cost of the catalog item in the given currency.",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
-        },
-        {
-          "name": "BundleContents",
-          "description": "Array of unique items that were awarded when this catalog item was purchased.",
-          "collection": "array",
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation Network identifier.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3131,7 +3408,7 @@
           "description": "Details for the items purchased.",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "PurchasedItem",
+          "actualtype": "ItemInstance",
           "isclass": true,
           "optional": true
         }
@@ -3166,6 +3443,32 @@
           "jsontype": "Object",
           "actualtype": "ItemInstance",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "RefreshPSNAuthTokenRequest": {
+      "name": "RefreshPSNAuthTokenRequest",
+      "properties": [
+        {
+          "name": "AuthCode",
+          "description": "Auth code returned by PSN OAuth system.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         }
       ]
@@ -3266,24 +3569,28 @@
       "properties": [
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Username",
+          "description": "PlayFab username for the account (3-20 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Email",
+          "description": "user email address attached to their account",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "Password",
+          "description": "password for the PlayFab account (6-30 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3351,6 +3658,7 @@
         },
         {
           "name": "PlayFabIds",
+          "description": "an array of unique playfab-assigned numerical ID of the user on whom the operation will be performed.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -3499,12 +3807,14 @@
       "properties": [
         {
           "name": "Email",
+          "description": "user email address attached to their account",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "TitleId",
+          "description": "unique numerical identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -4094,6 +4404,22 @@
       "name": "UnlinkIOSDeviceIDResult",
       "properties": []
     },
+    "UnlinkKongregateAccountRequest": {
+      "name": "UnlinkKongregateAccountRequest",
+      "properties": []
+    },
+    "UnlinkKongregateAccountResult": {
+      "name": "UnlinkKongregateAccountResult",
+      "properties": []
+    },
+    "UnlinkPSNAccountRequest": {
+      "name": "UnlinkPSNAccountRequest",
+      "properties": []
+    },
+    "UnlinkPSNAccountResult": {
+      "name": "UnlinkPSNAccountResult",
+      "properties": []
+    },
     "UnlinkSteamAccountRequest": {
       "name": "UnlinkSteamAccountRequest",
       "properties": []
@@ -4162,6 +4488,7 @@
       "properties": [
         {
           "name": "CharacterId",
+          "description": "unique playfab-assigned numerical ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -4823,6 +5150,29 @@
       ]
     },
     {
+      "name": "LoginWithKongregate",
+      "summary": "Signs the user in using a Kongregate player account.",
+      "requestDetails": "More details regarding Kongregate and their game authentication system can be found at  http://developers.kongregate.com/docs/virtual-goods/authentication. Developers must provide the Kongregate user ID and auth token that are generated using the Kongregate client library. PlayFab will combine these identifiers with the title's unique Kongregate app ID to log the player into the Kongregate system. If CreateAccount is set to true and there is not already a user matched to this Kongregate ID, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
+      "subgroup": "Authentication",
+      "url": "/Client/LoginWithKongregate",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithKongregateRequest",
+      "result": "LoginResult",
+      "seeAlso": [
+        "LinkKongregate",
+        "UnlinkKongregate"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "AccountNotFound",
+        "AccountBanned",
+        "InvalidKongregateToken",
+        "FeatureNotConfiguredForTitle"
+      ]
+    },
+    {
       "name": "LoginWithPlayFab",
       "summary": "Signs the user into the PlayFab account, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
       "requestDetails": "Username and password lengths are provided for information purposes. The server will validate that data passed in conforms to the field definition and report errors appropriately. It is recommended that developers not perform this validation locally, so that future updates to the username or password do not require client updates.",
@@ -5097,6 +5447,25 @@
       ]
     },
     {
+      "name": "LinkKongregate",
+      "summary": "Links the Kongregate identifier to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "url": "/Client/LinkKongregate",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkKongregateAccountRequest",
+      "result": "LinkKongregateAccountResult",
+      "seeAlso": [
+        "LoginWithKongregate"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountAlreadyLinked",
+        "InvalidKongregateToken",
+        "FeatureNotConfiguredForTitle"
+      ]
+    },
+    {
       "name": "LinkSteamAccount",
       "summary": "Links the Steam account associated with the provided Steam authentication ticket to the user's PlayFab account",
       "requestDetails": "Steam authentication is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties). Information on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here: https://partner.steamgames.com/documentation/webapi#publisherkey.",
@@ -5214,6 +5583,23 @@
       "seeAlso": [
         "LoginWithIOSDeviceID",
         "LinkIOSDeviceID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked"
+      ]
+    },
+    {
+      "name": "UnlinkKongregate",
+      "summary": "Unlinks the related Kongregate identifier from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "url": "/Client/UnlinkKongregate",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkKongregateAccountRequest",
+      "result": "UnlinkKongregateAccountResult",
+      "seeAlso": [
+        "LoginWithKongregate"
       ],
       "errors": [
         "InvalidParams",
@@ -5559,7 +5945,8 @@
         "PayForPurchase"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "FailedByPaymentProvider"
       ]
     },
     {
@@ -5592,6 +5979,23 @@
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetPurchase",
+      "summary": "Retrieves a completed purchase along with its current PlayFab status.",
+      "subgroup": "Player Item Management",
+      "url": "/Client/GetPurchase",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPurchaseRequest",
+      "result": "GetPurchaseResult",
+      "seeAlso": [
+        "StartPurchase"
+      ],
+      "errors": [
+        "InvalidParams",
+        "PurchaseDoesNotExist"
       ]
     },
     {
@@ -5629,7 +6033,8 @@
       "errors": [
         "InvalidParams",
         "InvalidPaymentProvider",
-        "FailedByPaymentProvider"
+        "FailedByPaymentProvider",
+        "PurchaseInitializationFailure"
       ]
     },
     {
@@ -5645,7 +6050,11 @@
         "StartPurchase"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "ItemNotFound",
+        "WrongVirtualCurrency",
+        "WrongPrice",
+        "InsufficientFunds"
       ]
     },
     {
@@ -5734,7 +6143,7 @@
     },
     {
       "name": "AddFriend",
-      "summary": "Adds the PlayFab user, based upon a match against a supplied unique identifier, to the friend list of the local user",
+      "summary": "Adds the PlayFab user, based upon a match against a supplied unique identifier, to the friend list of the local user. At least one of FriendPlayFabId,FriendUsername,FriendEmail, or FriendTitleDisplayName should be initialized.",
       "subgroup": "Friend List Management",
       "url": "/Client/AddFriend",
       "auth": "SessionTicket",
@@ -5747,7 +6156,8 @@
       ],
       "errors": [
         "InvalidParams",
-        "AccountNotFound"
+        "AccountNotFound",
+        "UsersAlreadyFriends"
       ]
     },
     {
@@ -5840,7 +6250,9 @@
         "ReceiptContainsMultipleInAppItems",
         "InvalidBundleID",
         "InvalidVirtualCurrency",
-        "DownstreamServiceUnavailable"
+        "DownstreamServiceUnavailable",
+        "NoMatchingCatalogItemForReceipt",
+        "InvalidCurrencyCode"
       ]
     },
     {
@@ -5862,7 +6274,9 @@
         "ReceiptContainsMultipleInAppItems",
         "InvalidBundleID",
         "InvalidVirtualCurrency",
-        "DownstreamServiceUnavailable"
+        "DownstreamServiceUnavailable",
+        "NoMatchingCatalogItemForReceipt",
+        "InvalidCurrencyCode"
       ]
     },
     {
@@ -5967,7 +6381,8 @@
         "InvalidParams",
         "InvalidReceipt",
         "ReceiptAlreadyUsed",
-        "ReceiptCancelled"
+        "ReceiptCancelled",
+        "NoMatchingCatalogItemForReceipt"
       ]
     },
     {
@@ -6360,6 +6775,7 @@
         "LoginWithFacebook",
         "LoginWithGoogleAccount",
         "LoginWithIOSDeviceID",
+        "LoginWithKongregate",
         "LoginWithPlayFab",
         "LoginWithSteam",
         "RegisterPlayFabUser"
@@ -6380,6 +6796,7 @@
         "LinkGameCenterAccount",
         "LinkGoogleAccount",
         "LinkIOSDeviceID",
+        "LinkKongregate",
         "LinkSteamAccount",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
@@ -6387,6 +6804,7 @@
         "UnlinkGameCenterAccount",
         "UnlinkGoogleAccount",
         "UnlinkIOSDeviceID",
+        "UnlinkKongregate",
         "UnlinkSteamAccount",
         "UpdateUserTitleDisplayName"
       ]
@@ -6423,6 +6841,7 @@
         "ConfirmPurchase",
         "ConsumeItem",
         "GetCharacterInventory",
+        "GetPurchase",
         "GetUserInventory",
         "PayForPurchase",
         "PurchaseItem",
@@ -6482,6 +6901,10 @@
         "RemoveSharedGroupMembers",
         "UpdateSharedGroupData"
       ]
+    },
+    {
+      "name": "Sony-specific APIs",
+      "methods": []
     },
     {
       "name": "Server-Side Cloud Script",
@@ -7196,6 +7619,38 @@
     "TradeAcceptedItemsMismatch": {
       "id": 1175,
       "name": "TradeAcceptedItemsMismatch"
+    },
+    "InvalidKongregateToken": {
+      "id": 1176,
+      "name": "InvalidKongregateToken"
+    },
+    "FeatureNotConfiguredForTitle": {
+      "id": 1177,
+      "name": "FeatureNotConfiguredForTitle"
+    },
+    "NoMatchingCatalogItemForReceipt": {
+      "id": 1178,
+      "name": "NoMatchingCatalogItemForReceipt"
+    },
+    "InvalidCurrencyCode": {
+      "id": 1179,
+      "name": "InvalidCurrencyCode"
+    },
+    "NoRealMoneyPriceForCatalogItem": {
+      "id": 1180,
+      "name": "NoRealMoneyPriceForCatalogItem"
+    },
+    "TradeInventoryItemIsNotTradable": {
+      "id": 1181,
+      "name": "TradeInventoryItemIsNotTradable"
+    },
+    "TradeAcceptedCatalogItemIsNotTradable": {
+      "id": 1182,
+      "name": "TradeAcceptedCatalogItemIsNotTradable"
+    },
+    "UsersAlreadyFriends": {
+      "id": 1183,
+      "name": "UsersAlreadyFriends"
     }
   },
   "errorList": [
@@ -7365,6 +7820,14 @@
     "TradeInventoryItemDoesNotExist",
     "TradeInventoryItemIsConsumed",
     "TradeInventoryItemIsStackable",
-    "TradeAcceptedItemsMismatch"
+    "TradeAcceptedItemsMismatch",
+    "InvalidKongregateToken",
+    "FeatureNotConfiguredForTitle",
+    "NoMatchingCatalogItemForReceipt",
+    "InvalidCurrencyCode",
+    "NoRealMoneyPriceForCatalogItem",
+    "TradeInventoryItemIsNotTradable",
+    "TradeAcceptedCatalogItemIsNotTradable",
+    "UsersAlreadyFriends"
   ]
 }
