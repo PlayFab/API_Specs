@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.3.20150707",
+  "revision": "1.4.20150810",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -147,6 +147,7 @@
         },
         {
           "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -278,15 +279,6 @@
           "optional": true
         },
         {
-          "name": "GrantedIfPlayerHas",
-          "description": "array of ItemId values which are evaluated when any item is added to the player inventory - if all items in this array are present, the this item will also be added to the player inventory",
-          "collection": "array",
-          "isUnordered": true,
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "Consumable",
           "description": "defines the consumable properties (number of uses, timeout) for the item",
           "jsontype": "Object",
@@ -312,7 +304,7 @@
         },
         {
           "name": "CanBecomeCharacter",
-          "description": "if true, then this item instance can be used to grant a character to a user.",
+          "description": "if true, then an item instance of this type can be used to grant a character to a user.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -320,6 +312,13 @@
         {
           "name": "IsStackable",
           "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "IsTradable",
+          "description": "if true, then an item instance of this type can be traded between players using the trading APIs",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1024,6 +1023,7 @@
         },
         {
           "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1134,6 +1134,7 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1188,16 +1189,10 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
-        },
-        {
-          "name": "CatalogVersion",
-          "description": "Used to limit results to only those from a specific catalog version.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
         }
       ]
     },
@@ -1233,6 +1228,140 @@
         }
       ]
     },
+    "GrantedItemInstance": {
+      "name": "GrantedItemInstance",
+      "description": "Result of granting an item to a user",
+      "sortKey": "ItemInstanceId",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Result",
+          "description": "Result of this operation.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ItemId",
+          "description": "Unique identifier for the inventory item, as defined in the catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemInstanceId",
+          "description": "Unique item identifier for this specific instance of the item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemClass",
+          "description": "Class name for the inventory item, as defined in the catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PurchaseDate",
+          "description": "Timestamp for when this instance was purchased.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Expiration",
+          "description": "Timestamp for when this instance will expire.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "RemainingUses",
+          "description": "Total number of remaining uses, if this is a consumable item.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "UsesIncrementedBy",
+          "description": "The number of uses that were added or removed to this item in this call.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Annotation",
+          "description": "Game specific comment associated with this instance when it was added to the user inventory.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version for the inventory item, when this instance was created.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BundleParent",
+          "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DisplayName",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitCurrency",
+          "description": "Currency type for the cost of the catalog item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitPrice",
+          "description": "Cost of the catalog item in the given currency.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "BundleContents",
+          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "A set of custom key-value pairs on the inventory item.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GrantItemsToUsersRequest": {
       "name": "GrantItemsToUsersRequest",
       "properties": [
@@ -1263,7 +1392,7 @@
           "description": "Array of items granted to users.",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "ItemGrantResult",
+          "actualtype": "GrantedItemInstance",
           "isclass": true,
           "optional": true
         }
@@ -1274,6 +1403,7 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1294,53 +1424,7 @@
         },
         {
           "name": "CharacterId",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "ItemGrantResult": {
-      "name": "ItemGrantResult",
-      "description": "Result of granting an item to a user",
-      "sortKey": "ItemInstanceId",
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ItemId",
-          "description": "Unique identifier of the catalog item to be granted to the user.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ItemInstanceId",
-          "description": "Unique instance Id of the granted item.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Annotation",
-          "description": "String detailing any additional information concerning this operation.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Result",
-          "description": "Result of this operation.",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1395,6 +1479,13 @@
           "optional": true
         },
         {
+          "name": "UsesIncrementedBy",
+          "description": "The number of uses that were added or removed to this item in this call.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
           "name": "Annotation",
           "description": "Game specific comment associated with this instance when it was added to the user inventory.",
           "jsontype": "String",
@@ -1411,6 +1502,34 @@
         {
           "name": "BundleParent",
           "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DisplayName",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitCurrency",
+          "description": "Currency type for the cost of the catalog item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnitPrice",
+          "description": "Cost of the catalog item in the given currency.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "BundleContents",
+          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1468,25 +1587,28 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Email",
+          "description": "User email address attached to their account",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Username",
+          "description": "PlayFab username for the account (3-20 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "TitleDisplayName",
-          "description": "title-specific username to match against existing user accounts",
+          "description": "Title specific username to match against existing user accounts",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1498,7 +1620,7 @@
       "properties": [
         {
           "name": "UserInfo",
-          "description": "user info for the user matching the request",
+          "description": "User info for the user matching the request",
           "jsontype": "Object",
           "actualtype": "UserAccountInfo",
           "isclass": true,
@@ -1643,6 +1765,7 @@
         },
         {
           "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1720,6 +1843,22 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "TableId",
+          "description": "Unique name for this drop table",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Nodes",
+          "description": "Child nodes that indicate what kind of drop table item this actually is.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ResultTableNode",
+          "isclass": true,
+          "optional": false
         }
       ]
     },
@@ -1766,6 +1905,29 @@
       "name": "RemoveServerBuildResult",
       "properties": []
     },
+    "ResetCharacterStatisticsRequest": {
+      "name": "ResetCharacterStatisticsRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ResetCharacterStatisticsResult": {
+      "name": "ResetCharacterStatisticsResult",
+      "properties": []
+    },
     "ResetUsersRequest": {
       "name": "ResetUsersRequest",
       "properties": [
@@ -1785,6 +1947,7 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1862,6 +2025,7 @@
       "properties": [
         {
           "name": "Email",
+          "description": "User email address attached to their account",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2197,6 +2361,7 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2236,6 +2401,7 @@
       "properties": [
         {
           "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2359,6 +2525,7 @@
         },
         {
           "name": "Password",
+          "description": "Password for the PlayFab account (6-30 characters)",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3621,6 +3788,21 @@
         "InvalidParams",
         "ContentQuotaExceeded"
       ]
+    },
+    {
+      "name": "ResetCharacterStatistics",
+      "summary": "Completely removes all statistics for the specified character, for the current game",
+      "requestDetails": "Note that this action cannot be un-done. All statistics for this  character will be deleted, removing the user from all leaderboards for the game.",
+      "subgroup": "Characters",
+      "url": "/Admin/ResetCharacterStatistics",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ResetCharacterStatisticsRequest",
+      "result": "ResetCharacterStatisticsResult",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
     }
   ],
   "subgroups": [
@@ -3722,6 +3904,12 @@
         "DeleteContent",
         "GetContentList",
         "GetContentUploadUrl"
+      ]
+    },
+    {
+      "name": "Characters",
+      "methods": [
+        "ResetCharacterStatistics"
       ]
     }
   ],
@@ -4393,6 +4581,38 @@
     "TradeAcceptedItemsMismatch": {
       "id": 1175,
       "name": "TradeAcceptedItemsMismatch"
+    },
+    "InvalidKongregateToken": {
+      "id": 1176,
+      "name": "InvalidKongregateToken"
+    },
+    "FeatureNotConfiguredForTitle": {
+      "id": 1177,
+      "name": "FeatureNotConfiguredForTitle"
+    },
+    "NoMatchingCatalogItemForReceipt": {
+      "id": 1178,
+      "name": "NoMatchingCatalogItemForReceipt"
+    },
+    "InvalidCurrencyCode": {
+      "id": 1179,
+      "name": "InvalidCurrencyCode"
+    },
+    "NoRealMoneyPriceForCatalogItem": {
+      "id": 1180,
+      "name": "NoRealMoneyPriceForCatalogItem"
+    },
+    "TradeInventoryItemIsNotTradable": {
+      "id": 1181,
+      "name": "TradeInventoryItemIsNotTradable"
+    },
+    "TradeAcceptedCatalogItemIsNotTradable": {
+      "id": 1182,
+      "name": "TradeAcceptedCatalogItemIsNotTradable"
+    },
+    "UsersAlreadyFriends": {
+      "id": 1183,
+      "name": "UsersAlreadyFriends"
     }
   },
   "errorList": [
@@ -4562,6 +4782,14 @@
     "TradeInventoryItemDoesNotExist",
     "TradeInventoryItemIsConsumed",
     "TradeInventoryItemIsStackable",
-    "TradeAcceptedItemsMismatch"
+    "TradeAcceptedItemsMismatch",
+    "InvalidKongregateToken",
+    "FeatureNotConfiguredForTitle",
+    "NoMatchingCatalogItemForReceipt",
+    "InvalidCurrencyCode",
+    "NoRealMoneyPriceForCatalogItem",
+    "TradeInventoryItemIsNotTradable",
+    "TradeAcceptedCatalogItemIsNotTradable",
+    "UsersAlreadyFriends"
   ]
 }
