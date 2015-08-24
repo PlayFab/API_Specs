@@ -3052,6 +3052,21 @@
       "name": "LinkIOSDeviceIDResult",
       "properties": []
     },
+    "LinkCustomIDRequest": {
+      "name": "LinkCustomIDRequest",
+      "properties": [
+        {
+          "name": "CustomId",
+          "description": "identifier for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }      ]
+    },
+    "LinkCustomIDResult": {
+      "name": "LinkCustomIDResult",
+      "properties": []
+    },      
     "LinkKongregateAccountRequest": {
       "name": "LinkKongregateAccountRequest",
       "properties": [
@@ -3375,6 +3390,32 @@
         }
       ]
     },
+    "LoginWithCustomIDRequest": {
+      "name": "LoginWithCustomIDRequest",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CustomId",
+          "description": "identifier for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this iOS device.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },      
     "LoginWithKongregateRequest": {
       "name": "LoginWithKongregateRequest",
       "properties": [
@@ -4965,6 +5006,22 @@
       "name": "UnlinkIOSDeviceIDResult",
       "properties": []
     },
+    "UnlinkCustomIDRequest": {
+      "name": "UnlinkCustomIDRequest",
+      "properties": [
+        {
+          "name": "CustomId",
+          "description": "identifier for the user's device. If not specified, the most recently signed in Device ID will be used.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UnlinkCustomIDResult": {
+      "name": "UnlinkCustomIDResult",
+      "properties": []
+    },
     "UnlinkKongregateAccountRequest": {
       "name": "UnlinkKongregateAccountRequest",
       "properties": []
@@ -5749,6 +5806,28 @@
       ]
     },
     {
+      "name": "LoginWithCustomID",
+      "summary": "Signs the user in using a custom device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "On any device (primarily desktops), specify a unique identifyer specific to the device that can used as the DeviceId. If this is the first time a user has signed in with the device and CreateAccount is set to true, a new PlayFab account will be created and linked to with the device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "url": "/Client/LoginWithCustomID",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithCustomIDRequest",
+      "result": "LoginResult",
+      "seeAlso": [
+        "LinkCustomID",
+        "UnlinkCustomID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "AccountNotFound",
+        "AccountBanned",
+        "InvalidPublisherId"
+      ]
+    },      
+    {
       "name": "LoginWithKongregate",
       "summary": "Signs the user in using a Kongregate player account.",
       "requestDetails": "More details regarding Kongregate and their game authentication system can be found at  http://developers.kongregate.com/docs/virtual-goods/authentication. Developers must provide the Kongregate user ID and auth token that are generated using the Kongregate client library. PlayFab will combine these identifiers with the title's unique Kongregate app ID to log the player into the Kongregate system. If CreateAccount is set to true and there is not already a user matched to this Kongregate ID, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
@@ -6064,6 +6143,25 @@
       ]
     },
     {
+      "name": "LinkCustomID",
+      "summary": "Links the custom device identifier to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "url": "/Client/LinkCustomID",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkCustomIDRequest",
+      "result": "LinkCustomIDResult",
+      "seeAlso": [
+        "LoginWithCustomID",
+        "UnlinkCustomID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "LinkedDeviceAlreadyClaimed",
+        "DeviceAlreadyLinked"
+      ]
+    },      
+    {
       "name": "LinkKongregate",
       "summary": "Links the Kongregate identifier to the user's PlayFab account",
       "subgroup": "Account Management",
@@ -6224,6 +6322,24 @@
         "AccountNotLinked"
       ]
     },
+    {
+      "name": "UnlinkCustomID",
+      "summary": "Unlinks the related device identifier from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "url": "/Client/UnlinkCustomID",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkCustomIDRequest",
+      "result": "UnlinkCustomIDResult",
+      "seeAlso": [
+        "LoginWithIOSDeviceID",
+        "LinkIOSDeviceID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked"
+      ]
+    },      
     {
       "name": "UnlinkKongregate",
       "summary": "Unlinks the related Kongregate identifier from the user's PlayFab account",
@@ -7411,6 +7527,7 @@
         "LoginWithFacebook",
         "LoginWithGoogleAccount",
         "LoginWithIOSDeviceID",
+        "LoginWithCustomID",
         "LoginWithKongregate",
         "LoginWithPlayFab",
         "LoginWithSteam",
@@ -7433,6 +7550,7 @@
         "LinkGameCenterAccount",
         "LinkGoogleAccount",
         "LinkIOSDeviceID",
+        "LinkCustomID",
         "LinkKongregate",
         "LinkSteamAccount",
         "SendAccountRecoveryEmail",
@@ -7442,6 +7560,7 @@
         "UnlinkGameCenterAccount",
         "UnlinkGoogleAccount",
         "UnlinkIOSDeviceID",
+        "UnlinkCustomID",
         "UnlinkKongregate",
         "UnlinkSteamAccount",
         "UpdateUserTitleDisplayName"
