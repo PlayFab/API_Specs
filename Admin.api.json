@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.4.20150810",
+  "revision": "1.4.20150824",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -311,7 +311,7 @@
         },
         {
           "name": "IsStackable",
-          "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead",
+          "description": "if true, then only one item instance of this type will exist and its remaininguses will be incremented instead. RemainingUses will cap out at Int32.Max (2,147,483,647). All subsequent increases will be discarded",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -1224,7 +1224,7 @@
         },
         {
           "name": "ContentType",
-          "description": "A standard MIME type describing the format of the contents. The same MIME type has to be set in the header when uploading the content.",
+          "description": "A standard MIME type describing the format of the contents. The same MIME type has to be set in the header when uploading the content. If not specified, the MIME type is 'binary/octet-stream' by default.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1597,11 +1597,11 @@
       "properties": [
         {
           "name": "Keys",
-          "description": " array of keys to get back data from the TitleData data blob, set by the admin tools",
+          "description": "Specific keys to search for in the title data (leave null to get all keys)",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -1688,6 +1688,13 @@
     "GetUserInventoryResult": {
       "name": "GetUserInventoryResult",
       "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose inventory is being returned.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
         {
           "name": "Inventory",
           "description": "Array of inventory items belonging to the user.",
