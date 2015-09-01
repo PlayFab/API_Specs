@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.4.20150824",
+  "revision": "1.5.20150901",
   "datatypes": {
     "AcceptTradeRequest": {
       "name": "AcceptTradeRequest",
@@ -556,6 +556,29 @@
         }
       ]
     },
+    "CharacterResult": {
+      "name": "CharacterResult",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterName",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterType",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "ConfirmPurchaseRequest": {
       "name": "ConfirmPurchaseRequest",
       "properties": [
@@ -612,6 +635,13 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -1599,7 +1629,7 @@
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         },
         {
           "name": "CharacterId",
@@ -3121,6 +3151,31 @@
       "name": "LinkSteamAccountResult",
       "properties": []
     },
+    "ListUsersCharactersRequest": {
+      "name": "ListUsersCharactersRequest",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ListUsersCharactersResult": {
+      "name": "ListUsersCharactersResult",
+      "properties": [
+        {
+          "name": "Characters",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CharacterResult",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "LogEventRequest": {
       "name": "LogEventRequest",
       "properties": [
@@ -3922,6 +3977,13 @@
         {
           "name": "StoreId",
           "description": "Store to buy this item through. If not set, prices default to those in the catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -5002,6 +5064,13 @@
         {
           "name": "CatalogVersion",
           "description": "Catalog version of the container.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -6689,7 +6758,8 @@
         "ItemNotFound",
         "WrongVirtualCurrency",
         "WrongPrice",
-        "InsufficientFunds"
+        "InsufficientFunds",
+        "CharacterNotFound"
       ]
     },
     {
@@ -6760,7 +6830,7 @@
     {
       "name": "UnlockContainerItem",
       "summary": "Unlocks a container item in the user's inventory and consumes a key item of the type indicated by the container item",
-      "requestDetails": "Container items and their associated unlocking items (\"crates\" and \"keys\") are paired inventory objects which provide developers with a secure way to have an object which requires another object to activate, without providing the client with the opportunity to use replay attacks, packet blocking, or similar techniques to gain the objects in the container illegitimately.",
+      "requestDetails": "Container items and their associated unlocking items (\"crates\" and \"keys\") are paired inventory objects which provide developers with a secure way to have an object which requires another object to activate, without providing the client with the opportunity to use replay attacks, packet blocking, or similar techniques to gain the objects in the container illegitimately. If an optional character ID is provided, this call will look into just that character's inventory for the crate + key. Items will then be granted to that character upon unlock.",
       "resultDetails": "As a result of this operation, the inventory objects defined as belonging to the container will be added to the user's inventory, including random drop table resolution and recursive addition of bundled items.",
       "subgroup": "Player Item Management",
       "url": "/Client/UnlockContainerItem",
@@ -7173,6 +7243,23 @@
       "result": "GetContentDownloadUrlResult"
     },
     {
+      "name": "GetAllUsersCharacters",
+      "summary": "Lists all of the characters that belong to a specific user.",
+      "requestDetails": "Returns a list of every character that currently belongs to a user.",
+      "subgroup": "Characters",
+      "url": "/Client/GetAllUsersCharacters",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ListUsersCharactersRequest",
+      "result": "ListUsersCharactersResult",
+      "seeAlso": [
+        "GetCharacterData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetCharacterLeaderboard",
       "summary": "Retrieves a list of ranked characters for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the character in the results is for the overall leaderboard.",
@@ -7560,6 +7647,7 @@
     {
       "name": "Characters",
       "methods": [
+        "GetAllUsersCharacters",
         "GetCharacterLeaderboard",
         "GetLeaderboardAroundCharacter",
         "GetLeaderboardForUserCharacters",
