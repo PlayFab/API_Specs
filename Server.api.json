@@ -1060,6 +1060,25 @@
       "name": "EmptyResult",
       "properties": []
     },
+    "FacebookPlayFabIdPair": {
+      "name": "FacebookPlayFabIdPair",
+      "properties": [
+        {
+          "name": "FacebookId",
+          "description": "Unique Facebook identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Facebook identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "FriendInfo": {
       "name": "FriendInfo",
       "properties": [
@@ -1683,6 +1702,33 @@
         }
       ]
     },
+    "GetPlayFabIDsFromFacebookIDsRequest": {
+      "name": "GetPlayFabIDsFromFacebookIDsRequest",
+      "properties": [
+        {
+          "name": "FacebookIDs",
+          "description": "Array of unique Facebook identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromFacebookIDsResult": {
+      "name": "GetPlayFabIDsFromFacebookIDsResult",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Facebook identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "FacebookPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "properties": [
@@ -1780,6 +1826,32 @@
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetTitleNewsRequest": {
+      "name": "GetTitleNewsRequest",
+      "properties": [
+        {
+          "name": "Count",
+          "description": "Limits the results to the last n entries. Defaults to 10 if not set.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GetTitleNewsResult": {
+      "name": "GetTitleNewsResult",
+      "properties": [
+        {
+          "name": "News",
+          "description": "Array of news items.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TitleNewsItem",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -3097,6 +3169,39 @@
         }
       ]
     },
+    "TitleNewsItem": {
+      "name": "TitleNewsItem",
+      "properties": [
+        {
+          "name": "Timestamp",
+          "description": "Date and time when the news items was posted.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "NewsId",
+          "description": "Unique identifier of news item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Title",
+          "description": "Title of the news item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Body",
+          "description": "News item text.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UpdateCharacterDataRequest": {
       "name": "UpdateCharacterDataRequest",
       "properties": [
@@ -3652,6 +3757,20 @@
       ]
     },
     {
+      "name": "GetPlayFabIDsFromFacebookIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Facebook identifiers.",
+      "resultDetails": "For Facebook identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Server/GetPlayFabIDsFromFacebookIDs",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromFacebookIDsRequest",
+      "result": "GetPlayFabIDsFromFacebookIDsResult",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "GetUserAccountInfo",
       "summary": "Retrieves the relevant details for a specified user",
       "requestDetails": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
@@ -4076,6 +4195,19 @@
       ]
     },
     {
+      "name": "GetTitleNews",
+      "summary": "Retrieves the title news feed, as configured in the developer portal",
+      "subgroup": "Title-Wide Data Management",
+      "url": "/Server/GetTitleNews",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetTitleNewsRequest",
+      "result": "GetTitleNewsResult",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "SetTitleData",
       "summary": "Updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
@@ -4189,7 +4321,7 @@
       "errors": [
         "InvalidParams",
         "CharacterNotFound",
-        "UserisNotValid"
+        "AccountNotFound"
       ]
     },
     {
@@ -4251,7 +4383,7 @@
       ],
       "errors": [
         "InvalidParams",
-        "UserisNotValid",
+        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -4272,7 +4404,7 @@
       ],
       "errors": [
         "InvalidParams",
-        "UserisNotValid",
+        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -4293,7 +4425,7 @@
       ],
       "errors": [
         "InvalidParams",
-        "UserisNotValid",
+        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -4627,7 +4759,8 @@
       ],
       "errors": [
         "InvalidParams",
-        "CharacterNotFound"
+        "CharacterNotFound",
+        "AccountNotFound"
       ]
     },
     {
@@ -4696,7 +4829,8 @@
       "result": "UpdateCharacterStatisticsResult",
       "errors": [
         "InvalidParams",
-        "CharacterNotFound"
+        "CharacterNotFound",
+        "AccountNotFound"
       ]
     },
     {
@@ -4842,6 +4976,7 @@
     {
       "name": "Account Management",
       "methods": [
+        "GetPlayFabIDsFromFacebookIDs",
         "GetUserAccountInfo",
         "SendPushNotification"
       ]
@@ -4873,6 +5008,7 @@
         "GetCatalogItems",
         "GetTitleData",
         "GetTitleInternalData",
+        "GetTitleNews",
         "SetTitleData",
         "SetTitleInternalData"
       ]
