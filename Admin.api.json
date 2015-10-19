@@ -2,7 +2,7 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
-  "revision": "1.6.20150928",
+  "revision": "1.7.20151019",
   "datatypes": {
     "AddNewsRequest": {
       "name": "AddNewsRequest",
@@ -181,7 +181,7 @@
         },
         {
           "name": "Amount",
-          "description": "Amount to be added to the user balance of the specified virtual currency.",
+          "description": "Amount to be added to the user balance of the specified virtual currency. Maximum VC balance is Int32 (2,147,483,647). Any increase over this value will be discarded.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -2302,7 +2302,7 @@
         },
         {
           "name": "BalanceChange",
-          "description": "Amount added or subtracted from the user's virtual currency.",
+          "description": "Amount added or subtracted from the user's virtual currency. Maximum VC balance is Int32 (2,147,483,647). Any increase over this value will be discarded.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -3373,7 +3373,7 @@
         },
         {
           "name": "InitialDeposit",
-          "description": "amount to automatically grant users upon first login to the tilte",
+          "description": "amount to automatically grant users upon first login to the title",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
@@ -3809,7 +3809,7 @@
     },
     {
       "name": "AddVirtualCurrencyTypes",
-      "summary": "Adds one or more virtual currencies to the set defined for the title",
+      "summary": "Adds one or more virtual currencies to the set defined for the title. Virtual Currencies have a maximum value of 2,147,483,647 when granted to a player. Any value over that will be discarded.",
       "requestDetails": "This operation is additive. Any new currencies defined in the array will be added to the set of those available for the title, while any CurrencyCode identifiers matching existing ones in the game will be overwritten with the new values.",
       "subgroup": "Title-Wide Data Management",
       "url": "/Admin/AddVirtualCurrencyTypes",
@@ -4179,7 +4179,9 @@
         "RemoveServerBuild",
         "ListServerBuilds",
         "GetServerBuildInfo",
-        "ModifyServerBuild"
+        "ModifyServerBuild",
+        "Matchmake",
+        "StartGame"
       ],
       "errors": [
         "InvalidParams",
@@ -4240,7 +4242,9 @@
         "RemoveServerBuild",
         "AddServerBuild",
         "GetServerBuildInfo",
-        "ModifyServerBuild"
+        "ModifyServerBuild",
+        "Matchmake",
+        "StartGame"
       ],
       "errors": [
         "InvalidParams"
@@ -4280,7 +4284,9 @@
         "AddServerBuild",
         "ListServerBuilds",
         "GetServerBuildInfo",
-        "ModifyServerBuild"
+        "ModifyServerBuild",
+        "Matchmake",
+        "StartGame"
       ],
       "errors": [
         "InvalidParams"
@@ -4384,6 +4390,11 @@
       "method": "POST",
       "request": "DeleteContentRequest",
       "result": "BlankResult",
+      "seeAlso": [
+        "GetContentDownloadUrl",
+        "GetContentUploadUrl",
+        "GetContentList"
+      ],
       "errors": [
         "InvalidParams",
         "ContentNotFound"
@@ -4398,6 +4409,11 @@
       "method": "POST",
       "request": "GetContentListRequest",
       "result": "GetContentListResult",
+      "seeAlso": [
+        "GetContentDownloadUrl",
+        "GetContentUploadUrl",
+        "DeleteContent"
+      ],
       "errors": [
         "InvalidParams"
       ]
@@ -4411,6 +4427,11 @@
       "method": "POST",
       "request": "GetContentUploadUrlRequest",
       "result": "GetContentUploadUrlResult",
+      "seeAlso": [
+        "GetContentDownloadUrl",
+        "DeleteContent",
+        "GetContentList"
+      ],
       "errors": [
         "InvalidParams",
         "ContentQuotaExceeded"
