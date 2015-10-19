@@ -2,7 +2,7 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
-  "revision": "1.6.20150928",
+  "revision": "1.7.20151019",
   "datatypes": {
     "AcceptTradeRequest": {
       "name": "AcceptTradeRequest",
@@ -3722,7 +3722,7 @@
         },
         {
           "name": "BalanceChange",
-          "description": "Amount added or subtracted from the user's virtual currency.",
+          "description": "Amount added or subtracted from the user's virtual currency. Maximum VC balance is Int32 (2,147,483,647). Any increase over this value will be discarded.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -4953,6 +4953,9 @@
           "name": "FailedByUber"
         },
         {
+          "name": "FailedByPlayFab"
+        },
+        {
           "name": "Revoked"
         },
         {
@@ -5079,7 +5082,7 @@
       "properties": [
         {
           "name": "ContainerItemId",
-          "description": "Unique identifier of the container to attempt to unlock.",
+          "description": "Category ItemId of the container type to unlock.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -5727,7 +5730,8 @@
       "result": "LoginResult",
       "seeAlso": [
         "LinkAndroidDeviceID",
-        "UnlinkAndroidDeviceID"
+        "UnlinkAndroidDeviceID",
+        "LoginWithIOSDeviceID"
       ],
       "errors": [
         "InvalidParams",
@@ -6165,7 +6169,8 @@
       "request": "LinkKongregateAccountRequest",
       "result": "LinkKongregateAccountResult",
       "seeAlso": [
-        "LoginWithKongregate"
+        "LoginWithKongregate",
+        "UnlinkKongregate"
       ],
       "errors": [
         "InvalidParams",
@@ -6326,7 +6331,8 @@
       "request": "UnlinkKongregateAccountRequest",
       "result": "UnlinkKongregateAccountResult",
       "seeAlso": [
-        "LoginWithKongregate"
+        "LoginWithKongregate",
+        "LinkKongregate"
       ],
       "errors": [
         "InvalidParams",
@@ -7020,7 +7026,9 @@
       "seeAlso": [
         "Matchmake",
         "StartGame",
-        "GetGameServerRegions"
+        "GetGameServerRegions",
+        "AddServerBuild",
+        "RemoveServerBuild"
       ],
       "errors": [
         "InvalidParams"
@@ -7038,7 +7046,9 @@
       "seeAlso": [
         "Matchmake",
         "StartGame",
-        "GetCurrentGames"
+        "GetCurrentGames",
+        "AddServerBuild",
+        "RemoveServerBuild"
       ],
       "errors": [
         "InvalidParams"
@@ -7056,7 +7066,9 @@
       "seeAlso": [
         "StartGame",
         "GetGameServerRegions",
-        "GetCurrentGames"
+        "GetCurrentGames",
+        "AddServerBuild",
+        "RemoveServerBuild"
       ],
       "errors": [
         "InvalidParams",
@@ -7075,7 +7087,9 @@
       "seeAlso": [
         "Matchmake",
         "GetGameServerRegions",
-        "GetCurrentGames"
+        "GetCurrentGames",
+        "AddServerBuild",
+        "RemoveServerBuild"
       ],
       "errors": [
         "InvalidParams"
@@ -7264,7 +7278,13 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "GetContentDownloadUrlRequest",
-      "result": "GetContentDownloadUrlResult"
+      "result": "GetContentDownloadUrlResult",
+      "seeAlso": [
+        "GetContentDownloadUrl",
+        "GetContentUploadUrl",
+        "DeleteContent",
+        "GetContentList"
+      ]
     },
     {
       "name": "GetAllUsersCharacters",
@@ -7294,7 +7314,9 @@
       "request": "GetCharacterLeaderboardRequest",
       "result": "GetCharacterLeaderboardResult",
       "seeAlso": [
-        "GetLeaderboardAroundCharacter"
+        "GetLeaderboardAroundCharacter",
+        "GetCharacterStatistics",
+        "UpdateCharacterStatistics"
       ],
       "errors": [
         "InvalidParams"
@@ -7312,7 +7334,8 @@
       "result": "GetLeaderboardAroundCharacterResult",
       "seeAlso": [
         "GetLeaderboard",
-        "GetCharacterLeaderboard"
+        "GetCharacterLeaderboard",
+        "UpdateCharacterStatistics"
       ],
       "errors": [
         "InvalidParams"
@@ -7330,7 +7353,8 @@
       "result": "GetLeaderboardForUsersCharactersResult",
       "seeAlso": [
         "GetLeaderboard",
-        "GetCharacterLeaderboard"
+        "GetCharacterLeaderboard",
+        "GetLeaderboardAroundUser"
       ],
       "errors": [
         "InvalidParams",
@@ -7428,6 +7452,12 @@
       "method": "POST",
       "request": "AcceptTradeRequest",
       "result": "AcceptTradeResponse",
+      "seeAlso": [
+        "OpenTrade",
+        "GetTradeStatus",
+        "CancelTrade",
+        "GetPlayerTrades"
+      ],
       "errors": [
         "InvalidParams",
         "TradeStatusNotValidForAccepting",
@@ -7455,6 +7485,12 @@
       "method": "POST",
       "request": "CancelTradeRequest",
       "result": "CancelTradeResponse",
+      "seeAlso": [
+        "OpenTrade",
+        "GetTradeStatus",
+        "AcceptTrade",
+        "GetPlayerTrades"
+      ],
       "errors": [
         "InvalidParams",
         "TradeCancelled",
@@ -7470,6 +7506,12 @@
       "method": "POST",
       "request": "GetPlayerTradesRequest",
       "result": "GetPlayerTradesResponse",
+      "seeAlso": [
+        "OpenTrade",
+        "GetTradeStatus",
+        "AcceptTrade",
+        "CancelTrade"
+      ],
       "errors": [
         "InvalidParams"
       ]
@@ -7483,6 +7525,12 @@
       "method": "POST",
       "request": "GetTradeStatusRequest",
       "result": "GetTradeStatusResponse",
+      "seeAlso": [
+        "OpenTrade",
+        "AcceptTrade",
+        "CancelTrade",
+        "GetPlayerTrades"
+      ],
       "errors": [
         "InvalidParams",
         "TradeDoesNotExist"
@@ -7497,6 +7545,12 @@
       "method": "POST",
       "request": "OpenTradeRequest",
       "result": "OpenTradeResponse",
+      "seeAlso": [
+        "GetTradeStatus",
+        "AcceptTrade",
+        "CancelTrade",
+        "GetPlayerTrades"
+      ],
       "errors": [
         "InvalidParams",
         "TradeAcceptedCatalogItemInvalid",
