@@ -2,7 +2,7 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
-  "revision": "1.8.20151026",
+  "revision": "1.9.20151109",
   "datatypes": {
     "AddCharacterVirtualCurrencyRequest": {
       "name": "AddCharacterVirtualCurrencyRequest",
@@ -3046,6 +3046,50 @@
         }
       ]
     },
+    "RedeemCouponRequest": {
+      "name": "RedeemCouponRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "CouponCode",
+          "description": "Generated coupon code to redeem.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the coupon.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RedeemCouponResult": {
+      "name": "RedeemCouponResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "GrantedItems",
+          "description": "Items granted to the player as a result of redeeming the coupon.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "RedeemMatchmakerTicketRequest": {
       "name": "RedeemMatchmakerTicketRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameServer",
@@ -3110,7 +3154,7 @@
         },
         {
           "name": "PlayFabId",
-          "description": "The PlayFab identifier of the player to lose a friend",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3472,6 +3516,14 @@
           "optional": true
         },
         {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from CharacterData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Permission",
           "description": "Permission to be applied to all user data keys written in this request. Defaults to \"private\" if not set.",
           "jsontype": "String",
@@ -3551,6 +3603,14 @@
           "optional": true
         },
         {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from GroupData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Permission",
           "description": "Permission to be applied to all user data keys in this request.",
           "jsontype": "String",
@@ -3582,6 +3642,14 @@
           "name": "Data",
           "description": "Data to be written to the user's custom data. Note that keys are trimmed of whitespace, are limited to 1024 characters, and may not begin with a '!' character.",
           "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from UserData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3629,6 +3697,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from UserData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -3662,6 +3738,14 @@
           "name": "Data",
           "description": "Data to be written to the item's custom data. Note that keys are trimmed of whitespace.",
           "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from ItemData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -4034,7 +4118,7 @@
       "summary": "Validated a client's session ticket, and if successful, returns details for that user",
       "requestDetails": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "subgroup": "Authentication",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/AuthenticateSessionTicket",
       "auth": "SecretKey",
       "method": "POST",
@@ -4052,7 +4136,7 @@
       "summary": "Retrieves the unique PlayFab identifiers for the given set of Facebook identifiers.",
       "resultDetails": "For Facebook identifiers which have not been linked to PlayFab accounts, null will be returned.",
       "subgroup": "Account Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetPlayFabIDsFromFacebookIDs",
       "auth": "SecretKey",
       "method": "POST",
@@ -4069,7 +4153,7 @@
       "summary": "Retrieves the relevant details for a specified user",
       "requestDetails": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "subgroup": "Account Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserAccountInfo",
       "auth": "SecretKey",
       "method": "POST",
@@ -4088,7 +4172,7 @@
       "name": "SendPushNotification",
       "summary": "Sends an iOS/Android Push Notification to a specific user, if that user's device has been configured for Push Notifications in PlayFab. If a user has linked both Android and iOS devices, both will be notified.",
       "subgroup": "Account Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SendPushNotification",
       "auth": "SecretKey",
       "method": "POST",
@@ -4107,7 +4191,7 @@
       "summary": "Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetLeaderboard",
       "auth": "SecretKey",
       "method": "POST",
@@ -4129,7 +4213,7 @@
       "summary": "Retrieves a list of ranked users for the given statistic, centered on the currently signed-in user",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetLeaderboardAroundUser",
       "auth": "SecretKey",
       "method": "POST",
@@ -4152,7 +4236,7 @@
       "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4176,7 +4260,7 @@
       "summary": "Retrieves the title-specific custom data for the user which cannot be accessed by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4224,7 +4308,7 @@
       "summary": "Retrieves the publisher-specific custom data for the user which cannot be accessed by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserPublisherInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4248,7 +4332,7 @@
       "summary": "Retrieves the publisher-specific custom data for the user which can only be read by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserPublisherReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4272,7 +4356,7 @@
       "summary": "Retrieves the title-specific custom data for the user which can only be read by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4296,7 +4380,7 @@
       "summary": "Retrieves the details of all title-specific statistics for the user",
       "resultDetails": "User statistics are numeric values which may only be updated by a  server operation, in order to minimize the opportunity for unauthorized changes. In addition to  being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserStatistics",
       "auth": "SecretKey",
       "method": "POST",
@@ -4319,7 +4403,7 @@
       "summary": "Updates the title-specific custom data for the user which is readable and writable by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4337,7 +4421,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4345,7 +4430,7 @@
       "summary": "Updates the title-specific custom data for the user which cannot be accessed by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4363,7 +4448,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4371,7 +4457,7 @@
       "summary": "Updates the publisher-specific custom data for the user which is readable and writable by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserPublisherData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4389,7 +4475,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4397,7 +4484,7 @@
       "summary": "Updates the publisher-specific custom data for the user which cannot be accessed by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserPublisherInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4415,7 +4502,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4423,7 +4511,7 @@
       "summary": "Updates the publisher-specific custom data for the user which can only be read by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserPublisherReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4441,7 +4529,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4449,7 +4538,7 @@
       "summary": "Updates the title-specific custom data for the user which can only be read by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4467,7 +4556,8 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
@@ -4476,7 +4566,7 @@
       "requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.",
       "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserStatistics",
       "auth": "SecretKey",
       "method": "POST",
@@ -4499,7 +4589,7 @@
       "name": "GetCatalogItems",
       "summary": "Retrieves the specified version of the title's catalog of virtual goods, including all defined properties",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCatalogItems",
       "auth": "SecretKey",
       "method": "POST",
@@ -4514,9 +4604,9 @@
     {
       "name": "GetTitleData",
       "summary": "Retrieves the key-value store of custom title settings",
-      "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build.",
+      "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetTitleData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4534,9 +4624,9 @@
     {
       "name": "GetTitleInternalData",
       "summary": "Retrieves the key-value store of custom internal title settings",
-      "requestDetails": "This API is designed to return title specific values which are accessible only to the server. This can be used to tweak settings on game servers and Cloud Scripts without needed to update and re-deploy them.",
+      "requestDetails": "This API is designed to return title specific values which are accessible only to the server. This can be used to tweak settings on game servers and Cloud Scripts without needed to update and re-deploy them. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetTitleInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4555,7 +4645,7 @@
       "name": "GetTitleNews",
       "summary": "Retrieves the title news feed, as configured in the developer portal",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetTitleNews",
       "auth": "SecretKey",
       "method": "POST",
@@ -4572,7 +4662,7 @@
       "summary": "Updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SetTitleData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4592,7 +4682,7 @@
       "summary": "Updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which are accessible only to the server. This can be used to tweak settings on game servers and Cloud Scripts without needed to update and re-deploy them. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "subgroup": "Title-Wide Data Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SetTitleInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4611,7 +4701,7 @@
       "name": "AddCharacterVirtualCurrency",
       "summary": "Increments  the character's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/AddCharacterVirtualCurrency",
       "auth": "SecretKey",
       "method": "POST",
@@ -4631,7 +4721,7 @@
       "name": "AddUserVirtualCurrency",
       "summary": "Increments  the user's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/AddUserVirtualCurrency",
       "auth": "SecretKey",
       "method": "POST",
@@ -4651,14 +4741,14 @@
       "summary": "Retrieves the specified character's current inventory of virtual goods",
       "requestDetails": "All items currently in the character inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterInventory",
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetCharacterInventoryRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"204883457\",\r\n  \"CharacterId\": \"9890723423\",\r\n  \"CatalogVersion\": \"5\"\r\n}",
       "result": "GetCharacterInventoryResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"CharacterId\": \"9890723423\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2015-10-26T11:03:01.042Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"CharacterId\": \"9890723423\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2015-11-09T10:16:15.729Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "GetUserInventory"
       ],
@@ -4672,14 +4762,14 @@
       "summary": "Retrieves the specified user's current inventory of virtual goods",
       "requestDetails": "All items currently in the user inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetUserInventory",
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetUserInventoryRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"204883457\"\r\n}",
       "result": "GetUserInventoryResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2015-10-26T11:03:01.038Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2015-11-09T10:16:15.725Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "GetUserAccountInfo"
       ],
@@ -4692,7 +4782,7 @@
       "summary": "Adds the specified items to the specified character's inventory",
       "requestDetails": "This function directly adds inventory items to the character's inventories. As  a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item  catalog definition.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GrantItemsToCharacter",
       "auth": "SecretKey",
       "method": "POST",
@@ -4711,7 +4801,7 @@
       "summary": "Adds the specified items to the specified user's inventory",
       "requestDetails": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item catalog definition.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GrantItemsToUser",
       "auth": "SecretKey",
       "method": "POST",
@@ -4728,7 +4818,7 @@
       "summary": "Adds the specified items to the specified user inventories",
       "requestDetails": "This function directly adds inventory items to user inventories. As a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item catalog definition.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GrantItemsToUsers",
       "auth": "SecretKey",
       "method": "POST",
@@ -4745,7 +4835,7 @@
       "summary": "Modifies the number of remaining uses of a player's inventory item",
       "requestDetails": "This function can both add and remove uses of an inventory item. If the number of uses drops below zero, the item will be removed from active inventory.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/ModifyItemUses",
       "auth": "SecretKey",
       "method": "POST",
@@ -4762,7 +4852,7 @@
       "summary": "Moves an item from a character's inventory into another of the users's character's inventory.",
       "requestDetails": "Transfers an item from a character to another character that is owned by the same user. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the other character to make use of the item instead.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/MoveItemToCharacterFromCharacter",
       "auth": "SecretKey",
       "method": "POST",
@@ -4787,7 +4877,7 @@
       "summary": "Moves an item from a user's inventory into their character's inventory.",
       "requestDetails": "Transfers an item from a user to a character she owns. This will remove the item from the user's inventory (until and unless it is moved back), and will enable the character to make use of the item instead.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/MoveItemToCharacterFromUser",
       "auth": "SecretKey",
       "method": "POST",
@@ -4811,7 +4901,7 @@
       "summary": "Moves an item from a character's inventory into the owning user's inventory.",
       "requestDetails": "Transfers an item from a character to the owning user. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the user to make use of the item instead.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/MoveItemToUserFromCharacter",
       "auth": "SecretKey",
       "method": "POST",
@@ -4831,11 +4921,29 @@
       ]
     },
     {
+      "name": "RedeemCoupon",
+      "summary": "Adds the virtual goods associated with the coupon to the user's inventory. Coupons can be generated  via the Promotions->Coupons tab in the PlayFab Game Manager. See this post for more information on coupons:  https://playfab.com/blog/2015/06/18/using-stores-and-coupons-game-manager",
+      "requestDetails": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This operation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already consumed code, or a code which has not yet been created in the service, will result in an error.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Server/RedeemCoupon",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RedeemCouponRequest",
+      "requestExample": "{\r\n  \"CouponCode\": \"123-1234-123\",\r\n  \"CatalogVersion\": \"5\"\r\n}",
+      "result": "RedeemCouponResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "CouponCodeNotFound"
+      ]
+    },
+    {
       "name": "ReportPlayer",
       "summary": "Submit a report about a player (due to bad bahavior, etc.) on behalf of another player, so that customer service representatives for the title can take action concerning potentially poxic players.",
       "resultDetails": "Players are currently limited to five reports per day. Attempts by a single user account to submit reports beyond five will result in Updated being returned as false.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/ReportPlayer",
       "auth": "SecretKey",
       "method": "POST",
@@ -4851,7 +4959,7 @@
       "name": "SubtractCharacterVirtualCurrency",
       "summary": "Decrements the character's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SubtractCharacterVirtualCurrency",
       "auth": "SecretKey",
       "method": "POST",
@@ -4871,7 +4979,7 @@
       "name": "SubtractUserVirtualCurrency",
       "summary": "Decrements the user's balance of the specified virtual currency by the stated amount",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SubtractUserVirtualCurrency",
       "auth": "SecretKey",
       "method": "POST",
@@ -4891,7 +4999,7 @@
       "summary": "Updates the key-value pair data tagged to the specified item, which is read-only from the client.",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance which belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while  keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Player Item Management",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateUserInventoryItemCustomData",
       "auth": "SecretKey",
       "method": "POST",
@@ -4906,14 +5014,15 @@
       "errors": [
         "InvalidParams",
         "KeyLengthExceeded",
-        "DataLengthExceeded"
+        "DataLengthExceeded",
+        "DeleteKeyConflict"
       ]
     },
     {
       "name": "NotifyMatchmakerPlayerLeft",
       "summary": "Informs the PlayFab match-making service that the user specified has left the Game Server Instance",
       "subgroup": "Matchmaking APIs",
-      "titleTiers": "Test, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/NotifyMatchmakerPlayerLeft",
       "auth": "SecretKey",
       "method": "POST",
@@ -4932,7 +5041,7 @@
       "summary": "Validates a Game Server session ticket and returns details about the user",
       "requestDetails": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been registered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each of which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid for the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "subgroup": "Matchmaking APIs",
-      "titleTiers": "Test, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/RedeemMatchmakerTicket",
       "auth": "SecretKey",
       "method": "POST",
@@ -4953,7 +5062,7 @@
       "name": "AwardSteamAchievement",
       "summary": "Awards the specified users the specified Steam achievements",
       "subgroup": "Steam-Specific APIs",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/AwardSteamAchievement",
       "auth": "SecretKey",
       "method": "POST",
@@ -4990,7 +5099,7 @@
       "name": "AddSharedGroupMembers",
       "summary": "Adds users to the set of those able to update both the shared data, as well as the set of users in the group. Only users in the group (and the server) can add new members.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/AddSharedGroupMembers",
       "auth": "SecretKey",
       "method": "POST",
@@ -5008,7 +5117,7 @@
       "summary": "Requests the creation of a shared group object, containing key/value pairs which may be updated by all members of the group. When created by a server, the group will initially have no members.",
       "requestDetails": "If SharedGroupId is specified, the service will attempt to create a group with that identifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/CreateSharedGroup",
       "auth": "SecretKey",
       "method": "POST",
@@ -5025,7 +5134,7 @@
       "name": "DeleteSharedGroup",
       "summary": "Deletes a shared group, freeing up the shared group ID to be reused for a new group",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/DeleteSharedGroup",
       "auth": "SecretKey",
       "method": "POST",
@@ -5040,9 +5149,9 @@
     {
       "name": "GetPublisherData",
       "summary": "Retrieves the key-value store of custom publisher settings",
-      "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. For more information email devrel@playfab.com",
+      "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.  For more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetPublisherData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5062,7 +5171,7 @@
       "name": "GetSharedGroupData",
       "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. The server can access all public and private group data.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetSharedGroupData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5078,7 +5187,7 @@
       "name": "RemoveSharedGroupMembers",
       "summary": "Removes users from the set of those able to update the shared data and the set of users in the group. Only users in the group can remove members. If as a result of the call, zero users remain with access, the group and its associated data will be deleted.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/RemoveSharedGroupMembers",
       "auth": "SecretKey",
       "method": "POST",
@@ -5095,7 +5204,7 @@
       "summary": "Updates the key-value store of custom publisher settings",
       "requestDetails": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.  If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/SetPublisherData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5116,7 +5225,7 @@
       "summary": "Adds, updates, and removes data keys for a shared group object. If the permission is set to Public, all fields updated or added in this call will be readable by users not in the group. By default, data permissions are set to Private. Regardless of the permission setting, only members of the group (and the server) can update the data.",
       "requestDetails": "Note that in the case of multiple calls to write to the same shared group data keys, the last write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios requiring coordination of data updates, it is recommended that titles make use of user data with read permission set to public, or a combination of user data and shared group data.",
       "subgroup": "Shared Group Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateSharedGroupData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5133,7 +5242,7 @@
       "name": "GetContentDownloadUrl",
       "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent  HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to  retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content -  if it has not been uploaded, the query to retrieve the data will fail. See this post for more information:  https://support.playfab.com/support/discussions/topics/1000059929",
       "subgroup": "Content",
-      "titleTiers": "Test, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetContentDownloadUrl",
       "auth": "SecretKey",
       "method": "POST",
@@ -5156,7 +5265,7 @@
       "summary": "Deletes the specific character ID from the specified user.",
       "requestDetails": "This function will delete the specified character from the list allowed by the user, and  will also delete any inventory or VC currently held by that character. It will NOT delete any statistics  associated for this character, in order to preserve leaderboard integrity.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/DeleteCharacterFromUser",
       "auth": "SecretKey",
       "method": "POST",
@@ -5174,7 +5283,7 @@
       "summary": "Lists all of the characters that belong to a specific user.",
       "requestDetails": "Returns a list of every character that currently belongs to a user.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetAllUsersCharacters",
       "auth": "SecretKey",
       "method": "POST",
@@ -5191,7 +5300,7 @@
       "summary": "Retrieves a list of ranked characters for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the character in the results is for the overall leaderboard.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterLeaderboard",
       "auth": "SecretKey",
       "method": "POST",
@@ -5213,7 +5322,7 @@
       "summary": "Retrieves the details of all title-specific statistics for the specific character",
       "requestDetails": "Character statistics are similar to user statistics in that they are numeric values which  may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to  being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterStatistics",
       "auth": "SecretKey",
       "method": "POST",
@@ -5237,7 +5346,7 @@
       "summary": "Retrieves a list of ranked characters for the given statistic, centered on the requested user",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetLeaderboardAroundCharacter",
       "auth": "SecretKey",
       "method": "POST",
@@ -5260,7 +5369,7 @@
       "summary": "Retrieves a list of all of the user's characters for the given statistic.",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetLeaderboardForUserCharacters",
       "auth": "SecretKey",
       "method": "POST",
@@ -5283,7 +5392,7 @@
       "summary": "Grants the specified character type to the user.",
       "requestDetails": "Grants a character to the user of the type and name specified in the request.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GrantCharacterToUser",
       "auth": "SecretKey",
       "method": "POST",
@@ -5300,7 +5409,7 @@
       "summary": "Updates the values of the specified title-specific statistics for the specific character",
       "requestDetails": "Character statistics are similar to user statistics in that they are numeric values which  may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to  being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Characters",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateCharacterStatistics",
       "auth": "SecretKey",
       "method": "POST",
@@ -5319,7 +5428,7 @@
       "summary": "Retrieves the title-specific custom data for the user which is readable and writable by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5344,7 +5453,7 @@
       "summary": "Retrieves the title-specific custom data for the user's character which cannot be accessed by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user data will be returned.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5369,7 +5478,7 @@
       "summary": "Retrieves the title-specific custom data for the user's character which can only be read by the client",
       "requestDetails": "Data is stored as JSON key-value pairs. If the Keys parameter is provided, the data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom data will be returned.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/GetCharacterReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5394,7 +5503,7 @@
       "summary": "Updates the title-specific custom data for the user's chjaracter which is readable and writable by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart  from those specified in the call.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateCharacterData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5419,7 +5528,7 @@
       "summary": "Updates the title-specific custom data for the user's character which cannot  be accessed by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed.  No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateCharacterInternalData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5444,7 +5553,7 @@
       "summary": "Updates the title-specific custom data for the user's character which can only be read by the client",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user. In updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "subgroup": "Character Data",
-      "titleTiers": "Test, Standard, Premium, Publisher",
+      "titleTiers": null,
       "url": "/Server/UpdateCharacterReadOnlyData",
       "auth": "SecretKey",
       "method": "POST",
@@ -5526,6 +5635,7 @@
         "MoveItemToCharacterFromCharacter",
         "MoveItemToCharacterFromUser",
         "MoveItemToUserFromCharacter",
+        "RedeemCoupon",
         "ReportPlayer",
         "SubtractCharacterVirtualCurrency",
         "SubtractUserVirtualCurrency",
@@ -6307,6 +6417,14 @@
     "CustomIdNotLinked": {
       "id": 1185,
       "name": "CustomIdNotLinked"
+    },
+    "TotalDataSizeExceeded": {
+      "id": 1186,
+      "name": "TotalDataSizeExceeded"
+    },
+    "DeleteKeyConflict": {
+      "id": 1187,
+      "name": "DeleteKeyConflict"
     }
   },
   "errorList": [
@@ -6486,6 +6604,8 @@
     "TradeAcceptedCatalogItemIsNotTradable",
     "UsersAlreadyFriends",
     "LinkedIdentifierAlreadyClaimed",
-    "CustomIdNotLinked"
+    "CustomIdNotLinked",
+    "TotalDataSizeExceeded",
+    "DeleteKeyConflict"
   ]
 }
