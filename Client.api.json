@@ -1919,6 +1919,57 @@
         }
       ]
     },
+    "GetFriendLeaderboardAroundCurrentUserRequest": {
+      "name": "GetFriendLeaderboardAroundCurrentUserRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "StatisticName",
+          "description": "Statistic used to rank players for this leaderboard.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "MaxResultsCount",
+          "description": "Maximum number of entries to retrieve.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "IncludeSteamFriends",
+          "description": "Indicates whether Steam service friends should be included in the response. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IncludeFacebookFriends",
+          "description": "Indicates whether Facebook friends should be included in the response. Default is true.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "GetFriendLeaderboardAroundCurrentUserResult": {
+      "name": "GetFriendLeaderboardAroundCurrentUserResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "Leaderboard",
+          "description": "Ordered listing of users and their positions in the requested leaderboard.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PlayerLeaderboardEntry",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetFriendLeaderboardRequest": {
       "name": "GetFriendLeaderboardRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameClient",
@@ -3513,6 +3564,14 @@
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
+        },
+        {
+          "name": "SettingsForUser",
+          "description": "Settings specific to this user.",
+          "jsontype": "Object",
+          "actualtype": "UserSettings",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -3636,6 +3695,34 @@
         {
           "name": "CreateAccount",
           "description": "Automatically create a PlayFab account if one is not currently linked to this Facebook account.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "LoginWithGameCenterRequest": {
+      "name": "LoginWithGameCenterRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayerId",
+          "description": "Unique Game Center player id.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this Game Center id.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -4570,6 +4657,14 @@
           "description": "PlayFab unique user name.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SettingsForUser",
+          "description": "Settings specific to this user.",
+          "jsontype": "Object",
+          "actualtype": "UserSettings",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -5953,6 +6048,19 @@
         }
       ]
     },
+    "UserSettings": {
+      "name": "UserSettings",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "NeedsAttribution",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
     "UserSteamInfo": {
       "name": "UserSteamInfo",
       "classNameSpace": "PlayFab.WebAPIModels.UserInfo",
@@ -6309,6 +6417,29 @@
         "AccountNotFound",
         "AccountBanned",
         "FacebookAPIError"
+      ]
+    },
+    {
+      "name": "LoginWithGameCenter",
+      "summary": "Signs the user in using an iOS Game Center player identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "The Game Center player identifier (https://developer.apple.com/library/ios/documentation/Accounts/Reference/ACAccountClassRef/index.html#//apple_ref/occ/instp/ACAccount/identifier) is a generated string which is stored on the local device. As with device identifiers, care must be taken to never expose a player's Game Center identifier to end users, as that could result in a user's account being compromised. If this is the first time a user has signed in with Game Center and CreateAccount is set to true, a new PlayFab account will be created and linked to the Game Center identifier. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Game Center account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/LoginWithGameCenter",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithGameCenterRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1000\",\r\n  \"PlayerId\": \"pachycephalosaurus01\",\r\n  \"CreateAccount\": false\r\n}",
+      "result": "LoginResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"4D2----8D11F4249A80000-7C64AB0A9F1D8D1A.CD803BF233CE76CC\",\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
+      "seeAlso": [
+        "LoginWithIOSDeviceID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "AccountNotFound",
+        "AccountBanned"
       ]
     },
     {
@@ -6993,6 +7124,28 @@
       ]
     },
     {
+      "name": "GetFriendLeaderboardAroundCurrentUser",
+      "summary": "Retrieves a list of ranked friends of the current player for the given statistic, centered on the currently signed-in user",
+      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Client/GetFriendLeaderboardAroundCurrentUser",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetFriendLeaderboardAroundCurrentUserRequest",
+      "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"MaxResultsCount\": 20\r\n}",
+      "result": "GetFriendLeaderboardAroundCurrentUserResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
+      "seeAlso": [
+        "GetLeaderboardAroundCurrentUser",
+        "GetUserStatistics"
+      ],
+      "errors": [
+        "InvalidParams",
+        "FacebookAPIError"
+      ]
+    },
+    {
       "name": "GetLeaderboard",
       "summary": "Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
@@ -7425,7 +7578,7 @@
       "request": "PayForPurchaseRequest",
       "requestExample": "{\r\n  \"OrderId\": \"8853591446005860822\",\r\n  \"ProviderName\": \"PayPal\",\r\n  \"Currency\": \"RM\"\r\n}",
       "result": "PayForPurchaseResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"OrderId\": \"8853591446005860822\",\r\n    \"Status\": 1,\r\n    \"PurchaseCurrency\": \"RM\",\r\n    \"PurchasePrice\": 199,\r\n    \"CreditApplied\": 0\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"OrderId\": \"8853591446005860822\",\r\n    \"Status\": \"Init\",\r\n    \"PurchaseCurrency\": \"RM\",\r\n    \"PurchasePrice\": 199,\r\n    \"CreditApplied\": 0\r\n  }\r\n}",
       "seeAlso": [
         "StartPurchase",
         "ConfirmPurchase"
@@ -8368,6 +8521,7 @@
         "LoginWithCustomID",
         "LoginWithEmailAddress",
         "LoginWithFacebook",
+        "LoginWithGameCenter",
         "LoginWithGoogleAccount",
         "LoginWithIOSDeviceID",
         "LoginWithKongregate",
@@ -8410,6 +8564,7 @@
       "name": "Player Data Management",
       "methods": [
         "GetFriendLeaderboard",
+        "GetFriendLeaderboardAroundCurrentUser",
         "GetLeaderboard",
         "GetLeaderboardAroundCurrentUser",
         "GetUserData",
@@ -9277,6 +9432,14 @@
     "ResettableStatisticVersionRequired": {
       "id": 1190,
       "name": "ResettableStatisticVersionRequired"
+    },
+    "NotAuthorizedByTitle": {
+      "id": 1191,
+      "name": "NotAuthorizedByTitle"
+    },
+    "NoPartnerEnabled": {
+      "id": 1192,
+      "name": "NoPartnerEnabled"
     }
   },
   "errorList": [
@@ -9461,6 +9624,8 @@
     "DeleteKeyConflict",
     "InvalidXboxLiveToken",
     "ExpiredXboxLiveToken",
-    "ResettableStatisticVersionRequired"
+    "ResettableStatisticVersionRequired",
+    "NotAuthorizedByTitle",
+    "NoPartnerEnabled"
   ]
 }
