@@ -1106,6 +1106,34 @@
         }
       ]
     },
+    "DeleteUsersRequest": {
+      "name": "DeleteUsersRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.AdminServerShared",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "PlayFabIds",
+          "description": "An array of unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeleteUsersResult": {
+      "name": "DeleteUsersResult",
+      "classNameSpace": "PlayFab.WebAPIModels.AdminServerShared",
+      "assembly": "WebAPIModels",
+      "properties": []
+    },
     "EmptyResult": {
       "name": "EmptyResult",
       "classNameSpace": "System.Web.Mvc",
@@ -1808,6 +1836,51 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "PlayerLeaderboardEntry",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerStatisticsRequest": {
+      "name": "GetPlayerStatisticsRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "user for whom statistics are being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "StatisticNames",
+          "description": "statistics to return",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerStatisticsResult": {
+      "name": "GetPlayerStatisticsResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose statistics are being returned",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Statistics",
+          "description": "User statistics for the requested user.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticValue",
           "isclass": true,
           "optional": true
         }
@@ -3366,6 +3439,62 @@
         }
       ]
     },
+    "StatisticUpdate": {
+      "name": "StatisticUpdate",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "StatisticName",
+          "description": "unique name of the statistic",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Version",
+          "description": "for updates to an existing statistic value for a player, the version of the statistic when it was loaded. Null when setting the statistic value for the first time.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "statistic value for the player",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "StatisticValue": {
+      "name": "StatisticValue",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "StatisticName",
+          "description": "unique name of the statistic",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "statistic value for the player",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Version",
+          "description": "for updates to an existing statistic value for a player, the version of the statistic when it was loaded",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "SubtractCharacterVirtualCurrencyRequest": {
       "name": "SubtractCharacterVirtualCurrencyRequest",
       "classNameSpace": "PlayFab.WebAPIModels.AdminServerShared",
@@ -3577,6 +3706,35 @@
     },
     "UpdateCharacterStatisticsResult": {
       "name": "UpdateCharacterStatisticsResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": []
+    },
+    "UpdatePlayerStatisticsRequest": {
+      "name": "UpdatePlayerStatisticsRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameServer",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Statistics",
+          "description": "Statistics to be updated with the provided values",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticUpdate",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdatePlayerStatisticsResult": {
+      "name": "UpdatePlayerStatisticsResult",
       "classNameSpace": "PlayFab.WebAPIModels.GameServer",
       "assembly": "WebAPIModels",
       "properties": []
@@ -4189,6 +4347,25 @@
       ]
     },
     {
+      "name": "DeleteUsers",
+      "summary": "Deletes the users for the provided game. Deletes custom data, all account linkages, and statistics.",
+      "requestDetails": "Note that this action cannot be undone. It will unlink all accounts and remove all PII information, as well as reset any statistics and leaderboards and clear out any stored custom data for the user.  This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/DeleteUsers",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteUsersRequest",
+      "requestExample": "",
+      "result": "DeleteUsersResult",
+      "resultExample": "",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound",
+        "APINotEnabledForGameServerAccess"
+      ]
+    },
+    {
       "name": "GetLeaderboard",
       "summary": "Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
@@ -4566,7 +4743,7 @@
       "name": "UpdateUserStatistics",
       "summary": "Updates the values of the specified title-specific statistics for the user",
       "requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.",
-      "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "resultDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Server/UpdateUserStatistics",
@@ -5594,6 +5771,7 @@
     {
       "name": "Player Data Management",
       "methods": [
+        "DeleteUsers",
         "GetLeaderboard",
         "GetLeaderboardAroundUser",
         "GetUserData",
@@ -6447,6 +6625,22 @@
     "NoPartnerEnabled": {
       "id": 1192,
       "name": "NoPartnerEnabled"
+    },
+    "InvalidPartnerResponse": {
+      "id": 1193,
+      "name": "InvalidPartnerResponse"
+    },
+    "APINotEnabledForGameServerAccess": {
+      "id": 1194,
+      "name": "APINotEnabledForGameServerAccess"
+    },
+    "StatisticNotFound": {
+      "id": 1195,
+      "name": "StatisticNotFound"
+    },
+    "StatisticNameConflict": {
+      "id": 1196,
+      "name": "StatisticNameConflict"
     }
   },
   "errorList": [
@@ -6633,6 +6827,10 @@
     "ExpiredXboxLiveToken",
     "ResettableStatisticVersionRequired",
     "NotAuthorizedByTitle",
-    "NoPartnerEnabled"
+    "NoPartnerEnabled",
+    "InvalidPartnerResponse",
+    "APINotEnabledForGameServerAccess",
+    "StatisticNotFound",
+    "StatisticNameConflict"
   ]
 }
