@@ -3526,6 +3526,26 @@
       "assembly": "WebAPIModels",
       "properties": []
     },
+    "LinkXboxAccountRequest": {
+      "name": "LinkXboxAccountRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "LinkXboxAccountResult": {
+      "name": "LinkXboxAccountResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": []
+    },
     "ListUsersCharactersRequest": {
       "name": "ListUsersCharactersRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameClient",
@@ -3990,6 +4010,34 @@
         {
           "name": "CreateAccount",
           "description": "Automatically create a PlayFab account if one is not currently linked to this Steam account.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "LoginWithXboxRequest": {
+      "name": "LoginWithXboxRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this Xbox Live account.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -5693,6 +5741,26 @@
       "assembly": "WebAPIModels",
       "properties": []
     },
+    "UnlinkXboxAccountRequest": {
+      "name": "UnlinkXboxAccountRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UnlinkXboxAccountResult": {
+      "name": "UnlinkXboxAccountResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": []
+    },
     "UnlockContainerItemRequest": {
       "name": "UnlockContainerItemRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameClient",
@@ -6675,6 +6743,34 @@
       ]
     },
     {
+      "name": "LoginWithPSN",
+      "summary": "Signs the user in using a PlayStation Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "If this is the first time a user has signed in with the PlayStation Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PSN account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PSN account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/LoginWithPSN",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithPSNRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1\",\r\n  \"AuthCode\": \"LKJ6D896D\",\r\n  \"RedirectUri\": \"orbis://games\",\r\n  \"CreateAccount\": false\r\n}",
+      "result": "LoginResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"4D2----8D11F4249A80000-7C64AB0A9F1D8D1A.CD803BF233CE76CC\",\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
+      "seeAlso": [
+        "LinkPSNAccount",
+        "UnlinkPSNAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "InvalidPublisherId",
+        "AccountNotFound",
+        "AccountBanned",
+        "InvalidPSNIssuerId",
+        "PSNInaccessible",
+        "InvalidPSNAuthCode"
+      ]
+    },
+    {
       "name": "LoginWithSteam",
       "summary": "Signs the user in using a Steam authentication ticket, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
       "requestDetails": "Steam sign-in is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties). Information on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here: https://partner.steamgames.com/documentation/webapi#publisherkey. If this is the first time a user has signed in with the Steam account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
@@ -6697,6 +6793,32 @@
         "InvalidSteamTicket",
         "AccountNotFound",
         "AccountBanned"
+      ]
+    },
+    {
+      "name": "LoginWithXbox",
+      "summary": "Signs the user in using a Xbox Live Token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/LoginWithXbox",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithXboxRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1\",\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"CreateAccount\": false\r\n}",
+      "result": "LoginResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"4D2----8D11F4249A80000-7C64AB0A9F1D8D1A.CD803BF233CE76CC\",\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
+      "seeAlso": [
+        "LinkXboxAccount",
+        "UnlinkXboxAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "InvalidPublisherId",
+        "AccountNotFound",
+        "AccountBanned",
+        "InvalidXboxLiveToken"
       ]
     },
     {
@@ -6817,6 +6939,23 @@
       "requestExample": "{\r\n  \"GoogleIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromGoogleIDsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"GoogleId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"GoogleId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromPSNAccountIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of PlayStation Network identifiers.",
+      "resultDetails": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/GetPlayFabIDsFromPSNAccountIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromPSNAccountIDsRequest",
+      "requestExample": "{\r\n  \"PSNAccountIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
+      "result": "GetPlayFabIDsFromPSNAccountIDsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"PSNAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"PSNAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "AccountNotFound"
       ]
@@ -7013,6 +7152,33 @@
       ]
     },
     {
+      "name": "LinkPSNAccount",
+      "summary": "Links the PlayStation Network account associated with the provided access code to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/LinkPSNAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkPSNAccountRequest",
+      "requestExample": "{\r\n  \"AuthCode\": \"LKJDG7DDE\",\r\n  \"RedirectUri\": \"orbis://games\"\r\n}",
+      "result": "LinkPSNAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "UnlinkPSNAccount",
+        "LoginWithPSN"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidPSNAuthCode",
+        "InvalidPublisherId",
+        "LinkedAccountAlreadyClaimed",
+        "AccountAlreadyLinked",
+        "InvalidPSNIssuerId",
+        "PSNInaccessible",
+        "InvalidPSNAuthCode"
+      ]
+    },
+    {
       "name": "LinkSteamAccount",
       "summary": "Links the Steam account associated with the provided Steam authentication ticket to the user's PlayFab account",
       "requestDetails": "Steam authentication is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties). Information on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here: https://partner.steamgames.com/documentation/webapi#publisherkey.",
@@ -7032,6 +7198,30 @@
       "errors": [
         "InvalidParams",
         "InvalidSteamTicket",
+        "LinkedAccountAlreadyClaimed",
+        "AccountAlreadyLinked"
+      ]
+    },
+    {
+      "name": "LinkXboxAccount",
+      "summary": "Links the Xbox Live account associated with the provided access code to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/LinkXboxAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkXboxAccountRequest",
+      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\"\r\n}",
+      "result": "LinkXboxAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "UnlinkXboxAccount",
+        "LoginWithXbox"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidXboxLiveToken",
+        "InvalidPublisherId",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
       ]
@@ -7200,6 +7390,26 @@
       ]
     },
     {
+      "name": "UnlinkPSNAccount",
+      "summary": "Unlinks the related PSN account from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/UnlinkPSNAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkPSNAccountRequest",
+      "requestExample": "{}",
+      "result": "UnlinkPSNAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "LinkPSNAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked"
+      ]
+    },
+    {
       "name": "UnlinkSteamAccount",
       "summary": "Unlinks the related Steam account from the user's PlayFab account",
       "subgroup": "Account Management",
@@ -7217,6 +7427,27 @@
       "errors": [
         "InvalidParams",
         "AccountNotLinked"
+      ]
+    },
+    {
+      "name": "UnlinkXboxAccount",
+      "summary": "Unlinks the related Xbox Live account from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/UnlinkXboxAccount",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkXboxAccountRequest",
+      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\"\r\n}",
+      "result": "UnlinkXboxAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "LinkXboxAccount"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked",
+        "InvalidXboxLiveToken"
       ]
     },
     {
@@ -8269,6 +8500,43 @@
       ]
     },
     {
+      "name": "ConsumePSNEntitlements",
+      "summary": "Checks for any new consumable entitlements. If any are found, they are consumed and added as PlayFab items",
+      "subgroup": "Sony-specific APIs",
+      "titleTiers": null,
+      "url": "/Client/ConsumePSNEntitlements",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ConsumePSNEntitlementsRequest",
+      "requestExample": "{\r\n  \"ServiceLabel\": 1\r\n}",
+      "result": "ConsumePSNEntitlementsResult",
+      "resultExample": "",
+      "errors": [
+        "InvalidParams",
+        "ExpiredAuthToken",
+        "FailedToGetEntitlements",
+        "PSNInaccessible"
+      ]
+    },
+    {
+      "name": "RefreshPSNAuthToken",
+      "summary": "Uses the supplied OAuth code to refresh the internally cached player PSN auth token",
+      "subgroup": "Sony-specific APIs",
+      "titleTiers": null,
+      "url": "/Client/RefreshPSNAuthToken",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "RefreshPSNAuthTokenRequest",
+      "requestExample": "{\r\n  \"AuthCode\": \"LKJDG7DDE\",\r\n  \"RedirectUri\": \"orbis://games\"\r\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "errors": [
+        "InvalidParams",
+        "PSNInaccessible",
+        "InvalidPSNAuthCode"
+      ]
+    },
+    {
       "name": "GetCloudScriptUrl",
       "summary": "Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript.",
       "requestDetails": "Cloud Scripts in PlayFab have both Versions and Revisions. Each time a new script is  uploaded against a Version, this creates a new Revision. If Testing is set to true, the URL returned will be for the Cloud Script Revision which was most recently uploaded. If Testing is set to false, the URL returned will be for the  Cloud Script Revision which was most recently deployed to live.",
@@ -8513,6 +8781,28 @@
       ]
     },
     {
+      "name": "ValidateAmazonIAPReceipt",
+      "summary": "Validates with Amazon that the receipt for an Amazon App Store in-app purchase is valid and that it matches the purchased catalog item",
+      "resultDetails": "Once verified, the catalog item matching the Amazon item name will be added to the user's inventory.",
+      "subgroup": "Amazon-Specific APIs",
+      "titleTiers": null,
+      "url": "/Client/ValidateAmazonIAPReceipt",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ValidateAmazonReceiptRequest",
+      "requestExample": "{\r\n  \"ReceiptId\": \"q1YqVbJSyjH28DGPKChw9c0o8nd3vSstssQtzSkrzM8tCk43K6z0d_HOTcwwN8vxCrVV0lEqBmpJzs_VK8hJrExLTNLLTCzQK8_MSUnJTy8LSpcoWRnoKKUAFRmaGBtZmBqCCFMzpVoA\",\r\n  \"UserId\": \"l3HL7XppEMhrOGDgur9-ulvqomrSg6qyODKmah72lJU=\"\r\n}",
+      "result": "ValidateAmazonReceiptResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "errors": [
+        "InvalidParams",
+        "InvalidReceipt",
+        "InvalidTitleId",
+        "ReceiptAlreadyUsed",
+        "MissingAmazonSharedKey",
+        "NoMatchingCatalogItemForReceipt"
+      ]
+    },
+    {
       "name": "AcceptTrade",
       "summary": "Accepts an open trade. If the call is successful, the offered and accepted items will be swapped between the two players' inventories.",
       "subgroup": "Trading",
@@ -8681,7 +8971,9 @@
         "LoginWithIOSDeviceID",
         "LoginWithKongregate",
         "LoginWithPlayFab",
+        "LoginWithPSN",
         "LoginWithSteam",
+        "LoginWithXbox",
         "RegisterPlayFabUser"
       ]
     },
@@ -8693,6 +8985,7 @@
         "GetPlayFabIDsFromFacebookIDs",
         "GetPlayFabIDsFromGameCenterIDs",
         "GetPlayFabIDsFromGoogleIDs",
+        "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromSteamIDs",
         "GetUserCombinedInfo",
         "LinkAndroidDeviceID",
@@ -8702,7 +8995,9 @@
         "LinkGoogleAccount",
         "LinkIOSDeviceID",
         "LinkKongregate",
+        "LinkPSNAccount",
         "LinkSteamAccount",
+        "LinkXboxAccount",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
         "UnlinkCustomID",
@@ -8711,7 +9006,9 @@
         "UnlinkGoogleAccount",
         "UnlinkIOSDeviceID",
         "UnlinkKongregate",
+        "UnlinkPSNAccount",
         "UnlinkSteamAccount",
+        "UnlinkXboxAccount",
         "UpdateUserTitleDisplayName"
       ]
     },
@@ -8811,7 +9108,10 @@
     },
     {
       "name": "Sony-specific APIs",
-      "methods": []
+      "methods": [
+        "ConsumePSNEntitlements",
+        "RefreshPSNAuthToken"
+      ]
     },
     {
       "name": "Server-Side Cloud Script",
@@ -8846,7 +9146,9 @@
     },
     {
       "name": "Amazon-Specific APIs",
-      "methods": []
+      "methods": [
+        "ValidateAmazonIAPReceipt"
+      ]
     },
     {
       "name": "Trading",
