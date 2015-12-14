@@ -4366,6 +4366,30 @@
       ]
     },
     {
+      "name": "GetFriendLeaderboard",
+      "summary": "Retrieves a list of ranked friends of the given player for the given statistic, starting from the indicated point in the leaderboard",
+      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/GetFriendLeaderboard",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetFriendLeaderboardRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"98092347523\",\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 1258,\r\n  \"MaxResultsCount\": 20,\r\n  \"IncludeSteamFriends\": false\r\n}",
+      "result": "GetLeaderboardResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
+      "beta": true,
+      "seeAlso": [
+        "GetLeaderboardAroundCurrentUser",
+        "GetLeaderboardAroundUser",
+        "GetUserStatistics"
+      ],
+      "errors": [
+        "InvalidParams",
+        "FacebookAPIError"
+      ]
+    },
+    {
       "name": "GetLeaderboard",
       "summary": "Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
@@ -4405,6 +4429,23 @@
         "GetUserStatistics",
         "UpdateUserStatistics"
       ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayerStatistics",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayerStatistics",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayerStatisticsRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"621EF2023753444\",\r\n  \"StatisticNames\": [\r\n    \"Points\",\r\n    \"Wins\"\r\n  ]\r\n}",
+      "result": "GetPlayerStatisticsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"621EF2023753444\",\r\n    \"Statistics\": [\r\n      {\r\n        \"StatisticName\": \"Points\",\r\n        \"Value\": 570,\r\n        \"Version\": \"1A\"\r\n      },\r\n      {\r\n        \"StatisticName\": \"Wins\",\r\n        \"Value\": 15,\r\n        \"Version\": \"0\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "beta": true,
       "errors": [
         "InvalidParams",
         "AccountNotFound"
@@ -4572,6 +4613,23 @@
         "GetLeaderboardAroundUser",
         "UpdateUserStatistics"
       ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "UpdatePlayerStatistics",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/UpdatePlayerStatistics",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdatePlayerStatisticsRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"Statistics\": [\r\n    {\r\n      \"StatisticName\": \"Points\",\r\n      \"Version\": \"1A\",\r\n      \"Value\": 600\r\n    },\r\n    {\r\n      \"StatisticName\": \"Wins\",\r\n      \"Version\": \"0\",\r\n      \"Value\": 16\r\n    },\r\n    {\r\n      \"StatisticName\": \"Stars\",\r\n      \"Value\": 7\r\n    }\r\n  ]\r\n}",
+      "result": "UpdatePlayerStatisticsResult",
+      "resultExample": "",
+      "beta": true,
       "errors": [
         "InvalidParams",
         "AccountNotFound"
@@ -5198,6 +5256,75 @@
       ]
     },
     {
+      "name": "AddFriend",
+      "summary": "Adds the Friend user to the friendlist of the user with PlayFabId. At least one of FriendPlayFabId,FriendUsername,FriendEmail, or FriendTitleDisplayName should be initialized.",
+      "subgroup": "Friend List Management",
+      "titleTiers": null,
+      "url": "/Server/AddFriend",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AddFriendRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"FriendPlayFabId\": \"20394883\"\r\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "beta": true,
+      "seeAlso": [
+        "GetFriendsList",
+        "RemoveFriend"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound",
+        "UsersAlreadyFriends"
+      ]
+    },
+    {
+      "name": "GetFriendsList",
+      "summary": "Retrieves the current friends for the user with PlayFabId, constrained to users who have PlayFab accounts. Friends from linked accounts (Facebook, Steam) are also included. You may optionally exclude some linked services' friends.",
+      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included.",
+      "subgroup": "Friend List Management",
+      "titleTiers": null,
+      "url": "/Server/GetFriendsList",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetFriendsListRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"93798903892789754\",\r\n  \"IncludeSteamFriends\": true\r\n}",
+      "result": "GetFriendsListResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Friends\": [\r\n      {\r\n        \"FriendPlayFabId\": \"93798903892789754\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"Davros01\",\r\n        \"Tags\": [\r\n          \"single blue eye\",\r\n          \"genius with robotics\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\"\r\n      },\r\n      {\r\n        \"FriendPlayFabId\": \"334907923945f\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"CyberLeader1\",\r\n        \"Tags\": [\r\n          \"allergic to gold\",\r\n          \"upgradeable\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "beta": true,
+      "seeAlso": [
+        "AddFriend",
+        "RemoveFriend"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidPublisherId",
+        "FacebookAPIError"
+      ]
+    },
+    {
+      "name": "RemoveFriend",
+      "summary": "Removes the specified friend from the the user's friend list",
+      "subgroup": "Friend List Management",
+      "titleTiers": null,
+      "url": "/Server/RemoveFriend",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RemoveFriendRequest",
+      "requestExample": "{\r\n  \"FriendPlayFabId\": \"29837799\",\r\n  \"PlayFabId\": \"1a46086aed40f142\"\r\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "beta": true,
+      "seeAlso": [
+        "AddFriend",
+        "SetFriendTags"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "NotifyMatchmakerPlayerLeft",
       "summary": "Informs the PlayFab match-making service that the user specified has left the Game Server Instance",
       "subgroup": "Matchmaking APIs",
@@ -5772,8 +5899,10 @@
       "name": "Player Data Management",
       "methods": [
         "DeleteUsers",
+        "GetFriendLeaderboard",
         "GetLeaderboard",
         "GetLeaderboardAroundUser",
+        "GetPlayerStatistics",
         "GetUserData",
         "GetUserInternalData",
         "GetUserPublisherData",
@@ -5781,6 +5910,7 @@
         "GetUserPublisherReadOnlyData",
         "GetUserReadOnlyData",
         "GetUserStatistics",
+        "UpdatePlayerStatistics",
         "UpdateUserData",
         "UpdateUserInternalData",
         "UpdateUserPublisherData",
@@ -5824,7 +5954,11 @@
     },
     {
       "name": "Friend List Management",
-      "methods": []
+      "methods": [
+        "AddFriend",
+        "GetFriendsList",
+        "RemoveFriend"
+      ]
     },
     {
       "name": "Matchmaking APIs",
