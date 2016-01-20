@@ -1874,6 +1874,35 @@
         }
       ]
     },
+    "GetCharacterStatisticsRequest": {
+      "name": "GetCharacterStatisticsRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetCharacterStatisticsResult": {
+      "name": "GetCharacterStatisticsResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "CharacterStatistics",
+          "description": "The requested character statistics.",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
     "GetCloudScriptUrlRequest": {
       "name": "GetCloudScriptUrlRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameClient",
@@ -6019,6 +6048,34 @@
         }
       ]
     },
+    "UpdateCharacterStatisticsRequest": {
+      "name": "UpdateCharacterStatisticsRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterStatistics",
+          "description": "Statistics to be updated with the provided values.",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "UpdateCharacterStatisticsResult": {
+      "name": "UpdateCharacterStatisticsResult",
+      "classNameSpace": "PlayFab.WebAPIModels.GameClient",
+      "assembly": "WebAPIModels",
+      "properties": []
+    },
     "UpdatePlayerStatisticsRequest": {
       "name": "UpdatePlayerStatisticsRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameClient",
@@ -8045,7 +8102,7 @@
     {
       "name": "GetUserStatistics",
       "summary": "Retrieves the details of all title-specific statistics for the user",
-      "resultDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "resultDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Client/GetUserStatistics",
@@ -8057,7 +8114,8 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UserStatistics\": {\r\n      \"Headshots\": 18,\r\n      \"Kills\": 47\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "GetLeaderboard",
-        "GetLeaderboardAroundCurrentUser"
+        "GetLeaderboardAroundCurrentUser",
+        "UpdateUserStatistics"
       ],
       "errors": [
         "InvalidParams"
@@ -8129,7 +8187,7 @@
     {
       "name": "UpdateUserStatistics",
       "summary": "Updates the values of the specified title-specific statistics for the user",
-      "requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged. This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  Statistics are used by the leaderboard apis, and accessible for custom game-logic.",
       "resultDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
@@ -9057,6 +9115,30 @@
       ]
     },
     {
+      "name": "GetCharacterStatistics",
+      "summary": "Retrieves the details of all title-specific statistics for the user",
+      "resultDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "subgroup": "Characters",
+      "titleTiers": null,
+      "url": "/Client/GetCharacterStatistics",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetCharacterStatisticsRequest",
+      "requestExample": "{\r\n  \"CharacterId\": \"98765432\"\r\n}",
+      "result": "GetCharacterStatisticsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"CharacterStatistics\": {\r\n      \"Headshots\": 18,\r\n      \"Kills\": 47\r\n    }\r\n  }\r\n}",
+      "seeAlso": [
+        "GetCharacterLeaderboard",
+        "GetLeaderboardAroundCharacter",
+        "GetLeaderboardForUserCharacters",
+        "UpdateCharacterStatistics"
+      ],
+      "errors": [
+        "InvalidParams",
+        "CharacterNotFound"
+      ]
+    },
+    {
       "name": "GetLeaderboardAroundCharacter",
       "summary": "Retrieves a list of ranked characters for the given statistic, centered on the requested Character ID",
       "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
@@ -9119,6 +9201,32 @@
         "ItemNotOwned",
         "InternalServerError",
         "InvalidItemProperties"
+      ]
+    },
+    {
+      "name": "UpdateCharacterStatistics",
+      "summary": "Updates the values of the specified title-specific statistics for the specific character",
+      "requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Character Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  Character statistics are used by the character-leaderboard apis, and accessible for custom game-logic.",
+      "subgroup": "Characters",
+      "titleTiers": null,
+      "url": "/Client/UpdateCharacterStatistics",
+      "auth": "None",
+      "method": "POST",
+      "request": "UpdateCharacterStatisticsRequest",
+      "requestExample": "{\r\n  \"CharacterId\": \"98765432\",\r\n  \"CharacterStatistics\": {\r\n    \"Headshots\": 18,\r\n    \"Kills\": 47\r\n  }\r\n}",
+      "result": "UpdateCharacterStatisticsResult",
+      "resultExample": "",
+      "seeAlso": [
+        "GetCharacterStatistics",
+        "GetCharacterLeaderboard",
+        "GetLeaderboardAroundCharacter",
+        "GetLeaderboardForUserCharacters"
+      ],
+      "errors": [
+        "InvalidParams",
+        "CharacterNotFound",
+        "InvalidCharacterStatistics",
+        "APINotEnabledForGameClientAccess"
       ]
     },
     {
@@ -9548,9 +9656,11 @@
       "methods": [
         "GetAllUsersCharacters",
         "GetCharacterLeaderboard",
+        "GetCharacterStatistics",
         "GetLeaderboardAroundCharacter",
         "GetLeaderboardForUserCharacters",
-        "GrantCharacterToUser"
+        "GrantCharacterToUser",
+        "UpdateCharacterStatistics"
       ]
     },
     {
