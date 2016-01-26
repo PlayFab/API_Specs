@@ -539,6 +539,62 @@
         }
       ]
     },
+    "ConsumeItemRequest": {
+      "name": "ConsumeItemRequest",
+      "classNameSpace": "PlayFab.WebAPIModels.AdminServerShared",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ItemInstanceId",
+          "description": "Unique instance identifier of the item to be consumed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ConsumeCount",
+          "description": "Number of uses to consume from the item.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ConsumeItemResult": {
+      "name": "ConsumeItemResult",
+      "classNameSpace": "PlayFab.WebAPIModels.AdminServerShared",
+      "assembly": "WebAPIModels",
+      "properties": [
+        {
+          "name": "ItemInstanceId",
+          "description": "Unique instance identifier of the item with uses consumed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RemainingUses",
+          "description": "Number of uses remaining on the item.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "CreateSharedGroupRequest": {
       "name": "CreateSharedGroupRequest",
       "classNameSpace": "PlayFab.WebAPIModels.GameServer",
@@ -5199,6 +5255,26 @@
       ]
     },
     {
+      "name": "ConsumeItem",
+      "summary": "Consume uses of a consumable item. When all uses are consumed, it will be removed from the player's inventory.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Server/ConsumeItem",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ConsumeItemRequest",
+      "requestExample": "{\r\n  \"ItemInstanceId\": \"94585729\",\r\n  \"ConsumeCount\": 1\r\n}",
+      "result": "ConsumeItemResult",
+      "resultExample": "",
+      "errors": [
+        "InvalidParams",
+        "NoRemainingUses",
+        "ItemNotFound",
+        "CharacterNotFound",
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "GetCharacterInventory",
       "summary": "Retrieves the specified character's current inventory of virtual goods",
       "requestDetails": "All items currently in the character inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
@@ -6191,6 +6267,7 @@
       "methods": [
         "AddCharacterVirtualCurrency",
         "AddUserVirtualCurrency",
+        "ConsumeItem",
         "GetCharacterInventory",
         "GetUserInventory",
         "GrantItemsToCharacter",
