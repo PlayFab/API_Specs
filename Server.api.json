@@ -3714,6 +3714,121 @@
         }
       ]
     },
+    "UnlockContainerInstanceRequest": {
+      "name": "UnlockContainerInstanceRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ContainerItemInstanceId",
+          "description": "ItemInstanceId of the container to unlock.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "KeyItemInstanceId",
+          "description": "ItemInstanceId of the key that will be consumed by unlocking this container.  If the container requires a key, this parameter is required.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Specifies the catalog version that should be used to determine container contents.  If unspecified, uses catalog associated with the item instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UnlockContainerItemRequest": {
+      "name": "UnlockContainerItemRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ContainerItemId",
+          "description": "Catalog ItemId of the container type to unlock.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Specifies the catalog version that should be used to determine container contents.  If unspecified, uses default/primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UnlockContainerItemResult": {
+      "name": "UnlockContainerItemResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "UnlockedItemInstanceId",
+          "description": "Unique instance identifier of the container unlocked.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UnlockedWithItemInstanceId",
+          "description": "Unique instance identifier of the key used to unlock the container, if applicable.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GrantedItems",
+          "description": "Items granted to the player as a result of unlocking the container.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "Virtual currency granted to the player as a result of unlocking the container.",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
     "UpdateCharacterDataRequest": {
       "name": "UpdateCharacterDataRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -5559,6 +5674,52 @@
       ]
     },
     {
+      "name": "UnlockContainerInstance",
+      "summary": "Opens a specific container (ContainerItemInstanceId), with a specific key (KeyItemInstanceId, when required), and returns the contents of the opened container. If the container (and key when relevant) are consumable (RemainingUses > 0), their RemainingUses will be decremented, consistent with the operation of ConsumeItem.",
+      "requestDetails": "Specify the container and optionally the catalogVersion for the container to open",
+      "resultDetails": "The items and vc found within the container.  These will be added and stacked in your inventory as appropriate.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Server/UnlockContainerInstance",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UnlockContainerInstanceRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"20394883\",\r\n  \"ContainerItemInstanceId\": \"123456788\",\r\n  \"KeyItemInstanceId\": \"123456789\"\r\n}",
+      "result": "UnlockContainerItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "InvalidContainerItem",
+        "ContainerNotOwned",
+        "KeyNotOwned",
+        "ContainerKeyInvalid",
+        "InvalidItemIdInTable"
+      ]
+    },
+    {
+      "name": "UnlockContainerItem",
+      "summary": "Searches Player or Character inventory for any ItemInstance matching the given CatalogItemId, if necessary unlocks it using any appropriate key, and returns the contents of the opened container. If the container (and key when relevant) are consumable (RemainingUses > 0), their RemainingUses will be decremented, consistent with the operation of ConsumeItem.",
+      "requestDetails": "Specify the type of container to open and optionally the catalogVersion for the container to open",
+      "resultDetails": "The items and vc found within the container.  These will be added and stacked in your inventory as appropriate.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Server/UnlockContainerItem",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UnlockContainerItemRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"20394883\",\r\n  \"ContainerItemId\": \"crate block 1\"\r\n}",
+      "result": "UnlockContainerItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "InvalidContainerItem",
+        "ContainerNotOwned",
+        "KeyNotOwned",
+        "ContainerKeyInvalid",
+        "InvalidItemIdInTable"
+      ]
+    },
+    {
       "name": "UpdateUserInventoryItemCustomData",
       "summary": "Updates the key-value pair data tagged to the specified item, which is read-only from the client.",
       "requestDetails": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance which belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while  keys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
@@ -6285,6 +6446,8 @@
         "RevokeInventoryItem",
         "SubtractCharacterVirtualCurrency",
         "SubtractUserVirtualCurrency",
+        "UnlockContainerInstance",
+        "UnlockContainerItem",
         "UpdateUserInventoryItemCustomData"
       ]
     },
@@ -7143,6 +7306,10 @@
     "StatisticVersionIncrementRateExceeded": {
       "id": 1204,
       "name": "StatisticVersionIncrementRateExceeded"
+    },
+    "ContainerKeyInvalid": {
+      "id": 1205,
+      "name": "ContainerKeyInvalid"
     }
   },
   "errorList": [
@@ -7341,6 +7508,7 @@
     "InvalidDropTable",
     "StatisticVersionAlreadyIncrementedForScheduledInterval",
     "StatisticCountLimitExceeded",
-    "StatisticVersionIncrementRateExceeded"
+    "StatisticVersionIncrementRateExceeded",
+    "ContainerKeyInvalid"
   ]
 }
