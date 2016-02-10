@@ -2649,11 +2649,19 @@
       "properties": [
         {
           "name": "SteamIDs",
-          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
+          "description": "Deprecated: Please use SteamStringIDs",
           "collection": "array",
           "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
+          "actualtype": "uint64",
+          "optional": true
+        },
+        {
+          "name": "SteamStringIDs",
+          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -5504,10 +5512,17 @@
       "properties": [
         {
           "name": "SteamId",
-          "description": "Unique Steam identifier for a user.",
+          "description": "Deprecated: Please use SteamStringId",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "uint64",
           "optional": false
+        },
+        {
+          "name": "SteamStringId",
+          "description": "Unique Steam identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "PlayFabId",
@@ -5982,6 +5997,41 @@
       "assembly": "PlayFab.Client.Models",
       "properties": []
     },
+    "UnlockContainerInstanceRequest": {
+      "name": "UnlockContainerInstanceRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ContainerItemInstanceId",
+          "description": "ItemInstanceId of the container to unlock.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "KeyItemInstanceId",
+          "description": "ItemInstanceId of the key that will be consumed by unlocking this container.  If the container requires a key, this parameter is required.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "Specifies the catalog version that should be used to determine container contents.  If unspecified, uses catalog associated with the item instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UnlockContainerItemRequest": {
       "name": "UnlockContainerItemRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -5989,14 +6039,14 @@
       "properties": [
         {
           "name": "ContainerItemId",
-          "description": "Category ItemId of the container type to unlock.",
+          "description": "Catalog ItemId of the container type to unlock.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "CatalogVersion",
-          "description": "Catalog version of the container.",
+          "description": "Specifies the catalog version that should be used to determine container contents.  If unspecified, uses default/primary catalog.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -6020,7 +6070,7 @@
           "description": "Unique instance identifier of the container unlocked.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         },
         {
           "name": "UnlockedWithItemInstanceId",
@@ -7425,9 +7475,9 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "GetPlayFabIDsFromSteamIDsRequest",
-      "requestExample": "{\r\n  \"SteamIDs\": [\r\n    7498495,\r\n    9374209\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"SteamStringIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromSteamIDsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"SteamId\": 1000000000,\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"SteamId\": 1000000001,\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"SteamId\": 857498576495,\r\n        \"SteamStringId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"SteamId\": 759374651209,\r\n        \"SteamStringId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "AccountNotFound"
       ]
@@ -8605,17 +8655,17 @@
       ]
     },
     {
-      "name": "UnlockContainerItem",
-      "summary": "Unlocks a container item in the user's inventory and consumes a key item of the type indicated by the container item",
-      "requestDetails": "Container items and their associated unlocking items (\"crates\" and \"keys\") are paired inventory objects which provide developers with a secure way to have an object which requires another object to activate, without providing the client with the opportunity to use replay attacks, packet blocking, or similar techniques to gain the objects in the container illegitimately. If an optional character ID is provided, this call will look into just that character's inventory for the crate + key. Items will then be granted to that character upon unlock.",
-      "resultDetails": "As a result of this operation, the inventory objects defined as belonging to the container will be added to the user's inventory, including random drop table resolution and recursive addition of bundled items.",
+      "name": "UnlockContainerInstance",
+      "summary": "Opens the specified container, with the specified key (when required), and returns the contents of the opened container. If the container (and key when relevant) are consumable (RemainingUses > 0), their RemainingUses will be decremented, consistent with the operation of ConsumeItem.",
+      "requestDetails": "Specify the container and optionally the catalogVersion for the container to open",
+      "resultDetails": "The items and vc found within the container.  These will be added and stacked in the appropriate inventory.",
       "subgroup": "Player Item Management",
       "titleTiers": null,
-      "url": "/Client/UnlockContainerItem",
+      "url": "/Client/UnlockContainerInstance",
       "auth": "SessionTicket",
       "method": "POST",
-      "request": "UnlockContainerItemRequest",
-      "requestExample": "{\r\n  \"ContainerItemId\": \"crate block 1\",\r\n  \"CatalogVersion\": \"5\"\r\n}",
+      "request": "UnlockContainerInstanceRequest",
+      "requestExample": "{\r\n  \"ContainerItemInstanceId\": \"123456788\",\r\n  \"KeyItemInstanceId\": \"123456789\"\r\n}",
       "result": "UnlockContainerItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
       "errors": [
@@ -8623,7 +8673,31 @@
         "InvalidContainerItem",
         "ContainerNotOwned",
         "KeyNotOwned",
-        "InvalidItemIdInTable"
+        "InvalidItemIdInTable",
+        "CharacterNotFound"
+      ]
+    },
+    {
+      "name": "UnlockContainerItem",
+      "summary": "Searches target inventory for an ItemInstance matching the given CatalogItemId, if necessary unlocks it using an appropriate key, and returns the contents of the opened container. If the container (and key when relevant) are consumable (RemainingUses > 0), their RemainingUses will be decremented, consistent with the operation of ConsumeItem.",
+      "requestDetails": "Specify the type of container to open and optionally the catalogVersion for the container to open",
+      "resultDetails": "The items and vc found within the container.  These will be added and stacked in the appropriate inventory.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Client/UnlockContainerItem",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlockContainerItemRequest",
+      "requestExample": "{\r\n  \"ContainerItemId\": \"crate block 1\"\r\n}",
+      "result": "UnlockContainerItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "InvalidContainerItem",
+        "ContainerNotOwned",
+        "KeyNotOwned",
+        "InvalidItemIdInTable",
+        "CharacterNotFound"
       ]
     },
     {
@@ -8717,7 +8791,7 @@
     {
       "name": "RegisterForIOSPushNotification",
       "summary": "Registers the iOS device to receive push notifications",
-      "requestDetails": "More information can be found on configuring your game for the Apple Push Notification service in the  Apple documentation, here:  https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
+      "requestDetails": "More information can be found on configuring your game for the Apple Push Notification service in the  Apple documentation, here:  https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Chapters/ApplePushService.html#//apple_ref/doc/uid/TP40008194-CH100-SW9.  The steps to configure and send Push Notifications is described in the PlayFab tutorials, here:  https://api.playfab.com/docs/pushCrashCourse/.",
       "subgroup": "IOS-Specific APIs",
       "titleTiers": null,
       "url": "/Client/RegisterForIOSPushNotification",
@@ -8884,7 +8958,7 @@
     {
       "name": "AndroidDevicePushNotificationRegistration",
       "summary": "Registers the Android device to receive push notifications",
-      "requestDetails": "More information can be found on configuring your game for the Google Cloud Messaging service in the Google developer documentation, here:  http://developer.android.com/google/gcm/client.html.  The steps to configure and send Push Notifications is described in the PlayFab forums, here:  https://support.playfab.com/discussions/topics/1000041035.",
+      "requestDetails": "More information can be found on configuring your game for the Google Cloud Messaging service in the Google developer documentation, here:  http://developer.android.com/google/gcm/client.html.  The steps to configure and send Push Notifications is described in the PlayFab tutorials, here:  https://api.playfab.com/docs/pushCrashCourse/.",
       "subgroup": "Android-Specific APIs",
       "titleTiers": null,
       "url": "/Client/AndroidDevicePushNotificationRegistration",
@@ -9128,7 +9202,7 @@
     },
     {
       "name": "GetContentDownloadUrl",
-      "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent  HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to  retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content -  if it has not been uploaded, the query to retrieve the data will fail. See this post for more information:  https://support.playfab.com/support/discussions/topics/1000059929",
+      "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent  HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to  retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content -  if it has not been uploaded, the query to retrieve the data will fail. See this post for more information:  https://community.playfab.com/hc/en-us/community/posts/205469488-How-to-upload-files-to-PlayFab-s-Content-Service",
       "subgroup": "Content",
       "titleTiers": null,
       "url": "/Client/GetContentDownloadUrl",
@@ -9652,6 +9726,7 @@
         "ReportPlayer",
         "StartPurchase",
         "SubtractUserVirtualCurrency",
+        "UnlockContainerInstance",
         "UnlockContainerItem"
       ]
     },
@@ -10552,6 +10627,10 @@
     "StatisticVersionIncrementRateExceeded": {
       "id": 1204,
       "name": "StatisticVersionIncrementRateExceeded"
+    },
+    "ContainerKeyInvalid": {
+      "id": 1205,
+      "name": "ContainerKeyInvalid"
     }
   },
   "errorList": [
@@ -10750,6 +10829,7 @@
     "InvalidDropTable",
     "StatisticVersionAlreadyIncrementedForScheduledInterval",
     "StatisticCountLimitExceeded",
-    "StatisticVersionIncrementRateExceeded"
+    "StatisticVersionIncrementRateExceeded",
+    "ContainerKeyInvalid"
   ]
 }
