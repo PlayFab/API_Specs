@@ -554,7 +554,7 @@
         },
         {
           "name": "VersionChangeInterval",
-          "description": "interval at which the values of the statistic for all players are reset. Resets begin at the next interval boundary",
+          "description": "interval at which the values of the statistic for all players are reset (resets begin at the next interval boundary)",
           "jsontype": "String",
           "actualtype": "StatisticResetIntervalOption",
           "isenum": true,
@@ -1547,7 +1547,7 @@
       "properties": [
         {
           "name": "Statistics",
-          "description": "definitions of all statistics for the title",
+          "description": "the player statistic definitions for the title",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "PlayerStatisticDefinition",
@@ -2629,7 +2629,7 @@
         },
         {
           "name": "VersionChangeInterval",
-          "description": "interval at which the values of the statistic for all players are reset",
+          "description": "interval at which the values of the statistic for all players are reset automatically",
           "jsontype": "String",
           "actualtype": "StatisticResetIntervalOption",
           "isenum": true,
@@ -3425,7 +3425,7 @@
         },
         {
           "name": "VersionChangeInterval",
-          "description": "interval at which the values of the statistic for all players are reset. Changes are effective at the next interval boundary",
+          "description": "interval at which the values of the statistic for all players are reset (changes are effective at the next occurance of the new interval boundary)",
           "jsontype": "String",
           "actualtype": "StatisticResetIntervalOption",
           "isenum": true,
@@ -4291,6 +4291,8 @@
     },
     {
       "name": "CreatePlayerStatisticDefinition",
+      "summary": "Adds a new player statistic configuration to the title, optionally allowing the developer to specify a reset interval.",
+      "requestDetails": "Statistics are numeric values, with each statistic in the title also generating a leaderboard. The ResetInterval  enables automatically resetting leaderboards on a specified interval. Upon reset, all player values are deleted, and the values for all players are  archived for retrieval, if needed (see GetPlayerStatisticVersions). Note that any statistics initially created via a call to UpdatePlayerStatistics (Client or Server) are non-incrementing by default and cannot be defined via this API call - UpdatePlayerStatisticDefinition should be used to set an increment period. Once a statistic has been versioned (reset), previous versions can be queried, but only writes to the current version are considered valid. Also, once incremented, the historical statistics for players in the title may be retrieved using the URL specified in the version information (GetPlayerStatisticVersions).",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/CreatePlayerStatisticDefinition",
@@ -4300,7 +4302,13 @@
       "requestExample": "{\r\n  \"StatisticName\": \"headshots\",\r\n  \"VersionChangeInterval\": \"Never\"\r\n}",
       "result": "CreatePlayerStatisticDefinitionResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Statistic\": {\r\n      \"StatisticName\": \"headshots\",\r\n      \"CurrentVersion\": 2,\r\n      \"VersionChangeInterval\": \"Day\"\r\n    }\r\n  }\r\n}",
-      "beta": true,
+      "seeAlso": [
+        "UpdatePlayerStatisticDefinition",
+        "GetPlayerStatisticDefinitions",
+        "GetPlayerStatisticVersions",
+        "GetPlayerStatistics",
+        "UpdatePlayerStatistics"
+      ],
       "errors": [
         "InvalidParams",
         "StatisticNameConflict",
@@ -4348,6 +4356,8 @@
     },
     {
       "name": "GetPlayerStatisticDefinitions",
+      "summary": "Retrieves the configuration information for all player statistics defined in the title, regardless of whether they have a reset interval.",
+      "resultDetails": "Statistics are numeric values, with each statistic in the title also generating a leaderboard. The configuration for each statistic includes the name of the statistic (StatisticName - its ID), the current version of the statistic (CurrentVersion - which is automatically incremented ecah time the statistics is reset), and the period at which it resets (ResetInterval - hourly, daily, weekly, or monthly). Statistics with no reset interval set will not have a ResetInterval.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/GetPlayerStatisticDefinitions",
@@ -4357,13 +4367,19 @@
       "requestExample": "",
       "result": "GetPlayerStatisticDefinitionsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Statistics\": [\r\n      {\r\n        \"StatisticName\": \"headshots\",\r\n        \"CurrentVersion\": 2,\r\n        \"VersionChangeInterval\": \"Day\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "beta": true,
+      "seeAlso": [
+        "CreatePlayerStatisticDefinition",
+        "GetPlayerStatistics",
+        "UpdatePlayerStatistics"
+      ],
       "errors": [
         "InvalidParams"
       ]
     },
     {
       "name": "GetPlayerStatisticVersions",
+      "summary": "Retrieves the information on the available versions of the specified statistic.",
+      "requestDetails": "Statistics are numeric values, with each statistic in the title also generating a leaderboard. The ResetInterval  enables automatically resetting leaderboards on a specified interval. Note that any statistics created via a call to UpdatePlayerStatistics (Client or Server) will have an existing configuration, with no reset interval defined. For previous versions of a statistic, the ArchivalStatus indicates whether that version's statistics have completed their backup to the archive location. Once the version has been archived, the ArchiveDownloadUrl  indicates the location from which the developer can download the full list of statistic values for all players, in order to provide rewards or other feedback to users based on their scores.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/GetPlayerStatisticVersions",
@@ -4373,7 +4389,13 @@
       "requestExample": "{\r\n  \"StatisticName\": \"headshots\"\r\n}",
       "result": "GetPlayerStatisticVersionsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StatisticVersions\": [\r\n      {\r\n        \"StatisticName\": \"headshots\",\r\n        \"Version\": 2,\r\n        \"ActivationTime\": \"2015-12-05T10:02:01Z\",\r\n        \"ArchivalStatus\": \"NotScheduled\",\r\n        \"ArchiveDownloadUrl\": \"https://Someurl\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "beta": true,
+      "seeAlso": [
+        "CreatePlayerStatisticDefinition",
+        "UpdatePlayerStatisticDefinition",
+        "GetPlayerStatisticDefinitions",
+        "GetPlayerStatistics",
+        "UpdatePlayerStatistics"
+      ],
       "errors": [
         "InvalidParams",
         "StatisticNotFound"
@@ -4525,6 +4547,8 @@
     },
     {
       "name": "IncrementPlayerStatisticVersion",
+      "summary": "Resets the indicated statistic, removing all player entries for it and backing up the old values.",
+      "requestDetails": "Statistics are numeric values, with each statistic in the title also generating a leaderboard.  When this call is made on a given statistic, this forces a resets of that statistic, as a result of which all players will  have their existing values for it removed. When this occurs, a backup process will be initiiated, recording the final  values for the statistic, across all players in the title, to a backup store from which those values can be retrieved, so that the developer can provide feedback and rewards to users based on their previous scores.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/IncrementPlayerStatisticVersion",
@@ -4534,7 +4558,14 @@
       "requestExample": "{\r\n  \"StatisticName\": \"headshots\"\r\n}",
       "result": "IncrementPlayerStatisticVersionResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StatisticVersion\": {\r\n      \"StatisticName\": \"headshots\",\r\n      \"Version\": 2,\r\n      \"ActivationTime\": \"2015-12-05T10:02:01Z\",\r\n      \"ArchivalStatus\": \"NotScheduled\",\r\n      \"ArchiveDownloadUrl\": \"https://Someurl\"\r\n    }\r\n  }\r\n}",
-      "beta": true,
+      "seeAlso": [
+        "CreatePlayerStatisticDefinition",
+        "UpdatePlayerStatisticDefinition",
+        "GetPlayerStatisticDefinitions",
+        "GetPlayerStatisticVersions",
+        "GetPlayerStatistics",
+        "UpdatePlayerStatistics"
+      ],
       "errors": [
         "InvalidParams",
         "StatisticNotFound",
@@ -4596,6 +4627,8 @@
     },
     {
       "name": "UpdatePlayerStatisticDefinition",
+      "summary": "Updates a player statistic configuration for the title, optionally allowing the developer to specify a reset interval.",
+      "requestDetails": "Statistics are numeric values, with each statistic in the title also generating a leaderboard. The ResetInterval  enables automatically resetting leaderboards on a specified interval. Upon reset, the statistic updates to a new version with no values (effectively removing all players from the leaderboard). The previous version's statistic values are also archived for retrieval, if needed (see GetPlayerStatisticVersions). Statistics not created via a call to CreatePlayerStatisticDefinition are non-incrementing by default, but can be set to a regular increment period via this API call. Once a statistic has been versioned (reset), the now-previous version can still be written to for up a short, pre-defined period (currently 10 seconds), to prevent issues with levels completing around the time of the reset. Also, once incremented, the historical statistics for players in the title may be retrieved using the URL specified in the version information (GetPlayerStatisticVersions).",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/UpdatePlayerStatisticDefinition",
@@ -4605,7 +4638,13 @@
       "requestExample": "{\r\n  \"StatisticName\": \"headshots\",\r\n  \"VersionChangeInterval\": \"Day\"\r\n}",
       "result": "UpdatePlayerStatisticDefinitionResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Statistic\": {\r\n      \"StatisticName\": \"headshots\",\r\n      \"CurrentVersion\": 2,\r\n      \"VersionChangeInterval\": \"Day\"\r\n    }\r\n  }\r\n}",
-      "beta": true,
+      "seeAlso": [
+        "CreatePlayerStatisticDefinition",
+        "GetPlayerStatisticDefinitions",
+        "GetPlayerStatisticVersions",
+        "GetPlayerStatistics",
+        "UpdatePlayerStatistics"
+      ],
       "errors": [
         "InvalidParams",
         "StatisticNotFound"
