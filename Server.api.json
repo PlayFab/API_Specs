@@ -1976,6 +1976,45 @@
         }
       ]
     },
+    "GetPlayFabIDsFromSteamIDsRequest": {
+      "name": "GetPlayFabIDsFromSteamIDsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "SteamIDs",
+          "description": "Deprecated: Please use SteamStringIDs",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": true
+        },
+        {
+          "name": "SteamStringIDs",
+          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromSteamIDsResult": {
+      "name": "GetPlayFabIDsFromSteamIDsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Steam identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "SteamPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -3593,6 +3632,34 @@
         }
       ]
     },
+    "SteamPlayFabIdPair": {
+      "name": "SteamPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "SteamId",
+          "description": "Deprecated: Please use SteamStringId",
+          "jsontype": "Number",
+          "actualtype": "uint64",
+          "optional": false
+        },
+        {
+          "name": "SteamStringId",
+          "description": "Unique Steam identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "SubtractCharacterVirtualCurrencyRequest": {
       "name": "SubtractCharacterVirtualCurrencyRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -4709,6 +4776,24 @@
       "requestExample": "{\r\n  \"FacebookIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromFacebookIDsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"FacebookId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"FacebookId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "AccountNotFound",
+        "InvalidPublisherId"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromSteamIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Steam identifiers. The Steam identifiers  are the profile IDs for the user accounts, available as SteamId in the Steamworks Community API calls.",
+      "resultDetails": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromSteamIDs",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromSteamIDsRequest",
+      "requestExample": "{\r\n  \"SteamStringIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
+      "result": "GetPlayFabIDsFromSteamIDsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"SteamId\": 857498576495,\r\n        \"SteamStringId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"SteamId\": 759374651209,\r\n        \"SteamStringId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "AccountNotFound",
         "InvalidPublisherId"
@@ -6403,6 +6488,7 @@
       "name": "Account Management",
       "methods": [
         "GetPlayFabIDsFromFacebookIDs",
+        "GetPlayFabIDsFromSteamIDs",
         "GetUserAccountInfo",
         "SendPushNotification"
       ]
