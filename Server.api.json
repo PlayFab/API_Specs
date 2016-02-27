@@ -1966,15 +1966,6 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
-        },
-        {
-          "name": "StatisticNameVersions",
-          "description": "statistics to return, if StatisticNames is not set (only statistics which have a version matching that provided will be returned)",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "StatisticNameVersion",
-          "isclass": true,
-          "optional": true
         }
       ]
     },
@@ -1996,36 +1987,6 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "StatisticValue",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "GetPlayerStatisticVersionsRequest": {
-      "name": "GetPlayerStatisticVersionsRequest",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "StatisticName",
-          "description": "unique name of the statistic",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetPlayerStatisticVersionsResult": {
-      "name": "GetPlayerStatisticVersionsResult",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "StatisticVersions",
-          "description": "version change history of the statistic",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "PlayerStatisticVersion",
           "isclass": true,
           "optional": true
         }
@@ -3305,55 +3266,6 @@
         }
       ]
     },
-    "PlayerStatisticVersion": {
-      "name": "PlayerStatisticVersion",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "StatisticName",
-          "description": "name of the statistic when the version became active",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Version",
-          "description": "version of the statistic",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
-        },
-        {
-          "name": "ScheduledActivationTime",
-          "description": "time at which the statistic version was scheduled to become active, based on the configured ResetInterval",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "ActivationTime",
-          "description": "time when the statistic version became active",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": false
-        },
-        {
-          "name": "ScheduledDeactivationTime",
-          "description": "time at which the statistic version was scheduled to become inactive, based on the configured ResetInterval",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "DeactivationTime",
-          "description": "time when the statistic version became inactive due to statistic version incrementing",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        }
-      ]
-    },
     "RedeemCouponRequest": {
       "name": "RedeemCouponRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -3808,27 +3720,6 @@
         }
       ]
     },
-    "StatisticNameVersion": {
-      "name": "StatisticNameVersion",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "StatisticName",
-          "description": "unique name of the statistic",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Version",
-          "description": "the version of the statistic to be returned",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
-        }
-      ]
-    },
     "StatisticUpdate": {
       "name": "StatisticUpdate",
       "classNameSpace": "PlayFab.Server.Models",
@@ -3879,9 +3770,9 @@
         {
           "name": "Version",
           "description": "for updates to an existing statistic value for a player, the version of the statistic when it was loaded",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -5194,39 +5085,15 @@
       "request": "GetPlayerStatisticsRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"621EF2023753444\",\r\n  \"StatisticNames\": [\r\n    \"Points\",\r\n    \"Wins\"\r\n  ]\r\n}",
       "result": "GetPlayerStatisticsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"621EF2023753444\",\r\n    \"Statistics\": [\r\n      {\r\n        \"StatisticName\": \"Points\",\r\n        \"Value\": 570,\r\n        \"Version\": \"1A\"\r\n      },\r\n      {\r\n        \"StatisticName\": \"Wins\",\r\n        \"Value\": 15,\r\n        \"Version\": \"0\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"621EF2023753444\",\r\n    \"Statistics\": [\r\n      {\r\n        \"StatisticName\": \"Points\",\r\n        \"Value\": 570,\r\n        \"Version\": 1\r\n      },\r\n      {\r\n        \"StatisticName\": \"Wins\",\r\n        \"Value\": 15,\r\n        \"Version\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "CreatePlayerStatisticDefinition",
         "UpdatePlayerStatisticDefinition",
-        "GetPlayerStatisticVersions",
         "UpdatePlayerStatistics"
       ],
       "errors": [
         "InvalidParams",
         "AccountNotFound"
-      ]
-    },
-    {
-      "name": "GetPlayerStatisticVersions",
-      "summary": "Retrieves the information on the available versions of the specified statistic.",
-      "subgroup": "Player Data Management",
-      "titleTiers": null,
-      "url": "/Server/GetPlayerStatisticVersions",
-      "auth": "SecretKey",
-      "method": "POST",
-      "request": "GetPlayerStatisticVersionsRequest",
-      "requestExample": "{\r\n  \"StatisticName\": \"headshots\"\r\n}",
-      "result": "GetPlayerStatisticVersionsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StatisticVersions\": [\r\n      {\r\n        \"StatisticName\": \"headshots\",\r\n        \"Version\": 2,\r\n        \"ActivationTime\": \"2015-12-05T10:02:01Z\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "seeAlso": [
-        "CreatePlayerStatisticDefinition",
-        "UpdatePlayerStatisticDefinition",
-        "GetPlayerStatistics",
-        "UpdatePlayerStatistics"
-      ],
-      "errors": [
-        "InvalidParams",
-        "StatisticNotFound"
       ]
     },
     {
@@ -6849,7 +6716,6 @@
         "GetLeaderboard",
         "GetLeaderboardAroundUser",
         "GetPlayerStatistics",
-        "GetPlayerStatisticVersions",
         "GetUserData",
         "GetUserInternalData",
         "GetUserPublisherData",
