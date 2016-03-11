@@ -4,6 +4,8 @@ api-specs README
 ----
 JSON files describing PlayFab's HTTP APIs. These JSON files are the input to the sdk-generator project, which uses these API descriptions to generate all the different SDK libraries, ensuring that they will always be in sync with the latest server spec.
 
+This depot is populated by an automated process.  Do not submit manual changes to the *.api.json files.  You'll probably break the automation, and even if you don't, your changes will be over-written and ignored in the next automated build.
+
 2. Troubleshooting:
 ----
 For a complete list of available APIs, check out the [online documentation](http://api.playfab.com/Documentation/).
