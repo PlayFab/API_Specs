@@ -559,6 +559,14 @@
           "actualtype": "StatisticResetIntervalOption",
           "isenum": true,
           "optional": true
+        },
+        {
+          "name": "AggregationMethod",
+          "description": "the aggregation method to use in updating the statistic (defaults to last)",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
+          "isenum": true,
+          "optional": true
         }
       ]
     },
@@ -2634,6 +2642,14 @@
           "actualtype": "StatisticResetIntervalOption",
           "isenum": true,
           "optional": true
+        },
+        {
+          "name": "AggregationMethod",
+          "description": "the aggregation method to use in updating the statistic (defaults to last)",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
+          "isenum": true,
+          "optional": true
         }
       ]
     },
@@ -3224,6 +3240,26 @@
         }
       ]
     },
+    "StatisticAggregationMethod": {
+      "name": "StatisticAggregationMethod",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Last"
+        },
+        {
+          "name": "Min"
+        },
+        {
+          "name": "Max"
+        },
+        {
+          "name": "Sum"
+        }
+      ]
+    },
     "StatisticResetIntervalOption": {
       "name": "StatisticResetIntervalOption",
       "classNameSpace": "PlayFab.Admin.Models",
@@ -3389,7 +3425,7 @@
       "properties": [
         {
           "name": "Version",
-          "description": "Cloud Script version to update. If null, defaults to most recent version",
+          "description": "Deprecated - unused",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
@@ -3401,6 +3437,13 @@
           "jsontype": "Object",
           "actualtype": "CloudScriptFile",
           "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "Publish",
+          "description": "Immediately publish the new revision",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
           "optional": false
         }
       ]
@@ -3443,6 +3486,14 @@
           "description": "interval at which the values of the statistic for all players are reset (changes are effective at the next occurance of the new interval boundary)",
           "jsontype": "String",
           "actualtype": "StatisticResetIntervalOption",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "AggregationMethod",
+          "description": "the aggregation method to use in updating the statistic (defaults to last)",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
           "isenum": true,
           "optional": true
         }
@@ -5517,7 +5568,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "UpdateCloudScriptRequest",
-      "requestExample": "{\r\n  \"Version\": 1,\r\n  \"Files\": [\r\n    {\r\n      \"Filename\": \"main.js\",\r\n      \"FileContents\": \"var LevelRewards =\\r\\n[\\r\\n\\t[\\\"TestItem1\\\"],\\r\\n\\t[\\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\"],\\r\\n\\t[\\\"TestItem1\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem2\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\", \\\"TestItem3\\\"]\\r\\n]\\r\\n\\r\\nhandlers.onLevelComplete = function(args)\\r\\n{\\r\\n\\tvar levelNum = args.level;\\r\\n\\t\\r\\n\\t// Do some basic input validation\\r\\n\\tif(levelNum < 0 || levelNum >= LevelRewards.length)\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Invalid level \\\"+levelNum+\\\" completed by \\\"+currentPlayerId);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar levelCompleteKey = \\\"LevelCompleted\\\"+levelNum;\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [levelCompleteKey]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Did they already complete this level?\\r\\n\\tif(playerInternalData.Data[levelCompleteKey])\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" already completed level \\\"+levelNum);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar rewards = LevelRewards[levelNum];\\r\\n\\t\\r\\n\\tvar resultItems = null;\\r\\n\\tif(rewards)\\r\\n\\t{\\r\\n\\t\\t// Grant reward items to player for completing the level\\r\\n\\t\\tvar itemGrantResult = server.GrantItemsToUser(\\r\\n\\t\\t{\\r\\n\\t\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\t\\tAnnotation: \\\"Given by completing level \\\"+levelNum,\\r\\n\\t\\t\\tItemIds: rewards\\r\\n\\t\\t});\\r\\n\\t\\t\\r\\n\\t\\tresultItems = itemGrantResult.ItemGrantResults;\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Mark the level as being completed so they can't get the reward again\\r\\n\\tvar saveData = {};\\r\\n\\tsaveData[levelCompleteKey] = \\\"true\\\";\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: saveData\\r\\n\\t});\\r\\n\\r\\n\\t// Return the results of the item grant so the client can see what they got\\r\\n\\treturn {\\r\\n\\t\\trewards: resultItems\\r\\n\\t};\\r\\n}\\r\\n\\r\\nvar monsterRewards =\\r\\n{\\r\\n\\t\\\"skrill\\\" : { \\\"ChumpCoins\\\" : 100},\\r\\n\\t\\\"lumpur\\\" : { \\\"ChumpCoins\\\" : 200}\\r\\n}\\r\\n\\r\\nvar killCoolDown = 60;\\r\\n\\r\\nfunction currTimeSeconds()\\r\\n{\\r\\n\\tvar now = new Date();\\r\\n\\treturn now.getTime() / 1000;\\r\\n}\\r\\n\\r\\nhandlers.monsterKilled = function(args)\\r\\n{\\r\\n\\tvar monsterType = args.type;\\r\\n\\t\\r\\n\\tvar now = currTimeSeconds();\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [\\\"lastKill\\\"]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Check when the last time they killed a monster was \\r\\n\\tvar lastKill = playerInternalData.Data[\\\"lastKill\\\"];\\r\\n\\tif(lastKill)\\r\\n\\t{\\r\\n\\t\\t// We have a value, see when it is\\r\\n\\t\\tvar lastKillTime = parseInt(lastKill.Value);\\r\\n\\t\\tif(now - lastKillTime < killCoolDown)\\r\\n\\t\\t{\\r\\n\\t\\t\\t// In this particular game, it should not be possible to kill a monster more often than once a minute, so they might be cheating\\r\\n\\t\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" killed \\\"+monsterType+\\\" again too quickly!\\\");\\r\\n\\t\\t\\treturn {};\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar killReward = monsterRewards[monsterType];\\r\\n\\t\\r\\n\\tif(killReward)\\r\\n\\t{\\r\\n\\t\\tfor(var currency in killReward)\\r\\n\\t\\t{\\r\\n\\t\\t\\tvar amount = killReward[currency];\\r\\n\\t\\t\\tserver.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currency, Amount: amount });\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Reset the kill timer\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: {\\r\\n\\t\\t\\t\\\"lastKill\\\" : String(now)\\r\\n\\t\\t}\\r\\n\\t});\\r\\n\\t\\r\\n\\treturn {\\r\\n\\t\\trewards: killReward\\r\\n\\t};\\r\\n}\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"Files\": [\r\n    {\r\n      \"Filename\": \"main.js\",\r\n      \"FileContents\": \"var LevelRewards =\\r\\n[\\r\\n\\t[\\\"TestItem1\\\"],\\r\\n\\t[\\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\"],\\r\\n\\t[\\\"TestItem1\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem2\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\", \\\"TestItem3\\\"]\\r\\n]\\r\\n\\r\\nhandlers.onLevelComplete = function(args)\\r\\n{\\r\\n\\tvar levelNum = args.level;\\r\\n\\t\\r\\n\\t// Do some basic input validation\\r\\n\\tif(levelNum < 0 || levelNum >= LevelRewards.length)\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Invalid level \\\"+levelNum+\\\" completed by \\\"+currentPlayerId);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar levelCompleteKey = \\\"LevelCompleted\\\"+levelNum;\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [levelCompleteKey]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Did they already complete this level?\\r\\n\\tif(playerInternalData.Data[levelCompleteKey])\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" already completed level \\\"+levelNum);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar rewards = LevelRewards[levelNum];\\r\\n\\t\\r\\n\\tvar resultItems = null;\\r\\n\\tif(rewards)\\r\\n\\t{\\r\\n\\t\\t// Grant reward items to player for completing the level\\r\\n\\t\\tvar itemGrantResult = server.GrantItemsToUser(\\r\\n\\t\\t{\\r\\n\\t\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\t\\tAnnotation: \\\"Given by completing level \\\"+levelNum,\\r\\n\\t\\t\\tItemIds: rewards\\r\\n\\t\\t});\\r\\n\\t\\t\\r\\n\\t\\tresultItems = itemGrantResult.ItemGrantResults;\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Mark the level as being completed so they can't get the reward again\\r\\n\\tvar saveData = {};\\r\\n\\tsaveData[levelCompleteKey] = \\\"true\\\";\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: saveData\\r\\n\\t});\\r\\n\\r\\n\\t// Return the results of the item grant so the client can see what they got\\r\\n\\treturn {\\r\\n\\t\\trewards: resultItems\\r\\n\\t};\\r\\n}\\r\\n\\r\\nvar monsterRewards =\\r\\n{\\r\\n\\t\\\"skrill\\\" : { \\\"ChumpCoins\\\" : 100},\\r\\n\\t\\\"lumpur\\\" : { \\\"ChumpCoins\\\" : 200}\\r\\n}\\r\\n\\r\\nvar killCoolDown = 60;\\r\\n\\r\\nfunction currTimeSeconds()\\r\\n{\\r\\n\\tvar now = new Date();\\r\\n\\treturn now.getTime() / 1000;\\r\\n}\\r\\n\\r\\nhandlers.monsterKilled = function(args)\\r\\n{\\r\\n\\tvar monsterType = args.type;\\r\\n\\t\\r\\n\\tvar now = currTimeSeconds();\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [\\\"lastKill\\\"]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Check when the last time they killed a monster was \\r\\n\\tvar lastKill = playerInternalData.Data[\\\"lastKill\\\"];\\r\\n\\tif(lastKill)\\r\\n\\t{\\r\\n\\t\\t// We have a value, see when it is\\r\\n\\t\\tvar lastKillTime = parseInt(lastKill.Value);\\r\\n\\t\\tif(now - lastKillTime < killCoolDown)\\r\\n\\t\\t{\\r\\n\\t\\t\\t// In this particular game, it should not be possible to kill a monster more often than once a minute, so they might be cheating\\r\\n\\t\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" killed \\\"+monsterType+\\\" again too quickly!\\\");\\r\\n\\t\\t\\treturn {};\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar killReward = monsterRewards[monsterType];\\r\\n\\t\\r\\n\\tif(killReward)\\r\\n\\t{\\r\\n\\t\\tfor(var currency in killReward)\\r\\n\\t\\t{\\r\\n\\t\\t\\tvar amount = killReward[currency];\\r\\n\\t\\t\\tserver.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currency, Amount: amount });\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Reset the kill timer\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: {\\r\\n\\t\\t\\t\\\"lastKill\\\" : String(now)\\r\\n\\t\\t}\\r\\n\\t});\\r\\n\\t\\r\\n\\treturn {\\r\\n\\t\\trewards: killReward\\r\\n\\t};\\r\\n}\"\r\n    }\r\n  ],\r\n  \"Publish\": false\r\n}",
       "result": "UpdateCloudScriptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Version\": 1,\r\n    \"Revision\": 5\r\n  }\r\n}",
       "errors": [
@@ -6517,6 +6568,26 @@
     "CloudScriptExecutionTimeLimitExceeded": {
       "id": 1206,
       "name": "CloudScriptExecutionTimeLimitExceeded"
+    },
+    "NoWritePermissionsForEvent": {
+      "id": 1207,
+      "name": "NoWritePermissionsForEvent"
+    },
+    "CloudScriptFunctionArgumentSizeExceeded": {
+      "id": 1208,
+      "name": "CloudScriptFunctionArgumentSizeExceeded"
+    },
+    "CloudScriptAPIRequestCountExceeded": {
+      "id": 1209,
+      "name": "CloudScriptAPIRequestCountExceeded"
+    },
+    "CloudScriptAPIRequestError": {
+      "id": 1210,
+      "name": "CloudScriptAPIRequestError"
+    },
+    "CloudScriptHTTPRequestError": {
+      "id": 1211,
+      "name": "CloudScriptHTTPRequestError"
     }
   },
   "errorList": [
@@ -6717,6 +6788,11 @@
     "StatisticCountLimitExceeded",
     "StatisticVersionIncrementRateExceeded",
     "ContainerKeyInvalid",
-    "CloudScriptExecutionTimeLimitExceeded"
+    "CloudScriptExecutionTimeLimitExceeded",
+    "NoWritePermissionsForEvent",
+    "CloudScriptFunctionArgumentSizeExceeded",
+    "CloudScriptAPIRequestCountExceeded",
+    "CloudScriptAPIRequestError",
+    "CloudScriptHTTPRequestError"
   ]
 }
