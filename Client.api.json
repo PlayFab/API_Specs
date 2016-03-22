@@ -657,6 +657,23 @@
         }
       ]
     },
+    "CloudScriptRevisionOption": {
+      "name": "CloudScriptRevisionOption",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Live"
+        },
+        {
+          "name": "Latest"
+        },
+        {
+          "name": "Specific"
+        }
+      ]
+    },
     "ConfirmPurchaseRequest": {
       "name": "ConfirmPurchaseRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -1387,6 +1404,120 @@
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
       "properties": []
+    },
+    "ExecuteCloudScriptRequest": {
+      "name": "ExecuteCloudScriptRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "FunctionName",
+          "description": "The name of the CloudScript function to execute",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "FunctionParameter",
+          "description": "Object that is passed in to the function as the first argument",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "RevisionSelection",
+          "description": "Option for which revision of the CloudScript to execute. 'Latest' executes the most recently created revision, 'Live' executes the current live, published revision, and 'Specific' executes the specified revision.",
+          "jsontype": "String",
+          "actualtype": "CloudScriptRevisionOption",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SpecificRevision",
+          "description": "The specivic revision to execute, when RevisionSelection is set to 'Specific'",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "GeneratePlayStreamEvent",
+          "description": "Generate a 'player_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "ExecuteCloudScriptResult": {
+      "name": "ExecuteCloudScriptResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "FunctionName",
+          "description": "The name of the function that executed",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Revision",
+          "description": "The revision of the CloudScript that executed",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "FunctionResult",
+          "description": "The object returned from the CloudScript function, if any",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "Logs",
+          "description": "Entries logged during the function execution. These include both entries logged in the function code using log.info() and log.error() and error entries for API and HTTP request failures.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "LogStatement",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ExecutionTimeSeconds",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
+        },
+        {
+          "name": "MemoryConsumedBytes",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "APIRequestsIssued",
+          "description": "Number of PlayFab API requests issued by the CloudScript function",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "HttpRequestsIssued",
+          "description": "Number of external HTTP requests issued by the CloudScript function",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Error",
+          "description": "Information about the error, if any, that occured during execution",
+          "jsontype": "Object",
+          "actualtype": "ScriptExecutionError",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "FacebookPlayFabIdPair": {
       "name": "FacebookPlayFabIdPair",
@@ -3612,7 +3743,7 @@
         },
         {
           "name": "ForceLink",
-          "description": "If this Facebook account is already linked to a Playfab account, this will unlink the old account before linking the new one. Be careful when using this call, as it may orphan the old account. Defaults to false.",
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -4325,6 +4456,33 @@
         }
       ]
     },
+    "LogStatement": {
+      "name": "LogStatement",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "Level",
+          "description": "'Debug', 'Info', or 'Error'",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Data",
+          "description": "Optional object accompanying the message as contextual information",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        }
+      ]
+    },
     "MatchmakeRequest": {
       "name": "MatchmakeRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -4760,6 +4918,132 @@
           "description": "time when the statistic version became inactive due to statistic version incrementing",
           "jsontype": "String",
           "actualtype": "DateTime",
+          "optional": true
+        }
+      ]
+    },
+    "PlayStreamEventHistory": {
+      "name": "PlayStreamEventHistory",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "ParentTriggerId",
+          "description": "The ID of the trigger that caused this event to be created.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ParentEventId",
+          "description": "The ID of the previous event that caused this event to be created by hitting a trigger.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TriggeredEvents",
+          "description": "If true, then this event was allowed to trigger subsequent events in a trigger.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "PlayStreamPlayerEventData": {
+      "name": "PlayStreamPlayerEventData",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "EntityType",
+          "description": "RESERVED KEYWORD. The type of entity (player, title, etc) to which this event applies.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Source",
+          "description": "RESERVED KEYWORD. The name of the source of this PlayStream event; will be PlayFab if the event originated from us.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "The ID of the title to which this player event applies.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SourceType",
+          "description": "RESERVED KEYWORD. The type of source of this event (PlayFab partner, other backend, or from the PlayFab API).",
+          "jsontype": "String",
+          "actualtype": "SourceType",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "EventId",
+          "description": "RESERVED KEYWORD. PlayFab-assigned unique identifier for this event.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityId",
+          "description": "RESERVED KEYWORD. The identifier for the entity (title, player, etc) to which this event applies.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EventNamespace",
+          "description": "RESERVED KEYWORD. The assigned namespacing for this event. For example: 'com.myprogram.ads'",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EventName",
+          "description": "RESERVED KEYWORD. The name of this event.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Timestamp",
+          "description": "RESERVED KEYWORD. The time (in UTC) associated with this event.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "History",
+          "description": "RESERVED KEYWORD. The history of events associated with this event. This is set in cases where an event has generated children events via a trigger action.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PlayStreamEventHistory",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Reserved",
+          "description": "RESERVED KEYWORD. Reserved exclusively for PlayFab internal use.",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "RESERVED KEYWORD. Key-Value pair storage. Any provider of this event schema is allowed to send additional values in this property.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -5306,6 +5590,34 @@
         }
       ]
     },
+    "ScriptExecutionError": {
+      "name": "ScriptExecutionError",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "Error",
+          "description": "Error code, such as CloudScriptNotFound, JavascriptException, CloudScriptFunctionArgumentSizeExceeded, CloudScriptAPIRequestCountExceeded, CloudScriptAPIRequestError, or CloudScriptHTTPRequestError",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Message",
+          "description": "Details about the error",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StackTrace",
+          "description": "Point during the execution of the script at which the error occurred, if any",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "SendAccountRecoveryEmailRequest": {
       "name": "SendAccountRecoveryEmailRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -5401,6 +5713,32 @@
           "actualtype": "UserDataPermission",
           "isenum": true,
           "optional": true
+        }
+      ]
+    },
+    "SourceType": {
+      "name": "SourceType",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Admin"
+        },
+        {
+          "name": "BackEnd"
+        },
+        {
+          "name": "GameClient"
+        },
+        {
+          "name": "GameServer"
+        },
+        {
+          "name": "Partner"
+        },
+        {
+          "name": "Stream"
         }
       ]
     },
@@ -7148,6 +7486,133 @@
           "description": "Maximum value to which the regenerating currency will automatically increment. Note that it can exceed this value through use of the AddUserVirtualCurrency API call. However, it will not regenerate automatically until it has fallen below this value.",
           "jsontype": "Number",
           "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "WriteEventResponse": {
+      "name": "WriteEventResponse",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
+    "WritePlayerClientEventRequest": {
+      "name": "WritePlayerClientEventRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Event",
+          "description": "The event data to send into the system. Must be one of the specified valid implementations.",
+          "collection": "abstract",
+          "jsontype": "Object",
+          "actualtype": "PlayStreamPlayerEventData",
+          "isclass": true,
+          "isAbstract": true,
+          "implementingtypes": [
+            {
+              "name": "PlayerCustomEventData",
+              "classNameSpace": "PlayFab.PlayerCustomEventData.Models",
+              "assembly": "PlayFab.PlayerCustomEventData.Models",
+              "description": "This describes a generic, player-based event. The provided attributes are the minimal setthat are required in order for PlayFab to understand your event. Any other structure or attributescan be added at will. ",
+              "properties": [
+                {
+                  "name": "EventName",
+                  "description": "RESERVED KEYWORD. The name of this event.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": false
+                },
+                {
+                  "name": "EventNamespace",
+                  "description": "RESERVED KEYWORD. The assigned namespacing for this event. For example: 'com.myprogram.ads'",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "Source",
+                  "description": "RESERVED KEYWORD. The name of the source of this PlayStream event; will be PlayFab if the event originated from us.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "EntityType",
+                  "description": "RESERVED KEYWORD. The type of entity (player, title, etc) to which this event applies.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "TitleId",
+                  "description": "The ID of the title to which this player event applies.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "SourceType",
+                  "description": "RESERVED KEYWORD. The type of source of this event (PlayFab partner, other backend, or from the PlayFab API).",
+                  "jsontype": "String",
+                  "actualtype": "SourceType",
+                  "isenum": true,
+                  "optional": true
+                },
+                {
+                  "name": "EventId",
+                  "description": "RESERVED KEYWORD. PlayFab-assigned unique identifier for this event.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "EntityId",
+                  "description": "RESERVED KEYWORD. The identifier for the entity (title, player, etc) to which this event applies.",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                },
+                {
+                  "name": "Timestamp",
+                  "description": "RESERVED KEYWORD. The time (in UTC) associated with this event.",
+                  "jsontype": "String",
+                  "actualtype": "DateTime",
+                  "optional": false
+                },
+                {
+                  "name": "History",
+                  "description": "RESERVED KEYWORD. The history of events associated with this event. This is set in cases where an event has generated children events via a trigger action.",
+                  "collection": "array",
+                  "jsontype": "Object",
+                  "actualtype": "PlayStreamEventHistory",
+                  "isclass": true,
+                  "optional": true
+                },
+                {
+                  "name": "Reserved",
+                  "description": "RESERVED KEYWORD. Reserved exclusively for PlayFab internal use.",
+                  "jsontype": "Object",
+                  "actualtype": "object",
+                  "optional": true
+                },
+                {
+                  "name": "CustomTags",
+                  "description": "RESERVED KEYWORD. Key-Value pair storage. Any provider of this event schema is allowed to send additional values in this property.",
+                  "collection": "map",
+                  "jsontype": "String",
+                  "actualtype": "String",
+                  "optional": true
+                }
+              ]
+            }
+          ],
           "optional": false
         }
       ]
@@ -9237,6 +9702,29 @@
       ]
     },
     {
+      "name": "WritePlayerEvent",
+      "summary": "Writes a player-based event into PlayStream.",
+      "requestDetails": "This API is designed to write a multitude of different event types into PlayStream. It supports both specific event type schemas definedby PlayFab, as well as a general custom event which PlayFab will pass through to any registered providers.",
+      "subgroup": "Analytics",
+      "titleTiers": null,
+      "url": "/Client/WritePlayerEvent",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "WritePlayerClientEventRequest",
+      "requestExample": "{\r\n  \"Event\": {\r\n    \"EventName\": \"forum_post_event\",\r\n    \"EventNamespace\": \"com.mygame.forums\",\r\n    \"EntityType\": \"player\",\r\n    \"Timestamp\": \"2016-03-22T17:12:59.641Z\",\r\n    \"CustomTags\": {\r\n      \"Region\": \"US-East\"\r\n    },\r\n    \"Subject\": \"My First Post\",\r\n    \"Body\": \"This is my awesome post.\"\r\n  }\r\n}",
+      "result": "WriteEventResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidRequest",
+        "NoWritePermissionsForEvent"
+      ]
+    },
+    {
       "name": "AddSharedGroupMembers",
       "summary": "Adds users to the set of those able to update both the shared data, as well as the set of users in the group. Only users in the group can add new members.",
       "subgroup": "Shared Group Data",
@@ -9383,10 +9871,34 @@
       ]
     },
     {
+      "name": "ExecuteCloudScript",
+      "summary": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player.",
+      "subgroup": "Server-Side Cloud Script",
+      "titleTiers": null,
+      "url": "/Client/ExecuteCloudScript",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ExecuteCloudScriptRequest",
+      "requestExample": "{\r\n  \"FunctionName\": \"levelCompleted\",\r\n  \"FunctionParameter\": {\r\n    \"level\": 3,\r\n    \"points\": 400\r\n  },\r\n  \"RevisionSelection\": \"Live\",\r\n  \"GeneratePlayStreamEvent\": true\r\n}",
+      "result": "ExecuteCloudScriptResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Revision\": 3,\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    },\r\n    \"Logs\": [\r\n      {\r\n        \"Level\": \"Info\",\r\n        \"Message\": \"Something normal happened\",\r\n        \"Data\": {\r\n          \"secondsAfterStart\": 75\r\n        }\r\n      },\r\n      {\r\n        \"Level\": \"Error\",\r\n        \"Message\": \"Something unexpected happened\"\r\n      }\r\n    ],\r\n    \"ExecutionTimeSeconds\": 0.03670790046453476,\r\n    \"MemoryConsumedBytes\": 38904,\r\n    \"APIRequestsIssued\": 2,\r\n    \"HttpRequestsIssued\": 0\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "CloudScriptNotFound",
+        "JavascriptException",
+        "CloudScriptFunctionArgumentSizeExceeded",
+        "CloudScriptAPIRequestCountExceeded",
+        "CloudScriptAPIRequestError",
+        "CloudScriptHTTPRequestError"
+      ]
+    },
+    {
       "name": "GetCloudScriptUrl",
       "summary": "Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript.",
       "requestDetails": "Cloud Scripts in PlayFab have both Versions and Revisions. Each time a new script is  uploaded against a Version, this creates a new Revision. If Testing is set to true, the URL returned will be for the Cloud Script Revision which was most recently uploaded. If Testing is set to false, the URL returned will be for the  Cloud Script Revision which was most recently deployed to live.",
       "resultDetails": "The URL returned is the one which must be used by the title to call into a handler in  Cloud Script. PlayFab-supplied SDKs will automatically save the results of this call, for use with any calls to  RunCloudScript.",
+      "deprecated": true,
+      "deprecatedBy": "ExecuteCloudScript",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/Client/GetCloudScriptUrl",
@@ -9408,6 +9920,8 @@
       "summary": "Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript. NOTE: Before calling this API, you must call GetCloudScriptUrl to be assigned a Cloud Script server URL. When using an official PlayFab SDK, this URL is stored internally in the SDK, but GetCloudScriptUrl must still be manually called.",
       "requestDetails": "Inputs to the Cloud Script may be specified either using Params, which is an object containing one or more parameters, or ParamsEncoded, which is a string containing the parameters encoded into JSON. Titles should only specify the parameters in one of these inputs - if both are specified, the ParamsEncoded will be used.",
       "resultDetails": "As part of the returned values, both Results and ResultsEncoded will be provided. As with Params and ParamsEncoded, these are respectively an object containing the returned values, and a string containing the returned values encoded into JSON. In addition, the Cloud Script may additionally generate a log, using log.info(), in order to provide additional debugging information.",
+      "deprecated": true,
+      "deprecatedBy": "ExecuteCloudScript",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/Client/RunCloudScript",
@@ -9994,7 +10508,8 @@
     {
       "name": "Analytics",
       "methods": [
-        "LogEvent"
+        "LogEvent",
+        "WritePlayerEvent"
       ]
     },
     {
@@ -10018,6 +10533,7 @@
     {
       "name": "Server-Side Cloud Script",
       "methods": [
+        "ExecuteCloudScript",
         "GetCloudScriptUrl",
         "RunCloudScript"
       ]
@@ -10863,6 +11379,26 @@
     "CloudScriptExecutionTimeLimitExceeded": {
       "id": 1206,
       "name": "CloudScriptExecutionTimeLimitExceeded"
+    },
+    "NoWritePermissionsForEvent": {
+      "id": 1207,
+      "name": "NoWritePermissionsForEvent"
+    },
+    "CloudScriptFunctionArgumentSizeExceeded": {
+      "id": 1208,
+      "name": "CloudScriptFunctionArgumentSizeExceeded"
+    },
+    "CloudScriptAPIRequestCountExceeded": {
+      "id": 1209,
+      "name": "CloudScriptAPIRequestCountExceeded"
+    },
+    "CloudScriptAPIRequestError": {
+      "id": 1210,
+      "name": "CloudScriptAPIRequestError"
+    },
+    "CloudScriptHTTPRequestError": {
+      "id": 1211,
+      "name": "CloudScriptHTTPRequestError"
     }
   },
   "errorList": [
@@ -11063,6 +11599,11 @@
     "StatisticCountLimitExceeded",
     "StatisticVersionIncrementRateExceeded",
     "ContainerKeyInvalid",
-    "CloudScriptExecutionTimeLimitExceeded"
+    "CloudScriptExecutionTimeLimitExceeded",
+    "NoWritePermissionsForEvent",
+    "CloudScriptFunctionArgumentSizeExceeded",
+    "CloudScriptAPIRequestCountExceeded",
+    "CloudScriptAPIRequestError",
+    "CloudScriptHTTPRequestError"
   ]
 }
