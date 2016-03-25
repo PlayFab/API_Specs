@@ -83,6 +83,37 @@
         }
       ]
     },
+    "AddGuildVirtualCurrencyRequest": {
+      "name": "AddGuildVirtualCurrencyRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "PlayFab unique identifier of the Guild whose virtual currency balance is to be increased.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "Name of the virtual currency which is to be incremented.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "Amount to be added to the Guild balance of the specified virtual currency. Maximum VC balance is Int32 (2,147,483,647). Any increase over this value will be discarded.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "AddSharedGroupMembersRequest": {
       "name": "AddSharedGroupMembersRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -1404,7 +1435,7 @@
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
+          "optional": false
         },
         {
           "name": "CharacterId",
@@ -1429,7 +1460,7 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose character inventory is being returned.",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1752,6 +1783,117 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "FriendInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetGuildDataRequest": {
+      "name": "GetGuildDataRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "Unique PlayFab assigned ID for a specific guild",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Keys",
+          "description": "Specific keys to search for in the custom user data.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IfChangedFromDataVersion",
+          "description": "The version that currently exists according to the caller. The call will return the data for all of the keys if the version in the system is greater than this.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "GetGuildDataResult": {
+      "name": "GetGuildDataResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Data",
+          "description": "Guild specific data for this title.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "UserDataRecord",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetGuildStatisticsRequest": {
+      "name": "GetGuildStatisticsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "guild for which statistics are being requested",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "StatisticNames",
+          "description": "statistics to return",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StatisticNameVersions",
+          "description": "statistics to return, if StatisticNames is not set (only statistics which have a version matching that provided will be returned)",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticNameVersion",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetGuildStatisticsResult": {
+      "name": "GetGuildStatisticsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Statistics",
+          "description": "User statistics for the requested user.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticValue",
           "isclass": true,
           "optional": true
         }
@@ -2353,7 +2495,7 @@
       "properties": [
         {
           "name": "PlayFabId",
-          "description": "PlayFab unique identifier of the user whose inventory is being returned.",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2653,6 +2795,64 @@
         {
           "name": "ItemGrantResults",
           "description": "Array of items granted to users.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GrantedItemInstance",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GrantItemsToGuildRequest": {
+      "name": "GrantItemsToGuildRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version from which items are to be granted.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GuildId",
+          "description": "Unique PlayFab assigned ID for a specific guild",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Annotation",
+          "description": "String detailing any additional information concerning this operation.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemIds",
+          "description": "Array of itemIds specifying which catalog items to grant to the Guild.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GrantItemsToGuildResult": {
+      "name": "GrantItemsToGuildResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "ItemGrantResults",
+          "description": "Array of items granted to Guild.",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "GrantedItemInstance",
@@ -3008,6 +3208,37 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "Balance",
+          "description": "Balance of the virtual currency after modification.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ModifyGuildVirtualCurrencyResult": {
+      "name": "ModifyGuildVirtualCurrencyResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "VirtualCurrency",
+          "description": "Name of the virtual currency which was modified.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BalanceChange",
+          "description": "Amount added or subtracted from the Guild's virtual currency. Maximum VC balance is Int32 (2,147,483,647). Any increase over this value will be discarded.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         },
         {
           "name": "Balance",
@@ -4100,6 +4331,37 @@
         }
       ]
     },
+    "SubtractGuildVirtualCurrencyRequest": {
+      "name": "SubtractGuildVirtualCurrencyRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "PlayFab unique identifier of the Guild whose virtual currency balance is to be decreased.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "VirtualCurrency",
+          "description": "Name of the virtual currency which is to be decremented.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "Amount to be subtracted from the Guild balance of the specified virtual currency.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "SubtractUserVirtualCurrencyRequest": {
       "name": "SubtractUserVirtualCurrencyRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -4395,6 +4657,99 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
+    "UpdateGuildDataRequest": {
+      "name": "UpdateGuildDataRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "Unique PlayFab assigned ID for a specific guild",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Data",
+          "description": "Key-value pairs to be written to the custom data. Note that keys are trimmed of whitespace, are limited in size, and may not begin with a '!' character.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from UserData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Permission",
+          "description": "Permission to be applied to all user data keys written in this request. Defaults to \"private\" if not set.",
+          "jsontype": "String",
+          "actualtype": "UserDataPermission",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateGuildDataResult": {
+      "name": "UpdateGuildDataResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "DataVersion",
+          "description": "Indicates the current version of the data that has been set. This is incremented with every set call for that type of data (read-only, internal, etc). This version can be provided in Get calls to find updated data.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        }
+      ]
+    },
+    "UpdateGuildStatisticsRequest": {
+      "name": "UpdateGuildStatisticsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "GuildId",
+          "description": "Unique PlayFab assigned ID for a specific guild",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Statistics",
+          "description": "Statistics to be updated with the provided values",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticUpdate",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateGuildStatisticsResult": {
+      "name": "UpdateGuildStatisticsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "UpdatePlayerStatisticsRequest": {
       "name": "UpdatePlayerStatisticsRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -4556,18 +4911,18 @@
       "assembly": "PlayFab.Server.Models",
       "properties": [
         {
-          "name": "CharacterId",
-          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "PlayFabId",
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "CharacterId",
+          "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "ItemInstanceId",
@@ -4593,12 +4948,6 @@
           "optional": true
         }
       ]
-    },
-    "UpdateUserInventoryItemDataResult": {
-      "name": "UpdateUserInventoryItemDataResult",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": []
     },
     "UpdateUserStatisticsRequest": {
       "name": "UpdateUserStatisticsRequest",
@@ -5902,7 +6251,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetCatalogItemsRequest",
-      "requestExample": "{\r\n  \"CatalogVersion\": \"5\"\r\n}",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"1\"\r\n}",
       "result": "GetCatalogItemsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Catalog\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Level 5 Shield\",\r\n        \"Description\": \"Strong defense against projectile attacks\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 149,\r\n          \"EUR\": 169\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Energy Drink Six-Pack\",\r\n        \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_1\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 1\",\r\n        \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_2\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 2\",\r\n        \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_3\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 3\",\r\n        \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_4\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 4\",\r\n        \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"granted_item_a\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Granted Item A\",\r\n        \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_1\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 1\",\r\n        \"Description\": \"Item demonstrating usage-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 500\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 3\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_2\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 2\",\r\n        \"Description\": \"Item demonstrating time-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 750\r\n        },\r\n        \"Consumable\": {\r\n          \"UsagePeriod\": 3600,\r\n          \"UsagePeriodGroup\": \"usage_group_1\"\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_2\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_bundle_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item bundle 1\",\r\n        \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 599\r\n        },\r\n        \"Bundle\": {\r\n          \"BundledItems\": [\r\n            \"sub_bundle_item_1\",\r\n            \"sub_bundle_item_2\"\r\n          ],\r\n          \"BundledResultTables\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"BundledVirtualCurrencies\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"key_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Key Item 1\",\r\n        \"Description\": \"Key used to unlock Container 1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 1\",\r\n        \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 499\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"KeyItemId\": \"key_item_1\",\r\n          \"ItemContents\": [\r\n            \"sub_container_item_1\",\r\n            \"sub_container_item_2\"\r\n          ],\r\n          \"ResultTableContents\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 2\",\r\n        \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 99\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"ItemClass\": \"starterpacks\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Super Starter Pack\",\r\n        \"Description\": \"Everything you need to get started fast track at the right price\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
@@ -6403,8 +6752,8 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "UpdateUserInventoryItemDataRequest",
-      "requestExample": "{\r\n  \"PlayFabId\": \"2039475\",\r\n  \"ItemInstanceId\": \"88331144\",\r\n  \"Data\": {\r\n    \"Equipped\": \"True\",\r\n    \"Slot\": \"Head\"\r\n  }\r\n}",
-      "result": "UpdateUserInventoryItemDataResult",
+      "requestExample": "{\r\n  \"PlayFabId\": \"204883457\",\r\n  \"CharacterId\": \"9890723423\",\r\n  \"ItemInstanceId\": \"88331144\",\r\n  \"Data\": {\r\n    \"Equipped\": \"True\",\r\n    \"Slot\": \"Head\"\r\n  }\r\n}",
+      "result": "EmptyResult",
       "resultExample": "",
       "seeAlso": [
         "GetUserInventory",
@@ -6581,7 +6930,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "WritePlayerServerEventRequest",
-      "requestExample": "{\r\n  \"Event\": {\r\n    \"EventName\": \"forum_post_event\",\r\n    \"EventNamespace\": \"com.mygame.forums\",\r\n    \"EntityType\": \"player\",\r\n    \"Timestamp\": \"2016-03-25T01:02:41.491Z\",\r\n    \"CustomTags\": {\r\n      \"Region\": \"US-East\"\r\n    },\r\n    \"Subject\": \"My First Post\",\r\n    \"Body\": \"This is my awesome post.\"\r\n  },\r\n  \"PlayFabId\": \"3213334\"\r\n}",
+      "requestExample": "{\r\n  \"Event\": {\r\n    \"EventName\": \"forum_post_event\",\r\n    \"EventNamespace\": \"com.mygame.forums\",\r\n    \"EntityType\": \"player\",\r\n    \"Timestamp\": \"2016-03-25T02:43:40.552Z\",\r\n    \"CustomTags\": {\r\n      \"Region\": \"US-East\"\r\n    },\r\n    \"Subject\": \"My First Post\",\r\n    \"Body\": \"This is my awesome post.\"\r\n  },\r\n  \"PlayFabId\": \"3213334\"\r\n}",
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "beta": true,
@@ -7132,6 +7481,225 @@
         "UserisNotValid",
         "CharacterNotFound"
       ]
+    },
+    {
+      "name": "AddGuildVirtualCurrency",
+      "summary": "Increments  the Guild's balance of the specified virtual currency by the stated amount",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/AddGuildVirtualCurrency",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AddGuildVirtualCurrencyRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"20394883\",\r\n  \"VirtualCurrency\": \"GC\",\r\n  \"Amount\": 100\r\n}",
+      "result": "ModifyGuildVirtualCurrencyResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"VirtualCurrency\": \"GC\",\r\n    \"BalanceChange\": 10,\r\n    \"Balance\": 1500\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "SubtractGuildVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidVirtualCurrency"
+      ]
+    },
+    {
+      "name": "GetGuildData",
+      "summary": "Updates the title-specific custom data for the guild which is readable and writable by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/GetGuildData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"ed526c2d3c36\",\r\n  \"Keys\": [\r\n    \"preferences\",\r\n    \"progress\"\r\n  ],\r\n  \"IfChangedFromDataVersion\": 1\r\n}",
+      "result": "GetGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 12,\r\n    \"Data\": {\r\n      \"preferences\": {\r\n        \"Value\": \"alpha\",\r\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"progress\": {\r\n        \"Value\": \"level_twenty\",\r\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    }\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "GetGuildInternalData",
+      "summary": "Retrieves the title-specific custom data for the guild which cannot be accessed by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/GetGuildInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"ed526c2d3c36\",\r\n  \"Keys\": [\r\n    \"preferences\",\r\n    \"progress\"\r\n  ],\r\n  \"IfChangedFromDataVersion\": 1\r\n}",
+      "result": "GetGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 12,\r\n    \"Data\": {\r\n      \"preferences\": {\r\n        \"Value\": \"alpha\",\r\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"progress\": {\r\n        \"Value\": \"level_twenty\",\r\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    }\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "GetGuildReadOnlyData",
+      "summary": "Retrieves the title-specific custom data for the guild which can only be read by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/GetGuildReadOnlyData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"ed526c2d3c36\",\r\n  \"Keys\": [\r\n    \"preferences\",\r\n    \"progress\"\r\n  ],\r\n  \"IfChangedFromDataVersion\": 1\r\n}",
+      "result": "GetGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 12,\r\n    \"Data\": {\r\n      \"preferences\": {\r\n        \"Value\": \"alpha\",\r\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"progress\": {\r\n        \"Value\": \"level_twenty\",\r\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    }\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "GetGuildStatistics",
+      "summary": "Retrieves the current version and values for the indicated statistics.",
+      "resultDetails": "If the statistic is configured for guild statistic aggregation, then the value will be derived from the statistic values for all players who are members of the guild, using the specified aggregation method (max, min, sum, etc.). In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/GetGuildStatistics",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetGuildStatisticsRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"eff1d0b9a366\",\r\n  \"StatisticNames\": [\r\n    \"Points\",\r\n    \"Wins\"\r\n  ]\r\n}",
+      "result": "GetGuildStatisticsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Statistics\": [\r\n      {\r\n        \"StatisticName\": \"Points\",\r\n        \"Value\": 570,\r\n        \"Version\": 1\r\n      },\r\n      {\r\n        \"StatisticName\": \"Wins\",\r\n        \"Value\": 15,\r\n        \"Version\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "GrantItemsToGuild",
+      "summary": "Adds the specified items to the specified guild's inventory",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/GrantItemsToGuild",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GrantItemsToGuildRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"8b76ea0f7be6\",\r\n  \"Annotation\": \"Entered Level 2\",\r\n  \"ItemIds\": [\r\n    \"shield_level_3\",\r\n    \"shield_level_4\"\r\n  ]\r\n}",
+      "result": "GrantItemsToGuildResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_3\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_4\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SubtractGuildVirtualCurrency",
+      "summary": "Decrements the Guild's balance of the specified virtual currency by the stated amount",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/SubtractGuildVirtualCurrency",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SubtractGuildVirtualCurrencyRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"20394883\",\r\n  \"VirtualCurrency\": \"GC\",\r\n  \"Amount\": 100\r\n}",
+      "result": "ModifyGuildVirtualCurrencyResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"VirtualCurrency\": \"GC\",\r\n    \"BalanceChange\": 10,\r\n    \"Balance\": 1500\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "AddGuildVirtualCurrency"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidVirtualCurrency"
+      ]
+    },
+    {
+      "name": "UpdateGuildData",
+      "summary": "Updates the title-specific custom data for the guild which is readable and writable by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/UpdateGuildData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"0fb1e9c99954\",\r\n  \"Data\": {\r\n    \"Class\": \"Fighter\",\r\n    \"Gender\": \"Female\",\r\n    \"Icon\": \"Guard 3\",\r\n    \"Theme\": \"Colorful\"\r\n  },\r\n  \"Permission\": \"Public\"\r\n}",
+      "result": "UpdateGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 13\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "UpdateGuildInternalData",
+      "summary": "Updates the title-specific custom data for the guild which cannot be accessed by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/UpdateGuildInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"0fb1e9c99954\",\r\n  \"Data\": {\r\n    \"Class\": \"Fighter\",\r\n    \"Gender\": \"Female\",\r\n    \"Icon\": \"Guard 3\",\r\n    \"Theme\": \"Colorful\"\r\n  },\r\n  \"Permission\": \"Public\"\r\n}",
+      "result": "UpdateGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 13\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "UpdateGuildReadOnlyData",
+      "summary": "Updates the title-specific custom data for the guild which can only be read by the client",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/UpdateGuildReadOnlyData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateGuildDataRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"0fb1e9c99954\",\r\n  \"Data\": {\r\n    \"Class\": \"Fighter\",\r\n    \"Gender\": \"Female\",\r\n    \"Icon\": \"Guard 3\",\r\n    \"Theme\": \"Colorful\"\r\n  },\r\n  \"Permission\": \"Public\"\r\n}",
+      "result": "UpdateGuildDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DataVersion\": 13\r\n  }\r\n}",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "UpdateGuildStatistics",
+      "summary": "Updates the values of the specified title-specific statistics.",
+      "requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  If the statistic is configured for guild statistic aggregation, then it cannot be directly updated using this API, rather, its  value is updated automatically based on guild members' corresponding statistic values.",
+      "subgroup": "Guilds",
+      "titleTiers": null,
+      "url": "/Server/UpdateGuildStatistics",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateGuildStatisticsRequest",
+      "requestExample": "{\r\n  \"GuildId\": \"aa4e1307a780\",\r\n  \"Statistics\": [\r\n    {\r\n      \"StatisticName\": \"Points\",\r\n      \"Version\": 1,\r\n      \"Value\": 600\r\n    },\r\n    {\r\n      \"StatisticName\": \"Wins\",\r\n      \"Version\": 2,\r\n      \"Value\": 16\r\n    },\r\n    {\r\n      \"StatisticName\": \"Stars\",\r\n      \"Value\": 7\r\n    }\r\n  ]\r\n}",
+      "result": "UpdateGuildStatisticsResult",
+      "resultExample": "",
+      "beta": true,
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "CreatePlayerStatisticDefinition",
+        "UpdatePlayerStatisticDefinition",
+        "GetPlayerStatistics"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound",
+        "StatisticNotFound",
+        "StatisticVersionInvalid",
+        "StatisticVersionClosedForWrites",
+        "StatisticCountLimitExceeded"
+      ]
     }
   ],
   "subgroups": [
@@ -7288,6 +7856,22 @@
         "UpdateCharacterData",
         "UpdateCharacterInternalData",
         "UpdateCharacterReadOnlyData"
+      ]
+    },
+    {
+      "name": "Guilds",
+      "methods": [
+        "AddGuildVirtualCurrency",
+        "GetGuildData",
+        "GetGuildInternalData",
+        "GetGuildReadOnlyData",
+        "GetGuildStatistics",
+        "GrantItemsToGuild",
+        "SubtractGuildVirtualCurrency",
+        "UpdateGuildData",
+        "UpdateGuildInternalData",
+        "UpdateGuildReadOnlyData",
+        "UpdateGuildStatistics"
       ]
     }
   ],
@@ -8103,6 +8687,14 @@
     "CloudScriptHTTPRequestError": {
       "id": 1211,
       "name": "CloudScriptHTTPRequestError"
+    },
+    "InsufficientGuildRole": {
+      "id": 1212,
+      "name": "InsufficientGuildRole"
+    },
+    "GuildNotFound": {
+      "id": 1213,
+      "name": "GuildNotFound"
     }
   },
   "errorList": [
@@ -8308,6 +8900,8 @@
     "CloudScriptFunctionArgumentSizeExceeded",
     "CloudScriptAPIRequestCountExceeded",
     "CloudScriptAPIRequestError",
-    "CloudScriptHTTPRequestError"
+    "CloudScriptHTTPRequestError",
+    "InsufficientGuildRole",
+    "GuildNotFound"
   ]
 }
