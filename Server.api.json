@@ -573,6 +573,23 @@
         }
       ]
     },
+    "CloudScriptRevisionOption": {
+      "name": "CloudScriptRevisionOption",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Live"
+        },
+        {
+          "name": "Latest"
+        },
+        {
+          "name": "Specific"
+        }
+      ]
+    },
     "ConsumeItemRequest": {
       "name": "ConsumeItemRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -1233,6 +1250,127 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
+    "ExecuteCloudScriptResult": {
+      "name": "ExecuteCloudScriptResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "FunctionName",
+          "description": "The name of the function that executed",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Revision",
+          "description": "The revision of the CloudScript that executed",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "FunctionResult",
+          "description": "The object returned from the CloudScript function, if any",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "Logs",
+          "description": "Entries logged during the function execution. These include both entries logged in the function code using log.info() and log.error() and error entries for API and HTTP request failures.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "LogStatement",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ExecutionTimeSeconds",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
+        },
+        {
+          "name": "MemoryConsumedBytes",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "APIRequestsIssued",
+          "description": "Number of PlayFab API requests issued by the CloudScript function",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "HttpRequestsIssued",
+          "description": "Number of external HTTP requests issued by the CloudScript function",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Error",
+          "description": "Information about the error, if any, that occured during execution",
+          "jsontype": "Object",
+          "actualtype": "ScriptExecutionError",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "ExecuteCloudScriptServerRequest": {
+      "name": "ExecuteCloudScriptServerRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FunctionName",
+          "description": "The name of the CloudScript function to execute",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "FunctionParameter",
+          "description": "Object that is passed in to the function as the first argument",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "RevisionSelection",
+          "description": "Option for which revision of the CloudScript to execute. 'Latest' executes the most recently created revision, 'Live' executes the current live, published revision, and 'Specific' executes the specified revision.",
+          "jsontype": "String",
+          "actualtype": "CloudScriptRevisionOption",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SpecificRevision",
+          "description": "The specivic revision to execute, when RevisionSelection is set to 'Specific'",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "GeneratePlayStreamEvent",
+          "description": "Generate a 'player_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
     "FacebookPlayFabIdPair": {
       "name": "FacebookPlayFabIdPair",
       "classNameSpace": "PlayFab.Server.Models",
@@ -1605,41 +1743,6 @@
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": true
-        }
-      ]
-    },
-    "GetCloudScriptUrlRequest": {
-      "name": "GetCloudScriptUrlRequest",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "Version",
-          "description": "Cloud Script Version to use. Defaults to 1.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "Testing",
-          "description": "Specifies whether the URL returned should be the one for the most recently uploaded Revision of the Cloud Script (true), or the Revision most recently set to live (false). Defaults to false.",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        }
-      ]
-    },
-    "GetCloudScriptUrlResult": {
-      "name": "GetCloudScriptUrlResult",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "properties": [
-        {
-          "name": "Url",
-          "description": "URL of the Cloud Script logic server.",
-          "jsontype": "String",
-          "actualtype": "String",
           "optional": true
         }
       ]
@@ -3197,6 +3300,33 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
+    "LogStatement": {
+      "name": "LogStatement",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "Level",
+          "description": "'Debug', 'Info', or 'Error'",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Data",
+          "description": "Optional object accompanying the message as contextual information",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        }
+      ]
+    },
     "ModifyCharacterVirtualCurrencyResult": {
       "name": "ModifyCharacterVirtualCurrencyResult",
       "classNameSpace": "PlayFab.Server.Models",
@@ -3947,94 +4077,28 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
-    "RunCloudScriptResult": {
-      "name": "RunCloudScriptResult",
+    "ScriptExecutionError": {
+      "name": "ScriptExecutionError",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
       "properties": [
         {
-          "name": "ActionId",
-          "description": "id of Cloud Script run",
+          "name": "Error",
+          "description": "Error code, such as CloudScriptNotFound, JavascriptException, CloudScriptFunctionArgumentSizeExceeded, CloudScriptAPIRequestCountExceeded, CloudScriptAPIRequestError, or CloudScriptHTTPRequestError",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
-          "name": "Version",
-          "description": "version of Cloud Script run",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "Revision",
-          "description": "revision of Cloud Script run",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "Results",
-          "description": "return values from the server action as a dynamic object",
-          "jsontype": "Object",
-          "actualtype": "object",
-          "optional": true
-        },
-        {
-          "name": "ResultsEncoded",
-          "description": "return values from the server action as a JSON encoded string",
+          "name": "Message",
+          "description": "Details about the error",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
-          "name": "ActionLog",
-          "description": "any log statements generated during the run of this action",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ExecutionTime",
-          "description": "time this script took to run, in seconds",
-          "jsontype": "Number",
-          "actualtype": "double",
-          "optional": false
-        }
-      ]
-    },
-    "RunServerCloudScriptRequest": {
-      "name": "RunServerCloudScriptRequest",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "properties": [
-        {
-          "name": "PlayFabId",
-          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ActionId",
-          "description": "server action to trigger",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "Params",
-          "description": "parameters to pass into the action (If you use this, don't use ParamsEncoded)",
-          "jsontype": "Object",
-          "actualtype": "object",
-          "optional": true
-        },
-        {
-          "name": "ParamsEncoded",
-          "description": "json-encoded parameters to pass into the action (If you use this, don't use Params)",
+          "name": "StackTrace",
+          "description": "Point during the execution of the script at which the error occurred, if any",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -7092,56 +7156,25 @@
       ]
     },
     {
-      "name": "GetCloudScriptUrl",
-      "summary": "Retrieves the title-specific URL for Cloud Script servers. This must be queried once, prior  to making any calls to RunCloudScript.",
-      "requestDetails": "Cloud Scripts in PlayFab have both Versions and Revisions. Each time a new script is  uploaded against a Version, this creates a new Revision. If Testing is set to true, the URL returned will be for the Cloud Script Revision which was most recently uploaded. If Testing is set to false, the URL returned will be for the  Cloud Script Revision which was most recently deployed to live.",
-      "resultDetails": "The URL returned is the one which must be used by the title to call into a handler in  Cloud Script. PlayFab-supplied SDKs will automatically save the results of this call, for use with any calls to  RunCloudScript.",
+      "name": "ExecuteCloudScript",
+      "summary": "Executes a CloudScript function, with the 'currentPlayerId' variable set to the specified PlayFabId parameter value.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
-      "url": "/Server/GetCloudScriptUrl",
+      "url": "/Server/ExecuteCloudScript",
       "auth": "SecretKey",
       "method": "POST",
-      "request": "GetCloudScriptUrlRequest",
-      "requestExample": "{\r\n  \"Version\": 1,\r\n  \"Testing\": false\r\n}",
-      "result": "GetCloudScriptUrlResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Url\": \"https://1.playfablogic.com/0/prod\"\r\n  }\r\n}",
-      "beta": true,
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
-      "seeAlso": [
-        "RunServerCloudScript"
-      ],
-      "errors": [
-        "InvalidParams"
-      ]
-    },
-    {
-      "name": "RunServerCloudScript",
-      "summary": "Triggers a particular server action, passing the provided inputs to the hosted Cloud Script. An action in this context is a handler in the JavaScript. NOTE: Before calling this API, you must call GetCloudScriptUrl to be assigned a Cloud Script server URL. When using an official PlayFab SDK, this URL is stored internally in the SDK, but GetCloudScriptUrl must still be manually called.",
-      "requestDetails": "Inputs to the Cloud Script may be specified either using Params, which is an object containing one or more parameters, or ParamsEncoded, which is a string containing the parameters encoded into JSON. Titles should only specify the parameters in one of these inputs - if both are specified, the ParamsEncoded will be used.",
-      "resultDetails": "As part of the returned values, both Results and ResultsEncoded will be provided. As with Params and ParamsEncoded, these are respectively an object containing the returned values, and a string containing the returned values encoded into JSON. In addition, the Cloud Script may additionally generate a log, using log.info(), in order to provide additional debugging information.",
-      "subgroup": "Server-Side Cloud Script",
-      "titleTiers": null,
-      "url": "/Server/RunServerCloudScript",
-      "auth": "SecretKey",
-      "method": "POST",
-      "request": "RunServerCloudScriptRequest",
-      "requestExample": "{\r\n  \"PlayFabId\": \"1337D00D\",\r\n  \"ActionId\": \"onLevelComplete\",\r\n  \"ParamsEncoded\": \"{\\\"level\\\":1}\"\r\n}",
-      "result": "RunCloudScriptResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ActionId\": \"onLevelComplete\",\r\n    \"Version\": 1,\r\n    \"Revision\": 2,\r\n    \"Results\": {\r\n      \"rewards\": [\r\n        {\r\n          \"PlayFabId\": 1111111111111111,\r\n          \"ItemId\": \"TestItem1\",\r\n          \"Annotation\": \"Given by completing level 1\",\r\n          \"Result\": false\r\n        }\r\n      ],\r\n      \"totalXP\": 1001\r\n    },\r\n    \"ResultsEncoded\": \"{\\\"rewards\\\":[{\\\"PlayFabId\\\":\\\"1111111111111111\\\",\\\"ItemId\\\":\\\"TestItem1\\\",\\\"Annotation\\\":\\\"Given by completing level 1\\\",\\\"Result\\\":false}]}\",\r\n    \"ActionLog\": \"info: \",\r\n    \"ExecutionTime\": 0.0709738\r\n  }\r\n}",
-      "serverType": "logic",
-      "beta": true,
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
-      "seeAlso": [
-        "GetCloudScriptUrl"
-      ],
+      "request": "ExecuteCloudScriptServerRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"1337D00D\",\r\n  \"FunctionName\": \"levelCompleted\",\r\n  \"FunctionParameter\": {\r\n    \"level\": 3,\r\n    \"points\": 400\r\n  },\r\n  \"RevisionSelection\": \"Live\",\r\n  \"GeneratePlayStreamEvent\": true\r\n}",
+      "result": "ExecuteCloudScriptResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Revision\": 3,\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    },\r\n    \"Logs\": [\r\n      {\r\n        \"Level\": \"Info\",\r\n        \"Message\": \"Something normal happened\",\r\n        \"Data\": {\r\n          \"secondsAfterStart\": 75\r\n        }\r\n      },\r\n      {\r\n        \"Level\": \"Error\",\r\n        \"Message\": \"Something unexpected happened\"\r\n      }\r\n    ],\r\n    \"ExecutionTimeSeconds\": 0.03670790046453476,\r\n    \"MemoryConsumedBytes\": 38904,\r\n    \"APIRequestsIssued\": 2,\r\n    \"HttpRequestsIssued\": 0\r\n  }\r\n}",
       "errors": [
         "InvalidParams",
         "CloudScriptNotFound",
-        "JavascriptException"
+        "JavascriptException",
+        "CloudScriptFunctionArgumentSizeExceeded",
+        "CloudScriptAPIRequestCountExceeded",
+        "CloudScriptAPIRequestError",
+        "CloudScriptHTTPRequestError"
       ]
     },
     {
@@ -7824,8 +7857,7 @@
     {
       "name": "Server-Side Cloud Script",
       "methods": [
-        "GetCloudScriptUrl",
-        "RunServerCloudScript"
+        "ExecuteCloudScript"
       ]
     },
     {
