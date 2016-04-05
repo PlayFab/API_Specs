@@ -7756,7 +7756,7 @@
       "properties": [
         {
           "name": "UserStatistics",
-          "description": "Statistics to be updated with the provided values.",
+          "description": "Statistics to be updated with the provided values. UserStatistics object must follow the Key(string), Value(int) pattern.",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
@@ -9240,6 +9240,23 @@
       ]
     },
     {
+      "name": "ReportPlayer",
+      "summary": "Submit a report for another player (due to bad bahavior, etc.), so that customer service representatives for the title can take action concerning potentially toxic players.",
+      "resultDetails": "Players are currently limited to five reports per day. Attempts by a single user account to submit reports beyond five will result in Updated being returned as false.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/ReportPlayer",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ReportPlayerClientRequest",
+      "requestExample": "{\r\n  \"ReporteeId\": \"1a46086aed40f142\",\r\n  \"Comment\": \"cheating\"\r\n}",
+      "result": "ReportPlayerClientResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Updated\": true,\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "SendAccountRecoveryEmail",
       "summary": "Forces an email to be sent to the registered email address for the user's account, with a link allowing the user to change the password",
       "requestDetails": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
@@ -9515,7 +9532,7 @@
     {
       "name": "GetFriendLeaderboardAroundCurrentUser",
       "summary": "Retrieves a list of ranked friends of the current player for the given statistic, centered on the currently signed-in user",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the user defaults to 0 when the user does not have the corresponding statistic.If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
       "deprecated": true,
       "deprecatedBy": "GetFriendLeaderboardAroundPlayer",
       "subgroup": "Player Data Management",
@@ -9539,7 +9556,7 @@
     {
       "name": "GetFriendLeaderboardAroundPlayer",
       "summary": "Retrieves a list of ranked friends of the current player for the given statistic, centered on the requested PlayFab user. If PlayFabId is empty or null will return currently logged in user.",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the user defaults to 0 when the user does not have the corresponding statistic.If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Client/GetFriendLeaderboardAroundPlayer",
@@ -9564,7 +9581,7 @@
     {
       "name": "GetLeaderboard",
       "summary": "Retrieves a list of ranked users for the given statistic, starting from the indicated point in the leaderboard",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note: the user's Position is relative to the overall leaderboard.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Client/GetLeaderboard",
@@ -9586,7 +9603,7 @@
     {
       "name": "GetLeaderboardAroundCurrentUser",
       "summary": "Retrieves a list of ranked users for the given statistic, centered on the currently signed-in user",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the user defaults to 0 when the user does not have the corresponding statistic.",
       "deprecated": true,
       "deprecatedBy": "GetLeaderboardAroundPlayer",
       "subgroup": "Player Data Management",
@@ -9610,7 +9627,7 @@
     {
       "name": "GetLeaderboardAroundPlayer",
       "summary": "Retrieves a list of ranked users for the given statistic, centered on the requested player. If PlayFabId is empty or null will return currently logged in user.",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the user defaults to 0 when the user does not have the corresponding statistic.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Client/GetLeaderboardAroundPlayer",
@@ -9788,7 +9805,7 @@
     },
     {
       "name": "UpdatePlayerStatistics",
-      "summary": "Updates the values of the specified title-specific statistics for the user",
+      "summary": "Updates the values of the specified title-specific statistics for the user. By default, clients are not permitted to update statistics. Developers may override this setting in the Game Manager > Settings > API Features.",
       "requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  Note that if the statistic is intended to have a reset period, the UpdatePlayerStatisticDefinition API call can be used to define that reset period. Once a statistic has been versioned (reset), the now-previous version can still be written to for up a short, pre-defined period (currently 10 seconds), using the Version parameter in this call.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
@@ -9859,7 +9876,7 @@
     },
     {
       "name": "UpdateUserStatistics",
-      "summary": "Updates the values of the specified title-specific statistics for the user",
+      "summary": "Updates the values of the specified title-specific statistics for the user. By default, clients are not permitted to update statistics. Developers may override this setting in the Game Manager > Settings > API Features.",
       "requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  Statistics are used by the leaderboard apis, and accessible for custom game-logic.  Note: For statistics configured to reset on an interval, this API call updates the current (latest) version of the player's statistic.  Titles using statistic versioning for resettable leaderboards should make use of the UpdatePlayerStatistics call instead, to ensure that the proper version is updated.",
       "resultDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "deprecated": true,
@@ -9905,6 +9922,24 @@
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetPublisherData",
+      "summary": "Retrieves the key-value store of custom publisher settings",
+      "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.  For more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Client/GetPublisherData",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPublisherDataRequest",
+      "requestExample": "{\r\n  \"Keys\": [\r\n    \"color\",\r\n    \"propertyA\"\r\n  ]\r\n}",
+      "result": "GetPublisherDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "PublisherNotSet"
       ]
     },
     {
@@ -10147,23 +10182,6 @@
       "errors": [
         "InvalidParams",
         "CouponCodeNotFound"
-      ]
-    },
-    {
-      "name": "ReportPlayer",
-      "summary": "Submit a report for another player (due to bad bahavior, etc.), so that customer service representatives for the title can take action concerning potentially toxic players.",
-      "resultDetails": "Players are currently limited to five reports per day. Attempts by a single user account to submit reports beyond five will result in Updated being returned as false.",
-      "subgroup": "Player Item Management",
-      "titleTiers": null,
-      "url": "/Client/ReportPlayer",
-      "auth": "SessionTicket",
-      "method": "POST",
-      "request": "ReportPlayerClientRequest",
-      "requestExample": "{\r\n  \"ReporteeId\": \"1a46086aed40f142\",\r\n  \"Comment\": \"cheating\"\r\n}",
-      "result": "ReportPlayerClientResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Updated\": true,\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10628,24 +10646,6 @@
       ]
     },
     {
-      "name": "GetPublisherData",
-      "summary": "Retrieves the key-value store of custom publisher settings",
-      "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.  For more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
-      "subgroup": "Shared Group Data",
-      "titleTiers": null,
-      "url": "/Client/GetPublisherData",
-      "auth": "SessionTicket",
-      "method": "POST",
-      "request": "GetPublisherDataRequest",
-      "requestExample": "{\r\n  \"Keys\": [\r\n    \"color\",\r\n    \"propertyA\"\r\n  ]\r\n}",
-      "result": "GetPublisherDataResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams",
-        "PublisherNotSet"
-      ]
-    },
-    {
       "name": "GetSharedGroupData",
       "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. Non-members of the group may use this to retrieve group data, including membership, but they will not receive data for keys marked as private.",
       "subgroup": "Shared Group Data",
@@ -10830,7 +10830,7 @@
     },
     {
       "name": "GetAllUsersCharacters",
-      "summary": "Lists all of the characters that belong to a specific user.",
+      "summary": "Lists all of the characters that belong to a specific user. CharacterIds are not globally unique; characterId must be evaluated with the parent PlayFabId to guarantee uniqueness.",
       "requestDetails": "Returns a list of every character that currently belongs to a user.",
       "subgroup": "Characters",
       "titleTiers": null,
@@ -10897,7 +10897,7 @@
     {
       "name": "GetLeaderboardAroundCharacter",
       "summary": "Retrieves a list of ranked characters for the given statistic, centered on the requested Character ID",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the character defaults to 0 when the character does not have the corresponding statistic.",
       "subgroup": "Characters",
       "titleTiers": null,
       "url": "/Client/GetLeaderboardAroundCharacter",
@@ -10919,7 +10919,7 @@
     {
       "name": "GetLeaderboardForUserCharacters",
       "summary": "Retrieves a list of all of the user's characters for the given statistic.",
-      "resultDetails": "Note that the Position of the user in the results is for the overall leaderboard.",
+      "resultDetails": "Note that the Position of the character in the results is for the overall leaderboard.",
       "subgroup": "Characters",
       "titleTiers": null,
       "url": "/Client/GetLeaderboardForUserCharacters",
@@ -10941,7 +10941,7 @@
     },
     {
       "name": "GrantCharacterToUser",
-      "summary": "Grants the specified character type to the user.",
+      "summary": "Grants the specified character type to the user. CharacterIds are not globally unique; characterId must be evaluated with the parent PlayFabId to guarantee uniqueness.",
       "requestDetails": "Grants a character to the user of the type specified by the item ID. The user must  already have an instance of this item in their inventory in order to allow character creation. This item can come from a purchase or grant, which must be done before calling to create the character.",
       "subgroup": "Characters",
       "titleTiers": null,
@@ -10961,7 +10961,7 @@
     },
     {
       "name": "UpdateCharacterStatistics",
-      "summary": "Updates the values of the specified title-specific statistics for the specific character",
+      "summary": "Updates the values of the specified title-specific statistics for the specific character. By default, clients are not permitted to update statistics. Developers may override this setting in the Game Manager > Settings > API Features.",
       "requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Character Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged.  Character statistics are used by the character-leaderboard apis, and accessible for custom game-logic.",
       "subgroup": "Characters",
       "titleTiers": null,
@@ -11480,7 +11480,7 @@
     {
       "name": "GetGuildsLeaderboardAroundGuild",
       "summary": "Retrieves a list of ranked guilds for the given statistic, centered on the requested guild ID",
-      "resultDetails": "Note that the Position of the guild in the results is for the overall leaderboard.",
+      "resultDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the guild defaults to 0 when the guild does not have the corresponding statistic.",
       "subgroup": "Guilds",
       "titleTiers": null,
       "url": "/Client/GetGuildsLeaderboardAroundGuild",
@@ -11715,7 +11715,7 @@
     },
     {
       "name": "UpdateGuildStatistics",
-      "summary": "Updates the values of the specified guild statistics",
+      "summary": "Updates the values of the specified guild statistics. By default, clients are not permitted to update statistics. Developers may override this setting in the Game Manager > Settings > API Features.",
       "requestDetails": "Enable this option with the 'Allow Client to Post Guild Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive.  Statistics not currently defined will be added, while those already defined will be updated with the given values. All other guild statistics will remain unchanged. If the statistic is configured for guild statistic aggregation, then it cannot be directly updated using this API. Rather, its  value is updated automatically based on guild members' corresponding statistic values.",
       "subgroup": "Guilds",
       "titleTiers": null,
@@ -11787,6 +11787,7 @@
         "LinkPSNAccount",
         "LinkSteamAccount",
         "LinkXboxAccount",
+        "ReportPlayer",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
         "UnlinkCustomID",
@@ -11827,6 +11828,7 @@
       "name": "Title-Wide Data Management",
       "methods": [
         "GetCatalogItems",
+        "GetPublisherData",
         "GetStoreItems",
         "GetTitleData",
         "GetTitleNews"
@@ -11844,7 +11846,6 @@
         "PayForPurchase",
         "PurchaseItem",
         "RedeemCoupon",
-        "ReportPlayer",
         "StartPurchase",
         "SubtractUserVirtualCurrency",
         "UnlockContainerInstance",
@@ -11896,7 +11897,6 @@
       "methods": [
         "AddSharedGroupMembers",
         "CreateSharedGroup",
-        "GetPublisherData",
         "GetSharedGroupData",
         "RemoveSharedGroupMembers",
         "UpdateSharedGroupData"
