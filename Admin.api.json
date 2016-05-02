@@ -3157,6 +3157,42 @@
       "assembly": "PlayFab.Admin.Models",
       "properties": []
     },
+    "SetStoreSegemntOverridesResult": {
+      "name": "SetStoreSegemntOverridesResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": []
+    },
+    "SetStoreSegmentOverridesRequest": {
+      "name": "SetStoreSegmentOverridesRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version to use for the request. Defaults to most recent catalog if null.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "BaseStoreId",
+          "description": "The id of the store being overridden. Requests from the client api to store will return the store associated with the override",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Overrides",
+          "description": "The list of overrides in order of evaluation.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StoreSegmentNamePair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "classNameSpace": "PlayFab.Admin.Models",
@@ -3335,6 +3371,27 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
+        }
+      ]
+    },
+    "StoreSegmentNamePair": {
+      "name": "StoreSegmentNamePair",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "StoreId",
+          "description": "The id of the store being referenced",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "SegmentName",
+          "description": "The name of the segment being referenced",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
         }
       ]
     },
@@ -5085,6 +5142,28 @@
       ]
     },
     {
+      "name": "SetStoreSegmentOverrides",
+      "summary": "Sets up a store to be used in an AB test using segments",
+      "requestDetails": "When a user calls GetStoreItems from the Client API for the DefaultStore, we return the store perscribed by this configuration. We take the first match of that user's segment to the list of given overrides. We default to the base store. Note that there can each store can only be the base store for one override at a time. Calling this api for an existing base store will overwrite the old configuration. Also note that this only affects requests from the client API.  For example, let say a developer calls SetStoreSegmentOverrides with SpringEventStore as the default, and sets the overrides in order {SegmentA -> SpringStoreA, SegmentB -> SpringStoreB}.  Later, a user calls Client/GetStoreItems with SpringEventStore as the  storeId. Playfab looks up if there are any overrides where SpringEventStore is the default. It finds the override,  and first checks if the user is in SegmentA. If yes, then returns SpringStoreA. If not, it checks if the user is in SegmentB. If so, it returns SpringStoreB. If not, it returns the default SpringEventStore",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/SetStoreSegmentOverrides",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetStoreSegmentOverridesRequest",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"SpringABTest\",\r\n  \"BaseStoreId\": \"SpringEventStore\",\r\n  \"Overrides\": [\r\n    {\r\n      \"StoreId\": \"SpringOverrideA\",\r\n      \"SegmentName\": \"VeryActivePlayers\"\r\n    },\r\n    {\r\n      \"StoreId\": \"SpringOverrideB\",\r\n      \"SegmentName\": \"PayingPlayers\"\r\n    }\r\n  ]\r\n}",
+      "result": "SetStoreSegemntOverridesResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Admin/GetStoreItems",
+        "Admin/SetStoreItems"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidJSONContent"
+      ]
+    },
+    {
       "name": "SetTitleData",
       "summary": "Creates and updates the key-value store of custom title settings",
       "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
@@ -5724,6 +5803,7 @@
         "ListVirtualCurrencyTypes",
         "SetCatalogItems",
         "SetStoreItems",
+        "SetStoreSegmentOverrides",
         "SetTitleData",
         "SetupPushNotification",
         "UpdateCatalogItems",
@@ -6634,6 +6714,14 @@
     "OperationNotSupportedForPlatform": {
       "id": 1219,
       "name": "OperationNotSupportedForPlatform"
+    },
+    "SegmentNotFound": {
+      "id": 1220,
+      "name": "SegmentNotFound"
+    },
+    "StoreNotFound": {
+      "id": 1221,
+      "name": "StoreNotFound"
     }
   },
   "errorList": [
@@ -6847,6 +6935,8 @@
     "InvalidEventField",
     "InvalidEventName",
     "CatalogNotConfigured",
-    "OperationNotSupportedForPlatform"
+    "OperationNotSupportedForPlatform",
+    "SegmentNotFound",
+    "StoreNotFound"
   ]
 }
