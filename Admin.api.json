@@ -5080,8 +5080,8 @@
     },
     {
       "name": "GetTitleData",
-      "summary": "Retrieves the key-value store of custom title settings",
-      "requestDetails": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This AdminAPI call for getting title data guarantees no delay in between update and retrieval of newly set data.",
+      "summary": "Retrieves the key-value store of custom title settings which can be read by the client",
+      "requestDetails": "This API method is designed to return title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create,test, and ship a new build. Note that due to caching, there may up to a minute delay in between updating title data and a query returning the newest value.",
       "subgroup": "Title-Wide Data Management",
       "titleTiers": null,
       "url": "/Admin/GetTitleData",
@@ -5093,6 +5093,26 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Admin/SetTitleData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetTitleInternalData",
+      "summary": "Retrieves the key-value store of custom title settings which cannot be read by the client",
+      "requestDetails": "This API method is designed to return title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. Note that due to caching, there may up to a minute delay in between updating title data and this query returning the newest value.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/GetTitleInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetTitleDataRequest",
+      "requestExample": "{\r\n  \"Keys\": [\r\n    \"color\",\r\n    \"propertyA\"\r\n  ]\r\n}",
+      "result": "GetTitleDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
+      "seeAlso": [
+        "Admin/SetTitleInternalData"
       ],
       "errors": [
         "InvalidParams"
@@ -5189,8 +5209,8 @@
     },
     {
       "name": "SetTitleData",
-      "summary": "Creates and updates the key-value store of custom title settings",
-      "requestDetails": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "summary": "Creates and updates the key-value store of custom title settings which can be read by the client",
+      "requestDetails": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "subgroup": "Title-Wide Data Management",
       "titleTiers": null,
       "url": "/Admin/SetTitleData",
@@ -5202,6 +5222,26 @@
       "resultExample": "",
       "seeAlso": [
         "Admin/GetTitleData"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "SetTitleInternalData",
+      "summary": "Updates the key-value store of custom title settings which cannot be read by the client",
+      "requestDetails": "This API method is designed to store title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/SetTitleInternalData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetTitleDataRequest",
+      "requestExample": "{\r\n  \"Key\": \"Running Speed\",\r\n  \"Value\": \"1.03\"\r\n}",
+      "result": "SetTitleDataResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Admin/GetTitleInternalData"
       ],
       "errors": [
         "InvalidParams"
@@ -5824,11 +5864,13 @@
         "GetRandomResultTables",
         "GetStoreItems",
         "GetTitleData",
+        "GetTitleInternalData",
         "ListVirtualCurrencyTypes",
         "SetCatalogItems",
         "SetStoreItems",
         "SetStoreSegmentOverrides",
         "SetTitleData",
+        "SetTitleInternalData",
         "SetupPushNotification",
         "UpdateCatalogItems",
         "UpdateRandomResultTables",
