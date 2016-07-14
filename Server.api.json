@@ -1231,7 +1231,7 @@
         },
         {
           "name": "TitleId",
-          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3134,6 +3134,22 @@
         {
           "name": "CharacterId",
           "description": "Unique PlayFab assigned ID for a specific character owned by a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Data",
+          "description": "Key-value pairs to be written to the custom data. Note that keys are trimmed of whitespace, are limited in size, and may not begin with a '!' character.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "KeysToRemove",
+          "description": "Optional list of Data-keys to remove from UserData.  Some SDKs cannot insert null-values into Data due to language constraints.  Use this to delete the keys directly.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -5084,6 +5100,14 @@
           "optional": true
         },
         {
+          "name": "TwitchInfo",
+          "description": "User Twitch account information, if a Twitch account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserTwitchInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "PsnInfo",
           "description": "User PSN account information, if a PSN account has been linked",
           "jsontype": "Object",
@@ -5347,6 +5371,9 @@
         },
         {
           "name": "Parse"
+        },
+        {
+          "name": "Twitch"
         }
       ]
     },
@@ -5468,6 +5495,27 @@
           "description": "boolean indicating whether or not the user is currently banned for a title",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "UserTwitchInfo": {
+      "name": "UserTwitchInfo",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "TwitchId",
+          "description": "Twitch ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TwitchUserName",
+          "description": "Twitch Username",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -6573,7 +6621,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "GrantItemsToUsersRequest",
-      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"ItemGrants\": [\r\n    {\r\n      \"PlayFabId\": \"20394883\",\r\n      \"ItemId\": \"shield_level_1\",\r\n      \"Annotation\": \"Entered Level 2\"\r\n    },\r\n    {\r\n      \"PlayFabId\": \"20394883\",\r\n      \"ItemId\": \"shield_level_2\",\r\n      \"Annotation\": \"Entered Level 2\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"ItemGrants\": [\r\n    {\r\n      \"PlayFabId\": \"20394883\",\r\n      \"ItemId\": \"shield_level_1\",\r\n      \"Annotation\": \"Entered Level 2\"\r\n    },\r\n    {\r\n      \"PlayFabId\": \"20394883\",\r\n      \"ItemId\": \"shield_level_2\",\r\n      \"Annotation\": \"Entered Level 2\",\r\n      \"Data\": {\r\n        \"Equipped\": \"True\",\r\n        \"Slot\": \"Head\"\r\n      }\r\n    }\r\n  ]\r\n}",
       "result": "GrantItemsToUsersResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_1\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_2\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
@@ -8832,6 +8880,14 @@
     "TitleNewsItemCountLimitExceeded": {
       "id": 1231,
       "name": "TitleNewsItemCountLimitExceeded"
+    },
+    "InvalidTwitchToken": {
+      "id": 1232,
+      "name": "InvalidTwitchToken"
+    },
+    "TwitchResponseError": {
+      "id": 1233,
+      "name": "TwitchResponseError"
     }
   },
   "errorList": [
@@ -9057,6 +9113,8 @@
     "GameServerBuildCountLimitExceeded",
     "VirtualCurrencyCountLimitExceeded",
     "VirtualCurrencyCodeExists",
-    "TitleNewsItemCountLimitExceeded"
+    "TitleNewsItemCountLimitExceeded",
+    "InvalidTwitchToken",
+    "TwitchResponseError"
   ]
 }
