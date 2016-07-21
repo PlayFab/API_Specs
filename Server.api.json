@@ -3874,6 +3874,32 @@
         }
       ]
     },
+    "RefreshGameServerInstanceHeartbeatRequest": {
+      "name": "RefreshGameServerInstanceHeartbeatRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier of the Game Server Instance for which the heartbeat is updated.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "RefreshGameServerInstanceHeartbeatResult": {
+      "name": "RefreshGameServerInstanceHeartbeatResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "RemoveFriendRequest": {
       "name": "RemoveFriendRequest",
       "classNameSpace": "PlayFab.Server.Models",
@@ -4131,6 +4157,40 @@
       "name": "SetGameServerInstanceStateResult",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
+      "properties": []
+    },
+    "SetGameServerInstanceTagsRequest": {
+      "name": "SetGameServerInstanceTagsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier of the Game Server Instance to be updated.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Tags",
+          "description": "Tags to set for the specified Game Server Instance. Note that this is the complete list of tags to be associated with the Game Server Instance.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SetGameServerInstanceTagsResult": {
+      "name": "SetGameServerInstanceTagsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": []
     },
     "SetPublisherDataRequest": {
@@ -6974,7 +7034,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayerState\": \"Unassigned\"\r\n  }\r\n}",
       "errors": [
         "InvalidParams",
-        "InvalidLobbyId",
         "GameNotFound"
       ]
     },
@@ -6993,10 +7052,29 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketIsValid\": true,\r\n    \"Error\": \"\",\r\n    \"UserInfo\": {\r\n      \"PlayFabId\": \"10931252888739651331\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"Username\": \"accountname\"\r\n    }\r\n  }\r\n}",
       "errors": [
         "InvalidParams",
-        "InvalidLobbyId",
         "InvalidGameTicket",
         "ExpiredGameTicket",
         "GameTicketDoesNotMatchLobby",
+        "GameNotFound"
+      ]
+    },
+    {
+      "name": "RefreshGameServerInstanceHeartbeat",
+      "summary": "Set the state of the indicated Game Server Instance. Also update the heartbeat for the instance.",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Server/RefreshGameServerInstanceHeartbeat",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RefreshGameServerInstanceHeartbeatRequest",
+      "requestExample": "{\r\n  \"LobbyId\": \"29439584\"\r\n}",
+      "result": "RefreshGameServerInstanceHeartbeatResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -7014,13 +7092,12 @@
       "resultExample": "",
       "errors": [
         "InvalidParams",
-        "InvalidLobbyId",
         "GameNotFound"
       ]
     },
     {
       "name": "SetGameServerInstanceState",
-      "summary": "Sets the state of the indicated Game Server Instance",
+      "summary": "Set the state of the indicated Game Server Instance.",
       "subgroup": "Matchmaking APIs",
       "titleTiers": null,
       "url": "/Server/SetGameServerInstanceState",
@@ -7032,7 +7109,26 @@
       "resultExample": "",
       "errors": [
         "InvalidParams",
-        "InvalidLobbyId",
+        "GameNotFound"
+      ]
+    },
+    {
+      "name": "SetGameServerInstanceTags",
+      "summary": "Set custom tags for the specified Game Server Instance",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Server/SetGameServerInstanceTags",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetGameServerInstanceTagsRequest",
+      "requestExample": "{\r\n  \"LobbyId\": \"29439584\",\r\n  \"Tags\": {\r\n    \"TagA\": \"123\",\r\n    \"TagB\": \"321\"\r\n  }\r\n}",
+      "result": "SetGameServerInstanceTagsResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -7905,8 +8001,10 @@
       "methods": [
         "NotifyMatchmakerPlayerLeft",
         "RedeemMatchmakerTicket",
+        "RefreshGameServerInstanceHeartbeat",
         "SetGameServerInstanceData",
-        "SetGameServerInstanceState"
+        "SetGameServerInstanceState",
+        "SetGameServerInstanceTags"
       ]
     },
     {
@@ -8408,10 +8506,6 @@
     "DatabaseThroughputExceeded": {
       "id": 1113,
       "name": "DatabaseThroughputExceeded"
-    },
-    "InvalidLobbyId": {
-      "id": 1114,
-      "name": "InvalidLobbyId"
     },
     "InvalidGameTicket": {
       "id": 1115,
@@ -9004,7 +9098,6 @@
     "InvalidReportDate",
     "ReportNotAvailable",
     "DatabaseThroughputExceeded",
-    "InvalidLobbyId",
     "InvalidGameTicket",
     "ExpiredGameTicket",
     "GameTicketDoesNotMatchLobby",
