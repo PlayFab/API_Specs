@@ -38,6 +38,32 @@
         }
       ]
     },
+    "DeregisterGameRequest": {
+      "name": "DeregisterGameRequest",
+      "classNameSpace": "PlayFab.Matchmaker.Models",
+      "assembly": "PlayFab.Matchmaker.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeregisterGameResponse": {
+      "name": "DeregisterGameResponse",
+      "classNameSpace": "PlayFab.Matchmaker.Models",
+      "assembly": "PlayFab.Matchmaker.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "ItemInstance": {
       "name": "ItemInstance",
       "classNameSpace": "PlayFab.Matchmaker.Models",
@@ -215,9 +241,6 @@
       "isenum": true,
       "enumvalues": [
         {
-          "name": "USCentral"
-        },
-        {
           "name": "USEast"
         },
         {
@@ -230,10 +253,84 @@
           "name": "Japan"
         },
         {
+          "name": "Australia"
+        },
+        {
           "name": "Brazil"
         },
         {
-          "name": "Australia"
+          "name": "USCentral"
+        }
+      ]
+    },
+    "RegisterGameRequest": {
+      "name": "RegisterGameRequest",
+      "classNameSpace": "PlayFab.Matchmaker.Models",
+      "assembly": "PlayFab.Matchmaker.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "ServerHost",
+          "description": "IP address of the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ServerPort",
+          "description": "Port number for communication with the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Build",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Region",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "Region",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "GameMode",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Tags",
+          "description": "Tags for the Game Server Instance",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RegisterGameResponse": {
+      "name": "RegisterGameResponse",
+      "classNameSpace": "PlayFab.Matchmaker.Models",
+      "assembly": "PlayFab.Matchmaker.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier generated for the Game Server Instance that is registered.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -287,7 +384,7 @@
       "properties": [
         {
           "name": "GameID",
-          "description": "Unique identifier for the lobby in the new Game Server Instance.",
+          "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -452,6 +549,28 @@
       ]
     },
     {
+      "name": "DeregisterGame",
+      "summary": "Inform the matchmaker that a Game Server Instance is removed.",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Matchmaker/DeregisterGame",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeregisterGameRequest",
+      "requestExample": "{\r\n  \"LobbyId\": \"8285313\"\r\n}",
+      "result": "DeregisterGameResponse",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Matchmaker/RegisterGame"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "PlayerJoined",
       "summary": "Informs the PlayFab game server hosting service that the indicated user has joined the Game Server Instance specified",
       "subgroup": "Matchmaking APIs",
@@ -493,6 +612,29 @@
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "RegisterGame",
+      "summary": "Inform the matchmaker that a new Game Server Instance is added.",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Matchmaker/RegisterGame",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RegisterGameRequest",
+      "requestExample": "{\r\n  \"ServerHost\": \"118.129.31.244\",\r\n  \"ServerPort\": \"9984\",\r\n  \"Build\": \"11_034234.13\",\r\n  \"Region\": \"USEast\",\r\n  \"GameMode\": \"FreeForAll\",\r\n  \"Tags\": {\r\n    \"level_cap\": \"high\",\r\n    \"no_smoking\": \"1\"\r\n  }\r\n}",
+      "result": "RegisterGameResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyId\": \"8285313\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Matchmaker/DeregisterGame"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidRequest"
       ]
     },
     {
@@ -545,8 +687,10 @@
       "name": "Matchmaking APIs",
       "methods": [
         "AuthUser",
+        "DeregisterGame",
         "PlayerJoined",
         "PlayerLeft",
+        "RegisterGame",
         "StartGame",
         "UserInfo"
       ]
@@ -972,10 +1116,6 @@
     "DatabaseThroughputExceeded": {
       "id": 1113,
       "name": "DatabaseThroughputExceeded"
-    },
-    "InvalidLobbyId": {
-      "id": 1114,
-      "name": "InvalidLobbyId"
     },
     "InvalidGameTicket": {
       "id": 1115,
@@ -1452,6 +1592,14 @@
     "TwitchResponseError": {
       "id": 1233,
       "name": "TwitchResponseError"
+    },
+    "ProfaneDisplayName": {
+      "id": 1234,
+      "name": "ProfaneDisplayName"
+    },
+    "UserAlreadyAdded": {
+      "id": 1235,
+      "name": "UserAlreadyAdded"
     }
   },
   "errorList": [
@@ -1560,7 +1708,6 @@
     "InvalidReportDate",
     "ReportNotAvailable",
     "DatabaseThroughputExceeded",
-    "InvalidLobbyId",
     "InvalidGameTicket",
     "ExpiredGameTicket",
     "GameTicketDoesNotMatchLobby",
@@ -1679,6 +1826,8 @@
     "VirtualCurrencyCodeExists",
     "TitleNewsItemCountLimitExceeded",
     "InvalidTwitchToken",
-    "TwitchResponseError"
+    "TwitchResponseError",
+    "ProfaneDisplayName",
+    "UserAlreadyAdded"
   ]
 }
