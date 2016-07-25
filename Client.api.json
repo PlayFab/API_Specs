@@ -771,6 +771,32 @@
         }
       ]
     },
+    "CollectionFilter": {
+      "name": "CollectionFilter",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "description": "Collection filter to include and/or exclude collections with certain key-value pairs. The filter generates a collection set defined by Includes rules and then remove collections that matches the Excludes rules. A collection is considered matching a rule if the rule describes a subset of the collection. ",
+      "properties": [
+        {
+          "name": "Includes",
+          "description": "List of Include rules, with any of which if a collection matches, it is included by the filter, unless it is excluded by one of the Exclude rule",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Container_Dictionary_String_String",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Excludes",
+          "description": "List of Exclude rules, with any of which if a collection matches, it is excluded by the filter.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Container_Dictionary_String_String",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "ConfirmPurchaseRequest": {
       "name": "ConfirmPurchaseRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -904,6 +930,22 @@
           "jsontype": "Object",
           "actualtype": "ItemInstance",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "Container_Dictionary_String_String": {
+      "name": "Container_Dictionary_String_String",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "description": "A data container",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Content of data",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -1472,7 +1514,7 @@
       "properties": [
         {
           "name": "Region",
-          "description": "region to check for game instances",
+          "description": "Region to check for Game Server Instances.",
           "jsontype": "String",
           "actualtype": "Region",
           "isenum": true,
@@ -1480,23 +1522,31 @@
         },
         {
           "name": "BuildVersion",
-          "description": "version of build to match against",
+          "description": "Build to match against.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "GameMode",
-          "description": "game mode to look for (optional)",
+          "description": "Game mode to look for.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "StatisticName",
-          "description": "statistic name to find statistic-based matches (optional)",
+          "description": "Statistic name to find statistic-based matches.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TagFilter",
+          "description": "Filter to include and/or exclude Game Server Instances associated with certain tags.",
+          "jsontype": "Object",
+          "actualtype": "CollectionFilter",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -1869,7 +1919,7 @@
         },
         {
           "name": "PlayerUserIds",
-          "description": "array of strings of current player names on this server (note that these are PlayFab usernames, as opposed to title display names)",
+          "description": "array of current player IDs on this server",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -1895,6 +1945,21 @@
           "description": "game session custom data",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Tags",
+          "description": "game session tags",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastHeartbeat",
+          "description": "last heartbeat of the game server instance, used in external game server provider mode",
+          "jsontype": "String",
+          "actualtype": "DateTime",
           "optional": true
         }
       ]
@@ -5771,14 +5836,14 @@
       "properties": [
         {
           "name": "BuildVersion",
-          "description": "build version to match against [Note: Required if LobbyId is not specified]",
+          "description": "Build version to match against. [Note: Required if LobbyId is not specified]",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "Region",
-          "description": "region to match make against [Note: Required if LobbyId is not specified]",
+          "description": "Region to match make against. [Note: Required if LobbyId is not specified]",
           "jsontype": "String",
           "actualtype": "Region",
           "isenum": true,
@@ -5786,37 +5851,45 @@
         },
         {
           "name": "GameMode",
-          "description": "game mode to match make against [Note: Required if LobbyId is not specified]",
+          "description": "Game mode to match make against. [Note: Required if LobbyId is not specified]",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "LobbyId",
-          "description": "lobby identifier to match make against (used to select a specific server)",
+          "description": "Lobby identifier to match make against. This is used to select a specific Game Server Instance.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "StatisticName",
-          "description": "player statistic to use in finding a match. May be null for no stat-based matching",
+          "description": "Player statistic to use in finding a match. May be null for no stat-based matching.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "CharacterId",
-          "description": "character to use for stats based matching. Leave null to use account stats",
+          "description": "Character to use for stats based matching. Leave null to use account stats.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "StartNewIfNoneFound",
-          "description": "start a game session if one with an open slot is not found. Defaults to true",
+          "description": "Start a game session if one with an open slot is not found. Defaults to true.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "TagFilter",
+          "description": "Filter to include and/or exclude Game Server Instances associated with certain Tags",
+          "jsontype": "Object",
+          "actualtype": "CollectionFilter",
+          "isclass": true,
           "optional": true
         },
         {
@@ -9349,7 +9422,9 @@
         "InvalidEmailAddress",
         "UsernameNotAvailable",
         "InvalidUsername",
-        "InvalidPassword"
+        "InvalidPassword",
+        "ProfaneDisplayName",
+        "InvalidPartnerResponse"
       ]
     },
     {
@@ -9376,7 +9451,8 @@
         "InvalidEmailAddress",
         "UsernameNotAvailable",
         "InvalidUsername",
-        "InvalidPassword"
+        "InvalidPassword",
+        "OverLimit"
       ]
     },
     {
@@ -10102,7 +10178,9 @@
       "errors": [
         "InvalidParams",
         "UsernameNotAvailable",
-        "InsufficientFunds"
+        "InsufficientFunds",
+        "ProfaneDisplayName",
+        "InvalidPartnerResponse"
       ]
     },
     {
@@ -11041,7 +11119,7 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "CurrentGamesRequest",
-      "requestExample": "{\r\n  \"Region\": \"USCentral\",\r\n  \"BuildVersion\": \"5.0.1\"\r\n}",
+      "requestExample": "{\r\n  \"Region\": \"USCentral\",\r\n  \"BuildVersion\": \"5.0.1\",\r\n  \"GameMode\": \"CaptureTheFlag\",\r\n  \"StatisticName\": \"level\",\r\n  \"TagFilter\": {\r\n    \"Includes\": [\r\n      {\r\n        \"Data\": {\r\n          \"level_cap\": \"0\"\r\n        }\r\n      }\r\n    ],\r\n    \"Excludes\": [\r\n      {\r\n        \"Data\": {\r\n          \"newbie\": \"0\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
       "result": "CurrentGamesResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Games\": [\r\n      {\r\n        \"Region\": \"USCentral\",\r\n        \"LobbyID\": \"Lobby 32\",\r\n        \"BuildVersion\": \"5.01\",\r\n        \"GameMode\": \"0\",\r\n        \"MaxPlayers\": 26,\r\n        \"PlayerUserIds\": [\r\n          \"70CE3CC42DD4D363\",\r\n          \"17978105374C103C\"\r\n        ],\r\n        \"RunTime\": 400,\r\n        \"GameServerState\": 0,\r\n        \"GameServerData\": \"\\\"ValueA\\\":\\\"FFA\\\",\\\"ValueB\\\":\\\"BBE\\\"\"\r\n      }\r\n    ],\r\n    \"PlayerCount\": 95,\r\n    \"GameCount\": 19\r\n  }\r\n}",
       "seeAlso": [
@@ -11066,7 +11144,7 @@
       "request": "GameServerRegionsRequest",
       "requestExample": "{\r\n  \"BuildVersion\": \"5.0.1\",\r\n  \"TitleId\": \"2074\"\r\n}",
       "result": "GameServerRegionsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Regions\": [\r\n      {\r\n        \"Region\": \"USCentral\",\r\n        \"Name\": \"USCentral\",\r\n        \"Available\": true,\r\n        \"PingUrl\": \"10.31.58.95\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Regions\": [\r\n      {\r\n        \"Region\": \"USEast\",\r\n        \"Name\": \"USCentral\",\r\n        \"Available\": true,\r\n        \"PingUrl\": \"10.31.58.95\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Client/Matchmake",
         "Client/StartGame",
@@ -11087,9 +11165,9 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "MatchmakeRequest",
-      "requestExample": "{\r\n  \"BuildVersion\": \"5.01\",\r\n  \"Region\": \"USCentral\",\r\n  \"GameMode\": \"0\",\r\n  \"LobbyId\": \"Lobby 32\"\r\n}",
+      "requestExample": "{\r\n  \"BuildVersion\": \"5.01\",\r\n  \"Region\": \"USCentral\",\r\n  \"GameMode\": \"0\",\r\n  \"TagFilter\": {\r\n    \"Includes\": [\r\n      {\r\n        \"Data\": {\r\n          \"level_cap\": \"0\"\r\n        }\r\n      }\r\n    ],\r\n    \"Excludes\": [\r\n      {\r\n        \"Data\": {\r\n          \"newbie\": \"0\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
       "result": "MatchmakeResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyID\": \"Lobby 32\",\r\n    \"ServerHostname\": \"192.168.0.1\",\r\n    \"ServerPort\": 7777,\r\n    \"Ticket\": \"e98yf289f248902f4904f0924f9pj\",\r\n    \"Status\": \"Waiting\"\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyID\": \"4006214\",\r\n    \"ServerHostname\": \"192.168.0.1\",\r\n    \"ServerPort\": 7777,\r\n    \"Ticket\": \"e98yf289f248902f4904f0924f9pj\",\r\n    \"Status\": \"Waiting\"\r\n  }\r\n}",
       "seeAlso": [
         "Client/StartGame",
         "Client/GetGameServerRegions",
@@ -11099,8 +11177,7 @@
       ],
       "errors": [
         "InvalidParams",
-        "GameModeNotFound",
-        "InvalidLobbyId"
+        "GameModeNotFound"
       ]
     },
     {
@@ -11115,7 +11192,7 @@
       "request": "StartGameRequest",
       "requestExample": "{\r\n  \"BuildVersion\": \"5.01\",\r\n  \"Region\": \"EUWest\",\r\n  \"GameMode\": \"0\",\r\n  \"CustomCommandLineData\": \"custom_gameserver_commandline_parameter\"\r\n}",
       "result": "StartGameResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyID\": \"Lobby 32\",\r\n    \"ServerHostname\": \"103.29.85.12\",\r\n    \"ServerPort\": 2019,\r\n    \"Ticket\": \"7D2920DE87C1D3A7-76561198047385422-3-3-8D0252520DB76F9-E6D775474D744A16.XXX\",\r\n    \"Expires\": \"Never\",\r\n    \"Password\": \"\"\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyID\": \"4006214\",\r\n    \"ServerHostname\": \"103.29.85.12\",\r\n    \"ServerPort\": 2019,\r\n    \"Ticket\": \"7D2920DE87C1D3A7-76561198047385422-3-3-8D0252520DB76F9-E6D775474D744A16.XXX\",\r\n    \"Expires\": \"Never\",\r\n    \"Password\": \"pa$$word\"\r\n  }\r\n}",
       "seeAlso": [
         "Client/Matchmake",
         "Client/GetGameServerRegions",
@@ -13037,10 +13114,6 @@
       "id": 1113,
       "name": "DatabaseThroughputExceeded"
     },
-    "InvalidLobbyId": {
-      "id": 1114,
-      "name": "InvalidLobbyId"
-    },
     "InvalidGameTicket": {
       "id": 1115,
       "name": "InvalidGameTicket"
@@ -13516,6 +13589,14 @@
     "TwitchResponseError": {
       "id": 1233,
       "name": "TwitchResponseError"
+    },
+    "ProfaneDisplayName": {
+      "id": 1234,
+      "name": "ProfaneDisplayName"
+    },
+    "UserAlreadyAdded": {
+      "id": 1235,
+      "name": "UserAlreadyAdded"
     }
   },
   "errorList": [
@@ -13624,7 +13705,6 @@
     "InvalidReportDate",
     "ReportNotAvailable",
     "DatabaseThroughputExceeded",
-    "InvalidLobbyId",
     "InvalidGameTicket",
     "ExpiredGameTicket",
     "GameTicketDoesNotMatchLobby",
@@ -13743,6 +13823,8 @@
     "VirtualCurrencyCodeExists",
     "TitleNewsItemCountLimitExceeded",
     "InvalidTwitchToken",
-    "TwitchResponseError"
+    "TwitchResponseError",
+    "ProfaneDisplayName",
+    "UserAlreadyAdded"
   ]
 }
