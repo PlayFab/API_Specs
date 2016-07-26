@@ -96,6 +96,27 @@
         }
       ]
     },
+    "AddGenericIDRequest": {
+      "name": "AddGenericIDRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "GenericId",
+          "description": "Generic service identifier to add to the player account.",
+          "jsontype": "Object",
+          "actualtype": "GenericServiceId",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "AddGenericIDResult": {
+      "name": "AddGenericIDResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": []
+    },
     "AddSharedGroupMembersRequest": {
       "name": "AddSharedGroupMembersRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -2015,6 +2036,49 @@
         }
       ]
     },
+    "GenericPlayFabIdPair": {
+      "name": "GenericPlayFabIdPair",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "GenericId",
+          "description": "Unique generic service identifier for a user.",
+          "jsontype": "Object",
+          "actualtype": "GenericServiceId",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the given generic identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GenericServiceId": {
+      "name": "GenericServiceId",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "ServiceName",
+          "description": "Name of the service for which the player has a unique identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "UserId",
+          "description": "Unique identifier of the player in that service.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "GetAccountInfoRequest": {
       "name": "GetAccountInfoRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -3587,6 +3651,38 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "GameCenterPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromGenericIDsRequest": {
+      "name": "GetPlayFabIDsFromGenericIDsRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "GenericIDs",
+          "description": "Array of unique generic service identifiers for which the title needs to get PlayFab identifiers. Currently limited to a maximum of 10 in a single request.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GenericServiceId",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromGenericIDsResult": {
+      "name": "GetPlayFabIDsFromGenericIDsResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of generic service identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GenericPlayFabIdPair",
           "isclass": true,
           "optional": true
         }
@@ -6657,6 +6753,27 @@
       "assembly": "PlayFab.Client.Models",
       "properties": []
     },
+    "RemoveGenericIDRequest": {
+      "name": "RemoveGenericIDRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "GenericId",
+          "description": "Generic service identifier to be removed from the player.",
+          "jsontype": "Object",
+          "actualtype": "GenericServiceId",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "RemoveGenericIDResult": {
+      "name": "RemoveGenericIDResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": []
+    },
     "RemoveGuildMemberRequest": {
       "name": "RemoveGuildMemberRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -9428,6 +9545,27 @@
       ]
     },
     {
+      "name": "AddGenericID",
+      "summary": "Adds the specified generic service identifier to the player's PlayFab account. This is designed to allow for a PlayFab ID lookup of any arbitrary service identifier a title wants to add. This identifier should never be used as authentication credentials, as the intent is that it is easily accessible by other players.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/AddGenericID",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "AddGenericIDRequest",
+      "requestExample": "{\r\n  \"GenericId\": {\r\n    \"ServiceName\": \"BigBizSocial\",\r\n    \"UserId\": \"1234567890\"\r\n  }\r\n}",
+      "result": "AddGenericIDResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Client/GetPlayFabIDsFromGenericIDs",
+        "Client/RemoveGenericID"
+      ],
+      "errors": [
+        "InvalidParams",
+        "IdentifierAlreadyClaimed"
+      ]
+    },
+    {
       "name": "AddUsernamePassword",
       "summary": "Adds playfab username/password auth to an existing semi-anonymous account created via a 3rd party auth method.",
       "resultDetails": "Each account must have a unique email address in the PlayFab service. Once created, the account may be associated with additional accounts (Steam, Facebook, Game Center, etc.), allowing for added social network lists and achievements systems.",
@@ -9519,6 +9657,27 @@
       "requestExample": "{\r\n  \"GameCenterIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromGameCenterIDsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"GameCenterId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"GameCenterId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayFabIDsFromGenericIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of generic service identifiers. A generic identifier is the service name plus the service-specific ID for the player, as specified by the title when the generic identifier was added to the player account.",
+      "resultDetails": "For generic service identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/GetPlayFabIDsFromGenericIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromGenericIDsRequest",
+      "requestExample": "{\r\n  \"GenericIDs\": [\r\n    {\r\n      \"ServiceName\": \"BigBizSocial\",\r\n      \"UserId\": \"1234567890\"\r\n    },\r\n    {\r\n      \"ServiceName\": \"VeeCeeMe\",\r\n      \"UserId\": \"og5igh85gf43gf\"\r\n    }\r\n  ]\r\n}",
+      "result": "GetPlayFabIDsFromGenericIDsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"GenericId\": {\r\n          \"ServiceName\": \"BigBizSocial\",\r\n          \"UserId\": \"1234567890\"\r\n        },\r\n        \"PlayFabId\": \"ABCDEF0123456789\"\r\n      },\r\n      {\r\n        \"GenericId\": {\r\n          \"ServiceName\": \"VeeCeeMe\",\r\n          \"UserId\": \"og5igh85gf43gf\"\r\n        },\r\n        \"PlayFabId\": \"1234567890ABCDEF\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "seeAlso": [
+        "Client/AddGenericID",
+        "Client/RemoveGenericID"
+      ],
       "errors": [
         "AccountNotFound"
       ]
@@ -9892,6 +10051,27 @@
         "InvalidPublisherId",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
+      ]
+    },
+    {
+      "name": "RemoveGenericID",
+      "summary": "Removes the specified generic service identifier from the player's PlayFab account.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/RemoveGenericID",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "RemoveGenericIDRequest",
+      "requestExample": "{\r\n  \"GenericId\": {\r\n    \"ServiceName\": \"BigBizSocial\",\r\n    \"UserId\": \"1234567890\"\r\n  }\r\n}",
+      "result": "RemoveGenericIDResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Client/AddGenericID",
+        "Client/GetPlayFabIDsFromGenericIDs"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotLinked"
       ]
     },
     {
@@ -12463,11 +12643,13 @@
     {
       "name": "Account Management",
       "methods": [
+        "AddGenericID",
         "AddUsernamePassword",
         "GetAccountInfo",
         "GetPlayerCombinedInfo",
         "GetPlayFabIDsFromFacebookIDs",
         "GetPlayFabIDsFromGameCenterIDs",
+        "GetPlayFabIDsFromGenericIDs",
         "GetPlayFabIDsFromGoogleIDs",
         "GetPlayFabIDsFromKongregateIDs",
         "GetPlayFabIDsFromPSNAccountIDs",
@@ -12485,6 +12667,7 @@
         "LinkSteamAccount",
         "LinkTwitch",
         "LinkXboxAccount",
+        "RemoveGenericID",
         "ReportPlayer",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
@@ -13605,6 +13788,14 @@
     "VirtualCurrencyCannotBeDeleted": {
       "id": 1237,
       "name": "VirtualCurrencyCannotBeDeleted"
+    },
+    "IdentifierAlreadyClaimed": {
+      "id": 1238,
+      "name": "IdentifierAlreadyClaimed"
+    },
+    "IdentifierNotLinked": {
+      "id": 1239,
+      "name": "IdentifierNotLinked"
     }
   },
   "errorList": [
@@ -13835,6 +14026,8 @@
     "ProfaneDisplayName",
     "UserAlreadyAdded",
     "InvalidVirtualCurrencyCode",
-    "VirtualCurrencyCannotBeDeleted"
+    "VirtualCurrencyCannotBeDeleted",
+    "IdentifierAlreadyClaimed",
+    "IdentifierNotLinked"
   ]
 }
