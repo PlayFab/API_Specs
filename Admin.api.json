@@ -2890,6 +2890,22 @@
       "assembly": "PlayFab.Admin.Models",
       "properties": []
     },
+    "RemoveVirtualCurrencyTypesRequest": {
+      "name": "RemoveVirtualCurrencyTypesRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "VirtualCurrencies",
+          "description": "List of virtual currencies to delete",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "VirtualCurrencyData",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
     "ResetCharacterStatisticsRequest": {
       "name": "ResetCharacterStatisticsRequest",
       "classNameSpace": "PlayFab.Admin.Models",
@@ -5041,11 +5057,13 @@
       "result": "BlankResult",
       "resultExample": "",
       "seeAlso": [
+        "Admin/RemoveVirtualCurrencyTypes",
         "Admin/ListVirtualCurrencyTypes"
       ],
       "errors": [
         "InvalidParams",
-        "VirtualCurrencyCountLimitExceeded"
+        "VirtualCurrencyCountLimitExceeded",
+        "InvalidVirtualCurrencyCode"
       ]
     },
     {
@@ -5182,10 +5200,33 @@
       "result": "ListVirtualCurrencyTypesResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"VirtualCurrencies\": [\r\n      {\r\n        \"CurrencyCode\": \"CC\",\r\n        \"DisplayName\": \"Chump Coins\",\r\n        \"InitialDeposit\": 100,\r\n        \"RechargeRate\": 1000,\r\n        \"RechargeMax\": 1000\r\n      },\r\n      {\r\n        \"CurrencyCode\": \"GC\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
-        "Admin/AddVirtualCurrencyTypes"
+        "Admin/AddVirtualCurrencyTypes",
+        "Admin/RemoveVirtualCurrencyTypes"
       ],
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "RemoveVirtualCurrencyTypes",
+      "summary": "Removes one or more virtual currencies from the set defined for the title.",
+      "requestDetails": "Virtual currencies to be removed cannot have entries in any catalog nor store for the title. This operation will also remove all player balances for the removed currencies.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/RemoveVirtualCurrencyTypes",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RemoveVirtualCurrencyTypesRequest",
+      "requestExample": "{\r\n  \"VirtualCurrencies\": [\r\n    {\r\n      \"CurrencyCode\": \"CC\"\r\n    },\r\n    {\r\n      \"CurrencyCode\": \"GC\"\r\n    }\r\n  ]\r\n}",
+      "result": "BlankResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Admin/AddVirtualCurrencyTypes",
+        "Admin/ListVirtualCurrencyTypes"
+      ],
+      "errors": [
+        "InvalidParams",
+        "VirtualCurrencyCannotBeDeleted"
       ]
     },
     {
@@ -5921,6 +5962,7 @@
         "GetTitleData",
         "GetTitleInternalData",
         "ListVirtualCurrencyTypes",
+        "RemoveVirtualCurrencyTypes",
         "SetCatalogItems",
         "SetStoreItems",
         "SetStoreSegmentOverrides",
@@ -6895,6 +6937,14 @@
     "UserAlreadyAdded": {
       "id": 1235,
       "name": "UserAlreadyAdded"
+    },
+    "InvalidVirtualCurrencyCode": {
+      "id": 1236,
+      "name": "InvalidVirtualCurrencyCode"
+    },
+    "VirtualCurrencyCannotBeDeleted": {
+      "id": 1237,
+      "name": "VirtualCurrencyCannotBeDeleted"
     }
   },
   "errorList": [
@@ -7123,6 +7173,8 @@
     "InvalidTwitchToken",
     "TwitchResponseError",
     "ProfaneDisplayName",
-    "UserAlreadyAdded"
+    "UserAlreadyAdded",
+    "InvalidVirtualCurrencyCode",
+    "VirtualCurrencyCannotBeDeleted"
   ]
 }
