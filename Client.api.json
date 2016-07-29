@@ -1667,6 +1667,40 @@
       "assembly": "PlayFab.Client.Models",
       "properties": []
     },
+    "EndSessionRequest": {
+      "name": "EndSessionRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "SessionId",
+          "description": "Unique ID for the session, generated on startup and ended on close.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "EndSessionResult": {
+      "name": "EndSessionResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "BytesWritten",
+          "description": "Number of bytes written to the S3 file associates",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "ExecuteCloudScriptRequest": {
       "name": "ExecuteCloudScriptRequest",
       "classNameSpace": "PlayFab.Client.Models",
@@ -7368,6 +7402,47 @@
         }
       ]
     },
+    "StartSessionRequest": {
+      "name": "StartSessionRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "StartSessionResult": {
+      "name": "StartSessionResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "SessionId",
+          "description": "Unique ID for the session, generated on startup and ended on close.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "S3Url",
+          "description": "PreSigned S3 URL used for writing to S3, null if logging is inapplicable for the session/the limit was exceeded",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "StatisticNameVersion": {
       "name": "StatisticNameVersion",
       "classNameSpace": "PlayFab.Client.Models",
@@ -10812,6 +10887,30 @@
       ]
     },
     {
+      "name": "EndSession",
+      "summary": "Ends a session for an individual client.",
+      "resultDetails": "Once a session has ended, any session-related API requests made with its ID will not be accepted.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Client/EndSession",
+      "auth": "None",
+      "method": "POST",
+      "request": "EndSessionRequest",
+      "requestExample": "{\r\n  \"SessionId\": \"1\"\r\n}",
+      "result": "EndSessionResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/StartSession"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidSessionId"
+      ]
+    },
+    {
       "name": "GetCatalogItems",
       "summary": "Retrieves the specified version of the title's catalog of virtual goods, including all defined properties",
       "resultDetails": "If CatalogVersion is not specified, only inventory items associated with the most recent version of the catalog will be returned.",
@@ -10901,6 +11000,30 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "InvalidParams"
+      ]
+    },
+    {
+      "name": "StartSession",
+      "summary": "Starts a session for an individual client.",
+      "resultDetails": "The session ID is used to make any sessions-related request and optionally logins.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Client/StartSession",
+      "auth": "None",
+      "method": "POST",
+      "request": "StartSessionRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1\"\r\n}",
+      "result": "StartSessionResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionId\": \"1\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/EndSession"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId"
       ]
     },
     {
@@ -12775,11 +12898,13 @@
     {
       "name": "Title-Wide Data Management",
       "methods": [
+        "EndSession",
         "GetCatalogItems",
         "GetPublisherData",
         "GetStoreItems",
         "GetTitleData",
-        "GetTitleNews"
+        "GetTitleNews",
+        "StartSession"
       ]
     },
     {
@@ -13880,6 +14005,14 @@
     "InvalidSegment": {
       "id": 1242,
       "name": "InvalidSegment"
+    },
+    "InvalidSessionId": {
+      "id": 1243,
+      "name": "InvalidSessionId"
+    },
+    "SessionLogNotFound": {
+      "id": 1244,
+      "name": "SessionLogNotFound"
     }
   },
   "errorList": [
@@ -14115,6 +14248,8 @@
     "IdentifierNotLinked",
     "InvalidContinuationToken",
     "ExpiredContinuationToken",
-    "InvalidSegment"
+    "InvalidSegment",
+    "InvalidSessionId",
+    "SessionLogNotFound"
   ]
 }
