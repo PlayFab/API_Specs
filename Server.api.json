@@ -2941,6 +2941,46 @@
         }
       ]
     },
+    "GetRandomResultTablesRequest": {
+      "name": "GetRandomResultTablesRequest",
+      "className": "GetRandomResultTablesRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Specifies the catalog version that should be used to retrieve the Random Result Tables.  If unspecified, uses default/primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TableIDs",
+          "description": "The unique identifier of the Random Result Table to use.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetRandomResultTablesResult": {
+      "name": "GetRandomResultTablesResult",
+      "className": "GetRandomResultTablesResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "Tables",
+          "description": "array of random result tables currently available",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "RandomResultTableListing",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetSegmentResult": {
       "name": "GetSegmentResult",
       "className": "GetSegmentResult",
@@ -4681,6 +4721,37 @@
         }
       ]
     },
+    "RandomResultTableListing": {
+      "name": "RandomResultTableListing",
+      "className": "RandomResultTableListing",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version this table is associated with",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TableId",
+          "description": "Unique name for this drop table",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Nodes",
+          "description": "Child nodes that indicate what kind of drop table item this actually is.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ResultTableNode",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
     "RedeemCouponRequest": {
       "name": "RedeemCouponRequest",
       "className": "RedeemCouponRequest",
@@ -4917,6 +4988,51 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        }
+      ]
+    },
+    "ResultTableNode": {
+      "name": "ResultTableNode",
+      "className": "ResultTableNode",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "ResultItemType",
+          "description": "Whether this entry in the table is an item or a link to another table",
+          "jsontype": "String",
+          "actualtype": "ResultTableNodeType",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "ResultItem",
+          "description": "Either an ItemId, or the TableId of another random result table",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Weight",
+          "description": "How likely this is to be rolled - larger numbers add more weight",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ResultTableNodeType": {
+      "name": "ResultTableNodeType",
+      "className": "ResultTableNodeType",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "ItemId"
+        },
+        {
+          "name": "TableId"
         }
       ]
     },
@@ -7639,6 +7755,28 @@
       ]
     },
     {
+      "name": "GetRandomResultTables",
+      "summary": "Retrieves the configuration information for the specified random results tables for the title, including all ItemId values and weights",
+      "resultDetails": "Note that if a specified Random Result Table contains no entries, or does not exist in the catalog, an InvalidDropTable error will be returned.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Server/GetRandomResultTables",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetRandomResultTablesRequest",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"1\",\r\n  \"TableIDs\": [\r\n    \"CommonElementCard\",\r\n    \"UncommonElementCard\",\r\n    \"RareElementCard\"\r\n  ]\r\n}",
+      "result": "GetRandomResultTablesResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Tables\": {\r\n      \"blah\": {\r\n        \"CatalogVersion\": \"1\",\r\n        \"TableId\": \"DropTable 1\",\r\n        \"Nodes\": [\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Gold Crown 1\",\r\n            \"Weight\": 20\r\n          },\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Magic Sword 3\",\r\n            \"Weight\": 50\r\n          },\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Clear Shield 3\",\r\n            \"Weight\": 70\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  }\r\n}",
+      "seeAlso": [
+        "Server/EvaluateRandomResultTable"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidDropTable",
+        "CatalogNotConfigured"
+      ]
+    },
+    {
       "name": "GetUserInventory",
       "summary": "Retrieves the specified user's current inventory of virtual goods",
       "requestDetails": "All items currently in the user inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included.",
@@ -9059,6 +9197,7 @@
         "ConsumeItem",
         "EvaluateRandomResultTable",
         "GetCharacterInventory",
+        "GetRandomResultTables",
         "GetUserInventory",
         "GrantItemsToCharacter",
         "GrantItemsToUser",
