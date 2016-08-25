@@ -146,6 +146,35 @@
         }
       ]
     },
+    "AddPlayerTagRequest": {
+      "name": "AddPlayerTagRequest",
+      "className": "AddPlayerTagRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TagName",
+          "description": "Unique tag for player profile.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "AddPlayerTagResult": {
+      "name": "AddPlayerTagResult",
+      "className": "AddPlayerTagResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": []
+    },
     "AddSharedGroupMembersRequest": {
       "name": "AddSharedGroupMembersRequest",
       "className": "AddSharedGroupMembersRequest",
@@ -2970,6 +2999,51 @@
         }
       ]
     },
+    "GetPlayerTagsRequest": {
+      "name": "GetPlayerTagsRequest",
+      "className": "GetPlayerTagsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Namespace",
+          "description": "Optional namespace to filter results by",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerTagsResult": {
+      "name": "GetPlayerTagsResult",
+      "className": "GetPlayerTagsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Tags",
+          "description": "Canonical tags (including namespace and tag's name) for the requested user",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "GetPlayFabIDsFromFacebookIDsRequest": {
       "name": "GetPlayFabIDsFromFacebookIDsRequest",
       "className": "GetPlayFabIDsFromFacebookIDsRequest",
@@ -5085,6 +5159,35 @@
           "optional": false
         }
       ]
+    },
+    "RemovePlayerTagRequest": {
+      "name": "RemovePlayerTagRequest",
+      "className": "RemovePlayerTagRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TagName",
+          "description": "Unique tag for player profile.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "RemovePlayerTagResult": {
+      "name": "RemovePlayerTagResult",
+      "className": "RemovePlayerTagResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": []
     },
     "RemoveSharedGroupMembersRequest": {
       "name": "RemoveSharedGroupMembersRequest",
@@ -9533,6 +9636,29 @@
       ]
     },
     {
+      "name": "AddPlayerTag",
+      "summary": "Adds a given tag to a player profile. The tag's namespace is automatically generated based on the source of the tag.",
+      "requestDetails": "This API will trigger a player_tag_added event and add a tag with the given TagName and PlayFabID to the corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters. Also there is a limit on the number of tags a title can have.",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Server/AddPlayerTag",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "AddPlayerTagRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"TagName\": \"MostKilled\"\r\n}",
+      "result": "AddPlayerTagResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/RemovePlayerTag",
+        "Server/GetPlayerTags"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound",
+        "PlayerTagCountLimitExceeded"
+      ]
+    },
+    {
       "name": "GetAllSegments",
       "summary": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as GetPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
       "requestDetails": "Request has no paramaters.",
@@ -9587,6 +9713,50 @@
       "errors": [
         "InvalidParams",
         "SegmentNotFound"
+      ]
+    },
+    {
+      "name": "GetPlayerTags",
+      "summary": "Get all tags with a given Namespace (optional) from a player profile.",
+      "requestDetails": "This API will return a list of canonical tags which includes both namespace and tag's name. If namespace is not provided, the result is a list of all canonical tags. TagName can be used for segmentation and Namespace is limited to 128 characters.",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Server/GetPlayerTags",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayerTagsRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"Namespace\": \"title.AAA\"\r\n}",
+      "result": "GetPlayerTagsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"Tags\": [\r\n      \"title.AAA.MostKilled\",\r\n      \"title.AAA.MostPlayed\",\r\n      \"title.AAA.MostBanned\"\r\n    ]\r\n  }\r\n}",
+      "seeAlso": [
+        "Server/RemovePlayerTag",
+        "Server/AddPlayerTag"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
+    },
+    {
+      "name": "RemovePlayerTag",
+      "summary": "Remove a given tag from a player profile. The tag's namespace is automatically generated based on the source of the tag.",
+      "requestDetails": "This API will trigger a player_tag_removed event and remove a tag with the given TagName and PlayFabID from the corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Server/RemovePlayerTag",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RemovePlayerTagRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"TagName\": \"MostKilled\"\r\n}",
+      "result": "RemovePlayerTagResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/AddPlayerTag",
+        "Server/GetPlayerTags"
+      ],
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
       ]
     }
   ],
@@ -9778,9 +9948,12 @@
     {
       "name": "PlayStream",
       "methods": [
+        "AddPlayerTag",
         "GetAllSegments",
         "GetPlayerSegments",
-        "GetPlayersInSegment"
+        "GetPlayersInSegment",
+        "GetPlayerTags",
+        "RemovePlayerTag"
       ]
     }
   ],
@@ -10736,6 +10909,10 @@
     "GameServerHostCountLimitExceeded": {
       "id": 1247,
       "name": "GameServerHostCountLimitExceeded"
+    },
+    "PlayerTagCountLimitExceeded": {
+      "id": 1248,
+      "name": "PlayerTagCountLimitExceeded"
     }
   },
   "errorList": [
@@ -10976,6 +11153,7 @@
     "SessionLogNotFound",
     "InvalidSearchTerm",
     "TwoFactorAuthenticationTokenRequired",
-    "GameServerHostCountLimitExceeded"
+    "GameServerHostCountLimitExceeded",
+    "PlayerTagCountLimitExceeded"
   ]
 }
