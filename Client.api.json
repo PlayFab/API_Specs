@@ -4383,6 +4383,36 @@
           "actualtype": "StoreItem",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "Source",
+          "description": "How the store was last updated (Admin or a third party).",
+          "jsontype": "String",
+          "actualtype": "SourceType",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "The base catalog that this store is a part of.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StoreId",
+          "description": "The ID of this store.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MarketingData",
+          "description": "Additional data about the store.",
+          "jsontype": "Object",
+          "actualtype": "StoreMarketingModel",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -7681,6 +7711,33 @@
         }
       ]
     },
+    "SourceType": {
+      "name": "SourceType",
+      "className": "SourceType",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Admin"
+        },
+        {
+          "name": "BackEnd"
+        },
+        {
+          "name": "GameClient"
+        },
+        {
+          "name": "GameServer"
+        },
+        {
+          "name": "Partner"
+        },
+        {
+          "name": "Stream"
+        }
+      ]
+    },
     "StartGameRequest": {
       "name": "StartGameRequest",
       "className": "StartGameRequest",
@@ -8031,14 +8088,14 @@
       "properties": [
         {
           "name": "ItemId",
-          "description": "unique identifier of the item as it exists in the catalog - note that this must exactly match the ItemId from the catalog",
+          "description": "Unique identifier of the item as it exists in the catalog - note that this must exactly match the ItemId from the catalog",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "VirtualCurrencyPrices",
-          "description": "price of this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
+          "description": "Override prices for this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
@@ -8046,10 +8103,54 @@
         },
         {
           "name": "RealCurrencyPrices",
-          "description": "override prices for this item for specific currencies",
+          "description": "Override prices for this item for specific currencies",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "Store specific custom data. The data only exists as part of this store; it is not transferred to item instances",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "DisplayPosition",
+          "description": "Intended display position for this item. Note that 0 is the first position",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
+    "StoreMarketingModel": {
+      "name": "StoreMarketingModel",
+      "className": "StoreMarketingModel",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "description": "Marketing data about a specific store",
+      "properties": [
+        {
+          "name": "DisplayName",
+          "description": "Display name of a store as it will appear to users.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Description",
+          "description": "Tagline for a store.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Metadata",
+          "description": "Custom data about a store.",
+          "jsontype": "Object",
+          "actualtype": "object",
           "optional": true
         }
       ]
@@ -11583,7 +11684,7 @@
       "request": "GetStoreItemsRequest",
       "requestExample": "{\r\n  \"StoreId\": \"BonusStore\"\r\n}",
       "result": "GetStoreItemsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Store\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"gamecredits_500\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Store\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 180,\r\n          \"GV\": 20\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 100\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 250,\r\n          \"GV\": 30\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 399\r\n        }\r\n      }\r\n    ],\r\n    \"Source\": \"Admin\",\r\n    \"CatalogVersion\": \"1\",\r\n    \"StoreId\": \"BonusStore\",\r\n    \"MarketingData\": {\r\n      \"DisplayName\": \"Amazing Bonus Store\",\r\n      \"Description\": \"Elite tier bonuses available here\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetCatalogItems"
       ],
