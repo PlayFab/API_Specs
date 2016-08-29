@@ -1732,6 +1732,20 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "GameCrashed",
+          "description": "Whether or not the game crashed. If this value is set, the value of CrashTime is used for the end-time of the session. Otherwise, server time is used",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "CrashTime",
+          "description": "The approximate UTC time the session crashed. If this value is null, server time is used",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
         }
       ]
     },
@@ -1745,10 +1759,10 @@
       ],
       "properties": [
         {
-          "name": "BytesWritten",
-          "description": "Number of bytes written to the S3 file associates",
-          "jsontype": "String",
-          "actualtype": "String",
+          "name": "KilobytesWritten",
+          "description": "Number of kilobytes written to the S3 file associated with the session",
+          "jsontype": "Number",
+          "actualtype": "double",
           "optional": true
         }
       ]
@@ -3768,6 +3782,51 @@
         }
       ]
     },
+    "GetPlayerTagsRequest": {
+      "name": "GetPlayerTagsRequest",
+      "className": "GetPlayerTagsRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Namespace",
+          "description": "Optional namespace to filter results by",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerTagsResult": {
+      "name": "GetPlayerTagsResult",
+      "className": "GetPlayerTagsResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Tags",
+          "description": "Canonical tags (including namespace and tag's name) for the requested user",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "GetPlayerTradesRequest": {
       "name": "GetPlayerTradesRequest",
       "className": "GetPlayerTradesRequest",
@@ -4322,6 +4381,36 @@
           "isUnordered": true,
           "jsontype": "Object",
           "actualtype": "StoreItem",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Source",
+          "description": "How the store was last updated (Admin or a third party).",
+          "jsontype": "String",
+          "actualtype": "SourceType",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "CatalogVersion",
+          "description": "The base catalog that this store is a part of.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StoreId",
+          "description": "The ID of this store.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MarketingData",
+          "description": "Additional data about the store.",
+          "jsontype": "Object",
+          "actualtype": "StoreMarketingModel",
           "isclass": true,
           "optional": true
         }
@@ -7622,6 +7711,33 @@
         }
       ]
     },
+    "SourceType": {
+      "name": "SourceType",
+      "className": "SourceType",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Admin"
+        },
+        {
+          "name": "BackEnd"
+        },
+        {
+          "name": "GameClient"
+        },
+        {
+          "name": "GameServer"
+        },
+        {
+          "name": "Partner"
+        },
+        {
+          "name": "Stream"
+        }
+      ]
+    },
     "StartGameRequest": {
       "name": "StartGameRequest",
       "className": "StartGameRequest",
@@ -7830,10 +7946,17 @@
           "optional": true
         },
         {
-          "name": "S3Url",
-          "description": "PreSigned S3 URL used for writing to S3, null if logging is inapplicable for the session/the limit was exceeded",
+          "name": "TemporaryWriteUrl",
+          "description": "Pre-signed S3 URL used for writing to S3, null if logging is inapplicable for the session/the limit was exceeded",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "KilobytesAvailable",
+          "description": "Number of kilobytes available for logging for the title; null if logging is turned off",
+          "jsontype": "Number",
+          "actualtype": "double",
           "optional": true
         }
       ]
@@ -7965,14 +8088,14 @@
       "properties": [
         {
           "name": "ItemId",
-          "description": "unique identifier of the item as it exists in the catalog - note that this must exactly match the ItemId from the catalog",
+          "description": "Unique identifier of the item as it exists in the catalog - note that this must exactly match the ItemId from the catalog",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "VirtualCurrencyPrices",
-          "description": "price of this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
+          "description": "Override prices for this item in virtual currencies and \"RM\" (the base Real Money purchase price, in USD pennies)",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
@@ -7980,10 +8103,54 @@
         },
         {
           "name": "RealCurrencyPrices",
-          "description": "override prices for this item for specific currencies",
+          "description": "Override prices for this item for specific currencies",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "Store specific custom data. The data only exists as part of this store; it is not transferred to item instances",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "DisplayPosition",
+          "description": "Intended display position for this item. Note that 0 is the first position",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
+    "StoreMarketingModel": {
+      "name": "StoreMarketingModel",
+      "className": "StoreMarketingModel",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "description": "Marketing data about a specific store",
+      "properties": [
+        {
+          "name": "DisplayName",
+          "description": "Display name of a store as it will appear to users.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Description",
+          "description": "Tagline for a store.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Metadata",
+          "description": "Custom data about a store.",
+          "jsontype": "Object",
+          "actualtype": "object",
           "optional": true
         }
       ]
@@ -9791,6 +9958,30 @@
   },
   "calls": [
     {
+      "name": "EndSession",
+      "summary": "Ends a session for an individual client.",
+      "resultDetails": "Sessions time out after 24 hours. Once a session has timed out or ended via an API call, any session-related API calls made with its ID will not be accepted.  You can call EndSession once per session to end it within a week of its start time, and its length will be clamped to 24 hours.  In crash recovery code, you can set GameCrashed to true allowing you to manually override the end-time of the session for more precise analytics.  The number of bytes written to the session's log URL is included in the result if the title has logging enabled.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/EndSession",
+      "auth": "None",
+      "method": "POST",
+      "request": "EndSessionRequest",
+      "requestExample": "{\r\n  \"SessionId\": \"1\",\r\n  \"GameCrashed\": false\r\n}",
+      "result": "EndSessionResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/StartSession"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidSessionId"
+      ]
+    },
+    {
       "name": "GetPhotonAuthenticationToken",
       "summary": "Gets a Photon custom authentication token that can be used to securely join the player into a Photon room. See https://api.playfab.com/docs/using-photon-with-playfab/ for more details.",
       "subgroup": "Authentication",
@@ -10166,6 +10357,30 @@
         "InvalidPassword",
         "ProfaneDisplayName",
         "InvalidPartnerResponse"
+      ]
+    },
+    {
+      "name": "StartSession",
+      "summary": "Starts a session for an individual client.",
+      "resultDetails": "The session ID is used to make any sessions-related request and optionally logins.  The result also includes a temporary URL for logging and the number of bytes the title has available before getting billed if the title has logging enabled.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/StartSession",
+      "auth": "None",
+      "method": "POST",
+      "request": "StartSessionRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1\"\r\n}",
+      "result": "StartSessionResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionId\": \"1\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/EndSession"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId"
       ]
     },
     {
@@ -11419,30 +11634,6 @@
       ]
     },
     {
-      "name": "EndSession",
-      "summary": "Ends a session for an individual client.",
-      "resultDetails": "Once a session has ended, any session-related API requests made with its ID will not be accepted.",
-      "subgroup": "Title-Wide Data Management",
-      "titleTiers": null,
-      "url": "/Client/EndSession",
-      "auth": "None",
-      "method": "POST",
-      "request": "EndSessionRequest",
-      "requestExample": "{\r\n  \"SessionId\": \"1\"\r\n}",
-      "result": "EndSessionResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
-      "seeAlso": [
-        "Client/StartSession"
-      ],
-      "errors": [
-        "InvalidParams",
-        "InvalidSessionId"
-      ]
-    },
-    {
       "name": "GetCatalogItems",
       "summary": "Retrieves the specified version of the title's catalog of virtual goods, including all defined properties",
       "resultDetails": "If CatalogVersion is not specified, only inventory items associated with the most recent version of the catalog will be returned.",
@@ -11493,7 +11684,7 @@
       "request": "GetStoreItemsRequest",
       "requestExample": "{\r\n  \"StoreId\": \"BonusStore\"\r\n}",
       "result": "GetStoreItemsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Store\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"gamecredits_500\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Store\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 180,\r\n          \"GV\": 20\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 100\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 250,\r\n          \"GV\": 30\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 399\r\n        }\r\n      }\r\n    ],\r\n    \"Source\": \"Admin\",\r\n    \"CatalogVersion\": \"1\",\r\n    \"StoreId\": \"BonusStore\",\r\n    \"MarketingData\": {\r\n      \"DisplayName\": \"Amazing Bonus Store\",\r\n      \"Description\": \"Elite tier bonuses available here\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetCatalogItems"
       ],
@@ -11532,30 +11723,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "InvalidParams"
-      ]
-    },
-    {
-      "name": "StartSession",
-      "summary": "Starts a session for an individual client.",
-      "resultDetails": "The session ID is used to make any sessions-related request and optionally logins.",
-      "subgroup": "Title-Wide Data Management",
-      "titleTiers": null,
-      "url": "/Client/StartSession",
-      "auth": "None",
-      "method": "POST",
-      "request": "StartSessionRequest",
-      "requestExample": "{\r\n  \"TitleId\": \"1\"\r\n}",
-      "result": "StartSessionResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionId\": \"1\"\r\n  }\r\n}",
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
-      "seeAlso": [
-        "Client/EndSession"
-      ],
-      "errors": [
-        "InvalidParams",
-        "InvalidTitleId"
       ]
     },
     {
@@ -13356,12 +13523,31 @@
       "errors": [
         "InvalidParams"
       ]
+    },
+    {
+      "name": "GetPlayerTags",
+      "summary": "Get all tags with a given Namespace (optional) from a player profile.",
+      "requestDetails": "This API will return a list of canonical tags which includes both namespace and tag's name. If namespace is not provided, the result is a list of all canonical tags. TagName can be used for segmentation and Namespace is limited to 128 characters.",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Client/GetPlayerTags",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayerTagsRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"Namespace\": \"title.AAA\"\r\n}",
+      "result": "GetPlayerTagsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"Tags\": [\r\n      \"title.AAA.MostKilled\",\r\n      \"title.AAA.MostPlayed\",\r\n      \"title.AAA.MostBanned\"\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "InvalidParams",
+        "AccountNotFound"
+      ]
     }
   ],
   "subgroups": [
     {
       "name": "Authentication",
       "methods": [
+        "EndSession",
         "GetPhotonAuthenticationToken",
         "LoginWithAndroidDeviceID",
         "LoginWithCustomID",
@@ -13376,7 +13562,8 @@
         "LoginWithSteam",
         "LoginWithTwitch",
         "LoginWithXbox",
-        "RegisterPlayFabUser"
+        "RegisterPlayFabUser",
+        "StartSession"
       ]
     },
     {
@@ -13448,13 +13635,11 @@
     {
       "name": "Title-Wide Data Management",
       "methods": [
-        "EndSession",
         "GetCatalogItems",
         "GetPublisherData",
         "GetStoreItems",
         "GetTitleData",
-        "GetTitleNews",
-        "StartSession"
+        "GetTitleNews"
       ]
     },
     {
@@ -13619,7 +13804,8 @@
     {
       "name": "PlayStream",
       "methods": [
-        "GetPlayerSegments"
+        "GetPlayerSegments",
+        "GetPlayerTags"
       ]
     }
   ],
@@ -14575,6 +14761,10 @@
     "GameServerHostCountLimitExceeded": {
       "id": 1247,
       "name": "GameServerHostCountLimitExceeded"
+    },
+    "PlayerTagCountLimitExceeded": {
+      "id": 1248,
+      "name": "PlayerTagCountLimitExceeded"
     }
   },
   "errorList": [
@@ -14815,6 +15005,7 @@
     "SessionLogNotFound",
     "InvalidSearchTerm",
     "TwoFactorAuthenticationTokenRequired",
-    "GameServerHostCountLimitExceeded"
+    "GameServerHostCountLimitExceeded",
+    "PlayerTagCountLimitExceeded"
   ]
 }
