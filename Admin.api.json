@@ -3,6 +3,33 @@
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
   "datatypes": {
+    "ActionsOnPlayersInSegmentJobState": {
+      "name": "ActionsOnPlayersInSegmentJobState",
+      "className": "ActionsOnPlayersInSegmentJobState",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Succeeded"
+        },
+        {
+          "name": "Starting"
+        },
+        {
+          "name": "InProgress"
+        },
+        {
+          "name": "Failed"
+        },
+        {
+          "name": "Aborted"
+        }
+      ]
+    },
     "AdCampaignAttribution": {
       "name": "AdCampaignAttribution",
       "className": "AdCampaignAttribution",
@@ -567,6 +594,20 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "IsLimitedEdition",
+          "description": "BETA: If true, then only a fixed number can ever be granted.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "InitialLimitedEditionCount",
+          "description": "BETA: If IsLImitedEdition is true, then this determines amount of the item initially available. Note that this fieldis ignored if the catalog item already existed in this catalog, or the field is less than 1.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
@@ -672,6 +713,49 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
+        }
+      ]
+    },
+    "CheckLimitedEditionItemAvailabilityRequest": {
+      "name": "CheckLimitedEditionItemAvailabilityRequest",
+      "className": "CheckLimitedEditionItemAvailabilityRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Which catalog is being updated. If null, uses the default catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "The item to check for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CheckLimitedEditionItemAvailabilityResult": {
+      "name": "CheckLimitedEditionItemAvailabilityResult",
+      "className": "CheckLimitedEditionItemAvailabilityResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Amount",
+          "description": "The amount of the specified resource remaining.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
@@ -1428,6 +1512,152 @@
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
+        }
+      ]
+    },
+    "GetActionGroupResult": {
+      "name": "GetActionGroupResult",
+      "className": "GetActionGroupResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "Name",
+          "description": "Action Group name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Id",
+          "description": "Action Group ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetActionsOnPlayersInSegmentJobStatusRequest": {
+      "name": "GetActionsOnPlayersInSegmentJobStatusRequest",
+      "className": "GetActionsOnPlayersInSegmentJobStatusRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "JobId",
+          "description": "The Job ID of the started job. If none will get the most recent job.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetActionsOnPlayersInSegmentJobStatusResult": {
+      "name": "GetActionsOnPlayersInSegmentJobStatusResult",
+      "className": "GetActionsOnPlayersInSegmentJobStatusResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "JobId",
+          "description": "ID of the last started job for the requested segment.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "StartedAt",
+          "description": "UTC date time of job start.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "JobState",
+          "description": "Enum indicate the current state of the job.",
+          "jsontype": "String",
+          "actualtype": "ActionsOnPlayersInSegmentJobState",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "ErrorMessage",
+          "description": "Error message for last processing attempt, if an error occured.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ErrorWasFatal",
+          "description": "Flag indicating if the error was fatal, if false job will be retried.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "TotalPlayersInSegment",
+          "description": "Total players in segment when job was started.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "TotalPlayersProcessed",
+          "description": "Total number of players that have had the actions applied to.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "PercentageComplete",
+          "description": "Percent of players processed",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": true
+        },
+        {
+          "name": "StoppedAt",
+          "description": "UTC date time of job was completed or canceled if not still running.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "EstimatedMinutesRemaining",
+          "description": "Estimated time remaining in minutes",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": true
+        }
+      ]
+    },
+    "GetAllActionGroupsRequest": {
+      "name": "GetAllActionGroupsRequest",
+      "className": "GetAllActionGroupsRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": []
+    },
+    "GetAllActionGroupsResult": {
+      "name": "GetAllActionGroupsResult",
+      "className": "GetAllActionGroupsResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "ActionGroups",
+          "description": "List of Action Groups.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "GetActionGroupResult",
+          "isclass": true,
+          "optional": false
         }
       ]
     },
@@ -2688,6 +2918,48 @@
         }
       ]
     },
+    "IncrementLimitedEditionItemAvailabilityRequest": {
+      "name": "IncrementLimitedEditionItemAvailabilityRequest",
+      "className": "IncrementLimitedEditionItemAvailabilityRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Which catalog is being updated. If null, uses the default catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "The item which needs more availability.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Amount",
+          "description": "Amount to increase availability by.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "IncrementLimitedEditionItemAvailabilityResult": {
+      "name": "IncrementLimitedEditionItemAvailabilityResult",
+      "className": "IncrementLimitedEditionItemAvailabilityResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "IncrementPlayerStatisticVersionRequest": {
       "name": "IncrementPlayerStatisticVersionRequest",
       "className": "IncrementPlayerStatisticVersionRequest",
@@ -3361,8 +3633,15 @@
           "optional": true
         },
         {
+          "name": "TotalValueToDateInUSD",
+          "description": "A sum of player's total purchases in USD across all currencies.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
           "name": "ValuesToDate",
-          "description": "Dictionary of player's total currency purchases. The key VTD is a sum of all player_realmoney_purchase events OrderTotals.",
+          "description": "Dictionary of player's total purchases by currency.",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "uint32",
@@ -4094,6 +4373,49 @@
       "classNameSpace": "PlayFab.Admin.Models",
       "assembly": "PlayFab.Admin.Models",
       "properties": []
+    },
+    "RunActionsOnPlayersInSegmentRequest": {
+      "name": "RunActionsOnPlayersInSegmentRequest",
+      "className": "RunActionsOnPlayersInSegmentRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "SegmentId",
+          "description": "Segment ID to perform actions on.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ActionId",
+          "description": "Action ID to perform on each player in segment.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "RunActionsOnPlayersInSegmentResult": {
+      "name": "RunActionsOnPlayersInSegmentResult",
+      "className": "RunActionsOnPlayersInSegmentResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "JobId",
+          "description": "ID of the job that was started.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
     },
     "SendAccountRecoveryEmailRequest": {
       "name": "SendAccountRecoveryEmailRequest",
@@ -5862,7 +6184,7 @@
     },
     {
       "name": "DeleteUsers",
-      "summary": "Deletes the users for the provided game. Deletes custom data, all account linkages, and statistics.",
+      "summary": "Deletes the users for the provided game. Deletes custom data, all account linkages, and statistics. This method does not remove the player's event history, login history, inventory items, nor virtual currencies.",
       "requestDetails": "Note that this action cannot be undone. It will unlink all accounts and remove all PII information, as well as reset any statistics and leaderboards and clear out any stored custom data for the user.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
@@ -6430,7 +6752,7 @@
       "request": "GetCatalogItemsRequest",
       "requestExample": "{\r\n  \"CatalogVersion\": \"1\"\r\n}",
       "result": "GetCatalogItemsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Catalog\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Level 5 Shield\",\r\n        \"Description\": \"Strong defense against projectile attacks\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 149,\r\n          \"EUR\": 169\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Energy Drink Six-Pack\",\r\n        \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_1\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 1\",\r\n        \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_2\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 2\",\r\n        \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_3\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 3\",\r\n        \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_4\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 4\",\r\n        \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"granted_item_a\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Granted Item A\",\r\n        \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_1\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 1\",\r\n        \"Description\": \"Item demonstrating usage-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 500\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 3\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_2\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 2\",\r\n        \"Description\": \"Item demonstrating time-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 750\r\n        },\r\n        \"Consumable\": {\r\n          \"UsagePeriod\": 3600,\r\n          \"UsagePeriodGroup\": \"usage_group_1\"\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_2\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_bundle_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item bundle 1\",\r\n        \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 599\r\n        },\r\n        \"Bundle\": {\r\n          \"BundledItems\": [\r\n            \"sub_bundle_item_1\",\r\n            \"sub_bundle_item_2\"\r\n          ],\r\n          \"BundledResultTables\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"BundledVirtualCurrencies\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"key_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Key Item 1\",\r\n        \"Description\": \"Key used to unlock Container 1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 1\",\r\n        \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 499\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"KeyItemId\": \"key_item_1\",\r\n          \"ItemContents\": [\r\n            \"sub_container_item_1\",\r\n            \"sub_container_item_2\"\r\n          ],\r\n          \"ResultTableContents\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 2\",\r\n        \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 99\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"ItemClass\": \"starterpacks\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Super Starter Pack\",\r\n        \"Description\": \"Everything you need to get started fast track at the right price\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Catalog\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Level 5 Shield\",\r\n        \"Description\": \"Strong defense against projectile attacks\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 149,\r\n          \"EUR\": 169\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Energy Drink Six-Pack\",\r\n        \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_1\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 1\",\r\n        \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_2\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 2\",\r\n        \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_3\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 3\",\r\n        \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_4\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 4\",\r\n        \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"granted_item_a\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Granted Item A\",\r\n        \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_1\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 1\",\r\n        \"Description\": \"Item demonstrating usage-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 500\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 3\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_2\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 2\",\r\n        \"Description\": \"Item demonstrating time-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 750\r\n        },\r\n        \"Consumable\": {\r\n          \"UsagePeriod\": 3600,\r\n          \"UsagePeriodGroup\": \"usage_group_1\"\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_2\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_bundle_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item bundle 1\",\r\n        \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 599\r\n        },\r\n        \"Bundle\": {\r\n          \"BundledItems\": [\r\n            \"sub_bundle_item_1\",\r\n            \"sub_bundle_item_2\"\r\n          ],\r\n          \"BundledResultTables\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"BundledVirtualCurrencies\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"key_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Key Item 1\",\r\n        \"Description\": \"Key used to unlock Container 1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 1\",\r\n        \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 499\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"KeyItemId\": \"key_item_1\",\r\n          \"ItemContents\": [\r\n            \"sub_container_item_1\",\r\n            \"sub_container_item_2\"\r\n          ],\r\n          \"ResultTableContents\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 2\",\r\n        \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 99\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"ItemClass\": \"starterpacks\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Super Starter Pack\",\r\n        \"Description\": \"Everything you need to get started fast track at the right price\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Admin/SetCatalogItems",
         "Admin/UpdateCatalogItems"
@@ -6593,7 +6915,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "UpdateCatalogItemsRequest",
-      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"Catalog\": [\r\n    {\r\n      \"ItemId\": \"shield_level_5\",\r\n      \"ItemClass\": \"shields\",\r\n      \"DisplayName\": \"Level 5 Shield\",\r\n      \"Description\": \"Strong defense against projectile attacks\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"RealCurrencyPrices\": {\r\n        \"GBP\": 149,\r\n        \"EUR\": 169\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"energy_boost_1\",\r\n      \"ItemClass\": \"boosts\",\r\n      \"DisplayName\": \"Energy Drink Six-Pack\",\r\n      \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_1\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 1\",\r\n      \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_2\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 2\",\r\n      \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_3\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 3\",\r\n      \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_4\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 4\",\r\n      \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"granted_item_a\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Granted Item A\",\r\n      \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_1\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 1\",\r\n      \"Description\": \"Item demonstrating usage-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 500\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 3\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_2\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 2\",\r\n      \"Description\": \"Item demonstrating time-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 750\r\n      },\r\n      \"Consumable\": {\r\n        \"UsagePeriod\": 3600,\r\n        \"UsagePeriodGroup\": \"usage_group_1\"\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_2\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_bundle_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Item bundle 1\",\r\n      \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 599\r\n      },\r\n      \"Bundle\": {\r\n        \"BundledItems\": [\r\n          \"sub_bundle_item_1\",\r\n          \"sub_bundle_item_2\"\r\n        ],\r\n        \"BundledResultTables\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"BundledVirtualCurrencies\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"key_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Key Item 1\",\r\n      \"Description\": \"Key used to unlock Container 1\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 1\",\r\n      \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 499\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"KeyItemId\": \"key_item_1\",\r\n        \"ItemContents\": [\r\n          \"sub_container_item_1\",\r\n          \"sub_container_item_2\"\r\n        ],\r\n        \"ResultTableContents\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 2\",\r\n      \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 99\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"starterpack_1\",\r\n      \"ItemClass\": \"starterpacks\",\r\n      \"DisplayName\": \"Super Starter Pack\",\r\n      \"Description\": \"Everything you need to get started fast track at the right price\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"Catalog\": [\r\n    {\r\n      \"ItemId\": \"shield_level_5\",\r\n      \"ItemClass\": \"shields\",\r\n      \"DisplayName\": \"Level 5 Shield\",\r\n      \"Description\": \"Strong defense against projectile attacks\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"RealCurrencyPrices\": {\r\n        \"GBP\": 149,\r\n        \"EUR\": 169\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"energy_boost_1\",\r\n      \"ItemClass\": \"boosts\",\r\n      \"DisplayName\": \"Energy Drink Six-Pack\",\r\n      \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_1\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 1\",\r\n      \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_2\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 2\",\r\n      \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_3\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 3\",\r\n      \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_4\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 4\",\r\n      \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"granted_item_a\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Granted Item A\",\r\n      \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_1\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 1\",\r\n      \"Description\": \"Item demonstrating usage-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 500\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 3\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_2\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 2\",\r\n      \"Description\": \"Item demonstrating time-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 750\r\n      },\r\n      \"Consumable\": {\r\n        \"UsagePeriod\": 3600,\r\n        \"UsagePeriodGroup\": \"usage_group_1\"\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_2\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_bundle_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Item bundle 1\",\r\n      \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 599\r\n      },\r\n      \"Bundle\": {\r\n        \"BundledItems\": [\r\n          \"sub_bundle_item_1\",\r\n          \"sub_bundle_item_2\"\r\n        ],\r\n        \"BundledResultTables\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"BundledVirtualCurrencies\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"key_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Key Item 1\",\r\n      \"Description\": \"Key used to unlock Container 1\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 1\",\r\n      \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 499\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"KeyItemId\": \"key_item_1\",\r\n        \"ItemContents\": [\r\n          \"sub_container_item_1\",\r\n          \"sub_container_item_2\"\r\n        ],\r\n        \"ResultTableContents\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 2\",\r\n      \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 99\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"starterpack_1\",\r\n      \"ItemClass\": \"starterpacks\",\r\n      \"DisplayName\": \"Super Starter Pack\",\r\n      \"Description\": \"Everything you need to get started fast track at the right price\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    }\r\n  ]\r\n}",
       "result": "UpdateCatalogItemsResult",
       "resultExample": "",
       "seeAlso": [
@@ -6729,7 +7051,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "UpdateCatalogItemsRequest",
-      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"Catalog\": [\r\n    {\r\n      \"ItemId\": \"shield_level_5\",\r\n      \"ItemClass\": \"shields\",\r\n      \"DisplayName\": \"Level 5 Shield\",\r\n      \"Description\": \"Strong defense against projectile attacks\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"RealCurrencyPrices\": {\r\n        \"GBP\": 149,\r\n        \"EUR\": 169\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"energy_boost_1\",\r\n      \"ItemClass\": \"boosts\",\r\n      \"DisplayName\": \"Energy Drink Six-Pack\",\r\n      \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_1\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 1\",\r\n      \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_2\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 2\",\r\n      \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_3\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 3\",\r\n      \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_4\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 4\",\r\n      \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"granted_item_a\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Granted Item A\",\r\n      \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_1\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 1\",\r\n      \"Description\": \"Item demonstrating usage-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 500\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 3\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_2\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 2\",\r\n      \"Description\": \"Item demonstrating time-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 750\r\n      },\r\n      \"Consumable\": {\r\n        \"UsagePeriod\": 3600,\r\n        \"UsagePeriodGroup\": \"usage_group_1\"\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_2\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_bundle_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Item bundle 1\",\r\n      \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 599\r\n      },\r\n      \"Bundle\": {\r\n        \"BundledItems\": [\r\n          \"sub_bundle_item_1\",\r\n          \"sub_bundle_item_2\"\r\n        ],\r\n        \"BundledResultTables\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"BundledVirtualCurrencies\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"key_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Key Item 1\",\r\n      \"Description\": \"Key used to unlock Container 1\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 1\",\r\n      \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 499\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"KeyItemId\": \"key_item_1\",\r\n        \"ItemContents\": [\r\n          \"sub_container_item_1\",\r\n          \"sub_container_item_2\"\r\n        ],\r\n        \"ResultTableContents\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 2\",\r\n      \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 99\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    },\r\n    {\r\n      \"ItemId\": \"starterpack_1\",\r\n      \"ItemClass\": \"starterpacks\",\r\n      \"DisplayName\": \"Super Starter Pack\",\r\n      \"Description\": \"Everything you need to get started fast track at the right price\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"5\",\r\n  \"Catalog\": [\r\n    {\r\n      \"ItemId\": \"shield_level_5\",\r\n      \"ItemClass\": \"shields\",\r\n      \"DisplayName\": \"Level 5 Shield\",\r\n      \"Description\": \"Strong defense against projectile attacks\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"RealCurrencyPrices\": {\r\n        \"GBP\": 149,\r\n        \"EUR\": 169\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"energy_boost_1\",\r\n      \"ItemClass\": \"boosts\",\r\n      \"DisplayName\": \"Energy Drink Six-Pack\",\r\n      \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199,\r\n        \"GV\": 25\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_1\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 1\",\r\n      \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_2\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 2\",\r\n      \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_3\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 3\",\r\n      \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"required_item_for_grant_a_4\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Grant Set Item 4\",\r\n      \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 249,\r\n        \"GV\": 1500\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"granted_item_a\",\r\n      \"ItemClass\": \"sets\",\r\n      \"DisplayName\": \"Granted Item A\",\r\n      \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_1\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 1\",\r\n      \"Description\": \"Item demonstrating usage-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 500\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 3\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"consumable_item_2\",\r\n      \"ItemClass\": \"Consumables\",\r\n      \"DisplayName\": \"Consumable Item 2\",\r\n      \"Description\": \"Item demonstrating time-based consumables\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"GV\": 750\r\n      },\r\n      \"Consumable\": {\r\n        \"UsagePeriod\": 3600,\r\n        \"UsagePeriodGroup\": \"usage_group_1\"\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_bundle_item_2\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Bundled Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_bundle_1\",\r\n      \"ItemClass\": \"Bundles\",\r\n      \"DisplayName\": \"Item bundle 1\",\r\n      \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 599\r\n      },\r\n      \"Bundle\": {\r\n        \"BundledItems\": [\r\n          \"sub_bundle_item_1\",\r\n          \"sub_bundle_item_2\"\r\n        ],\r\n        \"BundledResultTables\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"BundledVirtualCurrencies\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"key_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Key Item 1\",\r\n      \"Description\": \"Key used to unlock Container 1\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 199\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 1\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"sub_container_item_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Container Item 2\",\r\n      \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_1\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 1\",\r\n      \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 499\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"KeyItemId\": \"key_item_1\",\r\n        \"ItemContents\": [\r\n          \"sub_container_item_1\",\r\n          \"sub_container_item_2\"\r\n        ],\r\n        \"ResultTableContents\": [\r\n          \"random_result_1\"\r\n        ],\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"item_container_2\",\r\n      \"ItemClass\": \"Containers\",\r\n      \"DisplayName\": \"Item Container 2\",\r\n      \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n      \"VirtualCurrencyPrices\": {\r\n        \"RM\": 99\r\n      },\r\n      \"Consumable\": {\r\n        \"UsageCount\": 1\r\n      },\r\n      \"Container\": {\r\n        \"VirtualCurrencyContents\": {\r\n          \"GV\": 1000\r\n        }\r\n      },\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    },\r\n    {\r\n      \"ItemId\": \"starterpack_1\",\r\n      \"ItemClass\": \"starterpacks\",\r\n      \"DisplayName\": \"Super Starter Pack\",\r\n      \"Description\": \"Everything you need to get started fast track at the right price\",\r\n      \"CanBecomeCharacter\": false,\r\n      \"IsStackable\": false,\r\n      \"IsTradable\": false,\r\n      \"IsLimitedEdition\": false,\r\n      \"InitialLimitedEditionCount\": 0\r\n    }\r\n  ]\r\n}",
       "result": "UpdateCatalogItemsResult",
       "resultExample": "",
       "seeAlso": [
@@ -6809,6 +7131,29 @@
       ]
     },
     {
+      "name": "CheckLimitedEditionItemAvailability",
+      "summary": "Checks the global count for the limited edition item.",
+      "requestDetails": "This returns the total number of these items available.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Admin/CheckLimitedEditionItemAvailability",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "CheckLimitedEditionItemAvailabilityRequest",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"Rares\",\r\n  \"ItemId\": \"FreeHoodie\"\r\n}",
+      "result": "CheckLimitedEditionItemAvailabilityResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Amount\": 49\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/IncrementLimitedEditionItemAvailability"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetUserInventory",
       "summary": "Retrieves the specified user's current inventory of virtual goods",
       "requestDetails": "All items currently in the user inventory will be returned, irrespective of how they were acquired (via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be in the user's current inventory, and so will not be not included.",
@@ -6844,6 +7189,30 @@
       "errors": [
         "InvalidParams",
         "CatalogNotConfigured"
+      ]
+    },
+    {
+      "name": "IncrementLimitedEditionItemAvailability",
+      "summary": "Increases the global count for the given scarce resource.",
+      "requestDetails": "This operation will increment the global counter for the number of these items available. This number cannot be decremented, except by actual grants.",
+      "subgroup": "Player Item Management",
+      "titleTiers": null,
+      "url": "/Admin/IncrementLimitedEditionItemAvailability",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "IncrementLimitedEditionItemAvailabilityRequest",
+      "requestExample": "{\r\n  \"CatalogVersion\": \"Rares\",\r\n  \"ItemId\": \"FreeHoodie\",\r\n  \"Amount\": 50\r\n}",
+      "result": "IncrementLimitedEditionItemAvailabilityResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/CheckLimitedEditionItemAvailability"
+      ],
+      "errors": [
+        "InvalidParams",
+        "RequestAlreadyRunning"
       ]
     },
     {
@@ -7297,6 +7666,50 @@
       ]
     },
     {
+      "name": "GetActionsOnPlayersInSegmentJobStatus",
+      "summary": "Get a summary for actions on players in segment job.",
+      "requestDetails": "Given a Job ID returns the current bulk action job status. If no Job ID is specified returns the latest actions on players in segment job. There are three basic states for the status, Running, Errored/Canceled and Completed",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Admin/GetActionsOnPlayersInSegmentJobStatus",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetActionsOnPlayersInSegmentJobStatusRequest",
+      "requestExample": "{\r\n  \"JobId\": \"12389170481\"\r\n}",
+      "result": "GetActionsOnPlayersInSegmentJobStatusResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"JobId\": \"13740171024012\",\r\n    \"StartedAt\": \"2016-08-23T12:33:14Z\",\r\n    \"JobState\": \"InProgress\",\r\n    \"TotalPlayersInSegment\": 901793811,\r\n    \"TotalPlayersProcessed\": 17819201,\r\n    \"PercentageComplete\": 0.67,\r\n    \"EstimatedMinutesRemaining\": 175.0\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/RunActionsOnPlayersInSegment"
+      ],
+      "errors": [
+        "InvalidParams",
+        "NoActionsOnPlayersInSegmentJob"
+      ]
+    },
+    {
+      "name": "GetAllActionGroups",
+      "summary": "Retrieve a list of all PlayStream actions groups.",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Admin/GetAllActionGroups",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetAllActionGroupsRequest",
+      "requestExample": "{}",
+      "result": "GetAllActionGroupsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ActionGroups\": [\r\n      {\r\n        \"Name\": \"Grant beta items\",\r\n        \"Id\": \"12389170481\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "seeAlso": [
+        "Admin/GetAllSegments",
+        "Admin/RunActionsOnPlayersInSegment"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "GetAllSegments",
       "summary": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as GetPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
       "requestDetails": "Request has no paramaters.",
@@ -7310,7 +7723,8 @@
       "result": "GetAllSegmentsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Segments\": [\r\n      {\r\n        \"Id\": \"1337AA00\",\r\n        \"Name\": \"Fast Players\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
-        "Admin/GetPlayersInSegment"
+        "Admin/GetPlayersInSegment",
+        "Admin/GetAllActionGroups"
       ]
     },
     {
@@ -7397,6 +7811,34 @@
         "InvalidParams",
         "AccountNotFound"
       ]
+    },
+    {
+      "name": "RunActionsOnPlayersInSegment",
+      "summary": "Starts a new job that will execute all actions in an action group against the given segment. This API call will return before the job is completed.",
+      "requestDetails": "Starts a job in the PlayFab service to run each action against eveyr player in a segment. This may take hours to complete, depending on how many players are in the segment, how many actions need to be run for each and the service limit for number of players to process per second. If the definition of either the Segment or the Action Group is changed during the course of execution the job will be canceled. The player's that are in the segment are snapshotted at the begining of the job, players who enter or exit the segment during the job will not be included or excluded.",
+      "subgroup": "PlayStream",
+      "titleTiers": null,
+      "url": "/Admin/RunActionsOnPlayersInSegment",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RunActionsOnPlayersInSegmentRequest",
+      "requestExample": "{\r\n  \"SegmentId\": \"12389170481\",\r\n  \"ActionId\": \"841027201791\"\r\n}",
+      "result": "RunActionsOnPlayersInSegmentResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"JobId\": \"12389170481\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/GetAllSegments",
+        "Admin/GetAllActionGroups",
+        "Admin/GetActionsOnPlayersInSegmentJobStatus"
+      ],
+      "errors": [
+        "InvalidParams",
+        "MaximumSegmentBulkActionJobsRunning",
+        "SegmentNotFound",
+        "ActionGroupNotFound"
+      ]
     }
   ],
   "subgroups": [
@@ -7470,8 +7912,10 @@
       "name": "Player Item Management",
       "methods": [
         "AddUserVirtualCurrency",
+        "CheckLimitedEditionItemAvailability",
         "GetUserInventory",
         "GrantItemsToUsers",
+        "IncrementLimitedEditionItemAvailability",
         "RevokeInventoryItem",
         "SubtractUserVirtualCurrency"
       ]
@@ -7528,11 +7972,14 @@
       "name": "PlayStream",
       "methods": [
         "AddPlayerTag",
+        "GetActionsOnPlayersInSegmentJobStatus",
+        "GetAllActionGroups",
         "GetAllSegments",
         "GetPlayerSegments",
         "GetPlayersInSegment",
         "GetPlayerTags",
-        "RemovePlayerTag"
+        "RemovePlayerTag",
+        "RunActionsOnPlayersInSegment"
       ]
     }
   ],
@@ -8492,6 +8939,22 @@
     "PlayerTagCountLimitExceeded": {
       "id": 1248,
       "name": "PlayerTagCountLimitExceeded"
+    },
+    "RequestAlreadyRunning": {
+      "id": 1249,
+      "name": "RequestAlreadyRunning"
+    },
+    "ActionGroupNotFound": {
+      "id": 1250,
+      "name": "ActionGroupNotFound"
+    },
+    "MaximumSegmentBulkActionJobsRunning": {
+      "id": 1251,
+      "name": "MaximumSegmentBulkActionJobsRunning"
+    },
+    "NoActionsOnPlayersInSegmentJob": {
+      "id": 1252,
+      "name": "NoActionsOnPlayersInSegmentJob"
     }
   },
   "errorList": [
@@ -8733,6 +9196,10 @@
     "InvalidSearchTerm",
     "TwoFactorAuthenticationTokenRequired",
     "GameServerHostCountLimitExceeded",
-    "PlayerTagCountLimitExceeded"
+    "PlayerTagCountLimitExceeded",
+    "RequestAlreadyRunning",
+    "ActionGroupNotFound",
+    "MaximumSegmentBulkActionJobsRunning",
+    "NoActionsOnPlayersInSegmentJob"
   ]
 }
