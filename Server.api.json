@@ -1538,6 +1538,28 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
+    "DeregisterGameRequest": {
+      "name": "DeregisterGameRequest",
+      "className": "DeregisterGameRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeregisterGameResponse": {
+      "name": "DeregisterGameResponse",
+      "className": "DeregisterGameResponse",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": []
+    },
     "EmptyResult": {
       "name": "EmptyResult",
       "className": "EmptyResult",
@@ -5336,6 +5358,103 @@
       ],
       "properties": []
     },
+    "Region": {
+      "name": "Region",
+      "className": "Region",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "USCentral"
+        },
+        {
+          "name": "USEast"
+        },
+        {
+          "name": "EUWest"
+        },
+        {
+          "name": "Singapore"
+        },
+        {
+          "name": "Japan"
+        },
+        {
+          "name": "Brazil"
+        },
+        {
+          "name": "Australia"
+        }
+      ]
+    },
+    "RegisterGameRequest": {
+      "name": "RegisterGameRequest",
+      "className": "RegisterGameRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "ServerHost",
+          "description": "IP address of the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ServerPort",
+          "description": "Port number for communication with the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Build",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Region",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "Region",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "GameMode",
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Tags",
+          "description": "Tags for the Game Server Instance",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RegisterGameResponse": {
+      "name": "RegisterGameResponse",
+      "className": "RegisterGameResponse",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "LobbyId",
+          "description": "Unique identifier generated for the Game Server Instance that is registered.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "RemoveFriendRequest": {
       "name": "RemoveFriendRequest",
       "className": "RemoveFriendRequest",
@@ -8988,6 +9107,25 @@
       ]
     },
     {
+      "name": "DeregisterGame",
+      "summary": "Inform the matchmaker that a Game Server Instance is removed.",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Server/DeregisterGame",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeregisterGameRequest",
+      "requestExample": "{\r\n  \"LobbyId\": \"8285313\"\r\n}",
+      "result": "DeregisterGameResponse",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/RegisterGame"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
       "name": "NotifyMatchmakerPlayerLeft",
       "summary": "Informs the PlayFab match-making service that the user specified has left the Game Server Instance",
       "subgroup": "Matchmaking APIs",
@@ -9043,6 +9181,26 @@
       "errors": [
         "InvalidParams",
         "GameNotFound"
+      ]
+    },
+    {
+      "name": "RegisterGame",
+      "summary": "Inform the matchmaker that a new Game Server Instance is added.",
+      "subgroup": "Matchmaking APIs",
+      "titleTiers": null,
+      "url": "/Server/RegisterGame",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RegisterGameRequest",
+      "requestExample": "{\r\n  \"ServerHost\": \"118.129.31.244\",\r\n  \"ServerPort\": \"9984\",\r\n  \"Build\": \"11_034234.13\",\r\n  \"Region\": \"USEast\",\r\n  \"GameMode\": \"FreeForAll\",\r\n  \"Tags\": {\r\n    \"level_cap\": \"high\",\r\n    \"no_smoking\": \"1\"\r\n  }\r\n}",
+      "result": "RegisterGameResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyId\": \"8285313\"\r\n  }\r\n}",
+      "seeAlso": [
+        "Server/DeregisterGame"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidRequest"
       ]
     },
     {
@@ -10175,9 +10333,11 @@
     {
       "name": "Matchmaking APIs",
       "methods": [
+        "DeregisterGame",
         "NotifyMatchmakerPlayerLeft",
         "RedeemMatchmakerTicket",
         "RefreshGameServerInstanceHeartbeat",
+        "RegisterGame",
         "SetGameServerInstanceData",
         "SetGameServerInstanceState",
         "SetGameServerInstanceTags"
