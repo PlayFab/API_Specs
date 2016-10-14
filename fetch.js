@@ -24,13 +24,13 @@ function TabifyJson(inputJson, descriptor) {
 
 function GetApiFile(inputUrl, outputFilename, descriptor) {
     console.log("Begin reading: " + inputUrl);
-    var rawReply = "";
+    var rawResponse = "";
     var postReq = https.get(inputUrl, function (res) {
         res.setEncoding("utf8");
-        res.on("data", function (chunk) { rawReply += chunk; });
+        res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
             console.log("Finished reading: " + inputUrl);
-            WriteApiFile(outputFilename, rawReply, descriptor)
+            WriteApiFile(outputFilename, rawResponse, descriptor)
         });
     });
 }
