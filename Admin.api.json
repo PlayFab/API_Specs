@@ -3,33 +3,6 @@
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
   "datatypes": {
-    "ActionsOnPlayersInSegmentJobState": {
-      "name": "ActionsOnPlayersInSegmentJobState",
-      "className": "ActionsOnPlayersInSegmentJobState",
-      "classNameSpace": "PlayFab.Admin.Models",
-      "assembly": "PlayFab.Admin.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "Succeeded"
-        },
-        {
-          "name": "Starting"
-        },
-        {
-          "name": "InProgress"
-        },
-        {
-          "name": "Failed"
-        },
-        {
-          "name": "Aborted"
-        }
-      ]
-    },
     "AdCampaignAttribution": {
       "name": "AdCampaignAttribution",
       "className": "AdCampaignAttribution",
@@ -1582,7 +1555,7 @@
           "name": "JobState",
           "description": "Enum indicate the current state of the job.",
           "jsontype": "String",
-          "actualtype": "ActionsOnPlayersInSegmentJobState",
+          "actualtype": "ScheduledJobStatus",
           "isenum": true,
           "optional": true
         },
@@ -4402,6 +4375,36 @@
         }
       ]
     },
+    "ScheduledJobStatus": {
+      "name": "ScheduledJobStatus",
+      "className": "ScheduledJobStatus",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Succeeded"
+        },
+        {
+          "name": "Starting"
+        },
+        {
+          "name": "InProgress"
+        },
+        {
+          "name": "Failed"
+        },
+        {
+          "name": "Aborted"
+        },
+        {
+          "name": "Pending"
+        }
+      ]
+    },
     "SendAccountRecoveryEmailRequest": {
       "name": "SendAccountRecoveryEmailRequest",
       "className": "SendAccountRecoveryEmailRequest",
@@ -5467,10 +5470,17 @@
         },
         {
           "name": "Password",
-          "description": "Password for the PlayFab account (6-100 characters)",
+          "description": "Password for the PlayFab account",
+          "deprecation": {
+            "ProposedAfter": "10/14/2016",
+            "DeprecatedAfter": "11/10/2016",
+            "ObsoleteAfter": "11/15/2016",
+            "ReplacedBy": null
+          },
+          "deprecated": true,
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -6014,14 +6024,14 @@
     {
       "name": "ResetUsers",
       "summary": "Resets all title-specific information about a particular account, including user data, virtual currency balances, inventory, purchase history, and statistics",
-      "requestDetails": "This method is intended for use with test accounts, to allow a developer to reset and test a game experience from the start. Note that in order to reset an account, you must know the username and password. If the account does not have a username and password, you must add one with AddUsernamePassword in the client API prior to calling this method.",
+      "requestDetails": "This method is intended for use with test accounts, to allow a developer to reset and test a game experience from the start. Note that in order to reset an account, you must know the username. If the account does not have a username, you must add one with AddUsernamePassword in the client API prior to calling this method.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Admin/ResetUsers",
       "auth": "SecretKey",
       "method": "POST",
       "request": "ResetUsersRequest",
-      "requestExample": "{\r\n  \"Users\": [\r\n    {\r\n      \"Username\": \"username\",\r\n      \"Password\": \"password\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"Users\": [\r\n    {\r\n      \"Username\": \"John\"\r\n    }\r\n  ]\r\n}",
       "result": "BlankResult",
       "resultExample": "",
       "errors": [
@@ -7243,7 +7253,7 @@
       "request": "GetMatchmakerGameInfoRequest",
       "requestExample": "{\r\n  \"LobbyId\": \"2938488\"\r\n}",
       "result": "GetMatchmakerGameInfoResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyId\": \"2938488\",\r\n    \"TitleId\": \"2084\",\r\n    \"StartTime\": \"2014-04-20T00:00:00Z\",\r\n    \"EndTime\": \"2015-12-31T00:00:00Z\",\r\n    \"Mode\": \"0\",\r\n    \"BuildVersion\": \"5.0.1\",\r\n    \"Region\": \"USCentral\",\r\n    \"Players\": [\r\n      \"3959890454\",\r\n      \"02395858949\",\r\n      \"010095944\",\r\n      \"049588364\"\r\n    ],\r\n    \"ServerAddress\": \"10.250.24.54\",\r\n    \"ServerPort\": 1243\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyId\": \"2938488\",\r\n    \"TitleId\": \"2084\",\r\n    \"StartTime\": \"2016-04-20T10:32:58Z\",\r\n    \"EndTime\": \"2016-04-20T21:08:14Z\",\r\n    \"Mode\": \"0\",\r\n    \"BuildVersion\": \"5.0.1\",\r\n    \"Region\": \"USCentral\",\r\n    \"ServerAddress\": \"10.250.24.54\",\r\n    \"ServerPort\": 1243\r\n  }\r\n}",
       "seeAlso": [
         "Admin/GetMatchmakerGameModes",
         "Admin/ModifyMatchmakerGameModes"
@@ -8951,6 +8961,10 @@
     "InvalidTaskSchedule": {
       "id": 1257,
       "name": "InvalidTaskSchedule"
+    },
+    "SteamNotEnabledForTitle": {
+      "id": 1258,
+      "name": "SteamNotEnabledForTitle"
     }
   },
   "errorList": [
@@ -9201,6 +9215,7 @@
     "ScheduledTaskNameConflict",
     "ScheduledTaskCreateConflict",
     "InvalidScheduledTaskName",
-    "InvalidTaskSchedule"
+    "InvalidTaskSchedule",
+    "SteamNotEnabledForTitle"
   ]
 }
