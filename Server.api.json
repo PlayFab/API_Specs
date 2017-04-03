@@ -3220,14 +3220,14 @@
           "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         },
         {
           "name": "UseSpecificVersion",
           "description": "If true, uses the specified version. If false, gets the most recent version.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         },
         {
           "name": "ProfileConstraints",
@@ -3500,14 +3500,14 @@
           "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         },
         {
           "name": "UseSpecificVersion",
           "description": "If true, uses the specified version. If false, gets the most recent version.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -3628,14 +3628,14 @@
           "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": false
+          "optional": true
         },
         {
           "name": "UseSpecificVersion",
           "description": "If true, uses the specified version. If false, gets the most recent version.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -7343,6 +7343,41 @@
       "assembly": "PlayFab.Server.Models",
       "properties": []
     },
+    "SetPlayerSecretRequest": {
+      "name": "SetPlayerSecretRequest",
+      "className": "SetPlayerSecretRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayerSecret",
+          "description": "Player secret that is used to verify API request signatures",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SetPlayerSecretResult": {
+      "name": "SetPlayerSecretResult",
+      "className": "SetPlayerSecretResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "SetPublisherDataRequest": {
       "name": "SetPublisherDataRequest",
       "className": "SetPublisherDataRequest",
@@ -9245,6 +9280,27 @@
       ]
     },
     {
+      "name": "SetPlayerSecret",
+      "summary": "Sets the player's secret if it is not already set. Player secrets are used to sign API requests. To reset a player's secret use the Admin or Server API method SetPlayerSecret.",
+      "requestDetails": "APIs that require signatures require that the player have a configured Player Secret Key that is used to sign all requests. Players that don't have a secret will be blocked from making API calls until it is configured. To create a signature header add a SHA256 hashed string containing UTF8 encoded JSON body as it will be sent to the server, the current time in UTC formatted to ISO 8601, and the players secret formatted as 'body.date.secret'. Place the resulting hash into the header X-PlayFab-Signature, along with a header X-PlayFab-Timestamp of the same UTC timestamp used in the signature.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Server/SetPlayerSecret",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "SetPlayerSecretRequest",
+      "requestExample": "{\r\n  \"PlayerSecret\": \"secretkeyforthisplayer\",\r\n  \"PlayFabId\": \"ABCD1234\"\r\n}",
+      "result": "SetPlayerSecretResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
+        "PlayerSecretAlreadyConfigured"
+      ]
+    },
+    {
       "name": "BanUsers",
       "summary": "Bans users by PlayFab ID with optional IP address, or MAC address for the provided game.",
       "requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
@@ -9482,7 +9538,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetFriendLeaderboardRequest",
-      "requestExample": "{\r\n  \"PlayFabId\": \"98092347523\",\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 1258,\r\n  \"MaxResultsCount\": 20,\r\n  \"IncludeSteamFriends\": false,\r\n  \"Version\": 0,\r\n  \"UseSpecificVersion\": false\r\n}",
+      "requestExample": "{\r\n  \"PlayFabId\": \"98092347523\",\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 1258,\r\n  \"MaxResultsCount\": 20,\r\n  \"IncludeSteamFriends\": false\r\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
       "seeAlso": [
@@ -9505,7 +9561,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetLeaderboardRequest",
-      "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 0,\r\n  \"MaxResultsCount\": 20,\r\n  \"Version\": 0,\r\n  \"UseSpecificVersion\": false\r\n}",
+      "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 0,\r\n  \"MaxResultsCount\": 20\r\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
       "seeAlso": [
@@ -9527,7 +9583,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "GetLeaderboardAroundUserRequest",
-      "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"MaxResultsCount\": 20,\r\n  \"Version\": 0,\r\n  \"UseSpecificVersion\": false\r\n}",
+      "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"MaxResultsCount\": 20\r\n}",
       "result": "GetLeaderboardAroundUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
       "seeAlso": [
@@ -11844,7 +11900,8 @@
     {
       "name": "Authentication",
       "methods": [
-        "AuthenticateSessionTicket"
+        "AuthenticateSessionTicket",
+        "SetPlayerSecret"
       ]
     },
     {
@@ -13149,6 +13206,46 @@
     "ExpressionTooLong": {
       "id": 1286,
       "name": "ExpressionTooLong"
+    },
+    "DataUpdateRateExceeded": {
+      "id": 1287,
+      "name": "DataUpdateRateExceeded"
+    },
+    "RestrictedEmailDomain": {
+      "id": 1288,
+      "name": "RestrictedEmailDomain"
+    },
+    "EncryptionKeyDisabled": {
+      "id": 1289,
+      "name": "EncryptionKeyDisabled"
+    },
+    "EncryptionKeyMissing": {
+      "id": 1290,
+      "name": "EncryptionKeyMissing"
+    },
+    "EncryptionKeyBroken": {
+      "id": 1291,
+      "name": "EncryptionKeyBroken"
+    },
+    "NoSharedSecretKeyConfigured": {
+      "id": 1292,
+      "name": "NoSharedSecretKeyConfigured"
+    },
+    "SecretKeyNotFound": {
+      "id": 1293,
+      "name": "SecretKeyNotFound"
+    },
+    "PlayerSecretAlreadyConfigured": {
+      "id": 1294,
+      "name": "PlayerSecretAlreadyConfigured"
+    },
+    "APIRequestsDisabledForTitle": {
+      "id": 1295,
+      "name": "APIRequestsDisabledForTitle"
+    },
+    "InvalidSharedSecretKey": {
+      "id": 1296,
+      "name": "InvalidSharedSecretKey"
     }
   },
   "errorList": [
@@ -13427,6 +13524,16 @@
     "InvalidStatistic",
     "ExpressionParseFailure",
     "ExpressionInvokeFailure",
-    "ExpressionTooLong"
+    "ExpressionTooLong",
+    "DataUpdateRateExceeded",
+    "RestrictedEmailDomain",
+    "EncryptionKeyDisabled",
+    "EncryptionKeyMissing",
+    "EncryptionKeyBroken",
+    "NoSharedSecretKeyConfigured",
+    "SecretKeyNotFound",
+    "PlayerSecretAlreadyConfigured",
+    "APIRequestsDisabledForTitle",
+    "InvalidSharedSecretKey"
   ]
 }
