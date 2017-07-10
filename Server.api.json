@@ -3231,14 +3231,15 @@
         },
         {
           "name": "Version",
-          "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
+          "description": "The version of the leaderboard to get.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "UseSpecificVersion",
-          "description": "If true, uses the specified version. If false, gets the most recent version.",
+          "description": "If set to false, Version is considered null. If true, uses the specified Version",
+          "GovernsProperty": "Version",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -3511,14 +3512,15 @@
         },
         {
           "name": "Version",
-          "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
+          "description": "The version of the leaderboard to get.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "UseSpecificVersion",
-          "description": "If true, uses the specified version. If false, gets the most recent version.",
+          "description": "If set to false, Version is considered null. If true, uses the specified Version",
+          "GovernsProperty": "Version",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -3639,14 +3641,15 @@
         },
         {
           "name": "Version",
-          "description": "The version of the leaderboard to get, when UseSpecificVersion is true.",
+          "description": "The version of the leaderboard to get.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
         },
         {
           "name": "UseSpecificVersion",
-          "description": "If true, uses the specified version. If false, gets the most recent version.",
+          "description": "If set to false, Version is considered null. If true, uses the specified Version",
+          "GovernsProperty": "Version",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -6589,6 +6592,56 @@
         }
       ]
     },
+    "PushNotificationPackage": {
+      "name": "PushNotificationPackage",
+      "className": "PushNotificationPackage",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "ScheduleDate",
+          "description": "If set, represents a timestamp for when the device should display the message. Local format should be formatted as: yyyy-MM-dd HH:mm:ss or UTC timestamp formatted as yyyy-MM-ddTHH:mm:ssZ. Delivery is not delayed, scheduling is expected to be handled by the device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Title",
+          "description": "Title/Subject of the message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Message",
+          "description": "Content of the message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Icon",
+          "description": "Icon file to display with the message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Sound",
+          "description": "Sound file to play with the message",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomData",
+          "description": "Arbitrary string that will be delivered with the message. Suggested use: JSON formatted object",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "PushNotificationPlatform": {
       "name": "PushNotificationPlatform",
       "className": "PushNotificationPlatform",
@@ -6845,6 +6898,13 @@
       "assembly": "PlayFab.Server.Models",
       "properties": [
         {
+          "name": "LobbyId",
+          "description": "Previous lobby id if re-registering an existing game.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "ServerHost",
           "description": "IP address of the Game Server Instance.",
           "jsontype": "String",
@@ -6898,7 +6958,7 @@
       "properties": [
         {
           "name": "LobbyId",
-          "description": "Unique identifier generated for the Game Server Instance that is registered.",
+          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -7277,9 +7337,23 @@
         {
           "name": "Message",
           "description": "Text of message to send.",
+          "deprecation": {
+            "ProposedAfter": "6/1/2017",
+            "DeprecatedAfter": "8/1/2017",
+            "ObsoleteAfter": "9/1/2017",
+            "ReplacedBy": "Package"
+          },
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "Package",
+          "description": "Defines all possible push attributes like message, title, icon, etc",
+          "jsontype": "Object",
+          "actualtype": "PushNotificationPackage",
+          "isclass": true,
+          "optional": true
         },
         {
           "name": "Subject",
@@ -7421,9 +7495,6 @@
       "className": "SetPlayerSecretRequest",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "properties": [
         {
           "name": "PlayerSecret",
@@ -7446,9 +7517,6 @@
       "className": "SetPlayerSecretResult",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "properties": []
     },
     "SetPublisherDataRequest": {
@@ -9363,9 +9431,6 @@
       "requestExample": "{\r\n  \"PlayerSecret\": \"secretkeyforthisplayer\",\r\n  \"PlayFabId\": \"ABCD1234\"\r\n}",
       "result": "SetPlayerSecretResult",
       "resultExample": "",
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
       "errors": [
         "InvalidParams",
         "PlayerSecretAlreadyConfigured"
