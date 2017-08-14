@@ -2762,6 +2762,14 @@
           "actualtype": "UserGameCenterInfo",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "Profile",
+          "description": "The profile of the user, if requested.",
+          "jsontype": "Object",
+          "actualtype": "PlayerProfileModel",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -3294,7 +3302,7 @@
         },
         {
           "name": "ProfileConstraints",
-          "description": "If non-null, this determines which properties of the profile to return. If null, playfab will only include display names. For API calls from the client, only ShowDisplayName, ShowAvatarUrl are allowed at this time.",
+          "description": "If non-null, this determines which properties of the resulting player profiles to return. For API calls from the client, only the allowed client profile properties for the title may be requested. These allowed properties are configured in the Game Manager \"Client Profile Options\" tab in the \"Settings\" section.",
           "jsontype": "Object",
           "actualtype": "PlayerProfileViewConstraints",
           "isclass": true,
@@ -3327,6 +3335,14 @@
           "description": "Indicates whether Facebook friends should be included in the response. Default is true.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "ProfileConstraints",
+          "description": "If non-null, this determines which properties of the resulting player profiles to return. For API calls from the client, only the allowed client profile properties for the title may be requested. These allowed properties are configured in the Game Manager \"Client Profile Options\" tab in the \"Settings\" section.",
+          "jsontype": "Object",
+          "actualtype": "PlayerProfileViewConstraints",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -3552,7 +3568,7 @@
         },
         {
           "name": "ProfileConstraints",
-          "description": "If non-null, this determines which properties of the profile to return. If null, playfab will only include display names. For API calls from the client, only ShowDisplayName, ShowAvatarUrl are allowed at this time.",
+          "description": "If non-null, this determines which properties of the resulting player profiles to return. For API calls from the client, only the allowed client profile properties for the title may be requested. These allowed properties are configured in the Game Manager \"Client Profile Options\" tab in the \"Settings\" section.",
           "jsontype": "Object",
           "actualtype": "PlayerProfileViewConstraints",
           "isclass": true,
@@ -3681,7 +3697,7 @@
         },
         {
           "name": "ProfileConstraints",
-          "description": "If non-null, this determines which properties of the profile to return. If null, playfab will only include display names. For API calls from the client, only ShowDisplayName, ShowAvatarUrl are allowed at this time.",
+          "description": "If non-null, this determines which properties of the resulting player profiles to return. For API calls from the client, only the allowed client profile properties for the title may be requested. These allowed properties are configured in the Game Manager \"Client Profile Options\" tab in the \"Settings\" section.",
           "jsontype": "Object",
           "actualtype": "PlayerProfileViewConstraints",
           "isclass": true,
@@ -4032,7 +4048,7 @@
         },
         {
           "name": "ProfileConstraints",
-          "description": "If non-null, this determines which properties of the profile to return. If null, playfab will only include display names. For API calls from the client, only ShowDisplayName, ShowAvatarUrl are allowed at this time.",
+          "description": "If non-null, this determines which properties of the resulting player profiles to return. For API calls from the client, only the allowed client profile properties for the title may be requested. These allowed properties are configured in the Game Manager \"Client Profile Options\" tab in the \"Settings\" section.",
           "jsontype": "Object",
           "actualtype": "PlayerProfileViewConstraints",
           "isclass": true,
@@ -7378,6 +7394,55 @@
         }
       ]
     },
+    "SendCustomAccountRecoveryEmailRequest": {
+      "name": "SendCustomAccountRecoveryEmailRequest",
+      "className": "SendCustomAccountRecoveryEmailRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "EmailTemplateId",
+          "description": "The email template id of the account recovery email template to send.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Email",
+          "description": "User email address attached to their account",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Username",
+          "description": "The user's username requesting an account recovery.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SendCustomAccountRecoveryEmailResult": {
+      "name": "SendCustomAccountRecoveryEmailResult",
+      "className": "SendCustomAccountRecoveryEmailResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
     "SendPushNotificationRequest": {
       "name": "SendPushNotificationRequest",
       "className": "SendPushNotificationRequest",
@@ -9657,6 +9722,31 @@
       ]
     },
     {
+      "name": "SendCustomAccountRecoveryEmail",
+      "summary": "Forces an email to be sent to the registered contact email address for the user's account cased on an account recovery email template",
+      "requestDetails": "PlayFab accounts which have valid email address or username will be able to receive a password reset email using this API.The email sent must be an account recovery email template. The username or email can be passed in to send the email",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/SendCustomAccountRecoveryEmail",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SendCustomAccountRecoveryEmailRequest",
+      "requestExample": "{\r\n  \"TitleId\": \"1000\",\r\n  \"EmailTemplateId\": \"D53A\",\r\n  \"Email\": \"Me@here.com\"\r\n}",
+      "result": "SendCustomAccountRecoveryEmailResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
+        "InvalidTitleId",
+        "EmailTemplateMissing",
+        "NoContactEmailAddressFound",
+        "EmailClientTimeout",
+        "EmailClientCanceledTask"
+      ]
+    },
+    {
       "name": "SendPushNotification",
       "summary": "Sends an iOS/Android Push Notification to a specific user, if that user's device has been configured for Push Notifications in PlayFab. If a user has linked both Android and iOS devices, both will be notified.",
       "subgroup": "Account Management",
@@ -9746,7 +9836,7 @@
       "request": "GetFriendLeaderboardRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"98092347523\",\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 1258,\r\n  \"MaxResultsCount\": 20,\r\n  \"IncludeSteamFriends\": false\r\n}",
       "result": "GetLeaderboardResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0,\r\n        \"Profile\": {\r\n          \"AvatarUrl\": \"https://example.org/profile.jpg\",\r\n          \"Statistics\": [\r\n            {\r\n              \"Name\": \"Points\",\r\n              \"Version\": 2,\r\n              \"Value\": 15\r\n            },\r\n            {\r\n              \"Name\": \"XP\",\r\n              \"Version\": 1,\r\n              \"Value\": 10\r\n            }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetLeaderboardAroundCurrentUser",
         "Server/GetLeaderboardAroundUser",
@@ -9769,7 +9859,7 @@
       "request": "GetLeaderboardRequest",
       "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 0,\r\n  \"MaxResultsCount\": 20\r\n}",
       "result": "GetLeaderboardResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0,\r\n        \"Profile\": {\r\n          \"AvatarUrl\": \"https://example.org/profile.jpg\",\r\n          \"Statistics\": [\r\n            {\r\n              \"Name\": \"Points\",\r\n              \"Version\": 2,\r\n              \"Value\": 15\r\n            },\r\n            {\r\n              \"Name\": \"XP\",\r\n              \"Version\": 1,\r\n              \"Value\": 10\r\n            }\r\n          ]\r\n        }\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
       "seeAlso": [
         "Server/GetLeaderboardAroundUser",
         "Server/GetUserStatistics",
@@ -10921,11 +11011,12 @@
       "request": "GetFriendsListRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"93798903892789754\",\r\n  \"IncludeSteamFriends\": true\r\n}",
       "result": "GetFriendsListResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Friends\": [\r\n      {\r\n        \"FriendPlayFabId\": \"93798903892789754\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"Davros01\",\r\n        \"Tags\": [\r\n          \"single blue eye\",\r\n          \"genius with robotics\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\"\r\n      },\r\n      {\r\n        \"FriendPlayFabId\": \"334907923945f\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"CyberLeader1\",\r\n        \"Tags\": [\r\n          \"allergic to gold\",\r\n          \"upgradeable\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Friends\": [\r\n      {\r\n        \"FriendPlayFabId\": \"93798903892789754\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"Davros01\",\r\n        \"Tags\": [\r\n          \"single blue eye\",\r\n          \"genius with robotics\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\",\r\n        \"Profile\": {\r\n          \"AvatarUrl\": \"https://example.org/profile1.jpg\",\r\n          \"Statistics\": [\r\n            {\r\n              \"Name\": \"Points\",\r\n              \"Version\": 2,\r\n              \"Value\": 7\r\n            },\r\n            {\r\n              \"Name\": \"Points\",\r\n              \"Version\": 1,\r\n              \"Value\": 40\r\n            },\r\n            {\r\n              \"Name\": \"XP\",\r\n              \"Version\": 1,\r\n              \"Value\": 10\r\n            }\r\n          ]\r\n        }\r\n      },\r\n      {\r\n        \"FriendPlayFabId\": \"334907923945f\",\r\n        \"Username\": \"accountName\",\r\n        \"TitleDisplayName\": \"CyberLeader1\",\r\n        \"Tags\": [\r\n          \"allergic to gold\",\r\n          \"upgradeable\"\r\n        ],\r\n        \"CurrentMatchmakerLobbyId\": \"2073\",\r\n        \"Profile\": {\r\n          \"AvatarUrl\": \"https://example.org/profile2.jpg\",\r\n          \"Statistics\": [\r\n            {\r\n              \"Name\": \"Points\",\r\n              \"Version\": 2,\r\n              \"Value\": 15\r\n            },\r\n            {\r\n              \"Name\": \"XP\",\r\n              \"Version\": 1,\r\n              \"Value\": 10\r\n            }\r\n          ]\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Server/AddFriend",
         "Server/RemoveFriend",
-        "Server/SetFriendTags"
+        "Server/SetFriendTags",
+        "Server/GetPlayerProfile"
       ],
       "errors": [
         "InvalidParams",
@@ -12116,6 +12207,7 @@
         "GetUserBans",
         "RevokeAllBansForUser",
         "RevokeBans",
+        "SendCustomAccountRecoveryEmail",
         "SendPushNotification",
         "UpdateAvatarUrl",
         "UpdateBans"
@@ -13564,6 +13656,22 @@
     "NoContactEmailAddressFound": {
       "id": 1325,
       "name": "NoContactEmailAddressFound"
+    },
+    "InvalidAuthToken": {
+      "id": 1326,
+      "name": "InvalidAuthToken"
+    },
+    "AuthTokenDoesNotExist": {
+      "id": 1327,
+      "name": "AuthTokenDoesNotExist"
+    },
+    "AuthTokenExpired": {
+      "id": 1328,
+      "name": "AuthTokenExpired"
+    },
+    "AuthTokenAlreadyUsedToResetPassword": {
+      "id": 1329,
+      "name": "AuthTokenAlreadyUsedToResetPassword"
     }
   },
   "errorList": [
@@ -13881,6 +13989,10 @@
     "AccountDeleted",
     "PlayerSecretNotConfigured",
     "InvalidSignatureTime",
-    "NoContactEmailAddressFound"
+    "NoContactEmailAddressFound",
+    "InvalidAuthToken",
+    "AuthTokenDoesNotExist",
+    "AuthTokenExpired",
+    "AuthTokenAlreadyUsedToResetPassword"
   ]
 }
