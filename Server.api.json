@@ -260,6 +260,29 @@
         }
       ]
     },
+    "AdvancedPushPlatformMsg": {
+      "name": "AdvancedPushPlatformMsg",
+      "className": "AdvancedPushPlatformMsg",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "Json",
+          "description": "The Json the platform should receive.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Platform",
+          "description": "The platform that should receive the Json.",
+          "jsontype": "String",
+          "actualtype": "PushNotificationPlatform",
+          "isenum": true,
+          "optional": false
+        }
+      ]
+    },
     "AuthenticateSessionTicketRequest": {
       "name": "AuthenticateSessionTicketRequest",
       "className": "AuthenticateSessionTicketRequest",
@@ -5604,6 +5627,59 @@
         }
       ]
     },
+    "MembershipModel": {
+      "name": "MembershipModel",
+      "className": "MembershipModel",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "IsActive",
+          "description": "Whether this membership is active. That is, whether the MembershipExpiration time has been reached.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "MembershipExpiration",
+          "description": "The time this membership expires",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "MembershipId",
+          "description": "The id of the membership",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OverrideExpiration",
+          "description": "Membership expirations can be explicitly overridden (via game manager or the admin api). If this membership has been overridden, this will be the new expiration time.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "OverrideIsSet",
+          "description": "Whether the override expiration is set.",
+          "GovernsProperty": "OverrideExpiration",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "Subscriptions",
+          "description": "The list of subscriptions that this player has for this membership",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "SubscriptionModel",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "ModifyCharacterVirtualCurrencyResult": {
       "name": "ModifyCharacterVirtualCurrencyResult",
       "className": "ModifyCharacterVirtualCurrencyResult",
@@ -6288,6 +6364,15 @@
           "optional": true
         },
         {
+          "name": "Memberships",
+          "description": "List of memberships for the player, along with whether are expired.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "MembershipModel",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Origination",
           "description": "Player account origination",
           "jsontype": "String",
@@ -6435,6 +6520,13 @@
         {
           "name": "ShowLocations",
           "description": "Whether to show player's locations. Defaults to false",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ShowMemberships",
+          "description": "Whether to show player's membership information. Defaults to false",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": false
@@ -7304,6 +7396,15 @@
       "assembly": "PlayFab.Server.Models",
       "properties": [
         {
+          "name": "AdvancedPlatformDelivery",
+          "description": "Allows you to provide precisely formatted json to target devices. This is an advanced feature, allowing you to deliver to custom plugin logic, fields, or functionality not natively supported by PlayFab.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "AdvancedPushPlatformMsg",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Message",
           "description": "Text of message to send.",
           "jsontype": "String",
@@ -7312,7 +7413,7 @@
         },
         {
           "name": "Package",
-          "description": "Defines all possible push attributes like message, title, icon, etc. Not supported for iOS devices.",
+          "description": "Defines all possible push attributes like message, title, icon, etc. Not fully supported for iOS devices.",
           "jsontype": "Object",
           "actualtype": "PushNotificationPackage",
           "isclass": true,
@@ -7327,14 +7428,14 @@
         },
         {
           "name": "Subject",
-          "description": "Subject of message to send (may not be displayed in all platforms. Not supported for Android devices (use Package instead).",
+          "description": "Subject of message to send (may not be displayed in all platforms.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "TargetPlatforms",
-          "description": "Platforms that should receive the message. If omitted, we will send to all available platforms.",
+          "description": "Target Platforms that should receive the Message or Package. If omitted, we will send to all available platforms.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "PushNotificationPlatform",
@@ -7734,6 +7835,97 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        }
+      ]
+    },
+    "SubscriptionModel": {
+      "name": "SubscriptionModel",
+      "className": "SubscriptionModel",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "Expiration",
+          "description": "When this subscription expires.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "InitialSubscriptionTime",
+          "description": "The time the subscription was orignially purchased",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "IsActive",
+          "description": "Whether this subscription is currently active. That is, if Expiration > now.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "Status",
+          "description": "The status of this subscription, according to the subscription provider.",
+          "jsontype": "String",
+          "actualtype": "SubscriptionProviderStatus",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SubscriptionId",
+          "description": "The id for this subscription",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SubscriptionItemId",
+          "description": "The item id for this subscription from the primary catalog",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SubscriptionProvider",
+          "description": "The provider for this subscription. Apple or Google Play are supported today.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SubscriptionProviderStatus": {
+      "name": "SubscriptionProviderStatus",
+      "className": "SubscriptionProviderStatus",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "NoError"
+        },
+        {
+          "name": "Cancelled"
+        },
+        {
+          "name": "UnknownError"
+        },
+        {
+          "name": "BillingError"
+        },
+        {
+          "name": "ProductUnavailable"
+        },
+        {
+          "name": "CustomerDidNotAcceptPriceChange"
+        },
+        {
+          "name": "FreeTrial"
+        },
+        {
+          "name": "PaymentPending"
         }
       ]
     },
@@ -10395,7 +10587,7 @@
     {
       "name": "GetPlayersInSegment",
       "summary": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation.",
-      "requestDetails": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. ",
+      "requestDetails": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. This API is resource intensive and should not be used in scenarios which might generate high request volumes. Only one request to this API at a time should be made per title. Concurrent requests to the API may be rejected with the APIConcurrentRequestLimitExceeded error.",
       "subgroup": "PlayStream",
       "titleTiers": null,
       "url": "/Server/GetPlayersInSegment",
@@ -10410,7 +10602,8 @@
       ],
       "errors": [
         "InvalidParams",
-        "SegmentNotFound"
+        "SegmentNotFound",
+        "APIConcurrentRequestLimitExceeded"
       ]
     },
     {
@@ -11368,6 +11561,7 @@
       ],
       "errors": [
         "InvalidParams",
+        "SmtpAddonNotEnabled",
         "EmailTemplateMissing",
         "NoContactEmailAddressFound",
         "EmailClientTimeout",
@@ -13498,6 +13692,22 @@
     "XboxInaccessible": {
       "id": 1339,
       "name": "XboxInaccessible"
+    },
+    "SubscriptionAlreadyTaken": {
+      "id": 1340,
+      "name": "SubscriptionAlreadyTaken"
+    },
+    "SmtpAddonNotEnabled": {
+      "id": 1341,
+      "name": "SmtpAddonNotEnabled"
+    },
+    "APIConcurrentRequestLimitExceeded": {
+      "id": 1342,
+      "name": "APIConcurrentRequestLimitExceeded"
+    },
+    "XboxRejectedXSTSExchangeRequest": {
+      "id": 1343,
+      "name": "XboxRejectedXSTSExchangeRequest"
     }
   },
   "errorList": [
@@ -13829,6 +14039,10 @@
     "EntityTokenExpired",
     "EntityTokenRevoked",
     "InvalidProductForSubscription",
-    "XboxInaccessible"
+    "XboxInaccessible",
+    "SubscriptionAlreadyTaken",
+    "SmtpAddonNotEnabled",
+    "APIConcurrentRequestLimitExceeded",
+    "XboxRejectedXSTSExchangeRequest"
   ]
 }
