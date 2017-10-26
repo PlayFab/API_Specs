@@ -2,6 +2,9 @@
   "name": "Client",
   "url": "/Client",
   "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
+  "apiDescriptionList": [
+    "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality"
+  ],
   "datatypes": {
     "AcceptTradeRequest": {
       "name": "AcceptTradeRequest",
@@ -1315,6 +1318,14 @@
           "description": "The name of the email info data",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VerificationStatus",
+          "description": "The verification status of the email",
+          "jsontype": "String",
+          "actualtype": "EmailVerificationStatus",
+          "isenum": true,
           "optional": true
         }
       ]
@@ -2823,6 +2834,24 @@
       ],
       "properties": []
     },
+    "EmailVerificationStatus": {
+      "name": "EmailVerificationStatus",
+      "className": "EmailVerificationStatus",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Unverified"
+        },
+        {
+          "name": "Pending"
+        },
+        {
+          "name": "Confirmed"
+        }
+      ]
+    },
     "EmptyResult": {
       "name": "EmptyResult",
       "className": "EmptyResult",
@@ -3181,7 +3210,14 @@
         },
         {
           "name": "ServerHostname",
-          "description": "IP address of the server",
+          "description": "IPV4 address of the server",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerIPV6Address",
+          "description": "IPV6 address of the server",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3729,7 +3765,7 @@
         },
         {
           "name": "ThruCDN",
-          "description": "True if download through CDN. CDN provides better download bandwidth and time. However, if you want latest, non-cached version of the content, set this to false. Default is true.",
+          "description": "True to download through CDN. CDN provides higher download bandwidth and lower latency. However, if you want the latest, non-cached version of the content during development, set this to false. Default is true.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -3744,7 +3780,7 @@
       "properties": [
         {
           "name": "URL",
-          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in 1 hour.",
+          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in approximately one hour.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -8528,7 +8564,14 @@
         },
         {
           "name": "ServerHostname",
-          "description": "IP address of the server",
+          "description": "IPV4 address of the server",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerIPV6Address",
+          "description": "IPV6 address of the server",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -8818,14 +8861,14 @@
         },
         {
           "name": "PurchaseCurrency",
-          "description": "Real world currency for the transaction.",
+          "description": "Currency for the transaction, may be a virtual currency or real money.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "PurchasePrice",
-          "description": "Real world cost of the transaction.",
+          "description": "Cost of the transaction.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -8840,7 +8883,7 @@
         },
         {
           "name": "VCAmount",
-          "description": "Virtual currency cost of the transaction.",
+          "description": "Virtual currencies granted by the transaction, if any.",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
@@ -8848,7 +8891,7 @@
         },
         {
           "name": "VirtualCurrency",
-          "description": "Current virtual currency totals for the user.",
+          "description": "Current virtual currency balances for the user.",
           "collection": "map",
           "jsontype": "Number",
           "actualtype": "int32",
@@ -10523,7 +10566,14 @@
         },
         {
           "name": "ServerHostname",
-          "description": "server IP address",
+          "description": "server IPV4 address",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerIPV6Address",
+          "description": "server IPV6 address",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -13179,7 +13229,6 @@
         "Client/OpenTrade"
       ],
       "errors": [
-        "InvalidParams",
         "TradeStatusNotValidForAccepting",
         "TradeAcceptedCatalogItemInvalid",
         "TradeAllowedUsersInvalid",
@@ -13213,7 +13262,6 @@
         "Client/SetFriendTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "UsersAlreadyFriends"
       ]
@@ -13235,7 +13283,6 @@
         "Client/RemoveGenericID"
       ],
       "errors": [
-        "InvalidParams",
         "IdentifierAlreadyClaimed"
       ]
     },
@@ -13254,9 +13301,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13272,7 +13316,6 @@
       "result": "AddSharedGroupMembersResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -13294,14 +13337,13 @@
         "Client/LoginWithPlayFab"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
+        "AccountAlreadyLinked",
         "EmailAddressNotAvailable",
         "InvalidEmailAddress",
-        "UsernameNotAvailable",
-        "InvalidUsername",
         "InvalidPassword",
-        "OverLimit"
+        "InvalidTitleId",
+        "InvalidUsername",
+        "UsernameNotAvailable"
       ]
     },
     {
@@ -13321,8 +13363,8 @@
         "Client/SubtractUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
-        "APINotEnabledForGameClientAccess"
+        "APINotEnabledForGameClientAccess",
+        "InvalidVirtualCurrency"
       ]
     },
     {
@@ -13337,10 +13379,7 @@
       "request": "AndroidDevicePushNotificationRegistrationRequest",
       "requestExample": "{\r\n  \"DeviceToken\": \"59872d98fa632brn8hg3770\",\r\n  \"SendPushNotificationConfirmation\": true,\r\n  \"ConfirmationMessage\": \"Welcome to PlayFab!\"\r\n}",
       "result": "AndroidDevicePushNotificationRegistrationResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "ApproveGuildRoleChange",
@@ -13359,7 +13398,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -13377,8 +13415,7 @@
       "result": "AttributeInstallResult",
       "resultExample": "",
       "errors": [
-        "NoPartnerEnabled",
-        "InvalidParams"
+        "NoPartnerEnabled"
       ]
     },
     {
@@ -13400,7 +13437,6 @@
         "Client/OpenTrade"
       ],
       "errors": [
-        "InvalidParams",
         "TradeCancelled",
         "TradeAlreadyFilled"
       ]
@@ -13422,7 +13458,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -13445,7 +13480,6 @@
         "Client/StartPurchase"
       ],
       "errors": [
-        "InvalidParams",
         "FailedByPaymentProvider"
       ]
     },
@@ -13462,9 +13496,9 @@
       "result": "ConsumeItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemInstanceId\": \"a1de52\",\r\n    \"RemainingUses\": 4\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
-        "NoRemainingUses",
-        "ItemNotFound"
+        "InvalidItemProperties",
+        "ItemNotFound",
+        "NoRemainingUses"
       ]
     },
     {
@@ -13483,7 +13517,6 @@
         "Playstation"
       ],
       "errors": [
-        "InvalidParams",
         "ExpiredAuthToken",
         "FailedToGetEntitlements",
         "PSNInaccessible"
@@ -13508,7 +13541,6 @@
         "Client/LoginWithXbox"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidXboxLiveToken"
       ]
     },
@@ -13527,9 +13559,6 @@
       "resultExample": "",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13546,7 +13575,6 @@
       "result": "CreateSharedGroupResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SharedGroupId\": \"Clan Data\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidSharedGroupId"
       ]
     },
@@ -13567,7 +13595,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -13588,7 +13615,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -13605,7 +13631,6 @@
       "result": "ExecuteCloudScriptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Revision\": 3,\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    },\r\n    \"Logs\": [\r\n      {\r\n        \"Level\": \"Info\",\r\n        \"Message\": \"Something normal happened\",\r\n        \"Data\": {\r\n          \"secondsAfterStart\": 75\r\n        }\r\n      },\r\n      {\r\n        \"Level\": \"Error\",\r\n        \"Message\": \"Something unexpected happened\"\r\n      }\r\n    ],\r\n    \"ExecutionTimeSeconds\": 0.03670790046453476,\r\n    \"ProcessorTimeSeconds\": 0.0,\r\n    \"MemoryConsumedBytes\": 38904,\r\n    \"APIRequestsIssued\": 2,\r\n    \"HttpRequestsIssued\": 0\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "CloudScriptNotFound",
         "JavascriptException",
         "CloudScriptFunctionArgumentSizeExceeded",
@@ -13666,9 +13691,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Characters\": [\r\n      {\r\n        \"CharacterId\": \"3345677\",\r\n        \"CharacterName\": \"CoolDude\",\r\n        \"CharacterType\": \"StrongWarrior\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetCharacterData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13687,9 +13709,6 @@
       "seeAlso": [
         "Client/GetStoreItems",
         "Client/GetUserInventory"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13711,7 +13730,6 @@
         "Client/UpdateCharacterData"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "UserisNotValid"
       ]
@@ -13733,7 +13751,6 @@
         "Client/GetUserInventory"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound"
       ]
     },
@@ -13754,9 +13771,6 @@
         "Client/GetCharacterStatistics",
         "Client/GetLeaderboardAroundCharacter",
         "Client/UpdateCharacterStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13778,7 +13792,6 @@
         "Client/UpdateCharacterData"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "UserisNotValid"
       ]
@@ -13803,7 +13816,6 @@
         "Client/UpdateCharacterStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound"
       ]
     },
@@ -13829,9 +13841,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Url\": \"https://1.playfablogic.com/0/prod\"\r\n  }\r\n}",
       "seeAlso": [
         "Client/RunCloudScript"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13853,7 +13862,6 @@
         "Admin/GetContentUploadUrl"
       ],
       "errors": [
-        "InvalidParams",
         "ContentS3OriginBucketNotConfigured"
       ]
     },
@@ -13875,9 +13883,6 @@
         "Client/Matchmake",
         "Admin/RemoveServerBuild",
         "Client/StartGame"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -13900,7 +13905,6 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "FacebookAPIError"
       ]
     },
@@ -13928,7 +13932,6 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "FacebookAPIError"
       ]
     },
@@ -13952,7 +13955,6 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "FacebookAPIError"
       ]
@@ -13976,7 +13978,6 @@
         "Client/RemoveFriend"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidPublisherId",
         "FacebookAPIError"
       ]
@@ -13999,9 +14000,6 @@
         "Client/Matchmake",
         "Admin/RemoveServerBuild",
         "Client/StartGame"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14026,7 +14024,6 @@
         "Client/UpdateGuildData"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "UserisNotValid"
       ]
@@ -14053,7 +14050,6 @@
         "Client/OpenTrade"
       ],
       "errors": [
-        "InvalidParams",
         "GuildNotFound"
       ]
     },
@@ -14077,9 +14073,6 @@
         "Client/GetGuildsLeaderboard",
         "Client/GetGuildsLeaderboardAroundGuild",
         "Client/GetLeaderboardOfPlayersGuilds"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14104,7 +14097,6 @@
         "Client/UpdateGuildData"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "UserisNotValid"
       ]
@@ -14129,9 +14121,6 @@
         "Client/GetGuildMembershipLeaderboard",
         "Client/GetGuildsLeaderboardAroundGuild",
         "Client/GetLeaderboardOfPlayersGuilds"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14154,9 +14143,6 @@
         "Client/GetGuildMembershipLeaderboard",
         "Client/GetGuildsLeaderboard",
         "Client/GetLeaderboardOfPlayersGuilds"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14180,9 +14166,6 @@
         "Client/GetPlayerStatisticVersions",
         "Client/UpdateGuildStatistics",
         "Admin/UpdatePlayerStatisticDefinition"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14202,9 +14185,6 @@
         "Client/GetFriendLeaderboard",
         "Client/GetLeaderboardAroundPlayer",
         "Client/GetUserStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14224,9 +14204,6 @@
         "Client/GetCharacterLeaderboard",
         "Client/GetLeaderboard",
         "Client/UpdateCharacterStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14252,9 +14229,6 @@
         "Client/GetFriendLeaderboard",
         "Client/GetLeaderboard",
         "Client/GetUserStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14276,7 +14250,6 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -14299,7 +14272,6 @@
         "Server/GetLeaderboardAroundUser"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -14324,7 +14296,6 @@
         "Client/GetGuildsLeaderboardAroundGuild"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -14363,7 +14334,6 @@
       "result": "GetPhotonAuthenticationTokenResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PhotonCustomAuthenticationToken\": \"rod88fits4gqmgor7umopsbabguj441h3oe8u3gbzxf6rktibv\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "PhotonApplicationNotFound",
         "PhotonNotEnabledForTitle"
       ]
@@ -14416,10 +14386,7 @@
       "request": "GetPlayerSegmentsRequest",
       "requestExample": "{}",
       "result": "GetPlayerSegmentsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Segments\": [\r\n      {\r\n        \"Id\": \"1337AA00\",\r\n        \"Name\": \"Fast Players\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Segments\": [\r\n      {\r\n        \"Id\": \"1337AA00\",\r\n        \"Name\": \"Fast Players\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetPlayerStatistics",
@@ -14439,9 +14406,6 @@
         "Client/GetPlayerStatisticVersions",
         "Admin/UpdatePlayerStatisticDefinition",
         "Client/UpdatePlayerStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14463,7 +14427,6 @@
         "Client/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNotFound"
       ]
     },
@@ -14481,7 +14444,6 @@
       "result": "GetPlayerTagsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"Tags\": [\r\n      \"title.AAA.MostKilled\",\r\n      \"title.AAA.MostPlayed\",\r\n      \"title.AAA.MostBanned\"\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -14502,9 +14464,6 @@
         "Client/CancelTrade",
         "Client/GetTradeStatus",
         "Client/OpenTrade"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14664,7 +14623,6 @@
       "result": "GetPublisherDataResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -14684,7 +14642,6 @@
         "Client/StartPurchase"
       ],
       "errors": [
-        "InvalidParams",
         "PurchaseDoesNotExist"
       ]
     },
@@ -14699,10 +14656,7 @@
       "request": "GetSharedGroupDataRequest",
       "requestExample": "{\r\n  \"SharedGroupId\": \"Clan Data\",\r\n  \"Keys\": [\r\n    \"ClanKills\",\r\n    \"LastClanUpdate\"\r\n  ],\r\n  \"GetMembers\": true\r\n}",
       "result": "GetSharedGroupDataResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"ClanKills\": {\r\n        \"Value\": \"34\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"LastClanUpdate\": {\r\n        \"Value\": \"2015-01-03T17:44:21Z\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    },\r\n    \"Members\": [\r\n      \"D984A64B832\",\r\n      \"F74A523E1562\"\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"ClanKills\": {\r\n        \"Value\": \"34\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"LastClanUpdate\": {\r\n        \"Value\": \"2015-01-03T17:44:21Z\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    },\r\n    \"Members\": [\r\n      \"D984A64B832\",\r\n      \"F74A523E1562\"\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetStoreItems",
@@ -14719,9 +14673,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Store\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 180,\r\n          \"GV\": 20\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 100\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 250,\r\n          \"GV\": 30\r\n        }\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 399\r\n        }\r\n      }\r\n    ],\r\n    \"Source\": \"Admin\",\r\n    \"CatalogVersion\": \"1\",\r\n    \"StoreId\": \"BonusStore\",\r\n    \"MarketingData\": {\r\n      \"DisplayName\": \"Amazing Bonus Store\",\r\n      \"Description\": \"Elite tier bonuses available here\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetCatalogItems"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14754,10 +14705,7 @@
       "request": "GetTitleDataRequest",
       "requestExample": "{\r\n  \"Keys\": [\r\n    \"color\",\r\n    \"propertyA\"\r\n  ]\r\n}",
       "result": "GetTitleDataResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}"
     },
     {
       "name": "GetTitleNews",
@@ -14770,10 +14718,7 @@
       "request": "GetTitleNewsRequest",
       "requestExample": "{\r\n  \"Count\": 25\r\n}",
       "result": "GetTitleNewsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetTitlePublicKey",
@@ -14789,7 +14734,6 @@
       "result": "GetTitlePublicKeyResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"RSAPublicKey\": \"dGVzdCBrZXkgaGVyZQ==\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "NoSharedSecretKeyConfigured"
       ]
     },
@@ -14812,7 +14756,6 @@
         "Client/OpenTrade"
       ],
       "errors": [
-        "InvalidParams",
         "TradeDoesNotExist"
       ]
     },
@@ -14858,9 +14801,6 @@
       "seeAlso": [
         "Client/GetUserReadOnlyData",
         "Client/UpdateUserData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14878,9 +14818,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Client/GetCatalogItems"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14901,7 +14838,6 @@
         "Client/UpdateUserPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -14923,7 +14859,6 @@
         "Client/UpdateUserPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -14943,9 +14878,6 @@
       "seeAlso": [
         "Client/GetUserData",
         "Client/UpdateUserData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14971,9 +14903,6 @@
         "Client/GetLeaderboard",
         "Client/GetLeaderboardAroundCurrentUser",
         "Client/UpdateUserStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -14995,8 +14924,7 @@
       ],
       "errors": [
         "InvalidRequest",
-        "AccountNotFound",
-        "AccountBanned"
+        "AccountNotFound"
       ]
     },
     {
@@ -15013,7 +14941,6 @@
       "result": "GrantCharacterToUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"CharacterId\": \"98765432\",\r\n    \"CharacterType\": \"Blue Warrior\",\r\n    \"Result\": true\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "ItemNotOwned",
         "InternalServerError",
         "InvalidItemProperties"
@@ -15034,9 +14961,6 @@
       "resultExample": "",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -15056,7 +14980,6 @@
         "Client/UnlinkAndroidDeviceID"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedDeviceAlreadyClaimed",
         "DeviceAlreadyLinked"
       ]
@@ -15078,7 +15001,6 @@
         "Client/UnlinkCustomID"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedIdentifierAlreadyClaimed"
       ]
     },
@@ -15100,7 +15022,6 @@
         "Client/UnlinkFacebookAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidFacebookToken",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
@@ -15122,7 +15043,6 @@
         "Client/UnlinkGameCenterAccount"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
       ]
@@ -15145,11 +15065,9 @@
         "Client/UnlinkGoogleAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidGoogleToken",
         "GoogleOAuthNotConfiguredForTitle",
         "GoogleOAuthError",
-        "AccountBanned",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked"
       ]
@@ -15171,7 +15089,6 @@
         "Client/UnlinkIOSDeviceID"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedDeviceAlreadyClaimed",
         "DeviceAlreadyLinked"
       ]
@@ -15193,7 +15110,6 @@
         "Client/UnlinkKongregate"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedAccountAlreadyClaimed",
         "InvalidKongregateToken",
         "FeatureNotConfiguredForTitle"
@@ -15219,7 +15135,6 @@
         "Client/UnlinkPSNAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidPSNAuthCode",
         "InvalidPublisherId",
         "LinkedAccountAlreadyClaimed",
@@ -15247,7 +15162,6 @@
         "Client/UnlinkSteamAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidSteamTicket",
         "LinkedAccountAlreadyClaimed",
         "AccountAlreadyLinked",
@@ -15271,7 +15185,6 @@
         "Client/UnlinkTwitch"
       ],
       "errors": [
-        "InvalidParams",
         "LinkedAccountAlreadyClaimed",
         "InvalidTwitchToken",
         "FeatureNotConfiguredForTitle",
@@ -15324,7 +15237,6 @@
         "Client/UnlinkXboxAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidXboxLiveToken",
         "InvalidPublisherId",
         "LinkedAccountAlreadyClaimed",
@@ -15348,7 +15260,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -15369,7 +15280,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -15388,9 +15298,6 @@
       "resultExample": "",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -15440,10 +15347,9 @@
         "Client/UnlinkAndroidDeviceID"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
+        "InvalidSignature",
+        "InvalidTitleId",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15465,10 +15371,9 @@
         "Client/UnlinkCustomID"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
+        "InvalidSignature",
+        "InvalidTitleId",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15490,10 +15395,8 @@
         "Client/RegisterPlayFabUser"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidEmailOrPassword",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15516,11 +15419,9 @@
         "Client/UnlinkFacebookAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "InvalidFacebookToken",
         "AccountNotFound",
-        "AccountBanned",
         "FacebookAPIError",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15542,10 +15443,8 @@
         "Client/LoginWithIOSDeviceID"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
+        "InvalidTitleId",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15563,11 +15462,9 @@
       "result": "LoginResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"4D2---2-8D11F4249A80000-C370D76B7FB9B6E.FA03F386B0D7CF04\",\r\n    \"PlayFabId\": \"10931252888739651331\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidGoogleToken",
         "GoogleOAuthNotConfiguredForTitle",
         "GoogleOAuthError",
-        "AccountBanned",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15589,11 +15486,10 @@
         "Client/UnlinkIOSDeviceID"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidPublisherId",
+        "InvalidTitleId",
+        "PlayerSecretAlreadyConfigured",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15615,10 +15511,8 @@
         "Client/UnlinkKongregate"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidKongregateToken",
         "FeatureNotConfiguredForTitle",
         "RequestViewConstraintParamsNotAllowed"
@@ -15643,10 +15537,8 @@
         "Client/RegisterPlayFabUser"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidUsernameOrPassword",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15672,11 +15564,9 @@
         "Client/UnlinkPSNAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "InvalidPublisherId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidPSNIssuerId",
         "PSNInaccessible",
         "InvalidPSNAuthCode",
@@ -15701,11 +15591,9 @@
         "Client/UnlinkSteamAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "InvalidSteamTicket",
         "AccountNotFound",
-        "AccountBanned",
         "SteamNotEnabledForTitle",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15728,10 +15616,8 @@
         "Client/UnlinkTwitch"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidTwitchToken",
         "FeatureNotConfiguredForTitle",
         "DownstreamServiceUnavailable",
@@ -15759,7 +15645,6 @@
       "errors": [
         "InvalidRequest",
         "AccountNotFound",
-        "AccountBanned",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15784,11 +15669,9 @@
         "Client/UnlinkXboxAccount"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "InvalidPublisherId",
         "AccountNotFound",
-        "AccountBanned",
         "InvalidXboxLiveToken",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15813,7 +15696,6 @@
         "Client/StartGame"
       ],
       "errors": [
-        "InvalidParams",
         "GameModeNotFound",
         "BuildNotFound"
       ]
@@ -15837,7 +15719,6 @@
         "Client/GetTradeStatus"
       ],
       "errors": [
-        "InvalidParams",
         "TradeAcceptedCatalogItemInvalid",
         "TradeAllowedUsersInvalid",
         "TradeInventoryItemDoesNotExist",
@@ -15868,7 +15749,6 @@
         "Client/StartPurchase"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidPaymentProvider",
         "FailedByPaymentProvider",
         "PurchaseInitializationFailure",
@@ -15894,7 +15774,6 @@
         "Client/StartPurchase"
       ],
       "errors": [
-        "InvalidParams",
         "ItemNotFound",
         "WrongVirtualCurrency",
         "WrongPrice",
@@ -15916,11 +15795,10 @@
       "result": "RedeemCouponResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
-        "CouponCodeNotFound",
-        "CouponAlreadyRedeemed",
+        "CatalogNotConfigured",
         "CharacterNotFound",
-        "InvalidTitleId"
+        "CouponAlreadyRedeemed",
+        "CouponCodeNotFound"
       ]
     },
     {
@@ -15939,7 +15817,6 @@
         "Playstation"
       ],
       "errors": [
-        "InvalidParams",
         "PSNInaccessible",
         "InvalidPSNAuthCode"
       ]
@@ -15956,10 +15833,7 @@
       "request": "RegisterForIOSPushNotificationRequest",
       "requestExample": "{\r\n  \"DeviceToken\": \"39872f98eb882brn8hg3889\",\r\n  \"SendPushNotificationConfirmation\": true,\r\n  \"ConfirmationMessage\": \"Welcome to PlayFab\"\r\n}",
       "result": "RegisterForIOSPushNotificationResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "RegisterPlayFabUser",
@@ -15979,15 +15853,15 @@
         "Client/LoginWithPlayFab"
       ],
       "errors": [
-        "InvalidParams",
-        "InvalidTitleId",
         "EmailAddressNotAvailable",
         "InvalidEmailAddress",
-        "UsernameNotAvailable",
-        "InvalidUsername",
+        "InvalidPartnerResponse",
         "InvalidPassword",
+        "InvalidTitleId",
+        "InvalidUsername",
+        "NameNotAvailable",
         "ProfaneDisplayName",
-        "InvalidPartnerResponse"
+        "UsernameNotAvailable"
       ]
     },
     {
@@ -16028,9 +15902,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -16050,7 +15921,6 @@
         "Client/SetFriendTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -16071,7 +15941,6 @@
         "Client/GetPlayFabIDsFromGenericIDs"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16092,7 +15961,6 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
         "InsufficientGuildRole"
       ]
     },
@@ -16107,10 +15975,7 @@
       "request": "RemoveSharedGroupMembersRequest",
       "requestExample": "{\r\n  \"SharedGroupId\": \"Clan Data\",\r\n  \"PlayFabIds\": [\r\n    \"D984A64B832\",\r\n    \"F74A523E1562\"\r\n  ]\r\n}",
       "result": "RemoveSharedGroupMembersResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "ReportAdActivity",
@@ -16145,11 +16010,7 @@
       "request": "ReportPlayerClientRequest",
       "requestExample": "{\r\n  \"ReporteeId\": \"1a46086aed40f142\",\r\n  \"Comment\": \"cheating\"\r\n}",
       "result": "ReportPlayerClientResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams",
-        "OverLimit"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}"
     },
     {
       "name": "RequestGuildRoleChange",
@@ -16166,9 +16027,6 @@
       "resultExample": "",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -16186,7 +16044,6 @@
       "result": "RestoreIOSPurchasesResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidReceipt",
         "ReceiptAlreadyUsed",
         "ReceiptDoesNotContainInAppItems",
@@ -16244,7 +16101,6 @@
         "Client/GetCloudScriptUrl"
       ],
       "errors": [
-        "InvalidParams",
         "CloudScriptNotFound",
         "JavascriptException"
       ]
@@ -16263,7 +16119,6 @@
       "result": "SendAccountRecoveryEmailResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -16285,7 +16140,6 @@
         "Client/RemoveFriend"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -16303,7 +16157,6 @@
       "result": "SetPlayerSecretResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
         "PlayerSecretAlreadyConfigured"
       ]
     },
@@ -16328,7 +16181,6 @@
         "Admin/RemoveServerBuild"
       ],
       "errors": [
-        "InvalidParams",
         "APINotEnabledForGameClientAccess",
         "BuildNotFound"
       ]
@@ -16349,14 +16201,11 @@
       "seeAlso": [
         "Client/ConfirmPurchase",
         "Client/PayForPurchase"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
       "name": "SubtractUserVirtualCurrency",
-      "summary": "Decrements the user's balance of the specified virtual currency by the stated amount",
+      "summary": "Decrements the user's balance of the specified virtual currency by the stated amount. It is possible to make a VC balance negative with this API.",
       "requestDetails": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
       "subgroup": "Player Item Management",
       "titleTiers": null,
@@ -16371,7 +16220,6 @@
         "Client/AddUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "APINotEnabledForGameClientAccess"
       ]
     },
@@ -16392,7 +16240,6 @@
         "Client/LoginWithAndroidDeviceID"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16413,8 +16260,8 @@
         "Client/LoginWithCustomID"
       ],
       "errors": [
-        "InvalidParams",
-        "AccountNotLinked"
+        "AccountNotLinked",
+        "CustomIdNotLinked"
       ]
     },
     {
@@ -16433,7 +16280,6 @@
         "Client/LinkFacebookAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16453,7 +16299,6 @@
         "Client/LinkGameCenterAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16474,7 +16319,6 @@
         "Client/LoginWithGoogleAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16495,7 +16339,6 @@
         "Client/LoginWithIOSDeviceID"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16516,7 +16359,6 @@
         "Client/LoginWithKongregate"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16539,7 +16381,6 @@
         "Client/LinkPSNAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16559,7 +16400,6 @@
         "Client/LinkSteamAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16580,7 +16420,6 @@
         "Client/LoginWithTwitch"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked"
       ]
     },
@@ -16627,7 +16466,6 @@
         "Client/LinkXboxAccount"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotLinked",
         "InvalidXboxLiveToken"
       ]
@@ -16647,7 +16485,6 @@
       "result": "UnlockContainerItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidContainerItem",
         "ContainerNotOwned",
         "KeyNotOwned",
@@ -16670,7 +16507,6 @@
       "result": "UnlockContainerItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidContainerItem",
         "ContainerNotOwned",
         "KeyNotOwned",
@@ -16689,10 +16525,7 @@
       "request": "UpdateAvatarUrlRequest",
       "requestExample": "{\r\n  \"ImageUrl\": \"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50\"\r\n}",
       "result": "EmptyResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "UpdateCharacterData",
@@ -16713,7 +16546,6 @@
         "Client/GetUserData"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "AccountNotFound"
       ]
@@ -16738,7 +16570,6 @@
         "Client/GetLeaderboardForUserCharacters"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "InvalidCharacterStatistics",
         "APINotEnabledForGameClientAccess"
@@ -16766,7 +16597,6 @@
         "Client/UpdateGuildData"
       ],
       "errors": [
-        "InvalidParams",
         "GuildNotFound",
         "AccountNotFound"
       ]
@@ -16791,7 +16621,6 @@
         "Client/GetGuildStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "APINotEnabledForGameClientAccess",
         "StatisticNotFound",
@@ -16820,14 +16649,14 @@
         "Admin/UpdatePlayerStatisticDefinition"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "APINotEnabledForGameClientAccess",
+        "DuplicateStatisticName",
         "StatisticNotFound",
-        "StatisticVersionInvalid",
-        "StatisticVersionClosedForWrites",
         "StatisticCountLimitExceeded",
-        "DuplicateStatisticName"
+        "StatisticNameConflict",
+        "StatisticVersionClosedForWrites",
+        "StatisticVersionInvalid"
       ]
     },
     {
@@ -16844,7 +16673,6 @@
       "result": "UpdateSharedGroupDataResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "NotAuthorized"
       ]
     },
@@ -16864,10 +16692,6 @@
       "seeAlso": [
         "Client/GetUserData",
         "Client/GetUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams",
-        "DataUpdateRateExceeded"
       ]
     },
     {
@@ -16888,7 +16712,6 @@
         "Client/GetUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -16918,7 +16741,6 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "InvalidUserStatistics",
         "APINotEnabledForGameClientAccess",
@@ -16939,11 +16761,10 @@
       "result": "UpdateUserTitleDisplayNameResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DisplayName\": \"User Title Name\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
-        "UsernameNotAvailable",
-        "InsufficientFunds",
+        "InvalidPartnerResponse",
+        "NameNotAvailable",
         "ProfaneDisplayName",
-        "InvalidPartnerResponse"
+        "UsernameNotAvailable"
       ]
     },
     {
@@ -16960,7 +16781,6 @@
       "result": "ValidateAmazonReceiptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidReceipt",
         "InvalidTitleId",
         "ReceiptAlreadyUsed",
@@ -16984,11 +16804,11 @@
       "result": "ValidateGooglePlayPurchaseResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "InvalidReceipt",
+        "MissingTitleGoogleProperties",
+        "NoMatchingCatalogItemForReceipt",
         "ReceiptAlreadyUsed",
-        "ReceiptCancelled",
-        "NoMatchingCatalogItemForReceipt"
+        "ReceiptCancelled"
       ]
     },
     {
@@ -17006,16 +16826,16 @@
       "result": "ValidateIOSReceiptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
-        "InvalidReceipt",
-        "ReceiptAlreadyUsed",
-        "ReceiptDoesNotContainInAppItems",
-        "ReceiptContainsMultipleInAppItems",
-        "InvalidBundleID",
-        "InvalidVirtualCurrency",
         "DownstreamServiceUnavailable",
+        "InvalidBundleID",
+        "InvalidCurrencyCode",
+        "InvalidReceipt",
+        "InvalidVirtualCurrency",
         "NoMatchingCatalogItemForReceipt",
-        "InvalidCurrencyCode"
+        "ReceiptAlreadyUsed",
+        "ReceiptContainsMultipleInAppItems",
+        "ReceiptDoesNotContainInAppItems",
+        "SubscriptionAlreadyTaken"
       ]
     },
     {
@@ -17032,7 +16852,6 @@
       "result": "ValidateWindowsReceiptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidReceipt",
         "InvalidTitleId",
         "ReceiptAlreadyUsed",
@@ -17054,7 +16873,6 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidRequest",
         "NoWritePermissionsForEvent",
         "CharacterNotFound"
@@ -17074,7 +16892,7 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
+        "InvalidEventField",
         "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
@@ -17093,7 +16911,6 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
@@ -18431,6 +18248,30 @@
     "XboxRejectedXSTSExchangeRequest": {
       "id": 1343,
       "name": "XboxRejectedXSTSExchangeRequest"
+    },
+    "VariableNotDefined": {
+      "id": 1344,
+      "name": "VariableNotDefined"
+    },
+    "TemplateVersionNotDefined": {
+      "id": 1345,
+      "name": "TemplateVersionNotDefined"
+    },
+    "FileTooLarge": {
+      "id": 1346,
+      "name": "FileTooLarge"
+    },
+    "TitleDeleted": {
+      "id": 1347,
+      "name": "TitleDeleted"
+    },
+    "TitleContainsUserAccounts": {
+      "id": 1348,
+      "name": "TitleContainsUserAccounts"
+    },
+    "TitleDeletionPlayerCleanupFailure": {
+      "id": 1349,
+      "name": "TitleDeletionPlayerCleanupFailure"
     }
   },
   "errorList": [
@@ -18766,6 +18607,12 @@
     "SubscriptionAlreadyTaken",
     "SmtpAddonNotEnabled",
     "APIConcurrentRequestLimitExceeded",
-    "XboxRejectedXSTSExchangeRequest"
+    "XboxRejectedXSTSExchangeRequest",
+    "VariableNotDefined",
+    "TemplateVersionNotDefined",
+    "FileTooLarge",
+    "TitleDeleted",
+    "TitleContainsUserAccounts",
+    "TitleDeletionPlayerCleanupFailure"
   ]
 }

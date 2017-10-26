@@ -2,6 +2,9 @@
   "name": "Admin",
   "url": "/Admin",
   "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
+  "apiDescriptionList": [
+    "APIs for managing title configurations, uploaded Game Server code executables, and user data"
+  ],
   "datatypes": {
     "AbortTaskInstanceRequest": {
       "name": "AbortTaskInstanceRequest",
@@ -1136,6 +1139,14 @@
           "description": "The name of the email info data",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VerificationStatus",
+          "description": "The verification status of the email",
+          "jsontype": "String",
+          "actualtype": "EmailVerificationStatus",
+          "isenum": true,
           "optional": true
         }
       ]
@@ -2734,6 +2745,20 @@
         }
       ]
     },
+    "DeleteTitleRequest": {
+      "name": "DeleteTitleRequest",
+      "className": "DeleteTitleRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": []
+    },
+    "DeleteTitleResult": {
+      "name": "DeleteTitleResult",
+      "className": "DeleteTitleResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": []
+    },
     "DeleteUsersRequest": {
       "name": "DeleteUsersRequest",
       "className": "DeleteUsersRequest",
@@ -3293,7 +3318,7 @@
       "properties": [
         {
           "name": "URL",
-          "description": "URL for uploading content via HTTP PUT method. The URL will expire in 1 hour.",
+          "description": "URL for uploading content via HTTP PUT method. The URL will expire in approximately one hour.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -5391,7 +5416,7 @@
         },
         {
           "name": "Comment",
-          "description": "A comment about the statement. Intended solely for bookeeping and debugging.",
+          "description": "A comment about the statement. Intended solely for bookkeeping and debugging.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -8943,6 +8968,7 @@
       "methods": [
         "BanUsers",
         "DeletePlayer",
+        "DeleteTitle",
         "GetPlayerIdFromAuthToken",
         "GetPlayerProfile",
         "GetUserAccountInfo",
@@ -9129,7 +9155,6 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskInstanceNotFound"
       ]
     },
@@ -9146,7 +9171,6 @@
       "result": "AddNewsResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"NewsId\": \"74623b12-6c80-ee4b-7c3b-58e638aa62bd\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "TitleNewsItemCountLimitExceeded"
       ]
     },
@@ -9168,7 +9192,6 @@
         "Admin/RemovePlayerTag"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "PlayerTagCountLimitExceeded"
       ]
@@ -9194,7 +9217,6 @@
         "Matchmaker/StartGame"
       ],
       "errors": [
-        "InvalidParams",
         "BuildAlreadyExists",
         "BuildPackageDoesNotExist",
         "GameServerBuildSizeLimitExceeded",
@@ -9217,7 +9239,6 @@
         "Admin/SubtractUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -9239,7 +9260,6 @@
         "Admin/RemoveVirtualCurrencyTypes"
       ],
       "errors": [
-        "InvalidParams",
         "VirtualCurrencyCountLimitExceeded",
         "InvalidVirtualCurrencyCode"
       ]
@@ -9262,9 +9282,6 @@
         "Admin/RevokeAllBansForUser",
         "Admin/RevokeBans",
         "Admin/UpdateBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9285,9 +9302,6 @@
       ],
       "seeAlso": [
         "Admin/IncrementLimitedEditionItemAvailability"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9311,7 +9325,6 @@
         "Admin/UpdateTask"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidScheduledTaskName",
         "InvalidTaskSchedule",
         "ScheduledTaskCreateConflict",
@@ -9339,7 +9352,6 @@
         "Admin/UpdateTask"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidScheduledTaskName",
         "InvalidTaskSchedule",
         "ScheduledTaskCreateConflict",
@@ -9362,9 +9374,6 @@
       "seeAlso": [
         "Admin/GetPlayerSharedSecrets",
         "Admin/UpdatePlayerSharedSecret"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9390,7 +9399,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNameConflict",
         "StatisticCountLimitExceeded"
       ]
@@ -9412,9 +9420,6 @@
         "Server/GetContentDownloadUrl",
         "Admin/GetContentList",
         "Admin/GetContentUploadUrl"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9431,7 +9436,6 @@
       "result": "DeletePlayerResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "AccountDeleted"
       ]
@@ -9455,7 +9459,6 @@
         "Admin/UpdatePlayerSharedSecret"
       ],
       "errors": [
-        "InvalidParams",
         "SecretKeyNotFound"
       ]
     },
@@ -9478,7 +9481,6 @@
         "Admin/UpdateStoreItems"
       ],
       "errors": [
-        "InvalidParams",
         "CatalogNotConfigured",
         "StoreNotFound"
       ]
@@ -9502,9 +9504,29 @@
         "Admin/GetTasks",
         "Admin/RunTask",
         "Admin/UpdateTask"
+      ]
+    },
+    {
+      "name": "DeleteTitle",
+      "summary": "Permanently deletes a title and all associated configuration",
+      "requestDetails": "Deletes all data associated with the title, including catalog, virtual currencies, leaderboard statistics, Cloud Script revisions,                 segment definitions, event rules, tasks, add-ons, secret keys, data encryption keys, and permission policies.                  Removes the title from its studio and removes all associated developer roles and permissions.                  Does not delete PlayStream event history associated with the title.                 Note, this API queues the title for deletion and returns immediately. It may take several hours or more before all title data is fully deleted.                 All player accounts in the title must be deleted before deleting the title. If any player accounts exist, the API will return a 'TitleContainsUserAccounts' error.                                 Until the title data is fully deleted, attempts to call APIs with the title will fail with the 'TitleDeleted' error.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Admin/DeleteTitle",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteTitleRequest",
+      "requestExample": "{}",
+      "result": "DeleteTitleResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Admin/DeletePlayer"
       ],
       "errors": [
-        "InvalidParams"
+        "InvalidParams",
+        "InvalidTitleId",
+        "TitleDeleted",
+        "TitleContainsUserAccounts"
       ]
     },
     {
@@ -9527,7 +9549,6 @@
       "result": "DeleteUsersResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "InvalidTitleId",
         "InvalidPublisherId"
@@ -9553,7 +9574,6 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskInstanceNotFound"
       ]
     },
@@ -9577,9 +9597,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ActionGroups\": [\r\n      {\r\n        \"Name\": \"Grant beta items\",\r\n        \"Id\": \"12389170481\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Admin/GetAllSegments"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9614,9 +9631,6 @@
       "seeAlso": [
         "Admin/SetCatalogItems",
         "Admin/UpdateCatalogItems"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9632,7 +9646,6 @@
       "result": "GetCloudScriptRevisionResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Version\": 1,\r\n    \"Revision\": 3,\r\n    \"CreatedAt\": \"2015-01-03T17:44:21Z\",\r\n    \"Files\": [\r\n      {\r\n        \"Filename\": \"main.js\",\r\n        \"FileContents\": \"var LevelRewards =\\r\\n[\\r\\n\\t[\\\"TestItem1\\\"],\\r\\n\\t[\\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\"],\\r\\n\\t[\\\"TestItem1\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem2\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\", \\\"TestItem3\\\"]\\r\\n]\\r\\n\\r\\nhandlers.onLevelComplete = function(args)\\r\\n{\\r\\n\\tvar levelNum = args.level;\\r\\n\\t\\r\\n\\t// Do some basic input validation\\r\\n\\tif(levelNum < 0 || levelNum >= LevelRewards.length)\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Invalid level \\\"+levelNum+\\\" completed by \\\"+currentPlayerId);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar levelCompleteKey = \\\"LevelCompleted\\\"+levelNum;\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [levelCompleteKey]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Did they already complete this level?\\r\\n\\tif(playerInternalData.Data[levelCompleteKey])\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" already completed level \\\"+levelNum);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar rewards = LevelRewards[levelNum];\\r\\n\\t\\r\\n\\tvar resultItems = null;\\r\\n\\tif(rewards)\\r\\n\\t{\\r\\n\\t\\t// Grant reward items to player for completing the level\\r\\n\\t\\tvar itemGrantResult = server.GrantItemsToUser(\\r\\n\\t\\t{\\r\\n\\t\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\t\\tAnnotation: \\\"Given by completing level \\\"+levelNum,\\r\\n\\t\\t\\tItemIds: rewards\\r\\n\\t\\t});\\r\\n\\t\\t\\r\\n\\t\\tresultItems = itemGrantResult.ItemGrantResults;\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Mark the level as being completed so they can't get the reward again\\r\\n\\tvar saveData = {};\\r\\n\\tsaveData[levelCompleteKey] = \\\"true\\\";\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: saveData\\r\\n\\t});\\r\\n\\r\\n\\t// Return the results of the item grant so the client can see what they got\\r\\n\\treturn {\\r\\n\\t\\trewards: resultItems\\r\\n\\t};\\r\\n}\\r\\n\\r\\nvar monsterRewards =\\r\\n{\\r\\n\\t\\\"skrill\\\" : { \\\"ChumpCoins\\\" : 100},\\r\\n\\t\\\"lumpur\\\" : { \\\"ChumpCoins\\\" : 200}\\r\\n}\\r\\n\\r\\nvar killCoolDown = 60;\\r\\n\\r\\nfunction currTimeSeconds()\\r\\n{\\r\\n\\tvar now = new Date();\\r\\n\\treturn now.getTime() / 1000;\\r\\n}\\r\\n\\r\\nhandlers.monsterKilled = function(args)\\r\\n{\\r\\n\\tvar monsterType = args.type;\\r\\n\\t\\r\\n\\tvar now = currTimeSeconds();\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [\\\"lastKill\\\"]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Check when the last time they killed a monster was \\r\\n\\tvar lastKill = playerInternalData.Data[\\\"lastKill\\\"];\\r\\n\\tif(lastKill)\\r\\n\\t{\\r\\n\\t\\t// We have a value, see when it is\\r\\n\\t\\tvar lastKillTime = parseInt(lastKill.Value);\\r\\n\\t\\tif(now - lastKillTime < killCoolDown)\\r\\n\\t\\t{\\r\\n\\t\\t\\t// In this particular game, it should not be possible to kill a monster more often than once a minute, so they might be cheating\\r\\n\\t\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" killed \\\"+monsterType+\\\" again too quickly!\\\");\\r\\n\\t\\t\\treturn {};\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar killReward = monsterRewards[monsterType];\\r\\n\\t\\r\\n\\tif(killReward)\\r\\n\\t{\\r\\n\\t\\tfor(var currency in killReward)\\r\\n\\t\\t{\\r\\n\\t\\t\\tvar amount = killReward[currency];\\r\\n\\t\\t\\tserver.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currency, Amount: amount });\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Reset the kill timer\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: {\\r\\n\\t\\t\\t\\\"lastKill\\\" : String(now)\\r\\n\\t\\t}\\r\\n\\t});\\r\\n\\t\\r\\n\\treturn {\\r\\n\\t\\trewards: killReward\\r\\n\\t};\\r\\n}\"\r\n      }\r\n    ],\r\n    \"IsPublished\": true\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "VersionNotFound",
         "RevisionNotFound"
       ]
@@ -9657,7 +9670,6 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskInstanceNotFound"
       ]
     },
@@ -9672,10 +9684,7 @@
       "request": "GetCloudScriptVersionsRequest",
       "requestExample": "{}",
       "result": "GetCloudScriptVersionsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Versions\": [\r\n      {\r\n        \"Version\": 1,\r\n        \"PublishedRevision\": 3,\r\n        \"LatestRevision\": 5\r\n      },\r\n      {\r\n        \"Version\": 2,\r\n        \"PublishedRevision\": 1,\r\n        \"LatestRevision\": 1\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Versions\": [\r\n      {\r\n        \"Version\": 1,\r\n        \"PublishedRevision\": 3,\r\n        \"LatestRevision\": 5\r\n      },\r\n      {\r\n        \"Version\": 2,\r\n        \"PublishedRevision\": 1,\r\n        \"LatestRevision\": 1\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetContentList",
@@ -9696,7 +9705,6 @@
         "Admin/GetContentUploadUrl"
       ],
       "errors": [
-        "InvalidParams",
         "ContentS3OriginBucketNotConfigured"
       ]
     },
@@ -9719,7 +9727,6 @@
         "Admin/GetContentList"
       ],
       "errors": [
-        "InvalidParams",
         "ContentQuotaExceeded",
         "BillingInformationRequired"
       ]
@@ -9738,7 +9745,6 @@
       "result": "GetDataReportResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DownloadUrl\": \"https://data-reports-dev.s3-us-west-1.amazonaws.com/2730/PurchaseDataReport/2014/12/5/data.json?AWSAccessKeyId=AKIAJB5VEITH4PHABPAA&Expires=1418151409&Signature=1cF0Xre4FETLW%2BIu5BCW0TL8ShQ%3D\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidReportDate",
         "ReportNotAvailable"
       ]
@@ -9760,7 +9766,6 @@
         "Admin/ModifyMatchmakerGameModes"
       ],
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -9780,9 +9785,6 @@
       "seeAlso": [
         "Admin/GetMatchmakerGameInfo",
         "Admin/ModifyMatchmakerGameModes"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9823,8 +9825,7 @@
       ],
       "errors": [
         "PlayerNotInGame",
-        "ProfileDoesNotExist",
-        "InvalidParams"
+        "ProfileDoesNotExist"
       ]
     },
     {
@@ -9843,7 +9844,6 @@
         "Admin/GetAllSegments"
       ],
       "errors": [
-        "InvalidParams",
         "SegmentNotFound"
       ]
     },
@@ -9863,9 +9863,6 @@
       "seeAlso": [
         "Admin/CreatePlayerSharedSecret",
         "Admin/UpdatePlayerSharedSecret"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9885,7 +9882,6 @@
         "Admin/GetAllSegments"
       ],
       "errors": [
-        "InvalidParams",
         "SegmentNotFound"
       ]
     },
@@ -9909,9 +9905,6 @@
         "Admin/UpdatePlayerStatisticDefinition",
         "Client/UpdatePlayerStatistics",
         "Server/UpdatePlayerStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9937,7 +9930,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNotFound"
       ]
     },
@@ -9959,7 +9951,6 @@
         "Admin/RemovePlayerTag"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -9978,9 +9969,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PolicyName\": \"ApiPolicy\",\r\n    \"Statements\": [\r\n      {\r\n        \"Resource\": \"pfrn:api--*\",\r\n        \"Action\": \"*\",\r\n        \"Effect\": \"Allow\",\r\n        \"Principal\": \"*\",\r\n        \"Comment\": \"The default allow all policy\"\r\n      },\r\n      {\r\n        \"Resource\": \"pfrn:api--/Client/ConfirmPurchase\",\r\n        \"Action\": \"*\",\r\n        \"Effect\": \"Allow\",\r\n        \"Principal\": \"*\",\r\n        \"Comment\": \"This statement allows only request to ConfirmPurchase\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Admin/UpdatePolicy"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10000,7 +9988,6 @@
         "Admin/SetPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -10018,9 +10005,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Tables\": {\r\n      \"blah\": {\r\n        \"CatalogVersion\": \"1\",\r\n        \"TableId\": \"DropTable 1\",\r\n        \"Nodes\": [\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Gold Crown 1\",\r\n            \"Weight\": 20\r\n          },\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Magic Sword 3\",\r\n            \"Weight\": 50\r\n          },\r\n          {\r\n            \"ResultItemType\": \"ItemId\",\r\n            \"ResultItem\": \"Clear Shield 3\",\r\n            \"Weight\": 70\r\n          }\r\n        ]\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Admin/UpdateRandomResultTables"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10042,7 +10026,6 @@
         "Admin/RemoveServerBuild"
       ],
       "errors": [
-        "InvalidParams",
         "BuildNotFound"
       ]
     },
@@ -10065,7 +10048,6 @@
         "Admin/RemoveServerBuild"
       ],
       "errors": [
-        "InvalidParams",
         "BuildAlreadyExists"
       ]
     },
@@ -10086,9 +10068,6 @@
         "Admin/DeleteStore",
         "Admin/SetStoreItems",
         "Admin/UpdateStoreItems"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10111,7 +10090,6 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskNotFound"
       ]
     },
@@ -10133,9 +10111,6 @@
         "Admin/GetTasks",
         "Admin/RunTask",
         "Admin/UpdateTask"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10153,9 +10128,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Admin/SetTitleData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10173,9 +10145,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Admin/SetTitleInternalData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10195,7 +10164,6 @@
         "Admin/GetUserInventory"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "TitleNotActivated"
       ]
@@ -10220,7 +10188,6 @@
         "Admin/UpdateBans"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid"
       ]
     },
@@ -10243,9 +10210,6 @@
         "Admin/UpdateUserData",
         "Admin/UpdateUserInternalData",
         "Admin/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10267,9 +10231,6 @@
         "Admin/UpdateUserData",
         "Admin/UpdateUserInternalData",
         "Admin/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10287,9 +10248,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Admin/GetUserAccountInfo"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10311,9 +10269,6 @@
         "Admin/UpdateUserPublisherData",
         "Admin/UpdateUserPublisherInternalData",
         "Admin/UpdateUserPublisherReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10335,9 +10290,6 @@
         "Admin/UpdateUserPublisherData",
         "Admin/UpdateUserPublisherInternalData",
         "Admin/UpdateUserPublisherReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10359,9 +10311,6 @@
         "Admin/UpdateUserPublisherData",
         "Admin/UpdateUserPublisherInternalData",
         "Admin/UpdateUserPublisherReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10383,9 +10332,6 @@
         "Admin/UpdateUserData",
         "Admin/UpdateUserInternalData",
         "Admin/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10403,9 +10349,7 @@
       "result": "GrantItemsToUsersResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_1\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_2\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0,\r\n        \"CustomData\": {\r\n          \"Equipped\": \"True\",\r\n          \"Slot\": \"Head\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
-        "CatalogNotConfigured",
-        "OverLimit"
+        "CatalogNotConfigured"
       ]
     },
     {
@@ -10428,7 +10372,6 @@
         "Admin/CheckLimitedEditionItemAvailability"
       ],
       "errors": [
-        "InvalidParams",
         "RequestAlreadyRunning"
       ]
     },
@@ -10456,7 +10399,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNotFound",
         "StatisticVersionIncrementRateExceeded",
         "StatisticUpdateInProgress"
@@ -10481,9 +10423,6 @@
         "Admin/ModifyServerBuild",
         "Admin/RemoveServerBuild",
         "Matchmaker/StartGame"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10501,9 +10440,6 @@
       "seeAlso": [
         "Admin/AddVirtualCurrencyTypes",
         "Admin/RemoveVirtualCurrencyTypes"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10522,9 +10458,6 @@
       "seeAlso": [
         "Admin/GetMatchmakerGameInfo",
         "Admin/GetMatchmakerGameModes"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10546,7 +10479,6 @@
         "Admin/RemoveServerBuild"
       ],
       "errors": [
-        "InvalidParams",
         "BuildNotFound",
         "BuildNotAvailable",
         "GameServerHostCountLimitExceeded"
@@ -10564,10 +10496,7 @@
       "request": "RefundPurchaseRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"20394883\",\r\n  \"OrderId\": \"B456AE0\",\r\n  \"Reason\": \"Customer Request\"\r\n}",
       "result": "RefundPurchaseResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PurchaseStatus\": \"Refunded\"\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PurchaseStatus\": \"Refunded\"\r\n  }\r\n}"
     },
     {
       "name": "RemovePlayerTag",
@@ -10587,7 +10516,6 @@
         "Admin/GetPlayerTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10610,9 +10538,6 @@
         "Client/Matchmake",
         "Admin/ModifyServerBuild",
         "Matchmaker/StartGame"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10633,7 +10558,6 @@
         "Admin/ListVirtualCurrencyTypes"
       ],
       "errors": [
-        "InvalidParams",
         "VirtualCurrencyCannotBeDeleted"
       ]
     },
@@ -10651,7 +10575,6 @@
       "result": "ResetCharacterStatisticsResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10674,7 +10597,6 @@
       "errors": [
         "InvalidTitleId",
         "InvalidAuthToken",
-        "InvalidParams",
         "AuthTokenDoesNotExist",
         "AuthTokenExpired"
       ]
@@ -10699,7 +10621,6 @@
       "result": "BlankResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "InvalidPassword"
       ]
     },
@@ -10715,10 +10636,7 @@
       "request": "ResetUserStatisticsRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"293753934\"\r\n}",
       "result": "ResetUserStatisticsResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "ResolvePurchaseDispute",
@@ -10732,10 +10650,7 @@
       "request": "ResolvePurchaseDisputeRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"20394883\",\r\n  \"OrderId\": \"B456AE0\",\r\n  \"Reason\": \"Customer Request\",\r\n  \"Outcome\": \"Reinstate\"\r\n}",
       "result": "ResolvePurchaseDisputeResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PurchaseStatus\": \"Approved\"\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PurchaseStatus\": \"Approved\"\r\n  }\r\n}"
     },
     {
       "name": "RevokeAllBansForUser",
@@ -10757,7 +10672,6 @@
         "Admin/UpdateBans"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid"
       ]
     },
@@ -10779,9 +10693,6 @@
         "Admin/GetUserBans",
         "Admin/RevokeAllBansForUser",
         "Admin/UpdateBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10801,7 +10712,6 @@
         "Admin/GetUserInventory"
       ],
       "errors": [
-        "InvalidParams",
         "ItemNotFound"
       ]
     },
@@ -10826,7 +10736,6 @@
         "Admin/UpdateTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskNotFound"
       ]
     },
@@ -10844,7 +10753,6 @@
       "result": "SendAccountRecoveryEmailResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10866,7 +10774,6 @@
         "Admin/UpdateCatalogItems"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidJSONContent",
         "InvalidItemProperties"
       ]
@@ -10883,10 +10790,7 @@
       "request": "SetPlayerSecretRequest",
       "requestExample": "{\r\n  \"PlayerSecret\": \"secretkeyforthisplayer\",\r\n  \"PlayFabId\": \"ABCD1234\"\r\n}",
       "result": "SetPlayerSecretResult",
-      "resultExample": "",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": ""
     },
     {
       "name": "SetPublishedRevision",
@@ -10901,7 +10805,6 @@
       "result": "SetPublishedRevisionResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "VersionNotFound",
         "RevisionNotFound"
       ]
@@ -10923,7 +10826,6 @@
         "Admin/GetPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -10946,7 +10848,6 @@
         "Admin/UpdateStoreItems"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidJSONContent",
         "CatalogNotConfigured"
       ]
@@ -10972,7 +10873,6 @@
         "Admin/SetStoreItems"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidJSONContent"
       ]
     },
@@ -10993,7 +10893,6 @@
         "Admin/GetTitleData"
       ],
       "errors": [
-        "InvalidParams",
         "DataLengthExceeded",
         "TooManyKeys"
       ]
@@ -11015,7 +10914,6 @@
         "Admin/GetTitleInternalData"
       ],
       "errors": [
-        "InvalidParams",
         "DataLengthExceeded",
         "TooManyKeys"
       ]
@@ -11034,7 +10932,6 @@
       "result": "SetupPushNotificationResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ARN\": \"arn:aws:iam::123456789012:user/David\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "ValueAlreadyExists",
         "InvalidTitleId",
         "PushServiceError"
@@ -11056,7 +10953,6 @@
         "Admin/AddUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -11078,9 +10974,6 @@
         "Admin/GetUserBans",
         "Admin/RevokeAllBansForUser",
         "Admin/RevokeBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11101,7 +10994,6 @@
         "Admin/SetCatalogItems"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidJSONContent",
         "InvalidItemProperties"
       ]
@@ -11119,7 +11011,6 @@
       "result": "UpdateCloudScriptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Version\": 1,\r\n    \"Revision\": 5\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "JavascriptException",
         "ServiceUnavailable"
       ]
@@ -11140,9 +11031,6 @@
       "seeAlso": [
         "Admin/CreatePlayerSharedSecret",
         "Admin/GetPlayerSharedSecrets"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11168,7 +11056,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNotFound",
         "StatisticUpdateInProgress"
       ]
@@ -11188,9 +11075,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PolicyName\": \"ApiPolicy\",\r\n    \"Statements\": [\r\n      {\r\n        \"Resource\": \"pfrn:api--*\",\r\n        \"Action\": \"*\",\r\n        \"Effect\": \"Allow\",\r\n        \"Principal\": \"*\",\r\n        \"Comment\": \"The default allow all policy\"\r\n      },\r\n      {\r\n        \"Resource\": \"pfrn:api--/Client/ConfirmPurchase\",\r\n        \"Action\": \"*\",\r\n        \"Effect\": \"Allow\",\r\n        \"Principal\": \"*\",\r\n        \"Comment\": \"This statement allows only request to ConfirmPurchase\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Admin/GetPolicy"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11210,7 +11094,6 @@
         "Admin/GetRandomResultTables"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidDropTable",
         "InvalidJSONContent"
       ]
@@ -11234,7 +11117,6 @@
         "Admin/SetStoreItems"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidJSONContent",
         "CatalogNotConfigured"
       ]
@@ -11260,7 +11142,6 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "InvalidParams",
         "TaskNotFound",
         "InvalidScheduledTaskName",
         "InvalidTaskSchedule",
@@ -11288,10 +11169,6 @@
         "Admin/GetUserReadOnlyData",
         "Admin/UpdateUserInternalData",
         "Admin/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams",
-        "DataUpdateRateExceeded"
       ]
     },
     {
@@ -11313,9 +11190,6 @@
         "Admin/GetUserReadOnlyData",
         "Admin/UpdateUserData",
         "Admin/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11339,7 +11213,6 @@
         "Admin/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11364,9 +11237,7 @@
         "Admin/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
-        "PublisherNotSet",
-        "OverLimit"
+        "PublisherNotSet"
       ]
     },
     {
@@ -11390,7 +11261,6 @@
         "Admin/UpdateUserPublisherInternalData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11413,9 +11283,6 @@
         "Admin/GetUserReadOnlyData",
         "Admin/UpdateUserData",
         "Admin/UpdateUserInternalData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11432,7 +11299,6 @@
       "result": "UpdateUserTitleDisplayNameResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DisplayName\": \"New Display Name\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InsufficientFunds",
         "NameNotAvailable"
       ]
@@ -12770,6 +12636,30 @@
     "XboxRejectedXSTSExchangeRequest": {
       "id": 1343,
       "name": "XboxRejectedXSTSExchangeRequest"
+    },
+    "VariableNotDefined": {
+      "id": 1344,
+      "name": "VariableNotDefined"
+    },
+    "TemplateVersionNotDefined": {
+      "id": 1345,
+      "name": "TemplateVersionNotDefined"
+    },
+    "FileTooLarge": {
+      "id": 1346,
+      "name": "FileTooLarge"
+    },
+    "TitleDeleted": {
+      "id": 1347,
+      "name": "TitleDeleted"
+    },
+    "TitleContainsUserAccounts": {
+      "id": 1348,
+      "name": "TitleContainsUserAccounts"
+    },
+    "TitleDeletionPlayerCleanupFailure": {
+      "id": 1349,
+      "name": "TitleDeletionPlayerCleanupFailure"
     }
   },
   "errorList": [
@@ -13105,6 +12995,12 @@
     "SubscriptionAlreadyTaken",
     "SmtpAddonNotEnabled",
     "APIConcurrentRequestLimitExceeded",
-    "XboxRejectedXSTSExchangeRequest"
+    "XboxRejectedXSTSExchangeRequest",
+    "VariableNotDefined",
+    "TemplateVersionNotDefined",
+    "FileTooLarge",
+    "TitleDeleted",
+    "TitleContainsUserAccounts",
+    "TitleDeletionPlayerCleanupFailure"
   ]
 }

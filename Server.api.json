@@ -2,6 +2,9 @@
   "name": "Server",
   "url": "/Server",
   "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
+  "apiDescriptionList": [
+    "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration"
+  ],
   "datatypes": {
     "AdCampaignAttribution": {
       "name": "AdCampaignAttribution",
@@ -1002,6 +1005,14 @@
           "description": "The name of the email info data",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VerificationStatus",
+          "description": "The verification status of the email",
+          "jsontype": "String",
+          "actualtype": "EmailVerificationStatus",
+          "isenum": true,
           "optional": true
         }
       ]
@@ -3147,7 +3158,7 @@
         },
         {
           "name": "ThruCDN",
-          "description": "True if download through CDN. CDN provides better download bandwidth and time. However, if you want latest, non-cached version of the content, set this to false. Default is true.",
+          "description": "True to download through CDN. CDN provides higher download bandwidth and lower latency. However, if you want the latest, non-cached version of the content during development, set this to false. Default is true.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -3162,7 +3173,7 @@
       "properties": [
         {
           "name": "URL",
-          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in 1 hour.",
+          "description": "URL for downloading content via HTTP GET or HEAD method. The URL will expire in approximately one hour.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -7010,10 +7021,17 @@
         },
         {
           "name": "ServerHost",
-          "description": "IP address of the Game Server Instance.",
+          "description": "IPV4 address of the Game Server Instance.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "ServerIPV6Address",
+          "description": "IPV6 address of the Game Server Instance.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "ServerPort",
@@ -7395,6 +7413,41 @@
     "SendCustomAccountRecoveryEmailResult": {
       "name": "SendCustomAccountRecoveryEmailResult",
       "className": "SendCustomAccountRecoveryEmailResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": []
+    },
+    "SendEmailFromTemplateRequest": {
+      "name": "SendEmailFromTemplateRequest",
+      "className": "SendEmailFromTemplateRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "EmailTemplateId",
+          "description": "The email template id of the email template to send.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SendEmailFromTemplateResult": {
+      "name": "SendEmailFromTemplateResult",
+      "className": "SendEmailFromTemplateResult",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
       "AnyInclusiveFlags": [
@@ -9569,6 +9622,7 @@
         "RevokeAllBansForUser",
         "RevokeBans",
         "SendCustomAccountRecoveryEmail",
+        "SendEmailFromTemplate",
         "SendPushNotification",
         "UpdateAvatarUrl",
         "UpdateBans"
@@ -9780,7 +9834,6 @@
         "Server/SubtractCharacterVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -9802,7 +9855,6 @@
         "Server/SetFriendTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "UsersAlreadyFriends",
         "InvalidPublisherId"
@@ -9827,7 +9879,6 @@
         "Server/SubtractGuildVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -9849,7 +9900,6 @@
         "Server/RemovePlayerTag"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "PlayerTagCountLimitExceeded"
       ]
@@ -9867,9 +9917,9 @@
       "result": "AddSharedGroupMembersResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
-        "InvalidSharedGroupId"
+        "InvalidSharedGroupId",
+        "UserAlreadyAdded"
       ]
     },
     {
@@ -9888,7 +9938,6 @@
         "Server/SubtractUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -9906,7 +9955,6 @@
       "result": "AuthenticateSessionTicketResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UserInfo\": {\r\n      \"PlayFabId\": \"10931252888739651331\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"Username\": \"accountname\"\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidSessionTicket"
       ]
     },
@@ -9921,10 +9969,7 @@
       "request": "AwardSteamAchievementRequest",
       "requestExample": "{\r\n  \"Achievements\": [\r\n    {\r\n      \"PlayFabId\": \"234974573892\",\r\n      \"AchievementName\": \"FinishLevel1\",\r\n      \"Result\": false\r\n    },\r\n    {\r\n      \"PlayFabId\": \"334353433\",\r\n      \"AchievementName\": \"FinishLevel1\",\r\n      \"Result\": false\r\n    }\r\n  ]\r\n}",
       "result": "AwardSteamAchievementResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"AchievementResults\": [\r\n      {\r\n        \"PlayFabId\": \"234974573892\",\r\n        \"AchievementName\": \"FinishLevel1\",\r\n        \"Result\": true\r\n      },\r\n      {\r\n        \"PlayFabId\": \"334353433\",\r\n        \"AchievementName\": \"FinishLevel1\",\r\n        \"Result\": true\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"AchievementResults\": [\r\n      {\r\n        \"PlayFabId\": \"234974573892\",\r\n        \"AchievementName\": \"FinishLevel1\",\r\n        \"Result\": true\r\n      },\r\n      {\r\n        \"PlayFabId\": \"334353433\",\r\n        \"AchievementName\": \"FinishLevel1\",\r\n        \"Result\": true\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "BanUsers",
@@ -9944,9 +9989,6 @@
         "Server/RevokeAllBansForUser",
         "Server/RevokeBans",
         "Server/UpdateBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -9962,7 +10004,6 @@
       "result": "ConsumeItemResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "NoRemainingUses",
         "ItemNotFound",
         "CharacterNotFound",
@@ -9983,7 +10024,6 @@
       "result": "CreateSharedGroupResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SharedGroupId\": \"Clan Data\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidSharedGroupId"
       ]
     },
@@ -10001,7 +10041,6 @@
       "result": "DeleteCharacterFromUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "AccountNotFound"
       ]
@@ -10019,7 +10058,6 @@
       "result": "EmptyResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "InvalidSharedGroupId"
       ]
     },
@@ -10037,7 +10075,6 @@
       "result": "DeleteUsersResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "InvalidTitleId",
         "InvalidPublisherId",
         "APINotEnabledForGameServerAccess"
@@ -10057,9 +10094,6 @@
       "resultExample": "",
       "seeAlso": [
         "Server/RegisterGame"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10076,7 +10110,6 @@
       "result": "EvaluateRandomResultTableResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ResultItemId\": \"RareGreenAttackCard\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidDropTable",
         "CatalogNotConfigured"
       ]
@@ -10094,7 +10127,6 @@
       "result": "ExecuteCloudScriptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Revision\": 3,\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    },\r\n    \"Logs\": [\r\n      {\r\n        \"Level\": \"Info\",\r\n        \"Message\": \"Something normal happened\",\r\n        \"Data\": {\r\n          \"secondsAfterStart\": 75\r\n        }\r\n      },\r\n      {\r\n        \"Level\": \"Error\",\r\n        \"Message\": \"Something unexpected happened\"\r\n      }\r\n    ],\r\n    \"ExecutionTimeSeconds\": 0.03670790046453476,\r\n    \"ProcessorTimeSeconds\": 0.0,\r\n    \"MemoryConsumedBytes\": 38904,\r\n    \"APIRequestsIssued\": 2,\r\n    \"HttpRequestsIssued\": 0\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "CloudScriptNotFound",
         "JavascriptException",
         "CloudScriptFunctionArgumentSizeExceeded",
@@ -10123,9 +10155,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ActionGroups\": [\r\n      {\r\n        \"Name\": \"Grant beta items\",\r\n        \"Id\": \"12389170481\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Server/GetAllSegments"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10157,10 +10186,7 @@
       "request": "ListUsersCharactersRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"98333765432\"\r\n}",
       "result": "ListUsersCharactersResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Characters\": [\r\n      {\r\n        \"CharacterId\": \"3345677\",\r\n        \"CharacterName\": \"CoolDude\",\r\n        \"CharacterType\": \"StrongWarrior\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Characters\": [\r\n      {\r\n        \"CharacterId\": \"3345677\",\r\n        \"CharacterName\": \"CoolDude\",\r\n        \"CharacterType\": \"StrongWarrior\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetCatalogItems",
@@ -10173,10 +10199,7 @@
       "request": "GetCatalogItemsRequest",
       "requestExample": "{\r\n  \"CatalogVersion\": \"1\"\r\n}",
       "result": "GetCatalogItemsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Catalog\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Level 5 Shield\",\r\n        \"Description\": \"Strong defense against projectile attacks\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 149,\r\n          \"EUR\": 169\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Energy Drink Six-Pack\",\r\n        \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_1\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 1\",\r\n        \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_2\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 2\",\r\n        \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_3\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 3\",\r\n        \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_4\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 4\",\r\n        \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"granted_item_a\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Granted Item A\",\r\n        \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_1\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 1\",\r\n        \"Description\": \"Item demonstrating usage-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 500\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 3\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_2\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 2\",\r\n        \"Description\": \"Item demonstrating time-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 750\r\n        },\r\n        \"Consumable\": {\r\n          \"UsagePeriod\": 3600,\r\n          \"UsagePeriodGroup\": \"usage_group_1\"\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_2\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_bundle_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item bundle 1\",\r\n        \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 599\r\n        },\r\n        \"Bundle\": {\r\n          \"BundledItems\": [\r\n            \"sub_bundle_item_1\",\r\n            \"sub_bundle_item_2\"\r\n          ],\r\n          \"BundledResultTables\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"BundledVirtualCurrencies\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"key_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Key Item 1\",\r\n        \"Description\": \"Key used to unlock Container 1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 1\",\r\n        \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 499\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"KeyItemId\": \"key_item_1\",\r\n          \"ItemContents\": [\r\n            \"sub_container_item_1\",\r\n            \"sub_container_item_2\"\r\n          ],\r\n          \"ResultTableContents\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 2\",\r\n        \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 99\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"ItemClass\": \"starterpacks\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Super Starter Pack\",\r\n        \"Description\": \"Everything you need to get started fast track at the right price\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Catalog\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Level 5 Shield\",\r\n        \"Description\": \"Strong defense against projectile attacks\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"RealCurrencyPrices\": {\r\n          \"GBP\": 149,\r\n          \"EUR\": 169\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Energy Drink Six-Pack\",\r\n        \"Description\": \"Get a quick burst of energy whenever you need it\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199,\r\n          \"GV\": 25\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_1\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 1\",\r\n        \"Description\": \"Item 1 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_2\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 2\",\r\n        \"Description\": \"Item 2 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_3\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 3\",\r\n        \"Description\": \"Item 3 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"required_item_for_grant_a_4\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Grant Set Item 4\",\r\n        \"Description\": \"Item 4 from the set of items needed to get Granted Item A for free\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 249,\r\n          \"GV\": 1500\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"granted_item_a\",\r\n        \"ItemClass\": \"sets\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Granted Item A\",\r\n        \"Description\": \"Bonus item granted for free once the full set of 4 Grant Set items are collected\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_1\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 1\",\r\n        \"Description\": \"Item demonstrating usage-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 500\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 3\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"consumable_item_2\",\r\n        \"ItemClass\": \"Consumables\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Consumable Item 2\",\r\n        \"Description\": \"Item demonstrating time-based consumables\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"GV\": 750\r\n        },\r\n        \"Consumable\": {\r\n          \"UsagePeriod\": 3600,\r\n          \"UsagePeriodGroup\": \"usage_group_1\"\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_bundle_item_2\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Bundled Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of a bundle\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_bundle_1\",\r\n        \"ItemClass\": \"Bundles\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item bundle 1\",\r\n        \"Description\": \"Item which, when added to the user inventory, also adds other bundled items\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 599\r\n        },\r\n        \"Bundle\": {\r\n          \"BundledItems\": [\r\n            \"sub_bundle_item_1\",\r\n            \"sub_bundle_item_2\"\r\n          ],\r\n          \"BundledResultTables\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"BundledVirtualCurrencies\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"key_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Key Item 1\",\r\n        \"Description\": \"Key used to unlock Container 1\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 199\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 1\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"sub_container_item_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Container Item 2\",\r\n        \"Description\": \"Item which is added to the user inventory as part of opening a container\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_1\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 1\",\r\n        \"Description\": \"Item which, when opened with Key Item 1, also adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 499\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"KeyItemId\": \"key_item_1\",\r\n          \"ItemContents\": [\r\n            \"sub_container_item_1\",\r\n            \"sub_container_item_2\"\r\n          ],\r\n          \"ResultTableContents\": [\r\n            \"random_result_1\"\r\n          ],\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"item_container_2\",\r\n        \"ItemClass\": \"Containers\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Item Container 2\",\r\n        \"Description\": \"Item which, when opened (no key needed), adds the items it holds to the user inventory\",\r\n        \"VirtualCurrencyPrices\": {\r\n          \"RM\": 99\r\n        },\r\n        \"Consumable\": {\r\n          \"UsageCount\": 1\r\n        },\r\n        \"Container\": {\r\n          \"VirtualCurrencyContents\": {\r\n            \"GV\": 1000\r\n          }\r\n        },\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"starterpack_1\",\r\n        \"ItemClass\": \"starterpacks\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"DisplayName\": \"Super Starter Pack\",\r\n        \"Description\": \"Everything you need to get started fast track at the right price\",\r\n        \"CanBecomeCharacter\": false,\r\n        \"IsStackable\": false,\r\n        \"IsTradable\": false,\r\n        \"IsLimitedEdition\": false,\r\n        \"InitialLimitedEditionCount\": 0\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetCharacterData",
@@ -10198,7 +10221,6 @@
         "Server/UpdateCharacterReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -10223,7 +10245,6 @@
         "Server/UpdateCharacterReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -10245,7 +10266,6 @@
         "Server/GetUserInventory"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound"
       ]
     },
@@ -10266,9 +10286,6 @@
         "Server/GetCharacterStatistics",
         "Server/GetLeaderboardAroundCharacter",
         "Server/UpdateCharacterStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10291,7 +10308,6 @@
         "Server/UpdateCharacterReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -10315,7 +10331,6 @@
         "Server/UpdateCharacterStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "AccountNotFound"
       ]
@@ -10337,9 +10352,6 @@
         "Client/GetContentDownloadUrl",
         "Admin/GetContentList",
         "Admin/GetContentUploadUrl"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10361,7 +10373,6 @@
         "Server/GetUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "FacebookAPIError"
       ]
     },
@@ -10385,7 +10396,6 @@
         "Server/SetFriendTags"
       ],
       "errors": [
-        "InvalidParams",
         "FacebookAPIError",
         "AccountNotFound"
       ]
@@ -10472,9 +10482,6 @@
         "Server/GetLeaderboardAroundUser",
         "Server/GetUserStatistics",
         "Server/UpdateUserStatistics"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10496,7 +10503,6 @@
         "Server/UpdateCharacterStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10519,7 +10525,6 @@
         "Server/UpdateUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10542,7 +10547,6 @@
         "Server/UpdateCharacterStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10574,8 +10578,7 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayerProfile\": {\r\n      \"TitleId\": \"TitleName\",\r\n      \"PlayerId\": \"621EF20237534A44\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"LastLogin\": \"0001-01-01T00:00:00Z\",\r\n      \"BannedUntil\": \"9999-12-31T23:59:59.999Z\",\r\n      \"DisplayName\": \"PlayerDisplayName\",\r\n      \"TotalValueToDateInUSD\": 0\r\n    }\r\n  }\r\n}",
       "errors": [
         "PlayerNotInGame",
-        "ProfileDoesNotExist",
-        "InvalidParams"
+        "ProfileDoesNotExist"
       ]
     },
     {
@@ -10592,9 +10595,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Segments\": [\r\n      {\r\n        \"Id\": \"1337AA00\",\r\n        \"Name\": \"Fast Players\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "seeAlso": [
         "Server/GetAllSegments"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10614,7 +10614,6 @@
         "Server/GetAllSegments"
       ],
       "errors": [
-        "InvalidParams",
         "SegmentNotFound",
         "APIConcurrentRequestLimitExceeded"
       ]
@@ -10639,7 +10638,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10662,7 +10660,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "StatisticNotFound"
       ]
     },
@@ -10684,7 +10681,6 @@
         "Server/RemovePlayerTag"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -10741,7 +10737,6 @@
         "Server/SetPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -10762,7 +10757,6 @@
         "Server/EvaluateRandomResultTable"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidDropTable",
         "CatalogNotConfigured"
       ]
@@ -10780,7 +10774,6 @@
       "result": "GetSharedGroupDataResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"ClanKills\": {\r\n        \"Value\": \"34\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Public\"\r\n      },\r\n      \"LastClanUpdate\": {\r\n        \"Value\": \"2015-01-03T17:44:21Z\",\r\n        \"LastUpdatedBy\": \"D984A64B832\",\r\n        \"LastUpdated\": \"2015-01-03T17:44:21Z\",\r\n        \"Permission\": \"Private\"\r\n      }\r\n    },\r\n    \"Members\": [\r\n      \"D984A64B832\",\r\n      \"F74A523E1562\"\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidSharedGroupId"
       ]
     },
@@ -10817,9 +10810,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Server/SetTitleData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10837,9 +10827,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": {\r\n      \"color\": \"blue\",\r\n      \"propertyA\": \"xyz123\"\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Server/SetTitleInternalData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10853,10 +10840,7 @@
       "request": "GetTitleNewsRequest",
       "requestExample": "{\r\n  \"Count\": 25\r\n}",
       "result": "GetTitleNewsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"News\": [\r\n      {\r\n        \"Timestamp\": \"2014-04-06T00:00:00Z\",\r\n        \"Title\": \"News of the Day\",\r\n        \"Body\": \"<b>We have a new object to buy!</b>\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetUserAccountInfo",
@@ -10873,9 +10857,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UserInfo\": {\r\n      \"PlayFabId\": \"621EF20237534A44\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"Username\": \"accountname\",\r\n      \"FacebookInfo\": {\r\n        \"FacebookId\": \"1236849390256\",\r\n        \"FullName\": \"Jane Doe\"\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Server/GetUserInventory"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10898,7 +10879,6 @@
         "Server/UpdateBans"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid"
       ]
     },
@@ -10921,9 +10901,6 @@
         "Server/UpdateUserData",
         "Server/UpdateUserInternalData",
         "Server/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10945,9 +10922,6 @@
         "Server/UpdateUserData",
         "Server/UpdateUserInternalData",
         "Server/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10965,9 +10939,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayFabId\": \"204883457\",\r\n    \"Inventory\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"9879843\",\r\n        \"ItemClass\": \"shields\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"ItemId\": \"energy_boost_1\",\r\n        \"ItemInstanceId\": \"3854637\",\r\n        \"ItemClass\": \"boosts\",\r\n        \"RemainingUses\": 4,\r\n        \"CatalogVersion\": \"5\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 15\r\n    },\r\n    \"VirtualCurrencyRechargeTimes\": {\r\n      \"GC\": {\r\n        \"SecondsToRecharge\": 3600,\r\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\r\n        \"RechargeMax\": 50\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "Server/GetUserAccountInfo"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -10991,7 +10962,6 @@
         "Server/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11016,7 +10986,6 @@
         "Server/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11041,7 +11010,6 @@
         "Server/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11064,9 +11032,6 @@
         "Server/UpdateUserData",
         "Server/UpdateUserInternalData",
         "Server/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11096,7 +11061,6 @@
         "Server/UpdateUserStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11114,7 +11078,6 @@
       "result": "GrantCharacterToUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"CharacterId\": \"98765432\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11132,7 +11095,6 @@
       "result": "GrantItemsToCharacterResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_6\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "AccountNotFound",
         "CatalogNotConfigured"
@@ -11152,9 +11114,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_3\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_4\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "AllInclusiveFlags": [
         "Beta"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11172,7 +11131,6 @@
       "result": "GrantItemsToUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_3\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_4\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "CatalogNotConfigured"
       ]
     },
@@ -11191,9 +11149,7 @@
       "result": "GrantItemsToUsersResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_1\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_2\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0,\r\n        \"CustomData\": {\r\n          \"Equipped\": \"True\",\r\n          \"Slot\": \"Head\"\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
-        "CatalogNotConfigured",
-        "OverLimit"
+        "CatalogNotConfigured"
       ]
     },
     {
@@ -11216,7 +11172,6 @@
       "result": "LogEventResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "BodyTooLarge",
         "ReservedWordInBody",
         "ReservedEventName",
@@ -11237,10 +11192,7 @@
       "request": "ModifyItemUsesRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"20394883\",\r\n  \"ItemInstanceId\": \"94585729\",\r\n  \"UsesToAdd\": 1\r\n}",
       "result": "ModifyItemUsesResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemInstanceId\": \"94585729\",\r\n    \"RemainingUses\": 0\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemInstanceId\": \"94585729\",\r\n    \"RemainingUses\": 0\r\n  }\r\n}"
     },
     {
       "name": "MoveItemToCharacterFromCharacter",
@@ -11261,7 +11213,6 @@
         "Server/MoveItemToUserFromCharacter"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
@@ -11285,7 +11236,6 @@
         "Server/MoveItemToUserFromCharacter"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
@@ -11309,7 +11259,6 @@
         "Server/MoveItemToCharacterFromUser"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
@@ -11328,7 +11277,6 @@
       "result": "NotifyMatchmakerPlayerLeftResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayerState\": \"Unassigned\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -11346,7 +11294,6 @@
       "result": "RedeemCouponResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "CouponCodeNotFound",
         "CouponAlreadyRedeemed",
         "CharacterNotFound"
@@ -11366,7 +11313,6 @@
       "result": "RedeemMatchmakerTicketResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketIsValid\": true,\r\n    \"Error\": \"\",\r\n    \"UserInfo\": {\r\n      \"PlayFabId\": \"10931252888739651331\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"Username\": \"accountname\"\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidGameTicket",
         "ExpiredGameTicket",
         "GameTicketDoesNotMatchLobby",
@@ -11386,7 +11332,6 @@
       "result": "RefreshGameServerInstanceHeartbeatResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -11406,7 +11351,6 @@
         "Server/DeregisterGame"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidRequest"
       ]
     },
@@ -11427,7 +11371,6 @@
         "Server/SetFriendTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11449,7 +11392,6 @@
         "Server/GetPlayerTags"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11466,7 +11408,6 @@
       "result": "RemoveSharedGroupMembersResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "InvalidSharedGroupId"
       ]
     },
@@ -11482,11 +11423,7 @@
       "request": "ReportPlayerServerRequest",
       "requestExample": "{\r\n  \"ReporterId\": \"9ddafe27d6d445da\",\r\n  \"ReporteeId\": \"1a46086aed40f142\",\r\n  \"Comment\": \"cheating\"\r\n}",
       "result": "ReportPlayerServerResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}",
-      "errors": [
-        "InvalidParams",
-        "OverLimit"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SubmissionsRemaining\": 2\r\n  }\r\n}"
     },
     {
       "name": "RevokeAllBansForUser",
@@ -11508,7 +11445,6 @@
         "Server/UpdateBans"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid"
       ]
     },
@@ -11530,9 +11466,6 @@
         "Server/GetUserBans",
         "Server/RevokeAllBansForUser",
         "Server/UpdateBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11552,7 +11485,6 @@
         "Server/GetUserInventory"
       ],
       "errors": [
-        "InvalidParams",
         "ItemNotFound"
       ]
     },
@@ -11573,7 +11505,30 @@
         "Beta"
       ],
       "errors": [
-        "InvalidParams",
+        "SmtpAddonNotEnabled",
+        "EmailTemplateMissing",
+        "NoContactEmailAddressFound",
+        "EmailClientTimeout",
+        "EmailClientCanceledTask"
+      ]
+    },
+    {
+      "name": "SendEmailFromTemplate",
+      "summary": "Sends an email based on an email template to a player's contact email ",
+      "requestDetails": "Sends an email for only players that have contact emails associated with them. Takes in an email template ID specifyingthe email template to send.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/SendEmailFromTemplate",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SendEmailFromTemplateRequest",
+      "requestExample": "{\r\n  \"EmailTemplateId\": \"B53CA15D92D2E331\",\r\n  \"PlayFabId\": \"A01DC15D8E12E230\"\r\n}",
+      "result": "SendEmailFromTemplateResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
         "SmtpAddonNotEnabled",
         "EmailTemplateMissing",
         "NoContactEmailAddressFound",
@@ -11594,7 +11549,6 @@
       "result": "SendPushNotificationResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "PushNotEnabledForAccount",
         "PushServiceError"
       ]
@@ -11618,7 +11572,6 @@
         "Server/RemoveFriend"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11635,7 +11588,6 @@
       "result": "SetGameServerInstanceDataResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -11652,7 +11604,6 @@
       "result": "SetGameServerInstanceStateResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -11669,7 +11620,6 @@
       "result": "SetGameServerInstanceTagsResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "GameNotFound"
       ]
     },
@@ -11687,7 +11637,6 @@
       "result": "SetPlayerSecretResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "PlayerSecretAlreadyConfigured"
       ]
     },
@@ -11708,7 +11657,6 @@
         "Server/GetPublisherData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -11729,7 +11677,6 @@
         "Server/GetTitleData"
       ],
       "errors": [
-        "InvalidParams",
         "DataLengthExceeded",
         "TooManyKeys"
       ]
@@ -11751,14 +11698,13 @@
         "Server/GetTitleInternalData"
       ],
       "errors": [
-        "InvalidParams",
         "DataLengthExceeded",
         "TooManyKeys"
       ]
     },
     {
       "name": "SubtractCharacterVirtualCurrency",
-      "summary": "Decrements the character's balance of the specified virtual currency by the stated amount",
+      "summary": "Decrements the character's balance of the specified virtual currency by the stated amount. It is possible to make a VC balance negative with this API.",
       "subgroup": "Player Item Management",
       "titleTiers": null,
       "url": "/Server/SubtractCharacterVirtualCurrency",
@@ -11773,13 +11719,12 @@
         "Server/SubtractUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
     {
       "name": "SubtractGuildVirtualCurrency",
-      "summary": "Decrements the Guild's balance of the specified virtual currency by the stated amount",
+      "summary": "Decrements the Guild's balance of the specified virtual currency by the stated amount. It is possible to make a VC balance negative with this API.",
       "subgroup": "Guilds",
       "titleTiers": null,
       "url": "/Server/SubtractGuildVirtualCurrency",
@@ -11796,13 +11741,12 @@
         "Server/AddGuildVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
     {
       "name": "SubtractUserVirtualCurrency",
-      "summary": "Decrements the user's balance of the specified virtual currency by the stated amount",
+      "summary": "Decrements the user's balance of the specified virtual currency by the stated amount. It is possible to make a VC balance negative with this API.",
       "subgroup": "Player Item Management",
       "titleTiers": null,
       "url": "/Server/SubtractUserVirtualCurrency",
@@ -11816,7 +11760,6 @@
         "Server/AddUserVirtualCurrency"
       ],
       "errors": [
-        "InvalidParams",
         "InvalidVirtualCurrency"
       ]
     },
@@ -11835,7 +11778,6 @@
       "result": "UnlockContainerItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidContainerItem",
         "ContainerNotOwned",
         "KeyNotOwned",
@@ -11858,7 +11800,6 @@
       "result": "UnlockContainerItemResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UnlockedItemInstanceId\": \"0394760938094\",\r\n    \"GrantedItems\": [\r\n      {\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"Unique Item ID\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2014-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2015-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"No Annotation\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ],\r\n    \"VirtualCurrency\": {\r\n      \"GC\": 20\r\n    }\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidContainerItem",
         "ContainerNotOwned",
         "KeyNotOwned",
@@ -11879,7 +11820,6 @@
       "result": "EmptyResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "AccountNotFound"
       ]
     },
@@ -11901,9 +11841,6 @@
         "Server/GetUserBans",
         "Server/RevokeAllBansForUser",
         "Server/RevokeBans"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -11926,7 +11863,6 @@
         "Server/UpdateUserData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -11951,7 +11887,6 @@
         "Server/UpdateUserInternalData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -11976,7 +11911,6 @@
         "Server/GetUserReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "UserisNotValid",
         "CharacterNotFound"
       ]
@@ -11995,7 +11929,6 @@
       "result": "UpdateCharacterStatisticsResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "CharacterNotFound",
         "AccountNotFound",
         "InvalidCharacterStatistics"
@@ -12071,7 +12004,6 @@
         "Admin/UpdatePlayerStatisticDefinition"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "StatisticNotFound",
         "StatisticVersionInvalid",
@@ -12098,13 +12030,13 @@
         "Admin/UpdatePlayerStatisticDefinition"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
-        "StatisticNotFound",
-        "StatisticVersionInvalid",
-        "StatisticVersionClosedForWrites",
+        "DuplicateStatisticName",
         "StatisticCountLimitExceeded",
-        "DuplicateStatisticName"
+        "StatisticNameConflict",
+        "StatisticNotFound",
+        "StatisticVersionClosedForWrites",
+        "StatisticVersionInvalid"
       ]
     },
     {
@@ -12121,7 +12053,6 @@
       "result": "UpdateSharedGroupDataResult",
       "resultExample": "",
       "errors": [
-        "InvalidParams",
         "NotAuthorized",
         "InvalidSharedGroupId"
       ]
@@ -12145,10 +12076,6 @@
         "Server/GetUserReadOnlyData",
         "Server/UpdateUserInternalData",
         "Server/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams",
-        "DataUpdateRateExceeded"
       ]
     },
     {
@@ -12170,9 +12097,6 @@
         "Server/GetUserReadOnlyData",
         "Server/UpdateUserData",
         "Server/UpdateUserReadOnlyData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -12191,9 +12115,6 @@
       "seeAlso": [
         "Server/GetUserInventory",
         "Server/UpdateUserInternalData"
-      ],
-      "errors": [
-        "InvalidParams"
       ]
     },
     {
@@ -12217,7 +12138,6 @@
         "Server/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -12242,7 +12162,6 @@
         "Server/UpdateUserPublisherReadOnlyData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -12267,7 +12186,6 @@
         "Server/UpdateUserPublisherInternalData"
       ],
       "errors": [
-        "InvalidParams",
         "PublisherNotSet"
       ]
     },
@@ -12290,10 +12208,6 @@
         "Server/GetUserReadOnlyData",
         "Server/UpdateUserData",
         "Server/UpdateUserInternalData"
-      ],
-      "errors": [
-        "InvalidParams",
-        "OverLimit"
       ]
     },
     {
@@ -12324,7 +12238,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "InvalidParams",
         "AccountNotFound",
         "InvalidUserStatistics",
         "StatisticCountLimitExceeded"
@@ -12344,7 +12257,6 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidRequest",
         "NoWritePermissionsForEvent",
         "CharacterNotFound"
@@ -12364,7 +12276,6 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidRequest",
         "NoWritePermissionsForEvent",
         "UserisNotValid"
@@ -12384,7 +12295,6 @@
       "result": "WriteEventResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
-        "InvalidParams",
         "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
@@ -13722,6 +13632,30 @@
     "XboxRejectedXSTSExchangeRequest": {
       "id": 1343,
       "name": "XboxRejectedXSTSExchangeRequest"
+    },
+    "VariableNotDefined": {
+      "id": 1344,
+      "name": "VariableNotDefined"
+    },
+    "TemplateVersionNotDefined": {
+      "id": 1345,
+      "name": "TemplateVersionNotDefined"
+    },
+    "FileTooLarge": {
+      "id": 1346,
+      "name": "FileTooLarge"
+    },
+    "TitleDeleted": {
+      "id": 1347,
+      "name": "TitleDeleted"
+    },
+    "TitleContainsUserAccounts": {
+      "id": 1348,
+      "name": "TitleContainsUserAccounts"
+    },
+    "TitleDeletionPlayerCleanupFailure": {
+      "id": 1349,
+      "name": "TitleDeletionPlayerCleanupFailure"
     }
   },
   "errorList": [
@@ -14057,6 +13991,12 @@
     "SubscriptionAlreadyTaken",
     "SmtpAddonNotEnabled",
     "APIConcurrentRequestLimitExceeded",
-    "XboxRejectedXSTSExchangeRequest"
+    "XboxRejectedXSTSExchangeRequest",
+    "VariableNotDefined",
+    "TemplateVersionNotDefined",
+    "FileTooLarge",
+    "TitleDeleted",
+    "TitleContainsUserAccounts",
+    "TitleDeletionPlayerCleanupFailure"
   ]
 }
