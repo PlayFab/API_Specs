@@ -2821,6 +2821,22 @@
       ],
       "properties": []
     },
+    "DeviceInfoRequest": {
+      "name": "DeviceInfoRequest",
+      "className": "DeviceInfoRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "Info",
+          "description": "Information posted to the PlayStream Event. Currently arbitrary, and specific to the environment sending it.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        }
+      ]
+    },
     "EmailVerificationStatus": {
       "name": "EmailVerificationStatus",
       "className": "EmailVerificationStatus",
@@ -4760,9 +4776,6 @@
       "className": "GetPaymentTokenRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "properties": [
         {
           "name": "TokenProvider",
@@ -4778,9 +4791,6 @@
       "className": "GetPaymentTokenResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "properties": [
         {
           "name": "OrderId",
@@ -12948,6 +12958,7 @@
       "name": "Analytics",
       "methods": [
         "LogEvent",
+        "ReportDeviceInfo",
         "WriteCharacterEvent",
         "WritePlayerEvent",
         "WriteTitleEvent"
@@ -13230,8 +13241,8 @@
     },
     {
       "name": "AddOrUpdateContactEmail",
-      "summary": "Adds or updates a contact email to the player's profile",
-      "requestDetails": "This API updates an existing contact email in the player's profile based on an email name associated with the email. In the case that an email name is not found associated with an email, it instead adds a new email to the list of contact emails in the player's profile.",
+      "summary": "Adds or updates a contact email to the player's profile.",
+      "requestDetails": "This API adds a contact email to the player's profile. If the player's profile already contains a contact email, it will update the contact email to the email address specified.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Client/AddOrUpdateContactEmail",
@@ -13255,7 +13266,8 @@
       "result": "AddSharedGroupMembersResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound"
+        "AccountNotFound",
+        "UserAlreadyAdded"
       ]
     },
     {
@@ -14189,7 +14201,8 @@
         "Client/GetUserStatistics"
       ],
       "errors": [
-        "AccountNotFound"
+        "AccountNotFound",
+        "LeaderboardVersionNotAvailable"
       ]
     },
     {
@@ -14250,9 +14263,6 @@
       "requestExample": "{\r\n  \"TokenProvider\": \"xsolla\"\r\n}",
       "result": "GetPaymentTokenResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProviderToken\": \"uV0iCEvWkUGVqWerTgbrndWePOMiLAfO\",\r\n    \"OrderId\": \"8853591446005860822\"\r\n  }\r\n}",
-      "AllInclusiveFlags": [
-        "Beta"
-      ],
       "seeAlso": [
         "Client/GetPurchase"
       ],
@@ -15289,6 +15299,7 @@
         "AccountNotFound",
         "InvalidSignature",
         "InvalidTitleId",
+        "PlayerSecretAlreadyConfigured",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15313,6 +15324,7 @@
         "AccountNotFound",
         "InvalidSignature",
         "InvalidTitleId",
+        "PlayerSecretAlreadyConfigured",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -15428,6 +15440,7 @@
       "errors": [
         "AccountNotFound",
         "InvalidPublisherId",
+        "InvalidSignature",
         "InvalidTitleId",
         "PlayerSecretAlreadyConfigured",
         "RequestViewConstraintParamsNotAllowed"
@@ -15829,8 +15842,8 @@
     },
     {
       "name": "RemoveContactEmail",
-      "summary": "Removes a contact email from the player's profile",
-      "requestDetails": "This API removes an existing contact email in the player's profile based on an email name associated with the email.",
+      "summary": "Removes a contact email from the player's profile.",
+      "requestDetails": "This API removes an existing contact email from the player's profile.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Client/RemoveContactEmail",
@@ -15933,6 +15946,24 @@
       "errors": [
         "InvalidRequest",
         "InvalidAdPlacementAndReward"
+      ]
+    },
+    {
+      "name": "ReportDeviceInfo",
+      "summary": "Write a PlayStream event to describe the provided player device information. This API method is not designed to be called directly by developers. Each PlayFab client SDK will eventually report this information automatically.",
+      "requestDetails": "Any arbitrary information collected by the device",
+      "subgroup": "Analytics",
+      "titleTiers": null,
+      "url": "/Client/ReportDeviceInfo",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "DeviceInfoRequest",
+      "requestExample": "{\r\n  \"Info\": {\r\n    \"UserAgent\": \"Some Browser\",\r\n    \"ScreenResolution\": \"640x480\",\r\n    \"processorCount\": \"2\"\r\n  }\r\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "errors": [
+        "BodyTooLarge",
+        "NotAuthorizedByTitle"
       ]
     },
     {
@@ -18222,6 +18253,14 @@
     "EntityProfileVersionMismatch": {
       "id": 1352,
       "name": "EntityProfileVersionMismatch"
+    },
+    "TemplateVersionTooOld": {
+      "id": 1353,
+      "name": "TemplateVersionTooOld"
+    },
+    "MembershipDefinitionInUse": {
+      "id": 1354,
+      "name": "MembershipDefinitionInUse"
     }
   },
   "errorList": [
@@ -18566,6 +18605,8 @@
     "TitleDeletionPlayerCleanupFailure",
     "EntityFileOperationPending",
     "NoEntityFileOperationPending",
-    "EntityProfileVersionMismatch"
+    "EntityProfileVersionMismatch",
+    "TemplateVersionTooOld",
+    "MembershipDefinitionInUse"
   ]
 }
