@@ -71,13 +71,16 @@ function ExtractArgs(args) {
 }
 
 var argsDict = ExtractArgs(process.argv);
+var playFabUrl = "https://www.playfabapi.com/";
+if (argsDict["playFabUrl"])
+    playFabUrl = argsDict["playFabUrl"];
 
-GetApiFile("https://www.playfabapi.com/apispec/AdminAPI", "Admin.api", "Admin-Api");
-GetApiFile("https://www.playfabapi.com/apispec/ClientAPI", "Client.api", "Client-Api");
-GetApiFile("https://www.playfabapi.com/apispec/EntityAPI", "Entity.api", "Entity-Api");
-GetApiFile("https://www.playfabapi.com/apispec/MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
-GetApiFile("https://www.playfabapi.com/apispec/ServerAPI", "Server.api", "Server-Api");
+GetApiFile(playFabUrl + "apispec/AdminAPI", "Admin.api", "Admin-Api");
+GetApiFile(playFabUrl + "apispec/ClientAPI", "Client.api", "Client-Api");
+GetApiFile(playFabUrl + "apispec/EntityAPI", "Entity.api", "Entity-Api");
+GetApiFile(playFabUrl + "apispec/MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
+GetApiFile(playFabUrl + "apispec/ServerAPI", "Server.api", "Server-Api");
 
-GetApiFile("https://www.playfabapi.com/apispec/PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
-GetApiFile("https://www.playfabapi.com/apispec/PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
-GetApiFile("https://www.playfabapi.com/apispec/PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
+GetApiFile(playFabUrl + "apispec/PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
+GetApiFile(playFabUrl + "apispec/PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
+GetApiFile(playFabUrl + "apispec/PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
