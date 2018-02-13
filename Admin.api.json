@@ -6858,6 +6858,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "EmailTemplateId",
+          "description": "The email template id of the account recovery email template to send.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -9132,8 +9139,8 @@
         "Admin/RemoveVirtualCurrencyTypes"
       ],
       "errors": [
-        "VirtualCurrencyCountLimitExceeded",
-        "InvalidVirtualCurrencyCode"
+        "InvalidVirtualCurrencyCode",
+        "VirtualCurrencyCountLimitExceeded"
       ]
     },
     {
@@ -9268,8 +9275,8 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "StatisticNameConflict",
-        "StatisticCountLimitExceeded"
+        "StatisticCountLimitExceeded",
+        "StatisticNameConflict"
       ]
     },
     {
@@ -9305,8 +9312,8 @@
       "result": "DeletePlayerResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
-        "AccountDeleted"
+        "AccountDeleted",
+        "AccountNotFound"
       ]
     },
     {
@@ -9394,8 +9401,8 @@
       "errors": [
         "InvalidParams",
         "InvalidTitleId",
-        "TitleDeleted",
-        "TitleContainsUserAccounts"
+        "TitleContainsUserAccounts",
+        "TitleDeleted"
       ]
     },
     {
@@ -9419,8 +9426,8 @@
       "resultExample": "",
       "errors": [
         "AccountNotFound",
-        "InvalidTitleId",
-        "InvalidPublisherId"
+        "InvalidPublisherId",
+        "InvalidTitleId"
       ]
     },
     {
@@ -9515,8 +9522,8 @@
       "result": "GetCloudScriptRevisionResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Version\": 1,\r\n    \"Revision\": 3,\r\n    \"CreatedAt\": \"2015-01-03T17:44:21Z\",\r\n    \"Files\": [\r\n      {\r\n        \"Filename\": \"main.js\",\r\n        \"FileContents\": \"var LevelRewards =\\r\\n[\\r\\n\\t[\\\"TestItem1\\\"],\\r\\n\\t[\\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\"],\\r\\n\\t[\\\"TestItem1\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem2\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\", \\\"TestItem3\\\"]\\r\\n]\\r\\n\\r\\nhandlers.onLevelComplete = function(args)\\r\\n{\\r\\n\\tvar levelNum = args.level;\\r\\n\\t\\r\\n\\t// Do some basic input validation\\r\\n\\tif(levelNum < 0 || levelNum >= LevelRewards.length)\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Invalid level \\\"+levelNum+\\\" completed by \\\"+currentPlayerId);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar levelCompleteKey = \\\"LevelCompleted\\\"+levelNum;\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [levelCompleteKey]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Did they already complete this level?\\r\\n\\tif(playerInternalData.Data[levelCompleteKey])\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" already completed level \\\"+levelNum);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar rewards = LevelRewards[levelNum];\\r\\n\\t\\r\\n\\tvar resultItems = null;\\r\\n\\tif(rewards)\\r\\n\\t{\\r\\n\\t\\t// Grant reward items to player for completing the level\\r\\n\\t\\tvar itemGrantResult = server.GrantItemsToUser(\\r\\n\\t\\t{\\r\\n\\t\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\t\\tAnnotation: \\\"Given by completing level \\\"+levelNum,\\r\\n\\t\\t\\tItemIds: rewards\\r\\n\\t\\t});\\r\\n\\t\\t\\r\\n\\t\\tresultItems = itemGrantResult.ItemGrantResults;\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Mark the level as being completed so they can't get the reward again\\r\\n\\tvar saveData = {};\\r\\n\\tsaveData[levelCompleteKey] = \\\"true\\\";\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: saveData\\r\\n\\t});\\r\\n\\r\\n\\t// Return the results of the item grant so the client can see what they got\\r\\n\\treturn {\\r\\n\\t\\trewards: resultItems\\r\\n\\t};\\r\\n}\\r\\n\\r\\nvar monsterRewards =\\r\\n{\\r\\n\\t\\\"skrill\\\" : { \\\"ChumpCoins\\\" : 100},\\r\\n\\t\\\"lumpur\\\" : { \\\"ChumpCoins\\\" : 200}\\r\\n}\\r\\n\\r\\nvar killCoolDown = 60;\\r\\n\\r\\nfunction currTimeSeconds()\\r\\n{\\r\\n\\tvar now = new Date();\\r\\n\\treturn now.getTime() / 1000;\\r\\n}\\r\\n\\r\\nhandlers.monsterKilled = function(args)\\r\\n{\\r\\n\\tvar monsterType = args.type;\\r\\n\\t\\r\\n\\tvar now = currTimeSeconds();\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [\\\"lastKill\\\"]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Check when the last time they killed a monster was \\r\\n\\tvar lastKill = playerInternalData.Data[\\\"lastKill\\\"];\\r\\n\\tif(lastKill)\\r\\n\\t{\\r\\n\\t\\t// We have a value, see when it is\\r\\n\\t\\tvar lastKillTime = parseInt(lastKill.Value);\\r\\n\\t\\tif(now - lastKillTime < killCoolDown)\\r\\n\\t\\t{\\r\\n\\t\\t\\t// In this particular game, it should not be possible to kill a monster more often than once a minute, so they might be cheating\\r\\n\\t\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" killed \\\"+monsterType+\\\" again too quickly!\\\");\\r\\n\\t\\t\\treturn {};\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar killReward = monsterRewards[monsterType];\\r\\n\\t\\r\\n\\tif(killReward)\\r\\n\\t{\\r\\n\\t\\tfor(var currency in killReward)\\r\\n\\t\\t{\\r\\n\\t\\t\\tvar amount = killReward[currency];\\r\\n\\t\\t\\tserver.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currency, Amount: amount });\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Reset the kill timer\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: {\\r\\n\\t\\t\\t\\\"lastKill\\\" : String(now)\\r\\n\\t\\t}\\r\\n\\t});\\r\\n\\t\\r\\n\\treturn {\\r\\n\\t\\trewards: killReward\\r\\n\\t};\\r\\n}\"\r\n      }\r\n    ],\r\n    \"IsPublished\": true\r\n  }\r\n}",
       "errors": [
-        "VersionNotFound",
-        "RevisionNotFound"
+        "RevisionNotFound",
+        "VersionNotFound"
       ]
     },
     {
@@ -9596,14 +9603,14 @@
         "Admin/GetContentList"
       ],
       "errors": [
-        "ContentQuotaExceeded",
-        "BillingInformationRequired"
+        "BillingInformationRequired",
+        "ContentQuotaExceeded"
       ]
     },
     {
       "name": "GetDataReport",
       "summary": "Retrieves a download URL for the requested report",
-      "requestDetails": "Gets the download URL for the requested report data as csv. The reports available through this api are those available in Game Manager. Current ReportName values include: Daily Api Usage Details Report, Daily New User History Report, Daily Overview Report, Daily Real Money Purchase History Report, Daily Top Items Report, Daily Top Spender Report, Daily VC Purchase History Report, Monthly New User History Report, Monthly Overview Report, Monthly Real Money Purchase History Report, Monthly Top Items Report, Monthly Top Spender Report, Monthly Totals Report, Monthly VC Purchase History Report, Seven Day Retention Report.",
+      "requestDetails": "Gets the download URL for the requested report data (in CSV form). The reports available through this API call are those available in the Game Manager, in the Analytics->Reports tab.",
       "subgroup": "Player Data Management",
       "titleTiers": null,
       "url": "/Admin/GetDataReport",
@@ -9614,6 +9621,7 @@
       "result": "GetDataReportResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DownloadUrl\": \"https://data-reports-dev.s3-us-west-1.amazonaws.com/2730/PurchaseDataReport/2014/12/5/data.json?AWSAccessKeyId=AKIAJB5VEITH4PHABPAA&Expires=1418151409&Signature=1cF0Xre4FETLW%2BIu5BCW0TL8ShQ%3D\"\r\n  }\r\n}",
       "errors": [
+        "DAULimitExceeded",
         "InvalidReportDate",
         "ReportNotAvailable"
       ]
@@ -10260,8 +10268,8 @@
       ],
       "errors": [
         "StatisticNotFound",
-        "StatisticVersionIncrementRateExceeded",
-        "StatisticUpdateInProgress"
+        "StatisticUpdateInProgress",
+        "StatisticVersionIncrementRateExceeded"
       ]
     },
     {
@@ -10339,8 +10347,8 @@
         "Admin/RemoveServerBuild"
       ],
       "errors": [
-        "BuildNotFound",
         "BuildNotAvailable",
+        "BuildNotFound",
         "GameServerHostCountLimitExceeded"
       ]
     },
@@ -10452,10 +10460,10 @@
       "result": "ResetPasswordResult",
       "resultExample": "",
       "errors": [
-        "InvalidTitleId",
-        "InvalidAuthToken",
         "AuthTokenDoesNotExist",
-        "AuthTokenExpired"
+        "AuthTokenExpired",
+        "InvalidAuthToken",
+        "InvalidTitleId"
       ]
     },
     {
@@ -10598,7 +10606,7 @@
     },
     {
       "name": "SendAccountRecoveryEmail",
-      "summary": "Forces an email to be sent to the registered email address for the specified account, with a link allowing the user to change the password",
+      "summary": "Forces an email to be sent to the registered email address for the user's account, with a link allowing the user to change the password.If an account recovery email template ID is provided, an email using the custom email template will be used.",
       "requestDetails": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
       "subgroup": "Account Management",
       "titleTiers": null,
@@ -10606,7 +10614,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "SendAccountRecoveryEmailRequest",
-      "requestExample": "{\r\n  \"Email\": \"assignedemail@here.com\"\r\n}",
+      "requestExample": "{\r\n  \"Email\": \"assignedemail@here.com\",\r\n  \"EmailTemplateId\": \"D53AB15D8F12E330\"\r\n}",
       "result": "SendAccountRecoveryEmailResult",
       "resultExample": "",
       "errors": [
@@ -10631,8 +10639,8 @@
         "Admin/UpdateCatalogItems"
       ],
       "errors": [
-        "InvalidJSONContent",
-        "InvalidItemProperties"
+        "InvalidItemProperties",
+        "InvalidJSONContent"
       ]
     },
     {
@@ -10662,8 +10670,8 @@
       "result": "SetPublishedRevisionResult",
       "resultExample": "",
       "errors": [
-        "VersionNotFound",
-        "RevisionNotFound"
+        "RevisionNotFound",
+        "VersionNotFound"
       ]
     },
     {
@@ -10705,8 +10713,8 @@
         "Admin/UpdateStoreItems"
       ],
       "errors": [
-        "InvalidJSONContent",
-        "CatalogNotConfigured"
+        "CatalogNotConfigured",
+        "InvalidJSONContent"
       ]
     },
     {
@@ -10765,9 +10773,9 @@
       "result": "SetupPushNotificationResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ARN\": \"arn:aws:iam::123456789012:user/David\"\r\n  }\r\n}",
       "errors": [
-        "ValueAlreadyExists",
         "InvalidTitleId",
-        "PushServiceError"
+        "PushServiceError",
+        "ValueAlreadyExists"
       ]
     },
     {
@@ -10827,8 +10835,8 @@
         "Admin/SetCatalogItems"
       ],
       "errors": [
-        "InvalidJSONContent",
-        "InvalidItemProperties"
+        "InvalidItemProperties",
+        "InvalidJSONContent"
       ]
     },
     {
@@ -10950,8 +10958,8 @@
         "Admin/SetStoreItems"
       ],
       "errors": [
-        "InvalidJSONContent",
-        "CatalogNotConfigured"
+        "CatalogNotConfigured",
+        "InvalidJSONContent"
       ]
     },
     {
@@ -10975,12 +10983,12 @@
         "Admin/RunTask"
       ],
       "errors": [
-        "TaskNotFound",
         "InvalidScheduledTaskName",
-        "InvalidTaskSchedule",
         "InvalidScheduledTaskType",
+        "InvalidTaskSchedule",
         "ScheduledTaskCreateConflict",
-        "ScheduledTaskNameConflict"
+        "ScheduledTaskNameConflict",
+        "TaskNotFound"
       ]
     },
     {
@@ -12521,6 +12529,62 @@
     "FailedLoginAttemptRateLimitExceeded": {
       "id": 1356,
       "name": "FailedLoginAttemptRateLimitExceeded"
+    },
+    "EntityBlockedByGroup": {
+      "id": 1357,
+      "name": "EntityBlockedByGroup"
+    },
+    "EntityIsNotGroupOrRole": {
+      "id": 1358,
+      "name": "EntityIsNotGroupOrRole"
+    },
+    "EntityIsAlreadyMember": {
+      "id": 1359,
+      "name": "EntityIsAlreadyMember"
+    },
+    "MalformedGroupTemplate": {
+      "id": 1360,
+      "name": "MalformedGroupTemplate"
+    },
+    "GroupInvitationNotFound": {
+      "id": 1361,
+      "name": "GroupInvitationNotFound"
+    },
+    "GroupJoinRequestNotFound": {
+      "id": 1362,
+      "name": "GroupJoinRequestNotFound"
+    },
+    "OutstandingInvitationAcceptedInstead": {
+      "id": 1363,
+      "name": "OutstandingInvitationAcceptedInstead"
+    },
+    "OutstandingJoinRequestAcceptedInstead": {
+      "id": 1364,
+      "name": "OutstandingJoinRequestAcceptedInstead"
+    },
+    "RoleIsGroupDefaultMember": {
+      "id": 1365,
+      "name": "RoleIsGroupDefaultMember"
+    },
+    "RoleIsGroupAdmin": {
+      "id": 1366,
+      "name": "RoleIsGroupAdmin"
+    },
+    "RoleNameNotAvailable": {
+      "id": 1367,
+      "name": "RoleNameNotAvailable"
+    },
+    "GroupNameNotAvailable": {
+      "id": 1368,
+      "name": "GroupNameNotAvailable"
+    },
+    "EmailReportAlreadySent": {
+      "id": 1369,
+      "name": "EmailReportAlreadySent"
+    },
+    "EmailReportRecipientBlacklisted": {
+      "id": 1370,
+      "name": "EmailReportRecipientBlacklisted"
     }
   },
   "errorList": [
@@ -12869,6 +12933,20 @@
     "TemplateVersionTooOld",
     "MembershipDefinitionInUse",
     "PaymentPageNotConfigured",
-    "FailedLoginAttemptRateLimitExceeded"
+    "FailedLoginAttemptRateLimitExceeded",
+    "EntityBlockedByGroup",
+    "EntityIsNotGroupOrRole",
+    "EntityIsAlreadyMember",
+    "MalformedGroupTemplate",
+    "GroupInvitationNotFound",
+    "GroupJoinRequestNotFound",
+    "OutstandingInvitationAcceptedInstead",
+    "OutstandingJoinRequestAcceptedInstead",
+    "RoleIsGroupDefaultMember",
+    "RoleIsGroupAdmin",
+    "RoleNameNotAvailable",
+    "GroupNameNotAvailable",
+    "EmailReportAlreadySent",
+    "EmailReportRecipientBlacklisted"
   ]
 }
