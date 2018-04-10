@@ -1,47 +1,86 @@
 var https = require("https");
-var fs = require('fs');
+var fs = require("fs");
 
 var argsDict = null;
 
-function WriteApiFile(filename, body, descriptor) {
-    body = TabifyJson(body, descriptor);
-    if (body === null) {
+function WriteJsonFile(filename, jsonBody, descriptor) {
+    if (jsonBody === null) {
         console.log("  ***  Failed to write: " + descriptor);
         return;
     }
-    var fullFileName = filename + ".json";
-    console.log("Begin writing: " + fullFileName);
-    fs.writeFile(fullFileName, body, function (err) {
+    if (!filename.endsWith(".json"))
+        filename = filename + ".json";
+    console.log("  -> Begin writing: " + filename);
+    fs.writeFile(filename, jsonBody, function (err) {
         if (err)
             return console.log(err);
-        console.log("Finished writing: " + fullFileName);
+        console.log("  <- Finished writing: " + filename);
     });
 }
 
-function TabifyJson(inputJson, descriptor) {
-    console.log("Begin tabifying: " + descriptor);
+function TabifyJson(inputJson, descriptor, tabSpaces) {
+    console.log("  Begin tabifying: " + descriptor);
     var output = null;
+    if (!tabSpaces) tabSpaces = 2;
     try {
         var tempObj = JSON.parse(inputJson);
-        output = JSON.stringify(tempObj, null, 2);
-        console.log("Finish tabifying: " + descriptor);
+        output = JSON.stringify(tempObj, null, tabSpaces);
+        console.log("  Finish tabifying: " + descriptor);
     } catch (e) {
         console.log("  ***  Failed to stringify: " + descriptor);
         output = null;
     }
-    
+
     return output;
 }
 
-function GetApiFile(inputUrl, outputFilename, descriptor) {
-    console.log("Begin reading: " + inputUrl);
+function UpdateVersionNumbers(verJson) {
+    console.log("  Begin version numbers");
+
+    var versionRe = new RegExp("([0-9]+)\.([0-9]+)\.[0-9][0-9][0-9][0-9][0-9][0-9]");
+    var now = new Date();
+    var todaysDate = (now.getUTCFullYear()%100).toString().padStart(2, "0") + (now.getMonth()+1).toString().padStart(2, "0") + (now.getUTCDate()).toString().padStart(2, "0");
+    var output = JSON.parse(verJson);
+    var versions = output.sdkVersion;
+    for (var i in versions) {
+        var eachTempVer = versions[i];
+        if (typeof(eachTempVer) !== "string") continue;
+        var reMatch = eachTempVer.match(versionRe);
+        if (!reMatch) continue;
+
+        var majorVer = parseInt(reMatch[1]);
+        var minorVer = parseInt(reMatch[2]);
+        if (majorVer !== 0 || minorVer !== 0)
+            minorVer++; // Increment the minor version here
+
+        versions[i] = majorVer.toString() + "." + minorVer.toString() + "." + todaysDate;
+    }
+    
+    WriteJsonFile("SdkManualNotes.json", TabifyJson(JSON.stringify(output), "SdkManualNotes", 4), "SdkManualNotes");
+}
+
+function GetFileFromUrl(inputUrl, processFileCallback) {
+    console.log("-> Begin reading: " + inputUrl);
     var rawResponse = "";
     var postReq = https.get(inputUrl, function (res) {
         res.setEncoding("utf8");
         res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
-            console.log("Finished reading: " + inputUrl);
-            WriteApiFile(outputFilename, rawResponse, descriptor)
+            console.log("<- Finished reading: " + inputUrl);
+            processFileCallback(rawResponse);
+        });
+    });
+}
+
+function GetApiFile(inputUrl, outputFilename, descriptor) {
+    console.log("-> Begin reading: " + inputUrl);
+    var rawResponse = "";
+    var postReq = https.get(inputUrl, function (res) {
+        res.setEncoding("utf8");
+        res.on("data", function (chunk) { rawResponse += chunk; });
+        res.on("end", function () {
+            console.log("<- Finished reading: " + inputUrl);
+            WriteJsonFile(outputFilename, TabifyJson(rawResponse, descriptor, 2), descriptor);
         });
     });
 }
@@ -84,3 +123,5 @@ GetApiFile(playFabUrl + "apispec/ServerAPI", "Server.api", "Server-Api");
 GetApiFile(playFabUrl + "apispec/PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
 GetApiFile(playFabUrl + "apispec/PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
 GetApiFile(playFabUrl + "apispec/PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
+
+GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", UpdateVersionNumbers);
