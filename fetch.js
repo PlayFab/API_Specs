@@ -113,6 +113,8 @@ var argsDict = ExtractArgs(process.argv);
 var playFabUrl = "https://www.playfabapi.com/";
 if (argsDict["playFabUrl"])
     playFabUrl = argsDict["playFabUrl"];
+if (!playFabUrl.endsWith("/"))
+    playFabUrl = playFabUrl + "/";
 
 GetApiFile(playFabUrl + "apispec/AdminAPI", "Admin.api", "Admin-Api");
 GetApiFile(playFabUrl + "apispec/ClientAPI", "Client.api", "Client-Api");
