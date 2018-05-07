@@ -904,6 +904,47 @@
         }
       ]
     },
+    "GetEntityProfilesRequest": {
+      "name": "GetEntityProfilesRequest",
+      "className": "GetEntityProfilesRequest",
+      "classNameSpace": "PlayFab.Entity.Models",
+      "assembly": "PlayFab.Entity.Models",
+      "properties": [
+        {
+          "name": "DataAsObject",
+          "description": "Determines whether the objects will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON string.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "Entities",
+          "description": "Entity keys of the profiles to load. Must be between 1 and 25",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "GetEntityProfilesResponse": {
+      "name": "GetEntityProfilesResponse",
+      "className": "GetEntityProfilesResponse",
+      "classNameSpace": "PlayFab.Entity.Models",
+      "assembly": "PlayFab.Entity.Models",
+      "properties": [
+        {
+          "name": "Profiles",
+          "description": "Entity profiles",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityProfileBody",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetEntityTokenRequest": {
       "name": "GetEntityTokenRequest",
       "className": "GetEntityTokenRequest",
@@ -2282,6 +2323,7 @@
       "methods": [
         "GetGlobalPolicy",
         "GetProfile",
+        "GetProfiles",
         "SetGlobalPolicy",
         "SetProfilePolicy"
       ]
@@ -2761,7 +2803,26 @@
       "request": "GetEntityProfileRequest",
       "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"1234567787392\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
       "result": "GetEntityProfileResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Profile\": {\r\n      \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\r\n      \"VersionNumber\": 0,\r\n      \"Entity\": {\r\n        \"Id\": \"1234567787392\",\r\n        \"Type\": \"title_player_account\",\r\n        \"TypeString\": \"title_player_account\"\r\n      }\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Profile\": {\r\n      \"Entity\": {\r\n        \"Id\": \"1234567787392\",\r\n        \"Type\": \"title_player_account\",\r\n        \"TypeString\": \"title_player_account\"\r\n      },\r\n      \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\r\n      \"VersionNumber\": 0\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "NotAuthenticated",
+        "NotAuthorized",
+        "ProfileDoesNotExist"
+      ]
+    },
+    {
+      "name": "GetProfiles",
+      "summary": "Retrieves the entity's profile.",
+      "requestDetails": "Given a set of entity types and entity identifiers will retrieve all readable profiles properties for the caller. Profiles that the caller is not allowed to read will silently not be included in the results.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Profile/GetProfiles",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetEntityProfilesRequest",
+      "requestExample": "{\r\n  \"Entities\": [\r\n    {\r\n      \"Id\": \"1234567787392\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    },\r\n    {\r\n      \"Id\": \"42434567785265\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  ]\r\n}",
+      "result": "GetEntityProfilesResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Profiles\": [\r\n      {\r\n        \"Entity\": {\r\n          \"Id\": \"1234567787392\",\r\n          \"Type\": \"title_player_account\",\r\n          \"TypeString\": \"title_player_account\"\r\n        },\r\n        \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\r\n        \"VersionNumber\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "NotAuthenticated",
         "NotAuthorized",
@@ -2991,6 +3052,7 @@
         "Group/ListGroupApplications"
       ],
       "errors": [
+        "GroupApplicationNotFound",
         "NotAuthenticated",
         "NotAuthorized"
       ]
@@ -3174,6 +3236,10 @@
     "Success": {
       "id": 0,
       "name": "Success"
+    },
+    "UnkownError": {
+      "id": 500,
+      "name": "UnkownError"
     },
     "InvalidParams": {
       "id": 1000,
@@ -4618,10 +4684,35 @@
     "EventEntityNotAllowed": {
       "id": 1372,
       "name": "EventEntityNotAllowed"
+    },
+    "InvalidEntityType": {
+      "id": 1373,
+      "name": "InvalidEntityType"
+    },
+    "NullTokenResultFromAad": {
+      "id": 1374,
+      "name": "NullTokenResultFromAad"
+    },
+    "InvalidTokenResultFromAad": {
+      "id": 1375,
+      "name": "InvalidTokenResultFromAad"
+    },
+    "NoValidCertificateForAad": {
+      "id": 1376,
+      "name": "NoValidCertificateForAad"
+    },
+    "InvalidCertificateForAad": {
+      "id": 1377,
+      "name": "InvalidCertificateForAad"
+    },
+    "DuplicateDropTableId": {
+      "id": 1378,
+      "name": "DuplicateDropTableId"
     }
   },
   "errorList": [
     "Success",
+    "UnkownError",
     "InvalidParams",
     "AccountNotFound",
     "AccountBanned",
@@ -4982,6 +5073,12 @@
     "EmailReportAlreadySent",
     "EmailReportRecipientBlacklisted",
     "EventNamespaceNotAllowed",
-    "EventEntityNotAllowed"
+    "EventEntityNotAllowed",
+    "InvalidEntityType",
+    "NullTokenResultFromAad",
+    "InvalidTokenResultFromAad",
+    "NoValidCertificateForAad",
+    "InvalidCertificateForAad",
+    "DuplicateDropTableId"
   ]
 }

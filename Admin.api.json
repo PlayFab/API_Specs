@@ -2647,6 +2647,50 @@
         }
       ]
     },
+    "DeleteMasterPlayerAccountRequest": {
+      "name": "DeleteMasterPlayerAccountRequest",
+      "className": "DeleteMasterPlayerAccountRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeleteMasterPlayerAccountResult": {
+      "name": "DeleteMasterPlayerAccountResult",
+      "className": "DeleteMasterPlayerAccountResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "JobReceiptId",
+          "description": "A notification email with this job receipt Id will be sent to the title notification email address when deletion is complete.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleIds",
+          "description": "List of titles from which the player's data will be deleted.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "DeletePlayerRequest": {
       "name": "DeletePlayerRequest",
       "className": "DeletePlayerRequest",
@@ -2968,6 +3012,42 @@
         }
       ]
     },
+    "ExportMasterPlayerDataRequest": {
+      "name": "ExportMasterPlayerDataRequest",
+      "className": "ExportMasterPlayerDataRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ExportMasterPlayerDataResult": {
+      "name": "ExportMasterPlayerDataResult",
+      "className": "ExportMasterPlayerDataResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "JobReceiptId",
+          "description": "An email with this job receipt Id containing the export download link will be sent to the title notification email address when the export is complete.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GameBuildStatus": {
       "name": "GameBuildStatus",
       "className": "GameBuildStatus",
@@ -3037,6 +3117,9 @@
       "enumvalues": [
         {
           "name": "Success"
+        },
+        {
+          "name": "UnkownError"
         },
         {
           "name": "InvalidParams"
@@ -4120,6 +4203,24 @@
         },
         {
           "name": "EventEntityNotAllowed"
+        },
+        {
+          "name": "InvalidEntityType"
+        },
+        {
+          "name": "NullTokenResultFromAad"
+        },
+        {
+          "name": "InvalidTokenResultFromAad"
+        },
+        {
+          "name": "NoValidCertificateForAad"
+        },
+        {
+          "name": "InvalidCertificateForAad"
+        },
+        {
+          "name": "DuplicateDropTableId"
         }
       ]
     },
@@ -4641,6 +4742,43 @@
           "jsontype": "Object",
           "actualtype": "GameModeInfo",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayedTitleListRequest": {
+      "name": "GetPlayedTitleListRequest",
+      "className": "GetPlayedTitleListRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayedTitleListResult": {
+      "name": "GetPlayedTitleListResult",
+      "className": "GetPlayedTitleListResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "TitleIds",
+          "description": "List of titles the player has played",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -10092,8 +10230,11 @@
       "name": "Account Management",
       "methods": [
         "BanUsers",
+        "DeleteMasterPlayerAccount",
         "DeletePlayer",
         "DeleteTitle",
+        "ExportMasterPlayerData",
+        "GetPlayedTitleList",
         "GetPlayerIdFromAuthToken",
         "GetPlayerProfile",
         "GetUserAccountInfo",
@@ -10545,6 +10686,30 @@
       ]
     },
     {
+      "name": "DeleteMasterPlayerAccount",
+      "summary": "Removes a master player account entirely from all titles and deletes all associated data",
+      "requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances,         characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes.         Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted.         Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion.         Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.         It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Admin/DeleteMasterPlayerAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteMasterPlayerAccountRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"A68C908B66C23C5\"\r\n}",
+      "result": "DeleteMasterPlayerAccountResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"JobReceiptId\": \"A101202A2CD049A0A93C9531DFB37DE8\",\r\n    \"TitleIds\": [\r\n      \"A248\",\r\n      \"19B0\"\r\n    ]\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/GetPlayedTitleList"
+      ],
+      "errors": [
+        "AccountDeleted",
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "DeletePlayer",
       "summary": "Removes a user's player account from a title and deletes all associated data",
       "requestDetails": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,         characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.         Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.         Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.         Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.",
@@ -10674,6 +10839,27 @@
         "AccountNotFound",
         "InvalidPublisherId",
         "InvalidTitleId"
+      ]
+    },
+    {
+      "name": "ExportMasterPlayerData",
+      "summary": "Exports all associated data of a master player account",
+      "requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances,         characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history.         Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download.         Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Admin/ExportMasterPlayerData",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ExportMasterPlayerDataRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"A68C908B66C23C5\"\r\n}",
+      "result": "ExportMasterPlayerDataResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"JobReceiptId\": \"A101202A2CD049A0A93C9531DFB37DE8\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "AccountDeleted",
+        "AccountNotFound"
       ]
     },
     {
@@ -10907,6 +11093,30 @@
       "seeAlso": [
         "Admin/GetMatchmakerGameInfo",
         "Admin/ModifyMatchmakerGameModes"
+      ]
+    },
+    {
+      "name": "GetPlayedTitleList",
+      "summary": "Get the list of titles that the player has played",
+      "requestDetails": "Useful for identifying titles of which the player's data will be deleted by DeleteMasterPlayer.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Admin/GetPlayedTitleList",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayedTitleListRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"A68C908B66C23C5\"\r\n}",
+      "result": "GetPlayedTitleListResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TitleIds\": [\r\n      \"A248\",\r\n      \"19B0\"\r\n    ]\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/DeleteMasterPlayerAccount"
+      ],
+      "errors": [
+        "AccountDeleted",
+        "AccountNotFound"
       ]
     },
     {
@@ -11705,6 +11915,7 @@
       "result": "ResetPasswordResult",
       "resultExample": "",
       "errors": [
+        "AuthTokenAlreadyUsedToResetPassword",
         "AuthTokenDoesNotExist",
         "AuthTokenExpired",
         "InvalidAuthToken",
@@ -11979,6 +12190,7 @@
       ],
       "errors": [
         "CatalogNotConfigured",
+        "InvalidItemId",
         "InvalidJSONContent"
       ]
     },
@@ -12414,6 +12626,10 @@
     "Success": {
       "id": 0,
       "name": "Success"
+    },
+    "UnkownError": {
+      "id": 500,
+      "name": "UnkownError"
     },
     "InvalidParams": {
       "id": 1000,
@@ -13858,10 +14074,35 @@
     "EventEntityNotAllowed": {
       "id": 1372,
       "name": "EventEntityNotAllowed"
+    },
+    "InvalidEntityType": {
+      "id": 1373,
+      "name": "InvalidEntityType"
+    },
+    "NullTokenResultFromAad": {
+      "id": 1374,
+      "name": "NullTokenResultFromAad"
+    },
+    "InvalidTokenResultFromAad": {
+      "id": 1375,
+      "name": "InvalidTokenResultFromAad"
+    },
+    "NoValidCertificateForAad": {
+      "id": 1376,
+      "name": "NoValidCertificateForAad"
+    },
+    "InvalidCertificateForAad": {
+      "id": 1377,
+      "name": "InvalidCertificateForAad"
+    },
+    "DuplicateDropTableId": {
+      "id": 1378,
+      "name": "DuplicateDropTableId"
     }
   },
   "errorList": [
     "Success",
+    "UnkownError",
     "InvalidParams",
     "AccountNotFound",
     "AccountBanned",
@@ -14222,6 +14463,12 @@
     "EmailReportAlreadySent",
     "EmailReportRecipientBlacklisted",
     "EventNamespaceNotAllowed",
-    "EventEntityNotAllowed"
+    "EventEntityNotAllowed",
+    "InvalidEntityType",
+    "NullTokenResultFromAad",
+    "InvalidTokenResultFromAad",
+    "NoValidCertificateForAad",
+    "InvalidCertificateForAad",
+    "DuplicateDropTableId"
   ]
 }
