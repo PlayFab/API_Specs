@@ -2766,6 +2766,9 @@
         },
         {
           "name": "group"
+        },
+        {
+          "name": "service"
         }
       ]
     },
@@ -2973,6 +2976,14 @@
           "optional": true
         },
         {
+          "name": "PSNInfo",
+          "description": "Available PSN information, if the user and PlayFab friend are both connected to PSN.",
+          "jsontype": "Object",
+          "actualtype": "UserPsnInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "SteamInfo",
           "description": "Available Steam information (if the user and PlayFab friend are also connected in Steam).",
           "jsontype": "Object",
@@ -3000,6 +3011,14 @@
           "description": "PlayFab unique username for this friend.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxInfo",
+          "description": "Available Xbox information, if the user and PlayFab friend are both connected to Xbox Live.",
+          "jsontype": "Object",
+          "actualtype": "UserXboxInfo",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -3736,6 +3755,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "XboxToken",
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -3839,6 +3865,13 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -3936,6 +3969,13 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -3965,6 +4005,13 @@
           "jsontype": "Object",
           "actualtype": "PlayerProfileViewConstraints",
           "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -12365,6 +12412,7 @@
         "TradeAllowedUsersInvalid",
         "TradeAlreadyFilled",
         "TradeCancelled",
+        "TradeDoesNotExist",
         "TradeInventoryItemDoesNotExist",
         "TradeInventoryItemExpired",
         "TradeInventoryItemInvalidStatus",
@@ -12372,7 +12420,8 @@
         "TradeInventoryItemIsBundle",
         "TradeInventoryItemIsConsumed",
         "TradeInventoryItemIsStackable",
-        "TradeStatusNotValidForAccepting"
+        "TradeStatusNotValidForAccepting",
+        "TradeWaitForStatusTimeout"
       ]
     },
     {
@@ -12573,7 +12622,8 @@
         "Client/StartPurchase"
       ],
       "errors": [
-        "FailedByPaymentProvider"
+        "FailedByPaymentProvider",
+        "PurchaseDoesNotExist"
       ]
     },
     {
@@ -13586,6 +13636,7 @@
       "result": "GetTitlePublicKeyResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"RSAPublicKey\": \"dGVzdCBrZXkgaGVyZQ==\"\r\n  }\r\n}",
       "errors": [
+        "InvalidSharedSecretKey",
         "NoSharedSecretKeyConfigured"
       ]
     },
@@ -14209,6 +14260,7 @@
         "FacebookAPIError",
         "InvalidFacebookToken",
         "InvalidTitleId",
+        "PlayerSecretAlreadyConfigured",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -14850,6 +14902,7 @@
         "Beta"
       ],
       "errors": [
+        "AllAdPlacementViewsAlreadyConsumed",
         "InvalidAdPlacementAndReward",
         "InvalidRequest"
       ]
@@ -14912,7 +14965,7 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "SetFriendTagsRequest",
-      "requestExample": "{\r\n  \"FriendPlayFabId\": \"29837799\",\r\n  \"Tags\": [\r\n    \"great sniper\",\r\n    \"sucks at melee\"\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"FriendPlayFabId\": \"29837799\",\r\n  \"Tags\": [\r\n    \"great sniper\",\r\n    \"no good at melee\"\r\n  ]\r\n}",
       "result": "SetFriendTagsResult",
       "resultExample": "",
       "seeAlso": [
@@ -15473,7 +15526,8 @@
         "AccountNotFound",
         "APINotEnabledForGameClientAccess",
         "InvalidUserStatistics",
-        "StatisticCountLimitExceeded"
+        "StatisticCountLimitExceeded",
+        "StatisticNameConflict"
       ]
     },
     {
@@ -15537,6 +15591,7 @@
         "InvalidReceipt",
         "MissingTitleGoogleProperties",
         "NoMatchingCatalogItemForReceipt",
+        "NoRealMoneyPriceForCatalogItem",
         "ReceiptAlreadyUsed",
         "ReceiptCancelled",
         "SubscriptionAlreadyTaken"
@@ -15605,6 +15660,7 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
         "CharacterNotFound",
+        "InvalidEventField",
         "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
@@ -17123,6 +17179,46 @@
     "DuplicateDropTableId": {
       "id": 1378,
       "name": "DuplicateDropTableId"
+    },
+    "ComputeOK": {
+      "id": 1379,
+      "name": "ComputeOK"
+    },
+    "ComputeAccepted": {
+      "id": 1380,
+      "name": "ComputeAccepted"
+    },
+    "ComputeNoContent": {
+      "id": 1381,
+      "name": "ComputeNoContent"
+    },
+    "ComputeBadRequest": {
+      "id": 1382,
+      "name": "ComputeBadRequest"
+    },
+    "ComputeUnauthorized": {
+      "id": 1383,
+      "name": "ComputeUnauthorized"
+    },
+    "ComputeForbidden": {
+      "id": 1384,
+      "name": "ComputeForbidden"
+    },
+    "ComputeNotFound": {
+      "id": 1385,
+      "name": "ComputeNotFound"
+    },
+    "ComputeConflict": {
+      "id": 1386,
+      "name": "ComputeConflict"
+    },
+    "ComputeInternalServerError": {
+      "id": 1387,
+      "name": "ComputeInternalServerError"
+    },
+    "ComputeServiceUnavailable": {
+      "id": 1388,
+      "name": "ComputeServiceUnavailable"
     }
   },
   "errorList": [
@@ -17494,6 +17590,16 @@
     "InvalidTokenResultFromAad",
     "NoValidCertificateForAad",
     "InvalidCertificateForAad",
-    "DuplicateDropTableId"
+    "DuplicateDropTableId",
+    "ComputeOK",
+    "ComputeAccepted",
+    "ComputeNoContent",
+    "ComputeBadRequest",
+    "ComputeUnauthorized",
+    "ComputeForbidden",
+    "ComputeNotFound",
+    "ComputeConflict",
+    "ComputeInternalServerError",
+    "ComputeServiceUnavailable"
   ]
 }
