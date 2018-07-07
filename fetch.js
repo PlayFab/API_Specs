@@ -116,6 +116,28 @@ if (argsDict["playFabUrl"])
 if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
 
+try { 
+    // async load toc file
+    contents = JSON.parse("TOC.js", (key, value) => {
+    if (key === "documents") {
+        // value is a list of objects
+        for (var i in value) {
+            // iterate toc look for format LegacyPlayFabApiSpec format files
+                if (i["format"] === "LegacyPlayFabApiSpec") {
+                    // THEN build list of the below calls based on the files we find
+                    // (docKey, relPath, shortName);
+                    var docKey = i["docKey"];
+                    var relPath = i["relPath"];
+                    var shortName = i["shortName"];
+                    GetApiFile(playFabUrl + docKey, relPath, shortName);
+                };
+        }
+    }});
+} catch(err) {
+    console.log("=== fetch.js failed to parse TOC.json as JSON :( ===");
+    console.log(err);
+}
+
 GetApiFile(playFabUrl + "apispec/AdminAPI", "Admin.api", "Admin-Api");
 GetApiFile(playFabUrl + "apispec/ClientAPI", "Client.api", "Client-Api");
 GetApiFile(playFabUrl + "apispec/EntityAPI", "Entity.api", "Entity-Api");
