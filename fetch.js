@@ -120,15 +120,12 @@ try {
     // async load toc file
     contents = JSON.parse("TOC.js", (key, value) => {
     if (key === "documents") {
-        // value is a list of objects
-        for (var i in value) {
-            // iterate toc look for format LegacyPlayFabApiSpec format files
-                if (i["format"] === "LegacyPlayFabApiSpec") {
-                    // THEN build list of the below calls based on the files we find
-                    // (docKey, relPath, shortName);
-                    var docKey = i["docKey"];
-                    var relPath = i["relPath"];
-                    var shortName = i["shortName"];
+        // value is expected to be a list of objects
+        for (var obj in value) {
+                if (obj["format"] === "LegacyPlayFabApiSpec") {
+                    var docKey = obj["docKey"];
+                    var relPath = obj["relPath"];
+                    var shortName = obj["shortName"];
                     GetApiFile(playFabUrl + docKey, relPath, shortName);
                 };
         }
