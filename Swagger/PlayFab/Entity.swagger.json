@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "180612",
+    "version": "180709",
     "title": "PlayFab Entity API",
-    "description": "PlayFab Entity APIs provide a variety of core PlayFab features and work consistently across a broad set of entities, such as titles, players, characters, and more.",
+    "description": "PlayFab Entity APIs provide a variety of core PlayFab features and work consistently across a broad set of entities, such as titles, players, characters, and more. API methods for executing CloudScript with an Entity Profile",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -89,13 +89,94 @@
         ]
       }
     },
+    "/CloudScript/ExecuteEntityCloudScript": {
+      "post": {
+        "operationId": "CloudScript_ExecuteEntityCloudScript",
+        "tags": [
+          "Server-Side Cloud Script"
+        ],
+        "description": "Executes CloudScript using the Entity Profile",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/entity/method/ExecuteEntityCloudScript"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ExecuteEntityCloudScriptRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/ExecuteCloudScriptResult"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "Revision": 3,
+                  "FunctionResult": {
+                    "newScore": 25
+                  },
+                  "Logs": [
+                    {
+                      "Level": "Info",
+                      "Message": "Something normal happened",
+                      "Data": {
+                        "secondsAfterStart": 75
+                      }
+                    },
+                    {
+                      "Level": "Error",
+                      "Message": "Something unexpected happened"
+                    }
+                  ],
+                  "ExecutionTimeSeconds": 0.03670790046453476,
+                  "MemoryConsumedBytes": 38904,
+                  "APIRequestsIssued": 2
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Executes CloudScript with the entity profile that is defined in the request.",
+        "x-errors": [
+          "CloudScriptAPIRequestCountExceeded",
+          "CloudScriptAPIRequestError",
+          "CloudScriptFunctionArgumentSizeExceeded",
+          "CloudScriptHTTPRequestError",
+          "CloudScriptNotFound",
+          "JavascriptException"
+        ]
+      }
+    },
     "/Event/WriteEvents": {
       "post": {
         "operationId": "Event_WriteEvents",
         "tags": [
           "PlayStream Events"
         ],
-        "description": "Writes events to PlayStream.",
+        "description": "Write batches of entity based events to PlayStream.",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/entity/method/WriteEvents"
         },
@@ -142,9 +223,6 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-AllInclusiveFlags": [
-          "Beta"
-        ],
         "x-errors": [
           "EventEntityNotAllowed",
           "EventNamespaceNotAllowed",
@@ -542,7 +620,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/AllocateSessionHostResult"
+                  "$ref": "#/responses/AllocateSessionHostResponse"
                 }
               },
               "example": {
@@ -574,19 +652,19 @@
         ]
       }
     },
-    "/GameServer/CreateBuild": {
+    "/GameServer/CreateBuildWithCustomContainer": {
       "post": {
-        "operationId": "GameServer_CreateBuild",
+        "operationId": "GameServer_CreateBuildWithCustomContainer",
         "tags": [
           "GameServer"
         ],
         "description": "",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/entity/method/CreateBuild"
+          "url": "https://api.playfab.com/documentation/entity/method/CreateBuildWithCustomContainer"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/CreateBuildRequest"
+            "$ref": "#/parameters/CreateBuildWithCustomContainerRequest"
           }
         ],
         "security": [
@@ -609,7 +687,75 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/CreateBuildResult"
+                  "$ref": "#/responses/CreateBuildResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": null
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "GameServer/CreateBuildWithManagedContainer",
+          "GameServer/DeleteBuild",
+          "GameServer/GetBuild",
+          "GameServer/ListBuilds"
+        ],
+        "x-errors": [
+          "GameServerBadRequest",
+          "GameServerConflict",
+          "GameServerForbidden",
+          "GameServerInternalServerError",
+          "GameServerOk",
+          "GameServerUnauthorized"
+        ]
+      }
+    },
+    "/GameServer/CreateBuildWithManagedContainer": {
+      "post": {
+        "operationId": "GameServer_CreateBuildWithManagedContainer",
+        "tags": [
+          "GameServer"
+        ],
+        "description": "",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/entity/method/CreateBuildWithManagedContainer"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateBuildWithManagedContainerRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/CreateBuildResponse"
                 }
               },
               "example": {
@@ -676,7 +822,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/CreateRemoteUserResult"
+                  "$ref": "#/responses/CreateRemoteUserResponse"
                 }
               },
               "example": {
@@ -745,7 +891,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/DeleteBuildResult"
+                  "$ref": "#/responses/DeleteBuildResponse"
                 }
               },
               "example": {
@@ -763,7 +909,7 @@
           "Beta"
         ],
         "x-seeAlso": [
-          "GameServer/CreateBuild",
+          "GameServer/CreateBuildWithManagedContainer",
           "GameServer/GetBuild",
           "GameServer/ListBuilds"
         ],
@@ -812,7 +958,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetAssetUploadUrlResult"
+                  "$ref": "#/responses/GetAssetUploadUrlResponse"
                 }
               },
               "example": {
@@ -883,7 +1029,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetBuildResult"
+                  "$ref": "#/responses/GetBuildResponse"
                 }
               },
               "example": {
@@ -901,7 +1047,7 @@
           "Beta"
         ],
         "x-seeAlso": [
-          "GameServer/CreateBuild",
+          "GameServer/CreateBuildWithManagedContainer",
           "GameServer/DeleteBuild",
           "GameServer/ListBuilds"
         ],
@@ -951,7 +1097,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetRemoteLoginEndpointResult"
+                  "$ref": "#/responses/GetRemoteLoginEndpointResponse"
                 }
               },
               "example": {
@@ -1020,7 +1166,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetSessionHostResultDetailsResult"
+                  "$ref": "#/responses/GetSessionHostResponseDetailsResponse"
                 }
               },
               "example": {
@@ -1086,7 +1232,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/ListAssetsResult"
+                  "$ref": "#/responses/ListAssetsResponse"
                 }
               },
               "example": {
@@ -1157,7 +1303,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/ListBuildsResult"
+                  "$ref": "#/responses/ListBuildsResponse"
                 }
               },
               "example": {
@@ -1175,7 +1321,7 @@
           "Beta"
         ],
         "x-seeAlso": [
-          "GameServer/CreateBuild",
+          "GameServer/CreateBuildWithManagedContainer",
           "GameServer/DeleteBuild",
           "GameServer/GetBuild"
         ],
@@ -1224,7 +1370,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/ListCertificatesResult"
+                  "$ref": "#/responses/ListCertificatesResponse"
                 }
               },
               "example": {
@@ -1295,7 +1441,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/ListQosServersResult"
+                  "$ref": "#/responses/ListQosServersResponse"
                 }
               },
               "example": {
@@ -1356,7 +1502,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/ListSessionHostsResult"
+                  "$ref": "#/responses/ListSessionHostsResponse"
                 }
               },
               "example": {
@@ -1375,6 +1521,69 @@
         ],
         "x-seeAlso": [
           "GameServer/AllocateSessionHost"
+        ],
+        "x-errors": [
+          "GameServerBadRequest",
+          "GameServerForbidden",
+          "GameServerInternalServerError",
+          "GameServerNotFound",
+          "GameServerOk",
+          "GameServerServiceUnavailable",
+          "GameServerUnauthorized"
+        ]
+      }
+    },
+    "/GameServer/ListVirtualMachines": {
+      "post": {
+        "operationId": "GameServer_ListVirtualMachines",
+        "tags": [
+          "GameServer"
+        ],
+        "description": "",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/entity/method/ListVirtualMachines"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListVirtualMachinesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/ListVirtualMachinesResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": null
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
         ],
         "x-errors": [
           "GameServerBadRequest",
@@ -1422,7 +1631,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/UpdateBuildRegionsResult"
+                  "$ref": "#/responses/UpdateBuildRegionsResponse"
                 }
               },
               "example": {
@@ -1489,7 +1698,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/UploadCertificateResult"
+                  "$ref": "#/responses/UploadCertificateResponse"
                 }
               },
               "example": {
@@ -1787,6 +1996,7 @@
           "Group/RemoveGroupApplication"
         ],
         "x-errors": [
+          "EntityIsAlreadyMember",
           "InvalidParams",
           "NotAuthenticated",
           "NotAuthorized",
@@ -3450,6 +3660,7 @@
         "x-errors": [
           "MatchmakingCancelTicketServerIdentityInvalid",
           "MatchmakingCancelTicketUserIdentityMismatch",
+          "MatchmakingEntityInvalid",
           "MatchmakingHopperIdMissing",
           "MatchmakingTicketAlreadyCompleted",
           "MatchmakingTicketIdIdMissing",
@@ -3520,13 +3731,13 @@
           "MatchmakingCreateRequestGiveUpAfterInvalid",
           "MatchmakingCreateRequestMissing",
           "MatchmakingCreateTicketClientIdentityInvalid",
+          "MatchmakingEntityInvalid",
           "MatchmakingHopperIdMissing",
-          "MatchmakingInvalidEntityKeyList",
-          "MatchmakingInvalidUserAttributes",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdentityMismatch",
+          "MatchmakingPlayerIdMissing",
           "MatchmakingTicketIdMissing",
-          "MatchmakingTitleIdMissing",
-          "MatchmakingUserIdentityMismatch",
-          "MatchmakingUserIdMissing"
+          "MatchmakingTitleIdMissing"
         ]
       }
     },
@@ -3589,13 +3800,13 @@
           "MatchmakingCreateRequestGiveUpAfterInvalid",
           "MatchmakingCreateRequestUserListMissing",
           "MatchmakingCreateTicketServerIdentityInvalid",
+          "MatchmakingEntityInvalid",
           "MatchmakingHopperIdMissing",
-          "MatchmakingInvalidEntityKeyList",
-          "MatchmakingInvalidTicketCreatorProfile",
-          "MatchmakingInvalidUserAttributes",
+          "MatchmakingMemberProfileInvalid",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdMissing",
           "MatchmakingTicketIdMissing",
-          "MatchmakingTitleIdMissing",
-          "MatchmakingUserIdMissing"
+          "MatchmakingTitleIdMissing"
         ]
       }
     },
@@ -3656,6 +3867,7 @@
           "Beta"
         ],
         "x-errors": [
+          "MatchmakingEntityInvalid",
           "MatchmakingHopperIdMissing",
           "MatchmakingMatchIdIdMissing",
           "MatchmakingMatchIdMissing",
@@ -3711,7 +3923,7 @@
                   "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
                   "Created": "2016-08-23T12:33:14",
                   "Status": "MATCHED",
-                  "GiveUpAfterSeconds": 100000,
+                  "GiveUpAfterSeconds": 100,
                   "MembersToMatchWith": [
                     {
                       "Id": "123123123",
@@ -3736,6 +3948,7 @@
           "Beta"
         ],
         "x-errors": [
+          "MatchmakingEntityInvalid",
           "MatchmakingGetMatchIdentityMismatch",
           "MatchmakingGetTicketUserMismatch",
           "MatchmakingHopperIdMissing",
@@ -3801,18 +4014,20 @@
         ],
         "x-errors": [
           "MatchmakingAlreadyJoinedTicket",
+          "MatchmakingEntityInvalid",
           "MatchmakingHopperIdMissing",
-          "MatchmakingInvalidUserAttributes",
           "MatchmakingJoinRequestUserMissing",
           "MatchmakingJoinTicketServerIdentityInvalid",
           "MatchmakingJoinTicketUserIdentityMismatch",
+          "MatchmakingMemberProfileInvalid",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdentityMismatch",
+          "MatchmakingPlayerIdMissing",
           "MatchmakingTicketAlreadyCompleted",
           "MatchmakingTicketIdIdMissing",
           "MatchmakingTicketIdMissing",
           "MatchmakingTicketNotFound",
-          "MatchmakingTitleIdMissing",
-          "MatchmakingUserIdentityMismatch",
-          "MatchmakingUserIdMissing"
+          "MatchmakingTitleIdMissing"
         ]
       }
     },
@@ -4480,7 +4695,7 @@
       "type": "object",
       "properties": {
         "BuildId": {
-          "description": "BuildId to allocate against",
+          "description": "BuildId to allocate against, must be a GUID.",
           "type": "string"
         },
         "PreferredRegions": {
@@ -4491,9 +4706,11 @@
           "x-isenum": true
         },
         "SessionCookie": {
+          "description": "Data encoded as a string that is passed to the game server when allocated. This can be used to share a cryptographic secret for servers to authenticate clients, or to communication information such as game mode or map through the allocation flow.",
           "type": "string"
         },
         "SessionId": {
+          "description": "An identifer you create to track the session over its life. Must be a GUID.",
           "type": "string"
         }
       },
@@ -4506,7 +4723,7 @@
         "Beta"
       ]
     },
-    "AllocateSessionHostResult": {
+    "AllocateSessionHostResponse": {
       "type": "object",
       "properties": {
         "ConnectedPlayers": {
@@ -4646,6 +4863,9 @@
           "type": "string"
         }
       },
+      "required": [
+        "MountPath"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -4775,7 +4995,9 @@
           "x-actualtype": "int32"
         },
         "Region": {
-          "type": "string"
+          "$ref": "#/definitions/AzureRegion",
+          "type": "string",
+          "x-isenum": true
         },
         "StandbySessions": {
           "type": "number",
@@ -4818,6 +5040,11 @@
           "$ref": "#/definitions/ContainerFlavor",
           "type": "string",
           "x-isenum": true
+        },
+        "CustomGameContainerImage": {
+          "$ref": "#/definitions/ContainerImageReference",
+          "type": "object",
+          "x-isclass": true
         },
         "GameAssetReferences": {
           "type": "array",
@@ -4869,6 +5096,17 @@
         "Beta"
       ]
     },
+    "CancellationReason": {
+      "type": "object",
+      "enum": [
+        "Requested",
+        "Internal",
+        "Timeout"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CancelMatchmakingTicketRequest": {
       "type": "object",
       "properties": {
@@ -4911,15 +5149,22 @@
       "type": "object",
       "properties": {
         "Base64EncodedValue": {
+          "description": "Base64 encoded string contents of the certificate.",
           "type": "string"
         },
         "Name": {
+          "description": "A name for the certificate. This is used to reference certificates in build configurations.",
           "type": "string"
         },
         "Password": {
+          "description": "If required for your PFX certificate, use this field to provide a password that will be used to install the certificate on the container.",
           "type": "string"
         }
       },
+      "required": [
+        "Name",
+        "Base64EncodedValue"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -4984,6 +5229,14 @@
         ]
       }
     },
+    "CloudScriptRevisionOption": {
+      "type": "object",
+      "enum": [
+        "Live",
+        "Latest",
+        "Specific"
+      ]
+    },
     "ConnectedPlayer": {
       "type": "object",
       "properties": {
@@ -4998,22 +5251,54 @@
     "ContainerFlavor": {
       "type": "object",
       "enum": [
-        "WindowsServerCorePlayFab"
+        "WindowsServerCorePlayFab",
+        "LinuxCustom"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "CreateBuildRequest": {
+    "ContainerImageReference": {
+      "type": "object",
+      "properties": {
+        "ImageName": {
+          "type": "string"
+        },
+        "Tag": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "ImageName"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateBuildResponse": {
+      "type": "object",
+      "properties": {
+        "BuildSummary": {
+          "$ref": "#/definitions/BuildSummary",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateBuildWithCustomContainerRequest": {
       "type": "object",
       "properties": {
         "BuildName": {
           "type": "string"
         },
-        "ContainerFlavor": {
-          "$ref": "#/definitions/ContainerFlavor",
-          "type": "string",
-          "x-isenum": true
+        "ContainerRepositoryName": {
+          "type": "string"
+        },
+        "ContainerTag": {
+          "type": "string"
         },
         "GameAssetReferences": {
           "type": "array",
@@ -5059,6 +5344,7 @@
         }
       },
       "required": [
+        "ContainerRepositoryName",
         "BuildName",
         "SessionHostCountPerVm",
         "MappedPorts",
@@ -5068,15 +5354,69 @@
         "Beta"
       ]
     },
-    "CreateBuildResult": {
+    "CreateBuildWithManagedContainerRequest": {
       "type": "object",
       "properties": {
-        "BuildSummary": {
-          "$ref": "#/definitions/BuildSummary",
-          "type": "object",
+        "BuildName": {
+          "type": "string"
+        },
+        "ContainerFlavor": {
+          "$ref": "#/definitions/ContainerFlavor",
+          "type": "string",
+          "x-isenum": true
+        },
+        "GameAssetReferences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AssetReferenceParams"
+          },
           "x-isclass": true
+        },
+        "GameCertificateReferences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "MappedPorts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Port"
+          },
+          "x-isclass": true
+        },
+        "Metadata": {
+          "type": "object"
+        },
+        "RegionConfiguration": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BuildRegionParams"
+          },
+          "x-isclass": true
+        },
+        "SessionHostCountPerVm": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StartGameCommand": {
+          "description": "The command that is used to start the game server application, including any arguments",
+          "type": "string"
+        },
+        "VmSize": {
+          "$ref": "#/definitions/AzureVmSize",
+          "type": "string",
+          "x-isenum": true
         }
       },
+      "required": [
+        "StartGameCommand",
+        "GameAssetReferences",
+        "BuildName",
+        "SessionHostCountPerVm",
+        "MappedPorts",
+        "RegionConfiguration"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -5219,7 +5559,7 @@
       "type": "object",
       "properties": {
         "Creator": {
-          "$ref": "#/definitions/MatchmakingUser",
+          "$ref": "#/definitions/MatchmakingPlayer",
           "description": "The User who created this ticket.",
           "type": "object",
           "x-isclass": true
@@ -5256,7 +5596,7 @@
       "example": {
         "Creator": {},
         "MembersToMatchWith": [],
-        "GiveUpAfterSeconds": 100000000,
+        "GiveUpAfterSeconds": 100,
         "HopperId": "custom123"
       },
       "x-AnyInclusiveFlags": [
@@ -5317,7 +5657,7 @@
         "Beta"
       ]
     },
-    "CreateRemoteUserResult": {
+    "CreateRemoteUserResponse": {
       "type": "object",
       "properties": {},
       "x-AnyInclusiveFlags": [
@@ -5346,7 +5686,7 @@
           "description": "The users who will be part of this ticket.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingUser"
+            "$ref": "#/definitions/MatchmakingPlayer"
           },
           "x-isclass": true
         }
@@ -5358,7 +5698,7 @@
       ],
       "example": {
         "Members": [],
-        "GiveUpAfterSeconds": 100000000,
+        "GiveUpAfterSeconds": 100,
         "HopperId": "custom123"
       },
       "x-AnyInclusiveFlags": [
@@ -5379,7 +5719,7 @@
         "Beta"
       ]
     },
-    "DeleteBuildResult": {
+    "DeleteBuildResponse": {
       "type": "object",
       "properties": {},
       "x-AnyInclusiveFlags": [
@@ -5721,7 +6061,7 @@
           "x-isclass": true
         },
         "EventNamespace": {
-          "description": "The namespace in which the event is defined. For example: 'com.playfab.matchmaking'. If not specified, a default will be chosen based on the calling identity.",
+          "description": "The namespace in which the event is defined. It must be prepended with 'com.playfab.events.'",
           "type": "string"
         },
         "Name": {
@@ -5737,21 +6077,162 @@
           "type": "string"
         },
         "Payload": {
-          "description": "Arbitrary data associated with the event.",
+          "description": "Arbitrary data associated with the event. Only one of Payload or PayloadJSON is allowed.",
           "type": "object"
         },
         "PayloadJSON": {
-          "description": "Arbitrary data associated with the event, represented as a JSON serialized string.",
+          "description": "Arbitrary data associated with the event, represented as a JSON serialized string. Only one of Payload or PayloadJSON is allowed.",
           "type": "string"
         }
       },
       "required": [
         "Entity",
+        "EventNamespace",
         "Name"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
+    },
+    "ExecuteCloudScriptResult": {
+      "type": "object",
+      "properties": {
+        "APIRequestsIssued": {
+          "description": "Number of PlayFab API requests issued by the CloudScript function",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Error": {
+          "$ref": "#/definitions/ScriptExecutionError",
+          "description": "Information about the error, if any, that occurred during execution",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExecutionTimeSeconds": {
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "FunctionName": {
+          "description": "The name of the function that executed",
+          "type": "string"
+        },
+        "FunctionResult": {
+          "description": "The object returned from the CloudScript function, if any",
+          "type": "object"
+        },
+        "FunctionResultTooLarge": {
+          "description": "Flag indicating if the FunctionResult was too large and was subsequently dropped from this event. This only occurs if the total event size is larger than 350KB.",
+          "type": "boolean"
+        },
+        "HttpRequestsIssued": {
+          "description": "Number of external HTTP requests issued by the CloudScript function",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Logs": {
+          "description": "Entries logged during the function execution. These include both entries logged in the function code using log.info() and log.error() and error entries for API and HTTP request failures.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LogStatement"
+          },
+          "x-isclass": true
+        },
+        "LogsTooLarge": {
+          "description": "Flag indicating if the logs were too large and were subsequently dropped from this event. This only occurs if the total event size is larger than 350KB after the FunctionResult was removed.",
+          "type": "boolean"
+        },
+        "MemoryConsumedBytes": {
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ProcessorTimeSeconds": {
+          "description": "Processor time consumed while executing the function. This does not include time spent waiting on API calls or HTTP requests.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Revision": {
+          "description": "The revision of the CloudScript that executed",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Revision",
+        "ExecutionTimeSeconds",
+        "ProcessorTimeSeconds",
+        "MemoryConsumedBytes",
+        "APIRequestsIssued",
+        "HttpRequestsIssued"
+      ],
+      "example": {
+        "Revision": 3,
+        "FunctionResult": {
+          "newScore": 25
+        },
+        "Logs": [
+          {
+            "Level": "Info",
+            "Message": "Something normal happened",
+            "Data": {
+              "secondsAfterStart": 75
+            }
+          },
+          {
+            "Level": "Error",
+            "Message": "Something unexpected happened"
+          }
+        ],
+        "ExecutionTimeSeconds": 0.03670790046453476,
+        "MemoryConsumedBytes": 38904,
+        "APIRequestsIssued": 2
+      }
+    },
+    "ExecuteEntityCloudScriptRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FunctionName": {
+          "description": "The name of the CloudScript function to execute",
+          "type": "string"
+        },
+        "FunctionParameter": {
+          "description": "Object that is passed in to the function as the first argument",
+          "type": "object"
+        },
+        "GeneratePlayStreamEvent": {
+          "description": "Generate a 'entity_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "type": "boolean"
+        },
+        "RevisionSelection": {
+          "$ref": "#/definitions/CloudScriptRevisionOption",
+          "description": "Option for which revision of the CloudScript to execute. 'Latest' executes the most recently created revision, 'Live' executes the current live, published revision, and 'Specific' executes the specified revision. The default value is 'Specific', if the SpecificRevision parameter is specified, otherwise it is 'Live'.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "SpecificRevision": {
+          "description": "The specific revision to execute, when RevisionSelection is set to 'Specific'",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "FunctionName"
+      ],
+      "example": {
+        "FunctionName": "levelCompleted",
+        "FunctionParameter": {
+          "level": 3,
+          "points": 400
+        },
+        "RevisionSelection": "Live",
+        "GeneratePlayStreamEvent": true,
+        "Entity": {
+          "Id": "master_player_account",
+          "TypeString": "aaa"
+        }
+      }
     },
     "FinalizeFileUploadsRequest": {
       "type": "object",
@@ -5818,17 +6299,24 @@
           "type": "object"
         },
         "Name": {
+          "description": "The asset's file name and associated metadata.",
           "type": "string"
         }
       },
       "required": [
         "Name"
       ],
+      "example": {
+        "Name": "gameserver.zip",
+        "Metadata": {
+          "AssetData1": "SomeData"
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "GetAssetUploadUrlResult": {
+    "GetAssetUploadUrlResponse": {
       "type": "object",
       "properties": {
         "AssetUploadUrl": {
@@ -5859,7 +6347,7 @@
         "Beta"
       ]
     },
-    "GetBuildResult": {
+    "GetBuildResponse": {
       "type": "object",
       "properties": {
         "BuildSummary": {
@@ -6255,6 +6743,12 @@
     "GetMatchmakingTicketResult": {
       "type": "object",
       "properties": {
+        "CancellationReason": {
+          "$ref": "#/definitions/CancellationReason",
+          "description": "The reason why the current ticket was canceled. This field is only set if the ticket is in canceled state.",
+          "type": "string",
+          "x-isenum": true
+        },
         "Created": {
           "description": "The server date and time at which ticket was created.",
           "type": "string"
@@ -6282,7 +6776,7 @@
           "description": "A list of Users that have joined this ticket.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingUser"
+            "$ref": "#/definitions/MatchmakingPlayer"
           },
           "x-isclass": true
         },
@@ -6306,11 +6800,9 @@
       "required": [
         "TicketId",
         "HopperId",
-        "MatchId",
         "Created",
         "Status",
         "GiveUpAfterSeconds",
-        "MembersToMatchWith",
         "Members",
         "Creator"
       ],
@@ -6320,7 +6812,7 @@
         "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
         "Created": "2016-08-23T12:33:14",
         "Status": "MATCHED",
-        "GiveUpAfterSeconds": 100000,
+        "GiveUpAfterSeconds": 100,
         "MembersToMatchWith": [
           {
             "Id": "123123123",
@@ -6383,7 +6875,7 @@
           "description": "A list of Users that are matched together, along with their team assignments.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingUserWithTeamAssignment"
+            "$ref": "#/definitions/MatchmakingPlayerWithTeamAssignment"
           },
           "x-isclass": true
         }
@@ -6488,7 +6980,7 @@
         "Beta"
       ]
     },
-    "GetRemoteLoginEndpointResult": {
+    "GetRemoteLoginEndpointResponse": {
       "type": "object",
       "properties": {
         "IpV4Address": {
@@ -6512,19 +7004,25 @@
         "BuildId": {
           "type": "string"
         },
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "type": "string",
+          "x-isenum": true
+        },
         "SessionId": {
           "type": "string"
         }
       },
       "required": [
         "BuildId",
-        "SessionId"
+        "SessionId",
+        "Region"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "GetSessionHostResultDetailsResult": {
+    "GetSessionHostResponseDetailsResponse": {
       "type": "object",
       "properties": {
         "ConnectedPlayers": {
@@ -7022,7 +7520,7 @@
           "type": "string"
         },
         "Member": {
-          "$ref": "#/definitions/MatchmakingUser",
+          "$ref": "#/definitions/MatchmakingPlayer",
           "description": "The User who wants to join the ticket. Their Id must be listed in PlayFabIdsToMatchWith.",
           "type": "object",
           "x-isclass": true
@@ -7056,12 +7554,20 @@
     },
     "ListAssetsRequest": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "type": "string"
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "ListAssetsResult": {
+    "ListAssetsResponse": {
       "type": "object",
       "properties": {
         "AssetSummaries": {
@@ -7071,7 +7577,29 @@
           },
           "x-isclass": true
         },
-        "NextLink": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "NumItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ListBuildsRequest": {
+      "type": "object",
+      "properties": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
           "type": "string"
         }
       },
@@ -7079,14 +7607,7 @@
         "Beta"
       ]
     },
-    "ListBuildsRequest": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ListBuildsResult": {
+    "ListBuildsResponse": {
       "type": "object",
       "properties": {
         "BuildSummaries": {
@@ -7096,7 +7617,29 @@
           },
           "x-isclass": true
         },
-        "NextLink": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "NumItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ListCertificatesRequest": {
+      "type": "object",
+      "properties": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
           "type": "string"
         }
       },
@@ -7104,14 +7647,7 @@
         "Beta"
       ]
     },
-    "ListCertificatesRequest": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ListCertificatesResult": {
+    "ListCertificatesResponse": {
       "type": "object",
       "properties": {
         "CertificateSummaries": {
@@ -7121,10 +7657,17 @@
           },
           "x-isclass": true
         },
-        "NextLink": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
           "type": "string"
         }
       },
+      "required": [
+        "NumItems"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -7568,16 +8111,25 @@
     },
     "ListQosServersRequest": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "type": "string"
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "ListQosServersResult": {
+    "ListQosServersResponse": {
       "type": "object",
       "properties": {
-        "NextLink": {
-          "type": "string"
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "QosServers": {
           "type": "array",
@@ -7585,8 +8137,14 @@
             "$ref": "#/definitions/QosServer"
           },
           "x-isclass": true
+        },
+        "SkipToken": {
+          "type": "string"
         }
       },
+      "required": [
+        "NumItems"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -7597,10 +8155,17 @@
         "BuildId": {
           "type": "string"
         },
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
         "Region": {
           "$ref": "#/definitions/AzureRegion",
           "type": "string",
           "x-isenum": true
+        },
+        "SkipToken": {
+          "type": "string"
         }
       },
       "required": [
@@ -7611,13 +8176,10 @@
         "Beta"
       ]
     },
-    "ListSessionHostsResult": {
+    "ListSessionHostsResponse": {
       "type": "object",
       "properties": {
-        "NextLink": {
-          "type": "string"
-        },
-        "NumSessionHosts": {
+        "NumItems": {
           "type": "number",
           "x-actualtype": "int32"
         },
@@ -7627,17 +8189,92 @@
             "$ref": "#/definitions/SessionHostSummary"
           },
           "x-isclass": true
+        },
+        "SkipToken": {
+          "type": "string"
         }
       },
+      "required": [
+        "NumItems"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "MatchmakingUser": {
+    "ListVirtualMachinesRequest": {
+      "type": "object",
+      "properties": {
+        "BuildId": {
+          "type": "string"
+        },
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "type": "string",
+          "x-isenum": true
+        },
+        "SkipToken": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "BuildId",
+        "Region"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ListVirtualMachinesResponse": {
+      "type": "object",
+      "properties": {
+        "NumItems": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "type": "string"
+        },
+        "VirtualMachines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VirtualMachine"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "NumItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "LogStatement": {
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Optional object accompanying the message as contextual information",
+          "type": "object"
+        },
+        "Level": {
+          "description": "'Debug', 'Info', or 'Error'",
+          "type": "string"
+        },
+        "Message": {
+          "type": "string"
+        }
+      }
+    },
+    "MatchmakingPlayer": {
+      "description": "A user in a matchmaking ticket.",
       "type": "object",
       "properties": {
         "Attributes": {
-          "$ref": "#/definitions/MatchmakingUserAttributes",
+          "$ref": "#/definitions/MatchmakingPlayerAttributes",
           "description": "The user's attributes custom to the title.",
           "type": "object",
           "x-isclass": true
@@ -7656,7 +8293,8 @@
         "Beta"
       ]
     },
-    "MatchmakingUserAttributes": {
+    "MatchmakingPlayerAttributes": {
+      "description": "The matchmaking attributes for a user.",
       "type": "object",
       "properties": {
         "DataObject": {
@@ -7672,7 +8310,8 @@
         "Beta"
       ]
     },
-    "MatchmakingUserWithTeamAssignment": {
+    "MatchmakingPlayerWithTeamAssignment": {
+      "description": "A player in a created matchmaking match with a team assignment.",
       "type": "object",
       "properties": {
         "Entity": {
@@ -7874,6 +8513,23 @@
             "TypeString": "title_player_account"
           }
         ]
+      }
+    },
+    "ScriptExecutionError": {
+      "type": "object",
+      "properties": {
+        "Error": {
+          "description": "Error code, such as CloudScriptNotFound, JavascriptException, CloudScriptFunctionArgumentSizeExceeded, CloudScriptAPIRequestCountExceeded, CloudScriptAPIRequestError, or CloudScriptHTTPRequestError",
+          "type": "string"
+        },
+        "Message": {
+          "description": "Details about the error",
+          "type": "string"
+        },
+        "StackTrace": {
+          "description": "Point during the execution of the script at which the error occurred, if any",
+          "type": "string"
+        }
       }
     },
     "SessionHostSummary": {
@@ -8180,6 +8836,7 @@
           "type": "string"
         },
         "BuildRegions": {
+          "description": "The updated region configuration that should be applied to the specified build.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/BuildRegionParams"
@@ -8195,7 +8852,7 @@
         "Beta"
       ]
     },
-    "UpdateBuildRegionsResult": {
+    "UpdateBuildRegionsResponse": {
       "type": "object",
       "properties": {},
       "x-AnyInclusiveFlags": [
@@ -8346,9 +9003,23 @@
         "Beta"
       ]
     },
-    "UploadCertificateResult": {
+    "UploadCertificateResponse": {
       "type": "object",
       "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "VirtualMachine": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "type": "string"
+        },
+        "VmId": {
+          "type": "string"
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -8363,9 +9034,6 @@
             "$ref": "#/definitions/EventContents"
           },
           "x-isclass": true
-        },
-        "FlushToPlayStream": {
-          "type": "boolean"
         }
       },
       "required": [
@@ -8390,10 +9058,7 @@
             }
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "WriteEventsResponse": {
       "type": "object",
@@ -8410,10 +9075,7 @@
         "AssignedEventIds": [
           "496b598a05404142a6b6349c8cb29459"
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     }
   },
   "parameters": {
@@ -8489,12 +9151,20 @@
         "$ref": "#/definitions/ChangeMemberRoleRequest"
       }
     },
-    "CreateBuildRequest": {
-      "name": "CreateBuildRequest",
+    "CreateBuildWithCustomContainerRequest": {
+      "name": "CreateBuildWithCustomContainerRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/CreateBuildRequest"
+        "$ref": "#/definitions/CreateBuildWithCustomContainerRequest"
+      }
+    },
+    "CreateBuildWithManagedContainerRequest": {
+      "name": "CreateBuildWithManagedContainerRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/CreateBuildWithManagedContainerRequest"
       }
     },
     "CreateGroupRequest": {
@@ -8567,6 +9237,14 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/DeleteRoleRequest"
+      }
+    },
+    "ExecuteEntityCloudScriptRequest": {
+      "name": "ExecuteEntityCloudScriptRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ExecuteEntityCloudScriptRequest"
       }
     },
     "FinalizeFileUploadsRequest": {
@@ -8801,6 +9479,14 @@
         "$ref": "#/definitions/ListSessionHostsRequest"
       }
     },
+    "ListVirtualMachinesRequest": {
+      "name": "ListVirtualMachinesRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ListVirtualMachinesRequest"
+      }
+    },
     "RemoveGroupApplicationRequest": {
       "name": "RemoveGroupApplicationRequest",
       "in": "body",
@@ -8911,10 +9597,10 @@
         "$ref": "#/definitions/AbortFileUploadsResponse"
       }
     },
-    "AllocateSessionHostResult": {
+    "AllocateSessionHostResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/AllocateSessionHostResult"
+        "$ref": "#/definitions/AllocateSessionHostResponse"
       }
     },
     "ApplyToGroupResponse": {
@@ -8929,10 +9615,10 @@
         "$ref": "#/definitions/CancelMatchmakingTicketResult"
       }
     },
-    "CreateBuildResult": {
+    "CreateBuildResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/CreateBuildResult"
+        "$ref": "#/definitions/CreateBuildResponse"
       }
     },
     "CreateGroupResponse": {
@@ -8953,16 +9639,16 @@
         "$ref": "#/definitions/CreateMatchmakingTicketResult"
       }
     },
-    "CreateRemoteUserResult": {
+    "CreateRemoteUserResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/CreateRemoteUserResult"
+        "$ref": "#/definitions/CreateRemoteUserResponse"
       }
     },
-    "DeleteBuildResult": {
+    "DeleteBuildResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/DeleteBuildResult"
+        "$ref": "#/definitions/DeleteBuildResponse"
       }
     },
     "DeleteFilesResponse": {
@@ -8977,22 +9663,28 @@
         "$ref": "#/definitions/EmptyResult"
       }
     },
+    "ExecuteCloudScriptResult": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ExecuteCloudScriptResult"
+      }
+    },
     "FinalizeFileUploadsResponse": {
       "description": "",
       "schema": {
         "$ref": "#/definitions/FinalizeFileUploadsResponse"
       }
     },
-    "GetAssetUploadUrlResult": {
+    "GetAssetUploadUrlResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetAssetUploadUrlResult"
+        "$ref": "#/definitions/GetAssetUploadUrlResponse"
       }
     },
-    "GetBuildResult": {
+    "GetBuildResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetBuildResult"
+        "$ref": "#/definitions/GetBuildResponse"
       }
     },
     "GetEntityProfileResponse": {
@@ -9049,16 +9741,16 @@
         "$ref": "#/definitions/GetObjectsResponse"
       }
     },
-    "GetRemoteLoginEndpointResult": {
+    "GetRemoteLoginEndpointResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetRemoteLoginEndpointResult"
+        "$ref": "#/definitions/GetRemoteLoginEndpointResponse"
       }
     },
-    "GetSessionHostResultDetailsResult": {
+    "GetSessionHostResponseDetailsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetSessionHostResultDetailsResult"
+        "$ref": "#/definitions/GetSessionHostResponseDetailsResponse"
       }
     },
     "InitiateFileUploadsResponse": {
@@ -9085,22 +9777,22 @@
         "$ref": "#/definitions/JoinMatchmakingTicketResult"
       }
     },
-    "ListAssetsResult": {
+    "ListAssetsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/ListAssetsResult"
+        "$ref": "#/definitions/ListAssetsResponse"
       }
     },
-    "ListBuildsResult": {
+    "ListBuildsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/ListBuildsResult"
+        "$ref": "#/definitions/ListBuildsResponse"
       }
     },
-    "ListCertificatesResult": {
+    "ListCertificatesResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/ListCertificatesResult"
+        "$ref": "#/definitions/ListCertificatesResponse"
       }
     },
     "ListGroupApplicationsResponse": {
@@ -9139,16 +9831,22 @@
         "$ref": "#/definitions/ListMembershipResponse"
       }
     },
-    "ListQosServersResult": {
+    "ListQosServersResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/ListQosServersResult"
+        "$ref": "#/definitions/ListQosServersResponse"
       }
     },
-    "ListSessionHostsResult": {
+    "ListSessionHostsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/ListSessionHostsResult"
+        "$ref": "#/definitions/ListSessionHostsResponse"
+      }
+    },
+    "ListVirtualMachinesResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ListVirtualMachinesResponse"
       }
     },
     "SetEntityProfilePolicyResponse": {
@@ -9169,10 +9867,10 @@
         "$ref": "#/definitions/SetObjectsResponse"
       }
     },
-    "UpdateBuildRegionsResult": {
+    "UpdateBuildRegionsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/UpdateBuildRegionsResult"
+        "$ref": "#/definitions/UpdateBuildRegionsResponse"
       }
     },
     "UpdateGroupResponse": {
@@ -9187,10 +9885,10 @@
         "$ref": "#/definitions/UpdateGroupRoleResponse"
       }
     },
-    "UploadCertificateResult": {
+    "UploadCertificateResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/UploadCertificateResult"
+        "$ref": "#/definitions/UploadCertificateResponse"
       }
     },
     "WriteEventsResponse": {
@@ -9232,6 +9930,10 @@
     {
       "name": "PlayStream Events",
       "description": "https://api.playfab.com/documentation/Entity#PlayStream-Events"
+    },
+    {
+      "name": "Server-Side Cloud Script",
+      "description": "https://api.playfab.com/documentation/Entity#Server-Side-Cloud-Script"
     }
   ],
   "securityDefinitions": {
@@ -9263,10 +9965,6 @@
   "x-errors": {
     "Success": {
       "name": "Success"
-    },
-    "MatchmakingHopperIdInvalid": {
-      "id": 230,
-      "name": "MatchmakingHopperIdInvalid"
     },
     "UnkownError": {
       "id": 500,
@@ -10780,17 +11478,25 @@
       "id": 1388,
       "name": "GameServerServiceUnavailable"
     },
-    "MatchmakingInvalidEntityKeyList": {
-      "id": 2000,
-      "name": "MatchmakingInvalidEntityKeyList"
+    "ExplicitContentDetected": {
+      "id": 1389,
+      "name": "ExplicitContentDetected"
     },
-    "MatchmakingInvalidTicketCreatorProfile": {
+    "PIIContentDetected": {
+      "id": 1390,
+      "name": "PIIContentDetected"
+    },
+    "InvalidScheduledTaskParameter": {
+      "id": 1391,
+      "name": "InvalidScheduledTaskParameter"
+    },
+    "MatchmakingEntityInvalid": {
       "id": 2001,
-      "name": "MatchmakingInvalidTicketCreatorProfile"
+      "name": "MatchmakingEntityInvalid"
     },
-    "MatchmakingInvalidUserAttributes": {
+    "MatchmakingPlayerAttributesInvalid": {
       "id": 2002,
-      "name": "MatchmakingInvalidUserAttributes"
+      "name": "MatchmakingPlayerAttributesInvalid"
     },
     "MatchmakingCreateRequestMissing": {
       "id": 2003,
@@ -10836,9 +11542,9 @@
       "id": 2013,
       "name": "MatchmakingTicketIdIdMissing"
     },
-    "MatchmakingUserIdMissing": {
+    "MatchmakingPlayerIdMissing": {
       "id": 2014,
-      "name": "MatchmakingUserIdMissing"
+      "name": "MatchmakingPlayerIdMissing"
     },
     "MatchmakingJoinRequestUserMissing": {
       "id": 2015,
@@ -10888,9 +11594,9 @@
       "id": 2026,
       "name": "MatchmakingGetMatchIdentityMismatch"
     },
-    "MatchmakingUserIdentityMismatch": {
+    "MatchmakingPlayerIdentityMismatch": {
       "id": 2027,
-      "name": "MatchmakingUserIdentityMismatch"
+      "name": "MatchmakingPlayerIdentityMismatch"
     },
     "MatchmakingAlreadyJoinedTicket": {
       "id": 2028,
@@ -10900,9 +11606,17 @@
       "id": 2029,
       "name": "MatchmakingTicketAlreadyCompleted"
     },
+    "MatchmakingHopperIdInvalid": {
+      "id": 2030,
+      "name": "MatchmakingHopperIdInvalid"
+    },
     "MatchmakingHopperConfigInvalid": {
       "id": 2031,
       "name": "MatchmakingHopperConfigInvalid"
+    },
+    "MatchmakingMemberProfileInvalid": {
+      "id": 2032,
+      "name": "MatchmakingMemberProfileInvalid"
     }
   }
 }
