@@ -115,9 +115,10 @@ if (argsDict["playFabUrl"])
     playFabUrl = argsDict["playFabUrl"];
 if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
+if (!playFabUrl.endsWith("apispec/"))
+    playFabUrl = playFabUrl + "apispec/";
 
 try { 
-
     var jsonObj = require("./TOC.json");
 
     for (var i = 0; i < jsonObj.documents.length; ++i) 
@@ -133,14 +134,14 @@ try {
     console.log(err);
 }
 
-GetApiFile(playFabUrl + "apispec/AdminAPI", "Admin.api", "Admin-Api");
-GetApiFile(playFabUrl + "apispec/ClientAPI", "Client.api", "Client-Api");
-GetApiFile(playFabUrl + "apispec/EntityAPI", "Entity.api", "Entity-Api");
-GetApiFile(playFabUrl + "apispec/MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
-GetApiFile(playFabUrl + "apispec/ServerAPI", "Server.api", "Server-Api");
+GetApiFile(playFabUrl + "AdminAPI", "Admin.api", "Admin-Api");
+GetApiFile(playFabUrl + "ClientAPI", "Client.api", "Client-Api");
+GetApiFile(playFabUrl + "EntityAPI", "Entity.api", "Entity-Api");
+GetApiFile(playFabUrl + "MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
+GetApiFile(playFabUrl + "ServerAPI", "Server.api", "Server-Api");
 
-GetApiFile(playFabUrl + "apispec/PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
-GetApiFile(playFabUrl + "apispec/PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
-GetApiFile(playFabUrl + "apispec/PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
 
 GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", UpdateVersionNumbers);
