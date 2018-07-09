@@ -117,19 +117,44 @@ if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
 
 try { 
-    // async load toc file
-    contents = JSON.parse("TOC.js", (key, value) => {
-    if (key === "documents") {
-        // value is expected to be a list of objects
-        for (var obj in value) {
-                if (obj["format"] === "LegacyPlayFabApiSpec") {
-                    var docKey = obj["docKey"];
-                    var relPath = obj["relPath"];
-                    var shortName = obj["shortName"];
-                    GetApiFile(playFabUrl + docKey, relPath, shortName);
-                };
+    fs.readFile("TOC.json", (err, data) => {
+        if(err)
+        {
+            console.log(err);
         }
-    }});
+
+        var docKey;
+        var relPath;
+        var shortName;
+
+        contents = JSON.parse(data, (key, value) => {
+
+            switch(key)
+            {
+                case "docKey":
+                    docKey = value;
+                    break;
+                case "relPath":
+                    relPath = value;
+                    break;
+                case "shortName":
+                    shortName = value;
+                    break;
+                case "format":
+                    if(docKey && relPath && shortName)
+                    {
+                        if(value === "LegacyPlayFabApiSpec")
+                        {
+                            GetApiFile(playFabUrl + docKey, relPath, shortName);
+                            docKey = relPath = shortName = "";
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    });
 } catch(err) {
     console.log("=== fetch.js failed to parse TOC.json as JSON :( ===");
     console.log(err);
