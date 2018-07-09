@@ -115,34 +115,33 @@ if (argsDict["playFabUrl"])
     playFabUrl = argsDict["playFabUrl"];
 if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
+if (!playFabUrl.endsWith("apispec/"))
+    playFabUrl = playFabUrl + "apispec/";
 
 try { 
-    // async load toc file
-    contents = JSON.parse("TOC.js", (key, value) => {
-    if (key === "documents") {
-        // value is expected to be a list of objects
-        for (var obj in value) {
-                if (obj["format"] === "LegacyPlayFabApiSpec") {
-                    var docKey = obj["docKey"];
-                    var relPath = obj["relPath"];
-                    var shortName = obj["shortName"];
-                    GetApiFile(playFabUrl + docKey, relPath, shortName);
-                };
+    var jsonObj = require("./TOC.json");
+
+    for (var i = 0; i < jsonObj.documents.length; ++i) 
+    {
+        var apiSection = jsonObj.documents[i];
+        if (apiSection.format === "LegacyPlayFabApiSpec")
+        {
+            GetApiFile(playFabUrl + apiSection.docKey, apiSection.relPath, apiSection.shortName);
         }
-    }});
+    }
 } catch(err) {
     console.log("=== fetch.js failed to parse TOC.json as JSON :( ===");
     console.log(err);
 }
 
-GetApiFile(playFabUrl + "apispec/AdminAPI", "Admin.api", "Admin-Api");
-GetApiFile(playFabUrl + "apispec/ClientAPI", "Client.api", "Client-Api");
-GetApiFile(playFabUrl + "apispec/EntityAPI", "Entity.api", "Entity-Api");
-GetApiFile(playFabUrl + "apispec/MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
-GetApiFile(playFabUrl + "apispec/ServerAPI", "Server.api", "Server-Api");
+GetApiFile(playFabUrl + "AdminAPI", "Admin.api", "Admin-Api");
+GetApiFile(playFabUrl + "ClientAPI", "Client.api", "Client-Api");
+GetApiFile(playFabUrl + "EntityAPI", "Entity.api", "Entity-Api");
+GetApiFile(playFabUrl + "MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
+GetApiFile(playFabUrl + "ServerAPI", "Server.api", "Server-Api");
 
-GetApiFile(playFabUrl + "apispec/PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
-GetApiFile(playFabUrl + "apispec/PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
-GetApiFile(playFabUrl + "apispec/PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
+GetApiFile(playFabUrl + "PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
 
 GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", UpdateVersionNumbers);
