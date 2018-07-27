@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "180726",
-    "title": "PlayFab Matchmaker API",
-    "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
+    "title": "PlayFab Data API",
+    "description": "Various kinds of data-storage for an entity. Objects: Small (1kb) json-compatible objects that live directly within the profile. Files (usage billed separately) for larger storage needs.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,24 +24,24 @@
     "application/json"
   ],
   "paths": {
-    "/Matchmaker/AuthUser": {
+    "/File/AbortFileUploads": {
       "post": {
-        "operationId": "AuthUser",
+        "operationId": "AbortFileUploads",
         "tags": [
-          "Matchmaking"
+          "File"
         ],
-        "description": "Validates a user with the PlayFab service",
+        "description": "Abort pending file uploads to an entity's profile.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/AuthUser"
+          "url": "https://api.playfab.com/documentation/data/method/AbortFileUploads"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/AuthUserRequest"
+            "$ref": "#/parameters/AbortFileUploadsRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
@@ -59,15 +59,19 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/AuthUserResponse"
+                  "$ref": "#/responses/AbortFileUploadsResponse"
                 }
               },
               "example": {
                 "code": 200,
                 "status": 200,
                 "data": {
-                  "Authorized": true,
-                  "PlayFabId": "23990802934"
+                  "ProfileVersion": 8,
+                  "Entity": {
+                    "Id": "ID",
+                    "Type": "title_player_account",
+                    "TypeString": "title_player_account"
+                  }
                 }
               }
             }
@@ -76,36 +80,37 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order to securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the AuthorizationTicket in this call.",
+        "x-requestDetails": "Aborts the pending upload of the requested files.",
         "x-seeAlso": [
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
+          "File/DeleteFiles",
+          "File/FinalizeFileUploads",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
         ],
         "x-errors": [
-          "InvalidParams"
+          "FileNotFound",
+          "NoEntityFileOperationPending"
         ]
       }
     },
-    "/Matchmaker/DeregisterGame": {
+    "/File/DeleteFiles": {
       "post": {
-        "operationId": "DeregisterGame",
+        "operationId": "DeleteFiles",
         "tags": [
-          "Matchmaking"
+          "File"
         ],
-        "description": "Inform the matchmaker that a Game Server Instance is removed.",
+        "description": "Delete files on an entity's profile.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/DeregisterGame"
+          "url": "https://api.playfab.com/documentation/data/method/DeleteFiles"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/DeregisterGameRequest"
+            "$ref": "#/parameters/DeleteFilesRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
@@ -123,7 +128,75 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/DeregisterGameResponse"
+                  "$ref": "#/responses/DeleteFilesResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "ProfileVersion": 6,
+                  "Entity": {
+                    "Id": "ID",
+                    "Type": "title_player_account",
+                    "TypeString": "title_player_account"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Deletes the requested files from the entity's profile.",
+        "x-seeAlso": [
+          "File/FinalizeFileUploads",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
+        ],
+        "x-errors": [
+          "EntityFileOperationPending",
+          "FileNotFound"
+        ]
+      }
+    },
+    "/File/FinalizeFileUploads": {
+      "post": {
+        "operationId": "FinalizeFileUploads",
+        "tags": [
+          "File"
+        ],
+        "description": "Finalize file uploads to an entity's profile.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/data/method/FinalizeFileUploads"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/FinalizeFileUploadsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/FinalizeFileUploadsResponse"
                 }
               },
               "example": {
@@ -137,42 +210,37 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/DeregisterGame"
-        },
-        "x-AllInclusiveFlags": [
-          "Beta"
-        ],
+        "x-requestDetails": "Finalizes the upload of the requested files. Verifies that the files have been successfully uploaded and moves the file pointers from pending to live.",
         "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
+          "File/AbortFileUploads",
+          "File/DeleteFiles",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
         ],
         "x-errors": [
-          "InvalidParams"
+          "FileNotFound",
+          "NoEntityFileOperationPending"
         ]
       }
     },
-    "/Matchmaker/PlayerJoined": {
+    "/File/GetFiles": {
       "post": {
-        "operationId": "PlayerJoined",
+        "operationId": "GetFiles",
         "tags": [
-          "Matchmaking"
+          "File"
         ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has joined the Game Server Instance specified",
+        "description": "Retrieves file metadata from an entity's profile.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerJoined"
+          "url": "https://api.playfab.com/documentation/data/method/GetFiles"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/PlayerJoinedRequest"
+            "$ref": "#/parameters/GetFilesRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
@@ -190,134 +258,28 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/PlayerJoinedResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": null
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/PlayerLeft": {
-      "post": {
-        "operationId": "PlayerLeft",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has left the Game Server Instance specified",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerLeft"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/PlayerLeftRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/PlayerLeftResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": null
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/RegisterGame": {
-      "post": {
-        "operationId": "RegisterGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Inform the matchmaker that a new Game Server Instance is added.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/RegisterGame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/RegisterGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/RegisterGameResponse"
+                  "$ref": "#/responses/GetFilesResponse"
                 }
               },
               "example": {
                 "code": 200,
                 "status": 200,
                 "data": {
-                  "LobbyId": "8285313"
+                  "ProfileVersion": 5,
+                  "Metadata": {
+                    "game_settings": {
+                      "FileName": "game_settings",
+                      "DownloadUrl": "https://...",
+                      "Size": 5683,
+                      "Checksum": "97129sdlkj9129",
+                      "LastModified": "2017-12-05T17:36:05"
+                    }
+                  },
+                  "Entity": {
+                    "Id": "ID",
+                    "Type": "title_player_account",
+                    "TypeString": "title_player_account"
+                  }
                 }
               }
             }
@@ -326,44 +288,33 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/RegisterGame"
-        },
-        "x-AllInclusiveFlags": [
-          "Beta"
-        ],
+        "x-requestDetails": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing. ",
         "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
-        ],
-        "x-errors": [
-          "BuildNotFound",
-          "InvalidParams",
-          "InvalidRequest"
+          "File/AbortFileUploads",
+          "File/DeleteFiles",
+          "File/FinalizeFileUploads",
+          "File/InitiateFileUploads"
         ]
       }
     },
-    "/Matchmaker/StartGame": {
+    "/File/InitiateFileUploads": {
       "post": {
-        "operationId": "StartGame",
+        "operationId": "InitiateFileUploads",
         "tags": [
-          "Matchmaking"
+          "File"
         ],
-        "description": "Instructs the PlayFab game server hosting service to instantiate a new Game Server Instance",
+        "description": "Initiates file uploads to an entity's profile.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/StartGame"
+          "url": "https://api.playfab.com/documentation/data/method/InitiateFileUploads"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/StartGameRequest"
+            "$ref": "#/parameters/InitiateFileUploadsRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
@@ -381,109 +332,29 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/StartGameResponse"
+                  "$ref": "#/responses/InitiateFileUploadsResponse"
                 }
               },
               "example": {
                 "code": 200,
                 "status": 200,
                 "data": {
-                  "GameID": "1913398545777970887",
-                  "ServerHostname": "14.57.243.85",
-                  "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-                  "ServerPort": 1200
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "BuildNotFound",
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/UserInfo": {
-      "post": {
-        "operationId": "UserInfo",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Retrieves the relevant details for a specified user, which the external match-making service can then use to compute effective matches",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/UserInfo"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/UserInfoRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/UserInfoResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "PlayFabId": "23990802934",
-                  "Username": "username",
-                  "TitleDisplayName": "titlespecificdisplayname",
-                  "Inventory": [
+                  "ProfileVersion": 5,
+                  "UploadDetails": [
                     {
-                      "ItemId": "shield_level_5",
-                      "ItemInstanceId": "9879843",
-                      "ItemClass": "shields",
-                      "CatalogVersion": "5"
+                      "FileName": "game_state",
+                      "UploadUrl": "https://..."
                     },
                     {
-                      "ItemId": "energy_boost_1",
-                      "ItemInstanceId": "3854637",
-                      "ItemClass": "boosts",
-                      "RemainingUses": 4,
-                      "CatalogVersion": "5"
+                      "FileName": "profile_configuration",
+                      "UploadUrl": "https://..."
                     }
                   ],
-                  "VirtualCurrency": {
-                    "GC": 1500,
-                    "ZZ": 225
-                  },
-                  "VirtualCurrencyRechargeTimes": {
-                    "GC": {
-                      "SecondsToRecharge": 3600,
-                      "RechargeTime": "2014-01-01T12:00:00",
-                      "RechargeMax": 50
-                    }
-                  },
-                  "SteamId": "1234"
+                  "Entity": {
+                    "Id": "ID",
+                    "Type": "title_player_account",
+                    "TypeString": "title_player_account"
+                  }
                 }
               }
             }
@@ -492,14 +363,146 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-requestDetails": "Returns URLs that may be used to upload the files for a profile 5 minutes. After using the upload calls FinalizeFileUploads must be called to move the file status from pending to live.",
         "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame"
+          "File/AbortFileUploads",
+          "File/DeleteFiles",
+          "File/FinalizeFileUploads",
+          "File/GetFiles"
         ],
         "x-errors": [
-          "InvalidParams"
+          "EntityFileOperationPending"
+        ]
+      }
+    },
+    "/Object/GetObjects": {
+      "post": {
+        "operationId": "GetObjects",
+        "tags": [
+          "Object"
+        ],
+        "description": "Retrieves objects from an entity's profile.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/data/method/GetObjects"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetObjectsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/GetObjectsResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "ProfileVersion": 17,
+                  "Objects": {
+                    "gameState": {
+                      "ObjectName": "gameState",
+                      "EscapedDataObject": "{ \"Property\": { \"ValueName\": 5 } }"
+                    }
+                  },
+                  "Entity": {
+                    "Id": "ABC1234ABC",
+                    "Type": "title_player_account",
+                    "TypeString": "title_player_account"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets JSON objects from an entity profile and returns it. ",
+        "x-seeAlso": [
+          "Object/SetObjects"
+        ]
+      }
+    },
+    "/Object/SetObjects": {
+      "post": {
+        "operationId": "SetObjects",
+        "tags": [
+          "Object"
+        ],
+        "description": "Sets objects on an entity's profile.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/data/method/SetObjects"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetObjectsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/SetObjectsResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "SetResults": [
+                    {}
+                  ],
+                  "ProfileVersion": 5
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Sets JSON objects on the requested entity profile. May include a version number to be used to perform optimistic concurrency operations during update. If the current version differs from the version in the request the request will be ignored. If no version is set on the request then the value will always be updated if the values differ. Using the version value does not guarantee a write though, ConcurrentEditError may still occur if multiple clients are attempting to update the same profile. ",
+        "x-seeAlso": [
+          "Object/GetObjects"
+        ],
+        "x-errors": [
+          "EntityProfileVersionMismatch"
         ]
       }
     }
@@ -537,567 +540,705 @@
         }
       }
     },
-    "AuthUserRequest": {
+    "AbortFileUploadsRequest": {
       "type": "object",
       "properties": {
-        "AuthorizationTicket": {
-          "description": "Session Ticket provided by the client.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "AuthorizationTicket"
-      ],
-      "example": {
-        "AuthorizationTicket": "9F856B4A071A9A5D-0-0-AD0-8D165320C16429B-72087E2356D29870.9D0410B3E78D8A5F"
-      }
-    },
-    "AuthUserResponse": {
-      "type": "object",
-      "properties": {
-        "Authorized": {
-          "description": "Boolean indicating if the user has been authorized to use the external match-making service.",
-          "type": "boolean"
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
         },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the account that has been authorized.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Authorized"
-      ],
-      "example": {
-        "Authorized": true,
-        "PlayFabId": "23990802934"
-      }
-    },
-    "DeregisterGameRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId"
-      ],
-      "example": {
-        "LobbyId": "8285313"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "DeregisterGameResponse": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "ItemInstance": {
-      "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item instance (such as Tags, Description, or Custom Data that are set on the root catalog item), a call to GetCatalogItems is required. The Item ID of the instance can then be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set here from a call to UpdateUserInventoryItemCustomData.",
-      "type": "object",
-      "properties": {
-        "Annotation": {
-          "description": "Game specific comment associated with this instance when it was added to the user inventory.",
-          "type": "string"
-        },
-        "BundleContents": {
-          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+        "FileNames": {
+          "description": "Names of the files to have their pending uploads aborted.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "BundleParent": {
-          "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
-          "type": "string"
-        },
-        "CatalogVersion": {
-          "description": "Catalog version for the inventory item, when this instance was created.",
-          "type": "string"
-        },
-        "CustomData": {
-          "description": "A set of custom key-value pairs on the inventory item.",
-          "type": "object"
-        },
-        "DisplayName": {
-          "description": "CatalogItem.DisplayName at the time this item was purchased.",
-          "type": "string"
-        },
-        "Expiration": {
-          "description": "Timestamp for when this instance will expire.",
-          "type": "string"
-        },
-        "ItemClass": {
-          "description": "Class name for the inventory item, as defined in the catalog.",
-          "type": "string"
-        },
-        "ItemId": {
-          "description": "Unique identifier for the inventory item, as defined in the catalog.",
-          "type": "string"
-        },
-        "ItemInstanceId": {
-          "description": "Unique item identifier for this specific instance of the item.",
-          "type": "string"
-        },
-        "PurchaseDate": {
-          "description": "Timestamp for when this instance was purchased.",
-          "type": "string"
-        },
-        "RemainingUses": {
-          "description": "Total number of remaining uses, if this is a consumable item.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "UnitCurrency": {
-          "description": "Currency type for the cost of the catalog item.",
-          "type": "string"
-        },
-        "UnitPrice": {
-          "description": "Cost of the catalog item in the given currency.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "UsesIncrementedBy": {
-          "description": "The number of uses that were added or removed to this item in this call.",
+        "ProfileVersion": {
+          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
           "type": "number",
           "x-actualtype": "int32"
         }
       },
       "required": [
-        "UnitPrice"
+        "FileNames",
+        "Entity"
       ],
       "example": {
-        "ItemId": "shield_level_5",
-        "ItemInstanceId": "133713371337",
-        "ItemClass": "shields",
-        "PurchaseDate": "2017-03-07T00:00:00",
-        "Expiration": "2018-10-01T00:00:00",
-        "RemainingUses": 10,
-        "Annotation": "No Annotation",
-        "CatalogVersion": "5",
-        "BundleParent": "crate block 1"
-      },
-      "x-sortKey": "ItemInstanceId"
-    },
-    "PlayerJoinedRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is joining. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player joining.",
-          "type": "string"
+        "FileNames": [
+          "avatar"
+        ],
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         }
-      },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
-      "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
       }
     },
-    "PlayerJoinedResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "PlayerLeftRequest": {
+    "AbortFileUploadsResponse": {
       "type": "object",
       "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is leaving. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
         },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player leaving.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
-      "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
-      }
-    },
-    "PlayerLeftResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "Region": {
-      "type": "object",
-      "enum": [
-        "USCentral",
-        "USEast",
-        "EUWest",
-        "Singapore",
-        "Japan",
-        "Brazil",
-        "Australia"
-      ]
-    },
-    "RegisterGameRequest": {
-      "type": "object",
-      "properties": {
-        "Build": {
-          "description": "Unique identifier of the build running on the Game Server Instance.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game Mode the Game Server instance is running. Note that this must be defined in the Game Modes tab in the PlayFab Game Manager, along with the Build ID (the same Game Mode can be defined for multiple Build IDs).",
-          "type": "string"
-        },
-        "LobbyId": {
-          "description": "Previous lobby id if re-registering an existing game.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
-          "type": "string",
-          "x-isenum": true
-        },
-        "ServerHost": {
-          "description": "IPV4 address of the Game Server Instance.",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "string"
-        },
-        "Tags": {
-          "description": "Tags for the Game Server Instance",
-          "type": "object"
-        }
-      },
-      "required": [
-        "ServerHost",
-        "ServerPort",
-        "Build",
-        "Region",
-        "GameMode"
-      ],
-      "example": {
-        "ServerHost": "118.129.31.244",
-        "ServerPort": "9984",
-        "Build": "11_034234.13",
-        "Region": "USEast",
-        "GameMode": "FreeForAll",
-        "Tags": {
-          "level_cap": "high",
-          "no_smoking": "1"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "RegisterGameResponse": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
-          "type": "string"
-        }
-      },
-      "example": {
-        "LobbyId": "8285313"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "StartGameRequest": {
-      "type": "object",
-      "properties": {
-        "Build": {
-          "description": "Unique identifier of the previously uploaded build executable which is to be started.",
-          "type": "string"
-        },
-        "CustomCommandLineData": {
-          "description": "Custom command line argument when starting game server process.",
-          "type": "string"
-        },
-        "ExternalMatchmakerEventEndpoint": {
-          "description": "HTTP endpoint URL for receiving game status events, if using an external matchmaker. When the game ends, PlayFab will make a POST request to this URL with the X-SecretKey header set to the value of the game's secret and an application/json body of { \"EventName\": \"game_ended\", \"GameID\": \"<gameid>\" }.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game mode for this Game Server Instance.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region with which to associate the server, for filtering.",
-          "type": "string",
-          "x-isenum": true
-        }
-      },
-      "required": [
-        "Build",
-        "Region",
-        "GameMode",
-        "ExternalMatchmakerEventEndpoint"
-      ],
-      "example": {
-        "Build": "6.01",
-        "GameMode": "capture_the_flag",
-        "CustomCommandLineData": "custom_gameserver_commandline_parameter",
-        "ExternalMatchmakerEventEndpoint": "https://yourmatchmaker.com/gamestatusevents/"
-      }
-    },
-    "StartGameResponse": {
-      "type": "object",
-      "properties": {
-        "GameID": {
-          "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerHostname": {
-          "description": "IPV4 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        }
-      },
-      "required": [
-        "ServerPort"
-      ],
-      "example": {
-        "GameID": "1913398545777970887",
-        "ServerHostname": "14.57.243.85",
-        "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-        "ServerPort": 1200
-      }
-    },
-    "UserInfoRequest": {
-      "type": "object",
-      "properties": {
-        "MinCatalogVersion": {
-          "description": "Minimum catalog version for which data is requested (filters the results to only contain inventory items which have a catalog version of this or higher).",
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
           "type": "number",
           "x-actualtype": "int32"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information is being requested.",
-          "type": "string"
         }
       },
       "required": [
-        "PlayFabId",
-        "MinCatalogVersion"
+        "ProfileVersion"
       ],
       "example": {
-        "PlayFabId": "23990802934",
-        "MinCatalogVersion": 4
+        "ProfileVersion": 8,
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
       }
     },
-    "UserInfoResponse": {
+    "DeleteFilesRequest": {
       "type": "object",
       "properties": {
-        "Inventory": {
-          "description": "Array of inventory items in the user's current inventory.",
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FileNames": {
+          "description": "Names of the files to be deleted.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ItemInstance"
-          },
-          "x-isUnordered": true,
-          "x-isclass": true
+            "type": "string"
+          }
         },
-        "IsDeveloper": {
-          "description": "Boolean indicating whether the user is a developer.",
-          "type": "boolean"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information was requested.",
-          "type": "string"
-        },
-        "SteamId": {
-          "description": "Steam unique identifier, if the user has an associated Steam account.",
-          "type": "string"
-        },
-        "TitleDisplayName": {
-          "description": "Title specific display name, if set.",
-          "type": "string"
-        },
-        "Username": {
-          "description": "PlayFab unique user name.",
-          "type": "string"
-        },
-        "VirtualCurrency": {
-          "description": "Array of virtual currency balance(s) belonging to the user.",
-          "type": "object",
+        "ProfileVersion": {
+          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
+          "type": "number",
           "x-actualtype": "int32"
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "$ref": "#/definitions/VirtualCurrencyRechargeTime",
-          "description": "Array of remaining times and timestamps for virtual currencies.",
-          "type": "object",
-          "x-isclass": true
         }
       },
       "required": [
-        "IsDeveloper"
+        "FileNames",
+        "Entity"
       ],
       "example": {
-        "PlayFabId": "23990802934",
-        "Username": "username",
-        "TitleDisplayName": "titlespecificdisplayname",
-        "Inventory": [
-          {
-            "ItemId": "shield_level_5",
-            "ItemInstanceId": "9879843",
-            "ItemClass": "shields",
-            "CatalogVersion": "5"
-          },
-          {
-            "ItemId": "energy_boost_1",
-            "ItemInstanceId": "3854637",
-            "ItemClass": "boosts",
-            "RemainingUses": 4,
-            "CatalogVersion": "5"
-          }
+        "FileNames": [
+          "game_state",
+          "avatar"
         ],
-        "VirtualCurrency": {
-          "GC": 1500,
-          "ZZ": 225
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "GC": {
-            "SecondsToRecharge": 3600,
-            "RechargeTime": "2014-01-01T12:00:00",
-            "RechargeMax": 50
-          }
-        },
-        "SteamId": "1234"
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
       }
     },
-    "VirtualCurrencyRechargeTime": {
+    "DeleteFilesResponse": {
       "type": "object",
       "properties": {
-        "RechargeMax": {
-          "description": "Maximum value to which the regenerating currency will automatically increment. Note that it can exceed this value through use of the AddUserVirtualCurrency API call. However, it will not regenerate automatically until it has fallen below this value.",
-          "type": "number",
-          "x-actualtype": "int32"
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
         },
-        "RechargeTime": {
-          "description": "Server timestamp in UTC indicating the next time the virtual currency will be incremented.",
-          "type": "string"
-        },
-        "SecondsToRecharge": {
-          "description": "Time remaining (in seconds) before the next recharge increment of the virtual currency.",
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
           "type": "number",
           "x-actualtype": "int32"
         }
       },
       "required": [
-        "SecondsToRecharge",
-        "RechargeTime",
-        "RechargeMax"
+        "ProfileVersion"
       ],
       "example": {
-        "SecondsToRecharge": 3600,
-        "RechargeTime": "2014-01-01T12:00:00",
-        "RechargeMax": 50
+        "ProfileVersion": 6,
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "EntityKey": {
+      "description": "Entity identifier class that contains both the ID and type.",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Entity profile ID.",
+          "type": "string"
+        },
+        "Type": {
+          "$ref": "#/definitions/EntityTypes",
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "TypeString": {
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Id"
+      ]
+    },
+    "EntityTypes": {
+      "type": "object",
+      "enum": [
+        "title",
+        "master_player_account",
+        "title_player_account",
+        "character",
+        "group",
+        "service"
+      ]
+    },
+    "FinalizeFileUploadsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FileNames": {
+          "description": "Names of the files to be finalized. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "FileNames",
+        "Entity"
+      ],
+      "example": {
+        "FileNames": [
+          "profile_configuration",
+          "game_state"
+        ],
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "FinalizeFileUploadsResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Metadata": {
+          "$ref": "#/definitions/GetFileMetadata",
+          "description": "Collection of metadata for the entity's files",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ]
+    },
+    "GetFileMetadata": {
+      "type": "object",
+      "properties": {
+        "Checksum": {
+          "description": "Checksum value for the file",
+          "type": "string"
+        },
+        "DownloadUrl": {
+          "description": "Download URL where the file can be retrieved",
+          "type": "string"
+        },
+        "FileName": {
+          "description": "Name of the file",
+          "type": "string"
+        },
+        "LastModified": {
+          "description": "Last UTC time the file was modified",
+          "type": "string"
+        },
+        "Size": {
+          "description": "Storage service's reported byte count",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Size",
+        "LastModified"
+      ]
+    },
+    "GetFilesRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "example": {
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "GetFilesResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Metadata": {
+          "$ref": "#/definitions/GetFileMetadata",
+          "description": "Collection of metadata for the entity's files",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
+      "example": {
+        "ProfileVersion": 5,
+        "Metadata": {
+          "game_settings": {
+            "FileName": "game_settings",
+            "DownloadUrl": "https://...",
+            "Size": 5683,
+            "Checksum": "97129sdlkj9129",
+            "LastModified": "2017-12-05T17:36:05"
+          }
+        },
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "GetObjectsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EscapeObject": {
+          "description": "Determines whether the object will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON object.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "example": {
+        "Entity": {
+          "Id": "ABC90712ABC",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "GetObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Objects": {
+          "$ref": "#/definitions/ObjectResult",
+          "description": "Requested objects that the calling entity has access to",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
+      "example": {
+        "ProfileVersion": 17,
+        "Objects": {
+          "gameState": {
+            "ObjectName": "gameState",
+            "EscapedDataObject": "{ \"Property\": { \"ValueName\": 5 } }"
+          }
+        },
+        "Entity": {
+          "Id": "ABC1234ABC",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "InitiateFileUploadMetadata": {
+      "type": "object",
+      "properties": {
+        "FileName": {
+          "description": "Name of the file.",
+          "type": "string"
+        },
+        "UploadUrl": {
+          "description": "Location the data should be sent to via an HTTP PUT operation.",
+          "type": "string"
+        }
+      }
+    },
+    "InitiateFileUploadsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FileNames": {
+          "description": "Names of the files to be set. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ProfileVersion": {
+          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "FileNames",
+        "Entity"
+      ],
+      "example": {
+        "FileNames": [
+          "profile_configuration",
+          "game_state"
+        ],
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "InitiateFileUploadsResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "UploadDetails": {
+          "description": "Collection of file names and upload urls",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InitiateFileUploadMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
+      "example": {
+        "ProfileVersion": 5,
+        "UploadDetails": [
+          {
+            "FileName": "game_state",
+            "UploadUrl": "https://..."
+          },
+          {
+            "FileName": "profile_configuration",
+            "UploadUrl": "https://..."
+          }
+        ],
+        "Entity": {
+          "Id": "ID",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "ObjectResult": {
+      "type": "object",
+      "properties": {
+        "DataObject": {
+          "description": "Un-escaped JSON object, if EscapeObject false or default.",
+          "type": "object"
+        },
+        "EscapedDataObject": {
+          "description": "Escaped string JSON body of the object, if EscapeObject is true.",
+          "type": "string"
+        },
+        "ObjectName": {
+          "description": "Name of the object. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ObjectName": "SaveSate",
+        "EscapedDataObject": "{\"PlayerDetails\":{\"LastMissionSuccess\":\"2017-06-15T11:05:19Z\",\"LastMissionFailure\":\"2017-06-12T11:05:19Z\",\"MapPosition\":[22.0,37.78],\"IsPaidUpgrade\":true},\"GameSettings\":{\"Screen\":\"FriendsList\",\"Favorites\":[\"Place 1\",\"Place 2\"]},\"Social\":{\"Facebook\":{\"LikedPage\":true,\"PostedShare\":true,\"LinkedAccount\":false}}}"
+      }
+    },
+    "OperationTypes": {
+      "type": "object",
+      "enum": [
+        "Created",
+        "Updated",
+        "Deleted",
+        "None"
+      ]
+    },
+    "SetObject": {
+      "type": "object",
+      "properties": {
+        "DataObject": {
+          "description": "Body of the object to be saved. If empty and DeleteObject is true object will be deleted if it exists, or no operation will occur if it does not exist. Only one of Object or EscapedDataObject fields may be used.",
+          "type": "object"
+        },
+        "DeleteObject": {
+          "description": "Flag to indicate that this object should be deleted. Both DataObject and EscapedDataObject must not be set as well.",
+          "type": "boolean"
+        },
+        "EscapedDataObject": {
+          "description": "Body of the object to be saved as an escaped JSON string. If empty and DeleteObject is true object will be deleted if it exists, or no operation will occur if it does not exist. Only one of DataObject or EscapedDataObject fields may be used.",
+          "type": "string"
+        },
+        "ObjectName": {
+          "description": "Name of object. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ObjectName"
+      ]
+    },
+    "SetObjectInfo": {
+      "type": "object",
+      "properties": {
+        "ObjectName": {
+          "description": "Name of the object",
+          "type": "string"
+        },
+        "OperationReason": {
+          "description": "Optional reason to explain why the operation was the result that it was.",
+          "type": "string"
+        },
+        "SetResult": {
+          "$ref": "#/definitions/OperationTypes",
+          "description": "Indicates which operation was completed, either Created, Updated, Deleted or None.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "SetObjectsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpectedProfileVersion": {
+          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the object set will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Objects": {
+          "description": "Collection of objects to set on the profile.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SetObject"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Objects",
+        "Entity"
+      ],
+      "example": {
+        "ExpectedProfileVersion": 5,
+        "Objects": [
+          {
+            "ObjectName": "SaveSate",
+            "DataObject": {
+              "PlayerDetails": {
+                "LastMissionSuccess": "2017-06-15T11:05:19Z",
+                "LastMissionFailure": "2017-06-12T11:05:19Z",
+                "MapPosition": [
+                  22.0,
+                  37.78
+                ],
+                "IsPaidUpgrade": true
+              },
+              "GameSettings": {
+                "Screen": "FriendsList",
+                "Favorites": [
+                  "Place 1",
+                  "Place 2"
+                ]
+              }
+            },
+            "SimpleStatements": {
+              "Read": [
+                {
+                  "Friend": true
+                }
+              ],
+              "Write": [
+                "Self"
+              ]
+            }
+          }
+        ],
+        "Entity": {
+          "Id": "A8140AB9109712B",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "SetObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "ProfileVersion": {
+          "description": "New version of the entity profile.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SetResults": {
+          "description": "New version of the entity profile.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SetObjectInfo"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
+      "example": {
+        "SetResults": [
+          {}
+        ],
+        "ProfileVersion": 5
       }
     }
   },
   "parameters": {
-    "AuthUserRequest": {
-      "name": "AuthUserRequest",
+    "AbortFileUploadsRequest": {
+      "name": "AbortFileUploadsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/AuthUserRequest"
+        "$ref": "#/definitions/AbortFileUploadsRequest"
       }
     },
-    "DeregisterGameRequest": {
-      "name": "DeregisterGameRequest",
+    "DeleteFilesRequest": {
+      "name": "DeleteFilesRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/DeregisterGameRequest"
+        "$ref": "#/definitions/DeleteFilesRequest"
       }
     },
-    "PlayerJoinedRequest": {
-      "name": "PlayerJoinedRequest",
+    "FinalizeFileUploadsRequest": {
+      "name": "FinalizeFileUploadsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/PlayerJoinedRequest"
+        "$ref": "#/definitions/FinalizeFileUploadsRequest"
       }
     },
-    "PlayerLeftRequest": {
-      "name": "PlayerLeftRequest",
+    "GetFilesRequest": {
+      "name": "GetFilesRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/PlayerLeftRequest"
+        "$ref": "#/definitions/GetFilesRequest"
       }
     },
-    "RegisterGameRequest": {
-      "name": "RegisterGameRequest",
+    "GetObjectsRequest": {
+      "name": "GetObjectsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/RegisterGameRequest"
+        "$ref": "#/definitions/GetObjectsRequest"
       }
     },
-    "StartGameRequest": {
-      "name": "StartGameRequest",
+    "InitiateFileUploadsRequest": {
+      "name": "InitiateFileUploadsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/StartGameRequest"
+        "$ref": "#/definitions/InitiateFileUploadsRequest"
       }
     },
-    "UserInfoRequest": {
-      "name": "UserInfoRequest",
+    "SetObjectsRequest": {
+      "name": "SetObjectsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/UserInfoRequest"
+        "$ref": "#/definitions/SetObjectsRequest"
       }
     }
   },
@@ -1108,53 +1249,57 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "AuthUserResponse": {
+    "AbortFileUploadsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/AuthUserResponse"
+        "$ref": "#/definitions/AbortFileUploadsResponse"
       }
     },
-    "DeregisterGameResponse": {
+    "DeleteFilesResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/DeregisterGameResponse"
+        "$ref": "#/definitions/DeleteFilesResponse"
       }
     },
-    "PlayerJoinedResponse": {
+    "FinalizeFileUploadsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/PlayerJoinedResponse"
+        "$ref": "#/definitions/FinalizeFileUploadsResponse"
       }
     },
-    "PlayerLeftResponse": {
+    "GetFilesResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/PlayerLeftResponse"
+        "$ref": "#/definitions/GetFilesResponse"
       }
     },
-    "RegisterGameResponse": {
+    "GetObjectsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/RegisterGameResponse"
+        "$ref": "#/definitions/GetObjectsResponse"
       }
     },
-    "StartGameResponse": {
+    "InitiateFileUploadsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/StartGameResponse"
+        "$ref": "#/definitions/InitiateFileUploadsResponse"
       }
     },
-    "UserInfoResponse": {
+    "SetObjectsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/UserInfoResponse"
+        "$ref": "#/definitions/SetObjectsResponse"
       }
     }
   },
   "tags": [
     {
-      "name": "Matchmaking",
-      "description": "https://api.playfab.com/documentation/Matchmaker#Matchmaking"
+      "name": "File",
+      "description": "https://api.playfab.com/documentation/Data#File"
+    },
+    {
+      "name": "Object",
+      "description": "https://api.playfab.com/documentation/Data#Object"
     }
   ],
   "securityDefinitions": {

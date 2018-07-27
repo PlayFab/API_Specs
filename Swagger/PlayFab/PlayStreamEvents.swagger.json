@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "180726",
-    "title": "PlayFab Matchmaker API",
-    "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
+    "title": "PlayFab PlayStreamEvents API",
+    "description": "Entity profiles are the top level containers for essentially all information about an entity.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,24 +24,24 @@
     "application/json"
   ],
   "paths": {
-    "/Matchmaker/AuthUser": {
+    "/Event/WriteEvents": {
       "post": {
-        "operationId": "AuthUser",
+        "operationId": "WriteEvents",
         "tags": [
-          "Matchmaking"
+          "PlayStream Events"
         ],
-        "description": "Validates a user with the PlayFab service",
+        "description": "Write batches of entity based events to PlayStream.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/AuthUser"
+          "url": "https://api.playfab.com/documentation/playstreamevents/method/WriteEvents"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/AuthUserRequest"
+            "$ref": "#/parameters/WriteEventsRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
@@ -59,15 +59,16 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/AuthUserResponse"
+                  "$ref": "#/responses/WriteEventsResponse"
                 }
               },
               "example": {
                 "code": 200,
                 "status": 200,
                 "data": {
-                  "Authorized": true,
-                  "PlayFabId": "23990802934"
+                  "AssignedEventIds": [
+                    "496b598a05404142a6b6349c8cb29459"
+                  ]
                 }
               }
             }
@@ -76,430 +77,14 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order to securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the AuthorizationTicket in this call.",
-        "x-seeAlso": [
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
         "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/DeregisterGame": {
-      "post": {
-        "operationId": "DeregisterGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Inform the matchmaker that a Game Server Instance is removed.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/DeregisterGame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/DeregisterGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/DeregisterGameResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": null
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/DeregisterGame"
-        },
-        "x-AllInclusiveFlags": [
-          "Beta"
-        ],
-        "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
-        ],
-        "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/PlayerJoined": {
-      "post": {
-        "operationId": "PlayerJoined",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has joined the Game Server Instance specified",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerJoined"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/PlayerJoinedRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/PlayerJoinedResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": null
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/PlayerLeft": {
-      "post": {
-        "operationId": "PlayerLeft",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has left the Game Server Instance specified",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerLeft"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/PlayerLeftRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/PlayerLeftResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": null
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/RegisterGame": {
-      "post": {
-        "operationId": "RegisterGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Inform the matchmaker that a new Game Server Instance is added.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/RegisterGame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/RegisterGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/RegisterGameResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "LobbyId": "8285313"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/RegisterGame"
-        },
-        "x-AllInclusiveFlags": [
-          "Beta"
-        ],
-        "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
-        ],
-        "x-errors": [
-          "BuildNotFound",
-          "InvalidParams",
-          "InvalidRequest"
-        ]
-      }
-    },
-    "/Matchmaker/StartGame": {
-      "post": {
-        "operationId": "StartGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Instructs the PlayFab game server hosting service to instantiate a new Game Server Instance",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/StartGame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/StartGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/StartGameResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "GameID": "1913398545777970887",
-                  "ServerHostname": "14.57.243.85",
-                  "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-                  "ServerPort": 1200
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/UserInfo"
-        ],
-        "x-errors": [
-          "BuildNotFound",
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/UserInfo": {
-      "post": {
-        "operationId": "UserInfo",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Retrieves the relevant details for a specified user, which the external match-making service can then use to compute effective matches",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/UserInfo"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/UserInfoRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/UserInfoResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "PlayFabId": "23990802934",
-                  "Username": "username",
-                  "TitleDisplayName": "titlespecificdisplayname",
-                  "Inventory": [
-                    {
-                      "ItemId": "shield_level_5",
-                      "ItemInstanceId": "9879843",
-                      "ItemClass": "shields",
-                      "CatalogVersion": "5"
-                    },
-                    {
-                      "ItemId": "energy_boost_1",
-                      "ItemInstanceId": "3854637",
-                      "ItemClass": "boosts",
-                      "RemainingUses": 4,
-                      "CatalogVersion": "5"
-                    }
-                  ],
-                  "VirtualCurrency": {
-                    "GC": 1500,
-                    "ZZ": 225
-                  },
-                  "VirtualCurrencyRechargeTimes": {
-                    "GC": {
-                      "SecondsToRecharge": 3600,
-                      "RechargeTime": "2014-01-01T12:00:00",
-                      "RechargeMax": 50
-                    }
-                  },
-                  "SteamId": "1234"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame"
-        ],
-        "x-errors": [
-          "InvalidParams"
+          "EventEntityNotAllowed",
+          "EventNamespaceNotAllowed",
+          "InvalidJSONContent",
+          "NotAuthenticated",
+          "NotAuthorized",
+          "OverLimit",
+          "ProfileDoesNotExist"
         ]
       }
     }
@@ -537,567 +122,141 @@
         }
       }
     },
-    "AuthUserRequest": {
+    "EntityKey": {
+      "description": "Entity identifier class that contains both the ID and type.",
       "type": "object",
       "properties": {
-        "AuthorizationTicket": {
-          "description": "Session Ticket provided by the client.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "AuthorizationTicket"
-      ],
-      "example": {
-        "AuthorizationTicket": "9F856B4A071A9A5D-0-0-AD0-8D165320C16429B-72087E2356D29870.9D0410B3E78D8A5F"
-      }
-    },
-    "AuthUserResponse": {
-      "type": "object",
-      "properties": {
-        "Authorized": {
-          "description": "Boolean indicating if the user has been authorized to use the external match-making service.",
-          "type": "boolean"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the account that has been authorized.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Authorized"
-      ],
-      "example": {
-        "Authorized": true,
-        "PlayFabId": "23990802934"
-      }
-    },
-    "DeregisterGameRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId"
-      ],
-      "example": {
-        "LobbyId": "8285313"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "DeregisterGameResponse": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "ItemInstance": {
-      "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item instance (such as Tags, Description, or Custom Data that are set on the root catalog item), a call to GetCatalogItems is required. The Item ID of the instance can then be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set here from a call to UpdateUserInventoryItemCustomData.",
-      "type": "object",
-      "properties": {
-        "Annotation": {
-          "description": "Game specific comment associated with this instance when it was added to the user inventory.",
+        "Id": {
+          "description": "Entity profile ID.",
           "type": "string"
         },
-        "BundleContents": {
-          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+        "Type": {
+          "$ref": "#/definitions/EntityTypes",
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "TypeString": {
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Id"
+      ]
+    },
+    "EntityTypes": {
+      "type": "object",
+      "enum": [
+        "title",
+        "master_player_account",
+        "title_player_account",
+        "character",
+        "group",
+        "service"
+      ]
+    },
+    "EventContents": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "Entity associated with the event",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EventNamespace": {
+          "description": "The namespace in which the event is defined. It must be prepended with 'com.playfab.events.'",
+          "type": "string"
+        },
+        "Name": {
+          "description": "The name of this event.",
+          "type": "string"
+        },
+        "OriginalId": {
+          "description": "The original unique identifier associated with this event before it was posted to PlayFab. The value might differ from the EventId value, which is assigned when the event is received by the server.",
+          "type": "string"
+        },
+        "OriginalTimestamp": {
+          "description": "The time (in UTC) associated with this event when it occurred. If specified, this value is stored in the OriginalTimestamp property of the PlayStream event.",
+          "type": "string"
+        },
+        "Payload": {
+          "description": "Arbitrary data associated with the event. Only one of Payload or PayloadJSON is allowed.",
+          "type": "object"
+        },
+        "PayloadJSON": {
+          "description": "Arbitrary data associated with the event, represented as a JSON serialized string. Only one of Payload or PayloadJSON is allowed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Entity",
+        "EventNamespace",
+        "Name"
+      ]
+    },
+    "WriteEventsRequest": {
+      "type": "object",
+      "properties": {
+        "Events": {
+          "description": "Collection of events to write to PlayStream.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EventContents"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Events"
+      ],
+      "example": {
+        "Events": [
+          {
+            "Entity": {
+              "Id": "A8140AB9109712B",
+              "Type": "title",
+              "TypeString": "title"
+            },
+            "Name": "something_happened",
+            "Payload": {
+              "Foo": "Bar",
+              "Nums": [
+                1,
+                2,
+                3
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "WriteEventsResponse": {
+      "type": "object",
+      "properties": {
+        "AssignedEventIds": {
+          "description": "The unique identifiers assigned by the server to the events, in the same order as the events in the request. Only returned if FlushToPlayStream option is true.",
           "type": "array",
           "items": {
             "type": "string"
           }
-        },
-        "BundleParent": {
-          "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
-          "type": "string"
-        },
-        "CatalogVersion": {
-          "description": "Catalog version for the inventory item, when this instance was created.",
-          "type": "string"
-        },
-        "CustomData": {
-          "description": "A set of custom key-value pairs on the inventory item.",
-          "type": "object"
-        },
-        "DisplayName": {
-          "description": "CatalogItem.DisplayName at the time this item was purchased.",
-          "type": "string"
-        },
-        "Expiration": {
-          "description": "Timestamp for when this instance will expire.",
-          "type": "string"
-        },
-        "ItemClass": {
-          "description": "Class name for the inventory item, as defined in the catalog.",
-          "type": "string"
-        },
-        "ItemId": {
-          "description": "Unique identifier for the inventory item, as defined in the catalog.",
-          "type": "string"
-        },
-        "ItemInstanceId": {
-          "description": "Unique item identifier for this specific instance of the item.",
-          "type": "string"
-        },
-        "PurchaseDate": {
-          "description": "Timestamp for when this instance was purchased.",
-          "type": "string"
-        },
-        "RemainingUses": {
-          "description": "Total number of remaining uses, if this is a consumable item.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "UnitCurrency": {
-          "description": "Currency type for the cost of the catalog item.",
-          "type": "string"
-        },
-        "UnitPrice": {
-          "description": "Cost of the catalog item in the given currency.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "UsesIncrementedBy": {
-          "description": "The number of uses that were added or removed to this item in this call.",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "UnitPrice"
-      ],
-      "example": {
-        "ItemId": "shield_level_5",
-        "ItemInstanceId": "133713371337",
-        "ItemClass": "shields",
-        "PurchaseDate": "2017-03-07T00:00:00",
-        "Expiration": "2018-10-01T00:00:00",
-        "RemainingUses": 10,
-        "Annotation": "No Annotation",
-        "CatalogVersion": "5",
-        "BundleParent": "crate block 1"
-      },
-      "x-sortKey": "ItemInstanceId"
-    },
-    "PlayerJoinedRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is joining. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player joining.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
-      "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
-      }
-    },
-    "PlayerJoinedResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "PlayerLeftRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is leaving. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player leaving.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
-      "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
-      }
-    },
-    "PlayerLeftResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "Region": {
-      "type": "object",
-      "enum": [
-        "USCentral",
-        "USEast",
-        "EUWest",
-        "Singapore",
-        "Japan",
-        "Brazil",
-        "Australia"
-      ]
-    },
-    "RegisterGameRequest": {
-      "type": "object",
-      "properties": {
-        "Build": {
-          "description": "Unique identifier of the build running on the Game Server Instance.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game Mode the Game Server instance is running. Note that this must be defined in the Game Modes tab in the PlayFab Game Manager, along with the Build ID (the same Game Mode can be defined for multiple Build IDs).",
-          "type": "string"
-        },
-        "LobbyId": {
-          "description": "Previous lobby id if re-registering an existing game.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
-          "type": "string",
-          "x-isenum": true
-        },
-        "ServerHost": {
-          "description": "IPV4 address of the Game Server Instance.",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "string"
-        },
-        "Tags": {
-          "description": "Tags for the Game Server Instance",
-          "type": "object"
-        }
-      },
-      "required": [
-        "ServerHost",
-        "ServerPort",
-        "Build",
-        "Region",
-        "GameMode"
-      ],
-      "example": {
-        "ServerHost": "118.129.31.244",
-        "ServerPort": "9984",
-        "Build": "11_034234.13",
-        "Region": "USEast",
-        "GameMode": "FreeForAll",
-        "Tags": {
-          "level_cap": "high",
-          "no_smoking": "1"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "RegisterGameResponse": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
-          "type": "string"
         }
       },
       "example": {
-        "LobbyId": "8285313"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": {
-        "ProposedAfter": "09/19/2016",
-        "DeprecatedAfter": "10/19/2016",
-        "ObsoleteAfter": "11/19/2016"
-      }
-    },
-    "StartGameRequest": {
-      "type": "object",
-      "properties": {
-        "Build": {
-          "description": "Unique identifier of the previously uploaded build executable which is to be started.",
-          "type": "string"
-        },
-        "CustomCommandLineData": {
-          "description": "Custom command line argument when starting game server process.",
-          "type": "string"
-        },
-        "ExternalMatchmakerEventEndpoint": {
-          "description": "HTTP endpoint URL for receiving game status events, if using an external matchmaker. When the game ends, PlayFab will make a POST request to this URL with the X-SecretKey header set to the value of the game's secret and an application/json body of { \"EventName\": \"game_ended\", \"GameID\": \"<gameid>\" }.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game mode for this Game Server Instance.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region with which to associate the server, for filtering.",
-          "type": "string",
-          "x-isenum": true
-        }
-      },
-      "required": [
-        "Build",
-        "Region",
-        "GameMode",
-        "ExternalMatchmakerEventEndpoint"
-      ],
-      "example": {
-        "Build": "6.01",
-        "GameMode": "capture_the_flag",
-        "CustomCommandLineData": "custom_gameserver_commandline_parameter",
-        "ExternalMatchmakerEventEndpoint": "https://yourmatchmaker.com/gamestatusevents/"
-      }
-    },
-    "StartGameResponse": {
-      "type": "object",
-      "properties": {
-        "GameID": {
-          "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerHostname": {
-          "description": "IPV4 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        }
-      },
-      "required": [
-        "ServerPort"
-      ],
-      "example": {
-        "GameID": "1913398545777970887",
-        "ServerHostname": "14.57.243.85",
-        "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-        "ServerPort": 1200
-      }
-    },
-    "UserInfoRequest": {
-      "type": "object",
-      "properties": {
-        "MinCatalogVersion": {
-          "description": "Minimum catalog version for which data is requested (filters the results to only contain inventory items which have a catalog version of this or higher).",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information is being requested.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "PlayFabId",
-        "MinCatalogVersion"
-      ],
-      "example": {
-        "PlayFabId": "23990802934",
-        "MinCatalogVersion": 4
-      }
-    },
-    "UserInfoResponse": {
-      "type": "object",
-      "properties": {
-        "Inventory": {
-          "description": "Array of inventory items in the user's current inventory.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ItemInstance"
-          },
-          "x-isUnordered": true,
-          "x-isclass": true
-        },
-        "IsDeveloper": {
-          "description": "Boolean indicating whether the user is a developer.",
-          "type": "boolean"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information was requested.",
-          "type": "string"
-        },
-        "SteamId": {
-          "description": "Steam unique identifier, if the user has an associated Steam account.",
-          "type": "string"
-        },
-        "TitleDisplayName": {
-          "description": "Title specific display name, if set.",
-          "type": "string"
-        },
-        "Username": {
-          "description": "PlayFab unique user name.",
-          "type": "string"
-        },
-        "VirtualCurrency": {
-          "description": "Array of virtual currency balance(s) belonging to the user.",
-          "type": "object",
-          "x-actualtype": "int32"
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "$ref": "#/definitions/VirtualCurrencyRechargeTime",
-          "description": "Array of remaining times and timestamps for virtual currencies.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "IsDeveloper"
-      ],
-      "example": {
-        "PlayFabId": "23990802934",
-        "Username": "username",
-        "TitleDisplayName": "titlespecificdisplayname",
-        "Inventory": [
-          {
-            "ItemId": "shield_level_5",
-            "ItemInstanceId": "9879843",
-            "ItemClass": "shields",
-            "CatalogVersion": "5"
-          },
-          {
-            "ItemId": "energy_boost_1",
-            "ItemInstanceId": "3854637",
-            "ItemClass": "boosts",
-            "RemainingUses": 4,
-            "CatalogVersion": "5"
-          }
-        ],
-        "VirtualCurrency": {
-          "GC": 1500,
-          "ZZ": 225
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "GC": {
-            "SecondsToRecharge": 3600,
-            "RechargeTime": "2014-01-01T12:00:00",
-            "RechargeMax": 50
-          }
-        },
-        "SteamId": "1234"
-      }
-    },
-    "VirtualCurrencyRechargeTime": {
-      "type": "object",
-      "properties": {
-        "RechargeMax": {
-          "description": "Maximum value to which the regenerating currency will automatically increment. Note that it can exceed this value through use of the AddUserVirtualCurrency API call. However, it will not regenerate automatically until it has fallen below this value.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "RechargeTime": {
-          "description": "Server timestamp in UTC indicating the next time the virtual currency will be incremented.",
-          "type": "string"
-        },
-        "SecondsToRecharge": {
-          "description": "Time remaining (in seconds) before the next recharge increment of the virtual currency.",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "SecondsToRecharge",
-        "RechargeTime",
-        "RechargeMax"
-      ],
-      "example": {
-        "SecondsToRecharge": 3600,
-        "RechargeTime": "2014-01-01T12:00:00",
-        "RechargeMax": 50
+        "AssignedEventIds": [
+          "496b598a05404142a6b6349c8cb29459"
+        ]
       }
     }
   },
   "parameters": {
-    "AuthUserRequest": {
-      "name": "AuthUserRequest",
+    "WriteEventsRequest": {
+      "name": "WriteEventsRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/AuthUserRequest"
-      }
-    },
-    "DeregisterGameRequest": {
-      "name": "DeregisterGameRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/DeregisterGameRequest"
-      }
-    },
-    "PlayerJoinedRequest": {
-      "name": "PlayerJoinedRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/PlayerJoinedRequest"
-      }
-    },
-    "PlayerLeftRequest": {
-      "name": "PlayerLeftRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/PlayerLeftRequest"
-      }
-    },
-    "RegisterGameRequest": {
-      "name": "RegisterGameRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/RegisterGameRequest"
-      }
-    },
-    "StartGameRequest": {
-      "name": "StartGameRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/StartGameRequest"
-      }
-    },
-    "UserInfoRequest": {
-      "name": "UserInfoRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/UserInfoRequest"
+        "$ref": "#/definitions/WriteEventsRequest"
       }
     }
   },
@@ -1108,53 +267,17 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "AuthUserResponse": {
+    "WriteEventsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/AuthUserResponse"
-      }
-    },
-    "DeregisterGameResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/DeregisterGameResponse"
-      }
-    },
-    "PlayerJoinedResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/PlayerJoinedResponse"
-      }
-    },
-    "PlayerLeftResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/PlayerLeftResponse"
-      }
-    },
-    "RegisterGameResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/RegisterGameResponse"
-      }
-    },
-    "StartGameResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/StartGameResponse"
-      }
-    },
-    "UserInfoResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/UserInfoResponse"
+        "$ref": "#/definitions/WriteEventsResponse"
       }
     }
   },
   "tags": [
     {
-      "name": "Matchmaking",
-      "description": "https://api.playfab.com/documentation/Matchmaker#Matchmaking"
+      "name": "PlayStream Events",
+      "description": "https://api.playfab.com/documentation/PlayStreamEvents#PlayStream-Events"
     }
   ],
   "securityDefinitions": {
