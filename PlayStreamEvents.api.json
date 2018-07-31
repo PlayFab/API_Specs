@@ -1,58 +1,192 @@
 {
-  "name": "Fake",
-  "url": "/Fake",
-  "description": "",
-  "apiDescriptionList": [],
-  "AnyInclusiveFlags": [
-    "Fake"
+  "name": "PlayStreamEvents",
+  "url": "/PlayStreamEvents",
+  "description": "Entity profiles are the top level containers for essentially all information about an entity.",
+  "apiDescriptionList": [
+    "Entity profiles are the top level containers for essentially all information about an entity."
   ],
   "datatypes": {
-    "EmptyRequest": {
-      "name": "EmptyRequest",
-      "className": "EmptyRequest",
-      "classNameSpace": "PlayFab.Fake.Models",
-      "assembly": "PlayFab.Fake.Models",
-      "AnyInclusiveFlags": [
-        "Fake"
-      ],
-      "isRequest": true,
-      "properties": []
+    "EntityKey": {
+      "name": "EntityKey",
+      "className": "EntityKey",
+      "classNameSpace": "PlayFab.PlayStreamEvents.Models",
+      "assembly": "PlayFab.PlayStreamEvents.Models",
+      "description": "Entity identifier class that contains both the ID and type.",
+      "properties": [
+        {
+          "name": "Id",
+          "description": "Entity profile ID.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Type",
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "jsontype": "String",
+          "actualtype": "EntityTypes",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "TypeString",
+          "description": "Entity type. Optional to be used but one of EntityType or EntityTypeString must be set.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
-    "EmptyResult": {
-      "name": "EmptyResult",
-      "className": "EmptyResult",
-      "classNameSpace": "PlayFab.Fake.Models",
-      "assembly": "PlayFab.Fake.Models",
-      "AnyInclusiveFlags": [
-        "Fake"
-      ],
+    "EntityTypes": {
+      "name": "EntityTypes",
+      "className": "EntityTypes",
+      "classNameSpace": "PlayFab.PlayStreamEvents.Models",
+      "assembly": "PlayFab.PlayStreamEvents.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "title"
+        },
+        {
+          "name": "master_player_account"
+        },
+        {
+          "name": "title_player_account"
+        },
+        {
+          "name": "character"
+        },
+        {
+          "name": "group"
+        },
+        {
+          "name": "service"
+        }
+      ]
+    },
+    "EventContents": {
+      "name": "EventContents",
+      "className": "EventContents",
+      "classNameSpace": "PlayFab.PlayStreamEvents.Models",
+      "assembly": "PlayFab.PlayStreamEvents.Models",
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "Entity associated with the event",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "EventNamespace",
+          "description": "The namespace in which the event is defined. It must be prepended with 'com.playfab.events.'",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Name",
+          "description": "The name of this event.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "OriginalId",
+          "description": "The original unique identifier associated with this event before it was posted to PlayFab. The value might differ from the EventId value, which is assigned when the event is received by the server.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OriginalTimestamp",
+          "description": "The time (in UTC) associated with this event when it occurred. If specified, this value is stored in the OriginalTimestamp property of the PlayStream event.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Payload",
+          "description": "Arbitrary data associated with the event. Only one of Payload or PayloadJSON is allowed.",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "PayloadJSON",
+          "description": "Arbitrary data associated with the event, represented as a JSON serialized string. Only one of Payload or PayloadJSON is allowed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "WriteEventsRequest": {
+      "name": "WriteEventsRequest",
+      "className": "WriteEventsRequest",
+      "classNameSpace": "PlayFab.PlayStreamEvents.Models",
+      "assembly": "PlayFab.PlayStreamEvents.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Events",
+          "description": "Collection of events to write to PlayStream.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EventContents",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "WriteEventsResponse": {
+      "name": "WriteEventsResponse",
+      "className": "WriteEventsResponse",
+      "classNameSpace": "PlayFab.PlayStreamEvents.Models",
+      "assembly": "PlayFab.PlayStreamEvents.Models",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "AssignedEventIds",
+          "description": "The unique identifiers assigned by the server to the events, in the same order as the events in the request. Only returned if FlushToPlayStream option is true.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
     {
-      "name": "Fake",
+      "name": "PlayStream Events",
       "methods": [
-        "FakeApiCall"
+        "WriteEvents"
       ]
     }
   ],
   "calls": [
     {
-      "name": "FakeApiCall",
-      "summary": "This is a fake call in a fake ApiGroup which should never actually be called.",
-      "subgroup": "Fake",
+      "name": "WriteEvents",
+      "summary": "Write batches of entity based events to PlayStream.",
+      "subgroup": "PlayStream Events",
       "titleTiers": null,
-      "url": "/Fake/FakeApiCall",
-      "auth": "None",
+      "url": "/Event/WriteEvents",
+      "auth": "EntityToken",
       "method": "POST",
-      "request": "EmptyRequest",
-      "requestExample": "{}",
-      "result": "EmptyResult",
-      "resultExample": "",
-      "AnyInclusiveFlags": [
-        "Fake"
+      "request": "WriteEventsRequest",
+      "requestExample": "{\r\n  \"Events\": [\r\n    {\r\n      \"Entity\": {\r\n        \"Id\": \"A8140AB9109712B\",\r\n        \"Type\": \"title\",\r\n        \"TypeString\": \"title\"\r\n      },\r\n      \"Name\": \"something_happened\",\r\n      \"Payload\": {\r\n        \"Foo\": \"Bar\",\r\n        \"Nums\": [\r\n          1,\r\n          2,\r\n          3\r\n        ]\r\n      }\r\n    }\r\n  ]\r\n}",
+      "result": "WriteEventsResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"AssignedEventIds\": [\r\n      \"496b598a05404142a6b6349c8cb29459\"\r\n    ]\r\n  }\r\n}",
+      "errors": [
+        "EventEntityNotAllowed",
+        "EventNamespaceNotAllowed",
+        "InvalidJSONContent",
+        "NotAuthenticated",
+        "NotAuthorized",
+        "OverLimit",
+        "ProfileDoesNotExist"
       ]
     }
   ],
@@ -1585,6 +1719,10 @@
       "id": 1391,
       "name": "InvalidScheduledTaskParameter"
     },
+    "PerEntityEventRateLimitExceeded": {
+      "id": 1392,
+      "name": "PerEntityEventRateLimitExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -1625,9 +1763,9 @@
       "id": 2010,
       "name": "MatchmakingMatchIdIdMissing"
     },
-    "MatchmakingHopperIdMissing": {
+    "MatchmakingQueueNameMissing": {
       "id": 2011,
-      "name": "MatchmakingHopperIdMissing"
+      "name": "MatchmakingQueueNameMissing"
     },
     "MatchmakingTitleIdMissing": {
       "id": 2012,
@@ -1645,9 +1783,9 @@
       "id": 2015,
       "name": "MatchmakingJoinRequestUserMissing"
     },
-    "MatchmakingHopperConfigNotFound": {
+    "MatchmakingQueueConfigNotFound": {
       "id": 2016,
-      "name": "MatchmakingHopperConfigNotFound"
+      "name": "MatchmakingQueueConfigNotFound"
     },
     "MatchmakingMatchNotFound": {
       "id": 2017,
@@ -1701,17 +1839,25 @@
       "id": 2029,
       "name": "MatchmakingTicketAlreadyCompleted"
     },
-    "MatchmakingHopperIdInvalid": {
+    "MatchmakingQueueNameInvalid": {
       "id": 2030,
-      "name": "MatchmakingHopperIdInvalid"
+      "name": "MatchmakingQueueNameInvalid"
     },
-    "MatchmakingHopperConfigInvalid": {
+    "MatchmakingQueueConfigInvalid": {
       "id": 2031,
-      "name": "MatchmakingHopperConfigInvalid"
+      "name": "MatchmakingQueueConfigInvalid"
     },
     "MatchmakingMemberProfileInvalid": {
       "id": 2032,
       "name": "MatchmakingMemberProfileInvalid"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 2033,
+      "name": "WriteAttemptedDuringExport"
+    },
+    "NintendoSwitchDeviceIdNotLinked": {
+      "id": 2034,
+      "name": "NintendoSwitchDeviceIdNotLinked"
     }
   },
   "errorList": [
@@ -2097,6 +2243,7 @@
     "ExplicitContentDetected",
     "PIIContentDetected",
     "InvalidScheduledTaskParameter",
+    "PerEntityEventRateLimitExceeded",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateRequestMissing",
@@ -2107,12 +2254,12 @@
     "MatchmakingTicketIdMissing",
     "MatchmakingMatchIdMissing",
     "MatchmakingMatchIdIdMissing",
-    "MatchmakingHopperIdMissing",
+    "MatchmakingQueueNameMissing",
     "MatchmakingTitleIdMissing",
     "MatchmakingTicketIdIdMissing",
     "MatchmakingPlayerIdMissing",
     "MatchmakingJoinRequestUserMissing",
-    "MatchmakingHopperConfigNotFound",
+    "MatchmakingQueueConfigNotFound",
     "MatchmakingMatchNotFound",
     "MatchmakingTicketNotFound",
     "MatchmakingCreateTicketServerIdentityInvalid",
@@ -2126,8 +2273,10 @@
     "MatchmakingPlayerIdentityMismatch",
     "MatchmakingAlreadyJoinedTicket",
     "MatchmakingTicketAlreadyCompleted",
-    "MatchmakingHopperIdInvalid",
-    "MatchmakingHopperConfigInvalid",
-    "MatchmakingMemberProfileInvalid"
+    "MatchmakingQueueNameInvalid",
+    "MatchmakingQueueConfigInvalid",
+    "MatchmakingMemberProfileInvalid",
+    "WriteAttemptedDuringExport",
+    "NintendoSwitchDeviceIdNotLinked"
   ]
 }
