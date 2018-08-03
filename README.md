@@ -27,3 +27,6 @@ Our Developer Success Team can assist with answering any questions as well as pr
   http://www.apache.org/licenses/
   Full details available within the LICENSE file.
 ```
+
+## 4. Reflecting Re-architecting API changes in the documentation website
+If the API ever has a restructuring, there will be a need to update the playfab spec: https://www.playfabapi.com/apispec/ to reflect changes in the doc site.
