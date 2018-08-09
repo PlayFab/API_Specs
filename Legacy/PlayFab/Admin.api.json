@@ -4303,6 +4303,24 @@
           "name": "InvalidScheduledTaskParameter"
         },
         {
+          "name": "PerEntityEventRateLimitExceeded"
+        },
+        {
+          "name": "TitleDefaultLanguageNotSet"
+        },
+        {
+          "name": "EmailTemplateMissingDefaultVersion"
+        },
+        {
+          "name": "FacebookInstantGamesIdNotLinked"
+        },
+        {
+          "name": "InvalidFacebookInstantGamesSignature"
+        },
+        {
+          "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -4333,7 +4351,7 @@
           "name": "MatchmakingMatchIdIdMissing"
         },
         {
-          "name": "MatchmakingHopperIdMissing"
+          "name": "MatchmakingQueueNameMissing"
         },
         {
           "name": "MatchmakingTitleIdMissing"
@@ -4348,7 +4366,7 @@
           "name": "MatchmakingJoinRequestUserMissing"
         },
         {
-          "name": "MatchmakingHopperConfigNotFound"
+          "name": "MatchmakingQueueConfigNotFound"
         },
         {
           "name": "MatchmakingMatchNotFound"
@@ -4390,13 +4408,22 @@
           "name": "MatchmakingTicketAlreadyCompleted"
         },
         {
-          "name": "MatchmakingHopperIdInvalid"
+          "name": "MatchmakingQueueNameInvalid"
         },
         {
-          "name": "MatchmakingHopperConfigInvalid"
+          "name": "MatchmakingQueueConfigInvalid"
         },
         {
           "name": "MatchmakingMemberProfileInvalid"
+        },
+        {
+          "name": "WriteAttemptedDuringExport"
+        },
+        {
+          "name": "NintendoSwitchDeviceIdNotLinked"
+        },
+        {
+          "name": "MatchmakingNotEnabled"
         }
       ]
     },
@@ -4882,7 +4909,27 @@
         },
         {
           "name": "ServerAddress",
-          "description": "IP address for this Game Server Instance",
+          "description": "IPV4 address of the game server instance",
+          "deprecation": {
+            "ProposedAfter": "7/30/2018",
+            "DeprecatedAfter": "9/30/2018",
+            "ObsoleteAfter": "10/30/2018",
+            "ReplacedBy": "ServerIPV4Address"
+          },
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerIPV4Address",
+          "description": "IPV4 address of the server",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerIPV6Address",
+          "description": "IPV6 address of the server",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -4893,6 +4940,13 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
+        },
+        {
+          "name": "ServerPublicDNSName",
+          "description": "Public DNS name (if any) of the server",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "StartTime",
@@ -6534,6 +6588,18 @@
         },
         {
           "name": "WindowsHello"
+        },
+        {
+          "name": "GameServer"
+        },
+        {
+          "name": "CustomServer"
+        },
+        {
+          "name": "NintendoSwitch"
+        },
+        {
+          "name": "FacebookInstantGames"
         }
       ]
     },
@@ -7357,7 +7423,7 @@
         },
         {
           "name": "TotalValueToDateInUSD",
-          "description": "Sum of the player's purchases made with real-money currencies, converted to US dollars equivalent and represented as a whole number of cents (1/100 USD).       For example, 999 indicates nine dollars and ninety-nine cents.",
+          "description": "Sum of the player's purchases made with real-money currencies, converted to US dollars equivalent and represented as a whole number of cents (1/100 USD). For example, 999 indicates nine dollars and ninety-nine cents.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
@@ -10263,6 +10329,15 @@
         },
         {
           "name": "WindowsHello"
+        },
+        {
+          "name": "ServerCustomId"
+        },
+        {
+          "name": "NintendoSwitchDeviceId"
+        },
+        {
+          "name": "FacebookInstantGamesId"
         }
       ]
     },
@@ -11009,7 +11084,7 @@
     {
       "name": "DeleteMasterPlayerAccount",
       "summary": "Removes a master player account entirely from all titles and deletes all associated data",
-      "requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances,         characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes.         Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted.         Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion.         Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.         It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
+      "requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Admin/DeleteMasterPlayerAccount",
@@ -11030,7 +11105,7 @@
     {
       "name": "DeletePlayer",
       "summary": "Removes a user's player account from a title and deletes all associated data",
-      "requestDetails": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,         characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.         Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.         Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.         Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.",
+      "requestDetails": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances, characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player. Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list. Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Admin/DeletePlayer",
@@ -11114,7 +11189,7 @@
     {
       "name": "DeleteTitle",
       "summary": "Permanently deletes a title and all associated configuration",
-      "requestDetails": "Deletes all data associated with the title, including catalog, virtual currencies, leaderboard statistics, Cloud Script revisions,         segment definitions, event rules, tasks, add-ons, secret keys, data encryption keys, and permission policies.         Removes the title from its studio and removes all associated developer roles and permissions.         Does not delete PlayStream event history associated with the title.         Note, this API queues the title for deletion and returns immediately. It may take several hours or more before all title data is fully deleted.         All player accounts in the title must be deleted before deleting the title. If any player accounts exist, the API will return a 'TitleContainsUserAccounts' error.                 Until the title data is fully deleted, attempts to call APIs with the title will fail with the 'TitleDeleted' error.",
+      "requestDetails": "Deletes all data associated with the title, including catalog, virtual currencies, leaderboard statistics, Cloud Script revisions, segment definitions, event rules, tasks, add-ons, secret keys, data encryption keys, and permission policies. Removes the title from its studio and removes all associated developer roles and permissions. Does not delete PlayStream event history associated with the title. Note, this API queues the title for deletion and returns immediately. It may take several hours or more before all title data is fully deleted. All player accounts in the title must be deleted before deleting the title. If any player accounts exist, the API will return a 'TitleContainsUserAccounts' error. Until the title data is fully deleted, attempts to call APIs with the title will fail with the 'TitleDeleted' error.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Admin/DeleteTitle",
@@ -11162,7 +11237,7 @@
     {
       "name": "ExportMasterPlayerData",
       "summary": "Exports all associated data of a master player account",
-      "requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances,         characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history.         Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download.         Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
+      "requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Admin/ExportMasterPlayerData",
@@ -11796,7 +11871,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "LookupUserAccountInfoRequest",
-      "requestExample": "{\r\n  \"PlayFabId\": \"293753934\"\r\n}",
+      "requestExample": "{\r\n  \"PlayFabId\": \"293753934\",\r\n  \"IgnoreMissingTitleActivation\": false\r\n}",
       "result": "LookupUserAccountInfoResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UserInfo\": {\r\n      \"PlayFabId\": \"10931252888739651331\",\r\n      \"Created\": \"2013-04-07T09:04:28Z\",\r\n      \"Username\": \"accountname\",\r\n      \"TitleInfo\": {\r\n        \"DisplayName\": \"User title-specific name\",\r\n        \"Origination\": \"IOS\",\r\n        \"Created\": \"2014-01-08T11:03:18Z\",\r\n        \"LastLogin\": \"2014-04-07T09:04:28Z\",\r\n        \"FirstLogin\": \"2014-01-08T11:03:18Z\",\r\n        \"TitlePlayerAccount\": {\r\n          \"Id\": \"174812abf712\",\r\n          \"Type\": \"title_player_account\",\r\n          \"TypeString\": \"title_player_account\"\r\n        }\r\n      },\r\n      \"FacebookInfo\": {\r\n        \"FacebookId\": \"23525445454\"\r\n      },\r\n      \"SteamInfo\": {\r\n        \"SteamCountry\": \"US\",\r\n        \"SteamCurrency\": \"USD\"\r\n      },\r\n      \"GameCenterInfo\": {\r\n        \"GameCenterId\": \"someone\"\r\n      }\r\n    }\r\n  }\r\n}",
       "seeAlso": [
@@ -14465,6 +14540,30 @@
       "id": 1391,
       "name": "InvalidScheduledTaskParameter"
     },
+    "PerEntityEventRateLimitExceeded": {
+      "id": 1392,
+      "name": "PerEntityEventRateLimitExceeded"
+    },
+    "TitleDefaultLanguageNotSet": {
+      "id": 1393,
+      "name": "TitleDefaultLanguageNotSet"
+    },
+    "EmailTemplateMissingDefaultVersion": {
+      "id": 1394,
+      "name": "EmailTemplateMissingDefaultVersion"
+    },
+    "FacebookInstantGamesIdNotLinked": {
+      "id": 1395,
+      "name": "FacebookInstantGamesIdNotLinked"
+    },
+    "InvalidFacebookInstantGamesSignature": {
+      "id": 1396,
+      "name": "InvalidFacebookInstantGamesSignature"
+    },
+    "FacebookInstantGamesAuthNotConfiguredForTitle": {
+      "id": 1397,
+      "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -14505,9 +14604,9 @@
       "id": 2010,
       "name": "MatchmakingMatchIdIdMissing"
     },
-    "MatchmakingHopperIdMissing": {
+    "MatchmakingQueueNameMissing": {
       "id": 2011,
-      "name": "MatchmakingHopperIdMissing"
+      "name": "MatchmakingQueueNameMissing"
     },
     "MatchmakingTitleIdMissing": {
       "id": 2012,
@@ -14525,9 +14624,9 @@
       "id": 2015,
       "name": "MatchmakingJoinRequestUserMissing"
     },
-    "MatchmakingHopperConfigNotFound": {
+    "MatchmakingQueueConfigNotFound": {
       "id": 2016,
-      "name": "MatchmakingHopperConfigNotFound"
+      "name": "MatchmakingQueueConfigNotFound"
     },
     "MatchmakingMatchNotFound": {
       "id": 2017,
@@ -14581,17 +14680,29 @@
       "id": 2029,
       "name": "MatchmakingTicketAlreadyCompleted"
     },
-    "MatchmakingHopperIdInvalid": {
+    "MatchmakingQueueNameInvalid": {
       "id": 2030,
-      "name": "MatchmakingHopperIdInvalid"
+      "name": "MatchmakingQueueNameInvalid"
     },
-    "MatchmakingHopperConfigInvalid": {
+    "MatchmakingQueueConfigInvalid": {
       "id": 2031,
-      "name": "MatchmakingHopperConfigInvalid"
+      "name": "MatchmakingQueueConfigInvalid"
     },
     "MatchmakingMemberProfileInvalid": {
       "id": 2032,
       "name": "MatchmakingMemberProfileInvalid"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 2033,
+      "name": "WriteAttemptedDuringExport"
+    },
+    "NintendoSwitchDeviceIdNotLinked": {
+      "id": 2034,
+      "name": "NintendoSwitchDeviceIdNotLinked"
+    },
+    "MatchmakingNotEnabled": {
+      "id": 2035,
+      "name": "MatchmakingNotEnabled"
     }
   },
   "errorList": [
@@ -14977,6 +15088,12 @@
     "ExplicitContentDetected",
     "PIIContentDetected",
     "InvalidScheduledTaskParameter",
+    "PerEntityEventRateLimitExceeded",
+    "TitleDefaultLanguageNotSet",
+    "EmailTemplateMissingDefaultVersion",
+    "FacebookInstantGamesIdNotLinked",
+    "InvalidFacebookInstantGamesSignature",
+    "FacebookInstantGamesAuthNotConfiguredForTitle",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateRequestMissing",
@@ -14987,12 +15104,12 @@
     "MatchmakingTicketIdMissing",
     "MatchmakingMatchIdMissing",
     "MatchmakingMatchIdIdMissing",
-    "MatchmakingHopperIdMissing",
+    "MatchmakingQueueNameMissing",
     "MatchmakingTitleIdMissing",
     "MatchmakingTicketIdIdMissing",
     "MatchmakingPlayerIdMissing",
     "MatchmakingJoinRequestUserMissing",
-    "MatchmakingHopperConfigNotFound",
+    "MatchmakingQueueConfigNotFound",
     "MatchmakingMatchNotFound",
     "MatchmakingTicketNotFound",
     "MatchmakingCreateTicketServerIdentityInvalid",
@@ -15006,8 +15123,11 @@
     "MatchmakingPlayerIdentityMismatch",
     "MatchmakingAlreadyJoinedTicket",
     "MatchmakingTicketAlreadyCompleted",
-    "MatchmakingHopperIdInvalid",
-    "MatchmakingHopperConfigInvalid",
-    "MatchmakingMemberProfileInvalid"
+    "MatchmakingQueueNameInvalid",
+    "MatchmakingQueueConfigInvalid",
+    "MatchmakingMemberProfileInvalid",
+    "WriteAttemptedDuringExport",
+    "NintendoSwitchDeviceIdNotLinked",
+    "MatchmakingNotEnabled"
   ]
 }
