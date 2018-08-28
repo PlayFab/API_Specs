@@ -134,14 +134,4 @@ try {
     console.log(err);
 }
 
-GetApiFile(playFabUrl + "AdminAPI", "Admin.api", "Admin-Api");
-GetApiFile(playFabUrl + "ClientAPI", "Client.api", "Client-Api");
-GetApiFile(playFabUrl + "EntityAPI", "Entity.api", "Entity-Api");
-GetApiFile(playFabUrl + "MatchmakerAPI", "Matchmaker.api", "Matchmaker-Api");
-GetApiFile(playFabUrl + "ServerAPI", "Server.api", "Server-Api");
-
-GetApiFile(playFabUrl + "PlayStreamEventModels", "PlayStreamEventModels", "Client-Api");
-GetApiFile(playFabUrl + "PlayStreamCommonEventModels", "PlayStreamCommonEventModels", "Client-Api");
-GetApiFile(playFabUrl + "PlayStreamProfileModel", "PlayStreamProfileModels", "Client-Api");
-
 GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", UpdateVersionNumbers);
