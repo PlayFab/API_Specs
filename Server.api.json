@@ -2441,9 +2441,9 @@
         }
       ]
     },
-    "EmptyResult": {
-      "name": "EmptyResult",
-      "className": "EmptyResult",
+    "EmptyResponse": {
+      "name": "EmptyResponse",
+      "className": "EmptyResponse",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
@@ -2454,11 +2454,11 @@
       "className": "EntityKey",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
-      "description": "Entity identifier class that contains both the ID and type.",
+      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "properties": [
         {
           "name": "Id",
-          "description": "Entity profile ID.",
+          "description": "Unique ID of the entity.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2468,7 +2468,20 @@
           "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "TypeString",
+          "description": "Alternate name for Type.",
+          "deprecation": {
+            "ProposedAfter": "6/1/2018",
+            "DeprecatedAfter": "7/1/2018",
+            "ObsoleteAfter": "8/1/2018",
+            "ReplacedBy": "Type"
+          },
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2502,33 +2515,6 @@
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": true
-        }
-      ]
-    },
-    "EntityTypes": {
-      "name": "EntityTypes",
-      "className": "EntityTypes",
-      "classNameSpace": "PlayFab.Server.Models",
-      "assembly": "PlayFab.Server.Models",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "title"
-        },
-        {
-          "name": "master_player_account"
-        },
-        {
-          "name": "title_player_account"
-        },
-        {
-          "name": "character"
-        },
-        {
-          "name": "group"
-        },
-        {
-          "name": "service"
         }
       ]
     },
@@ -3983,34 +3969,34 @@
           "name": "DuplicateDropTableId"
         },
         {
-          "name": "GameServerOk"
+          "name": "MultiplayerServerError"
         },
         {
-          "name": "GameServerAccepted"
+          "name": "MultiplayerServerTooManyRequests"
         },
         {
-          "name": "GameServerNoContent"
+          "name": "MultiplayerServerNoContent"
         },
         {
-          "name": "GameServerBadRequest"
+          "name": "MultiplayerServerBadRequest"
         },
         {
-          "name": "GameServerUnauthorized"
+          "name": "MultiplayerServerUnauthorized"
         },
         {
-          "name": "GameServerForbidden"
+          "name": "MultiplayerServerForbidden"
         },
         {
-          "name": "GameServerNotFound"
+          "name": "MultiplayerServerNotFound"
         },
         {
-          "name": "GameServerConflict"
+          "name": "MultiplayerServerConflict"
         },
         {
-          "name": "GameServerInternalServerError"
+          "name": "MultiplayerServerInternalServerError"
         },
         {
-          "name": "GameServerServiceUnavailable"
+          "name": "MultiplayerServerUnavailable"
         },
         {
           "name": "ExplicitContentDetected"
@@ -5730,6 +5716,54 @@
         }
       ]
     },
+    "GetPlayFabIDsFromXboxLiveIDsRequest": {
+      "name": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "className": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Sandbox",
+          "description": "The ID of Xbox Live sandbox.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxLiveAccountIDs",
+          "description": "Array of unique Xbox Live account identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromXboxLiveIDsResult": {
+      "name": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "className": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "XboxLiveAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "className": "GetPublisherDataRequest",
@@ -6819,6 +6853,50 @@
         }
       ]
     },
+    "LinkXboxAccountRequest": {
+      "name": "LinkXboxAccountRequest",
+      "className": "LinkXboxAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ForceLink",
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "LinkXboxAccountResult": {
+      "name": "LinkXboxAccountResult",
+      "className": "LinkXboxAccountResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
     "ListUsersCharactersRequest": {
       "name": "ListUsersCharactersRequest",
       "className": "ListUsersCharactersRequest",
@@ -7037,6 +7115,9 @@
         },
         {
           "name": "FacebookInstantGames"
+        },
+        {
+          "name": "OpenIdConnect"
         }
       ]
     },
@@ -7067,7 +7148,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "If true entity account will also be logged and and will return an EntityToken.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7088,67 +7175,50 @@
         }
       ]
     },
-    "LoginWithServerCustomIdResult": {
-      "name": "LoginWithServerCustomIdResult",
-      "className": "LoginWithServerCustomIdResult",
+    "LoginWithXboxRequest": {
+      "name": "LoginWithXboxRequest",
+      "className": "LoginWithXboxRequest",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "isResult": true,
+      "isRequest": true,
       "properties": [
         {
-          "name": "EntityToken",
-          "description": "If LoginTitlePlayerAccountEntity flag is set on the login request the title_player_account will also be logged in and returned.",
-          "jsontype": "Object",
-          "actualtype": "EntityTokenResponse",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "InfoResultPayload",
-          "description": "Results for requested info.",
-          "jsontype": "Object",
-          "actualtype": "GetPlayerCombinedInfoResultPayload",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "LastLoginTime",
-          "description": "The time of this user's previous login. If there was no previous login, then it's DateTime.MinValue",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": true
-        },
-        {
-          "name": "NewlyCreated",
-          "description": "True if the account was newly created on this login.",
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "PlayFabId",
-          "description": "Player's unique PlayFabId.",
-          "jsontype": "String",
-          "actualtype": "String",
           "optional": true
         },
         {
-          "name": "SessionTicket",
-          "description": "Unique token authorizing the user and game at the server level, for the current session.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SettingsForUser",
-          "description": "Settings specific to this user.",
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
           "jsontype": "Object",
-          "actualtype": "UserSettings",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
         }
       ]
     },
@@ -9201,6 +9271,70 @@
         }
       ]
     },
+    "ServerLoginResult": {
+      "name": "ServerLoginResult",
+      "className": "ServerLoginResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "EntityToken",
+          "description": "If LoginTitlePlayerAccountEntity flag is set on the login request the title_player_account will also be logged in and returned.",
+          "jsontype": "Object",
+          "actualtype": "EntityTokenResponse",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "InfoResultPayload",
+          "description": "Results for requested info.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoResultPayload",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LastLoginTime",
+          "description": "The time of this user's previous login. If there was no previous login, then it's DateTime.MinValue",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "NewlyCreated",
+          "description": "True if the account was newly created on this login.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Player's unique PlayFabId.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SessionTicket",
+          "description": "Unique token authorizing the user and game at the server level, for the current session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SettingsForUser",
+          "description": "Settings specific to this user.",
+          "jsontype": "Object",
+          "actualtype": "UserSettings",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "SetFriendTagsRequest": {
       "name": "SetFriendTagsRequest",
       "className": "SetFriendTagsRequest",
@@ -9833,6 +9967,43 @@
           "optional": true
         }
       ]
+    },
+    "UnlinkXboxAccountRequest": {
+      "name": "UnlinkXboxAccountRequest",
+      "className": "UnlinkXboxAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UnlinkXboxAccountResult": {
+      "name": "UnlinkXboxAccountResult",
+      "className": "UnlinkXboxAccountResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
     },
     "UnlockContainerInstanceRequest": {
       "name": "UnlockContainerInstanceRequest",
@@ -10478,6 +10649,14 @@
           "optional": true
         },
         {
+          "name": "FacebookInstantGamesIdInfo",
+          "description": "Facebook Instant Games account information, if a Facebook Instant Games account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserFacebookInstantGamesIdInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "GameCenterInfo",
           "description": "User Gamecenter information, if a Gamecenter account has been linked",
           "jsontype": "Object",
@@ -10506,6 +10685,23 @@
           "description": "User Kongregate account information, if a Kongregate account has been linked",
           "jsontype": "Object",
           "actualtype": "UserKongregateInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "NintendoSwitchDeviceIdInfo",
+          "description": "Nintendo Switch account information, if a Nintendo Switch account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserNintendoSwitchDeviceIdInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "OpenIdInfo",
+          "description": "OpenID Connect information, if any OpenID Connect accounts have been linked",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UserOpenIdInfo",
           "isclass": true,
           "optional": true
         },
@@ -10561,6 +10757,14 @@
           "description": "User account name in the PlayFab service",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "WindowsHelloInfo",
+          "description": "Windows Hello account information, if a Windows Hello account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserWindowsHelloInfo",
+          "isclass": true,
           "optional": true
         },
         {
@@ -10671,6 +10875,21 @@
         }
       ]
     },
+    "UserFacebookInstantGamesIdInfo": {
+      "name": "UserFacebookInstantGamesIdInfo",
+      "className": "UserFacebookInstantGamesIdInfo",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "FacebookInstantGamesId",
+          "description": "Facebook Instant Games ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UserGameCenterInfo": {
       "name": "UserGameCenterInfo",
       "className": "UserGameCenterInfo",
@@ -10759,6 +10978,50 @@
         }
       ]
     },
+    "UserNintendoSwitchDeviceIdInfo": {
+      "name": "UserNintendoSwitchDeviceIdInfo",
+      "className": "UserNintendoSwitchDeviceIdInfo",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "NintendoSwitchDeviceId",
+          "description": "Nintendo Switch Device ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserOpenIdInfo": {
+      "name": "UserOpenIdInfo",
+      "className": "UserOpenIdInfo",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "ConnectionId",
+          "description": "OpenID Connection ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Issuer",
+          "description": "OpenID Issuer",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Subject",
+          "description": "OpenID Subject",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UserOrigination": {
       "name": "UserOrigination",
       "className": "UserOrigination",
@@ -10828,6 +11091,9 @@
         },
         {
           "name": "FacebookInstantGamesId"
+        },
+        {
+          "name": "OpenIdConnect"
         }
       ]
     },
@@ -11020,6 +11286,28 @@
         {
           "name": "TwitchUserName",
           "description": "Twitch Username",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserWindowsHelloInfo": {
+      "name": "UserWindowsHelloInfo",
+      "className": "UserWindowsHelloInfo",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "WindowsHelloDeviceName",
+          "description": "Windows Hello Device Name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "WindowsHelloPublicKeyHash",
+          "description": "Windows Hello Public Key Hash",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -11228,6 +11516,31 @@
           "optional": true
         }
       ]
+    },
+    "XboxLiveAccountPlayFabIdPair": {
+      "name": "XboxLiveAccountPlayFabIdPair",
+      "className": "XboxLiveAccountPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxLiveAccountId",
+          "description": "Unique Xbox Live identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
@@ -11240,15 +11553,18 @@
         "GetPlayFabIDsFromFacebookInstantGamesIds",
         "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "GetPlayFabIDsFromSteamIDs",
+        "GetPlayFabIDsFromXboxLiveIDs",
         "GetServerCustomIDsFromPlayFabIDs",
         "GetUserAccountInfo",
         "GetUserBans",
+        "LinkXboxAccount",
         "LoginWithServerCustomId",
         "RevokeAllBansForUser",
         "RevokeBans",
         "SendCustomAccountRecoveryEmail",
         "SendEmailFromTemplate",
         "SendPushNotification",
+        "UnlinkXboxAccount",
         "UpdateAvatarUrl",
         "UpdateBans"
       ]
@@ -11266,6 +11582,7 @@
       "name": "Authentication",
       "methods": [
         "AuthenticateSessionTicket",
+        "LoginWithXbox",
         "SetPlayerSecret"
       ]
     },
@@ -11457,7 +11774,7 @@
       "method": "POST",
       "request": "AddFriendRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"10931252888739651331\",\r\n  \"FriendPlayFabId\": \"20394883\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "seeAlso": [
         "Server/GetFriendsList",
@@ -11644,7 +11961,7 @@
       "method": "POST",
       "request": "DeleteSharedGroupRequest",
       "requestExample": "{\r\n  \"SharedGroupId\": \"Clan Data\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "errors": [
         "InvalidSharedGroupId"
@@ -12282,6 +12599,26 @@
       ]
     },
     {
+      "name": "GetPlayFabIDsFromXboxLiveIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of XboxLive identifiers.",
+      "resultDetails": "For XboxLive identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromXboxLiveIDs",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "requestExample": "{\r\n  \"XboxLiveAccountIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ],\r\n  \"Sandbox\": \"RETAIL\"\r\n}",
+      "result": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"XboxLiveAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"XboxLiveAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "GetPublisherData",
       "summary": "Retrieves the key-value store of custom publisher settings",
       "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. For more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
@@ -12716,6 +13053,32 @@
       ]
     },
     {
+      "name": "LinkXboxAccount",
+      "summary": "Links the Xbox Live account associated with the provided access code to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/LinkXboxAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LinkXboxAccountRequest",
+      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"PlayFabId\": \"5a446c83645201\"\r\n}",
+      "result": "LinkXboxAccountResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/LoginWithXbox",
+        "Server/UnlinkXboxAccount"
+      ],
+      "errors": [
+        "AccountAlreadyLinked",
+        "InvalidPublisherId",
+        "InvalidXboxLiveToken",
+        "LinkedAccountAlreadyClaimed"
+      ]
+    },
+    {
       "name": "LogEvent",
       "summary": "Logs a custom analytics event",
       "requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automatically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
@@ -12753,7 +13116,7 @@
       "method": "POST",
       "request": "LoginWithServerCustomIdRequest",
       "requestExample": "{\r\n  \"ServerCustomId\": \"asdalsdkjar09u23ijf\",\r\n  \"CreateAccount\": true\r\n}",
-      "result": "LoginWithServerCustomIdResult",
+      "result": "ServerLoginResult",
       "resultExample": "",
       "AllInclusiveFlags": [
         "Beta"
@@ -12761,6 +13124,38 @@
       "errors": [
         "AccountBanned",
         "AccountNotFound"
+      ]
+    },
+    {
+      "name": "LoginWithXbox",
+      "summary": "Signs the user in using a Xbox Live Token from an external server backend, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Server/LoginWithXbox",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithXboxRequest",
+      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"CreateAccount\": false\r\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/LinkXboxAccount",
+        "Server/UnlinkXboxAccount"
+      ],
+      "errors": [
+        "AccountNotFound",
+        "ExpiredXboxLiveToken",
+        "InvalidPublisherId",
+        "InvalidTitleId",
+        "InvalidXboxLiveToken",
+        "RequestViewConstraintParamsNotAllowed",
+        "XboxInaccessible",
+        "XboxRejectedXSTSExchangeRequest",
+        "XboxXASSExchangeFailure"
       ]
     },
     {
@@ -12952,7 +13347,7 @@
       "method": "POST",
       "request": "RemoveFriendRequest",
       "requestExample": "{\r\n  \"FriendPlayFabId\": \"29837799\",\r\n  \"PlayFabId\": \"1a46086aed40f142\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "seeAlso": [
         "Server/AddFriend",
@@ -13168,7 +13563,7 @@
       "method": "POST",
       "request": "SetFriendTagsRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"ABCDEF123456\",\r\n  \"FriendPlayFabId\": \"298ABC37799\",\r\n  \"Tags\": [\r\n    \"great sniper\",\r\n    \"sucks at melee\"\r\n  ]\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "seeAlso": [
         "Server/AddFriend",
@@ -13346,6 +13741,29 @@
       ]
     },
     {
+      "name": "UnlinkXboxAccount",
+      "summary": "Unlinks the related Xbox Live account from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/UnlinkXboxAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UnlinkXboxAccountRequest",
+      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"PlayFabId\": \"5a446c83645201\"\r\n}",
+      "result": "UnlinkXboxAccountResult",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/LinkXboxAccount"
+      ],
+      "errors": [
+        "AccountNotLinked",
+        "InvalidXboxLiveToken"
+      ]
+    },
+    {
       "name": "UnlockContainerInstance",
       "summary": "Opens a specific container (ContainerItemInstanceId), with a specific key (KeyItemInstanceId, when required), and returns the contents of the opened container. If the container (and key when relevant) are consumable (RemainingUses > 0), their RemainingUses will be decremented, consistent with the operation of ConsumeItem.",
       "requestDetails": "Specify the container and optionally the catalogVersion for the container to open",
@@ -13399,7 +13817,7 @@
       "method": "POST",
       "request": "UpdateAvatarUrlRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"22ca65837b158fab\",\r\n  \"ImageUrl\": \"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "errors": [
         "AccountNotFound"
@@ -13616,7 +14034,7 @@
       "method": "POST",
       "request": "UpdateUserInventoryItemDataRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"204883457\",\r\n  \"CharacterId\": \"9890723423\",\r\n  \"ItemInstanceId\": \"88331144\",\r\n  \"Data\": {\r\n    \"Equipped\": \"True\",\r\n    \"Slot\": \"Head\"\r\n  }\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "seeAlso": [
         "Server/GetUserInventory",
@@ -15286,45 +15704,45 @@
       "id": 1378,
       "name": "DuplicateDropTableId"
     },
-    "GameServerOk": {
+    "MultiplayerServerError": {
       "id": 1379,
-      "name": "GameServerOk"
+      "name": "MultiplayerServerError"
     },
-    "GameServerAccepted": {
+    "MultiplayerServerTooManyRequests": {
       "id": 1380,
-      "name": "GameServerAccepted"
+      "name": "MultiplayerServerTooManyRequests"
     },
-    "GameServerNoContent": {
+    "MultiplayerServerNoContent": {
       "id": 1381,
-      "name": "GameServerNoContent"
+      "name": "MultiplayerServerNoContent"
     },
-    "GameServerBadRequest": {
+    "MultiplayerServerBadRequest": {
       "id": 1382,
-      "name": "GameServerBadRequest"
+      "name": "MultiplayerServerBadRequest"
     },
-    "GameServerUnauthorized": {
+    "MultiplayerServerUnauthorized": {
       "id": 1383,
-      "name": "GameServerUnauthorized"
+      "name": "MultiplayerServerUnauthorized"
     },
-    "GameServerForbidden": {
+    "MultiplayerServerForbidden": {
       "id": 1384,
-      "name": "GameServerForbidden"
+      "name": "MultiplayerServerForbidden"
     },
-    "GameServerNotFound": {
+    "MultiplayerServerNotFound": {
       "id": 1385,
-      "name": "GameServerNotFound"
+      "name": "MultiplayerServerNotFound"
     },
-    "GameServerConflict": {
+    "MultiplayerServerConflict": {
       "id": 1386,
-      "name": "GameServerConflict"
+      "name": "MultiplayerServerConflict"
     },
-    "GameServerInternalServerError": {
+    "MultiplayerServerInternalServerError": {
       "id": 1387,
-      "name": "GameServerInternalServerError"
+      "name": "MultiplayerServerInternalServerError"
     },
-    "GameServerServiceUnavailable": {
+    "MultiplayerServerUnavailable": {
       "id": 1388,
-      "name": "GameServerServiceUnavailable"
+      "name": "MultiplayerServerUnavailable"
     },
     "ExplicitContentDetected": {
       "id": 1389,
@@ -15873,16 +16291,16 @@
     "NoValidCertificateForAad",
     "InvalidCertificateForAad",
     "DuplicateDropTableId",
-    "GameServerOk",
-    "GameServerAccepted",
-    "GameServerNoContent",
-    "GameServerBadRequest",
-    "GameServerUnauthorized",
-    "GameServerForbidden",
-    "GameServerNotFound",
-    "GameServerConflict",
-    "GameServerInternalServerError",
-    "GameServerServiceUnavailable",
+    "MultiplayerServerError",
+    "MultiplayerServerTooManyRequests",
+    "MultiplayerServerNoContent",
+    "MultiplayerServerBadRequest",
+    "MultiplayerServerUnauthorized",
+    "MultiplayerServerForbidden",
+    "MultiplayerServerNotFound",
+    "MultiplayerServerConflict",
+    "MultiplayerServerInternalServerError",
+    "MultiplayerServerUnavailable",
     "ExplicitContentDetected",
     "PIIContentDetected",
     "InvalidScheduledTaskParameter",

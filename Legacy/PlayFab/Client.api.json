@@ -1194,9 +1194,6 @@
       "className": "ConsumeXboxEntitlementsRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isRequest": true,
       "properties": [
         {
@@ -1220,9 +1217,6 @@
       "className": "ConsumeXboxEntitlementsResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isResult": true,
       "properties": [
         {
@@ -2709,9 +2703,9 @@
         }
       ]
     },
-    "EmptyResult": {
-      "name": "EmptyResult",
-      "className": "EmptyResult",
+    "EmptyResponse": {
+      "name": "EmptyResponse",
+      "className": "EmptyResponse",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
       "isResult": true,
@@ -2722,11 +2716,11 @@
       "className": "EntityKey",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "description": "Entity identifier class that contains both the ID and type.",
+      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "properties": [
         {
           "name": "Id",
-          "description": "Entity profile ID.",
+          "description": "Unique ID of the entity.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2736,7 +2730,20 @@
           "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "TypeString",
+          "description": "Alternate name for Type.",
+          "deprecation": {
+            "ProposedAfter": "6/1/2018",
+            "DeprecatedAfter": "7/1/2018",
+            "ObsoleteAfter": "8/1/2018",
+            "ReplacedBy": "Type"
+          },
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -2767,33 +2774,6 @@
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": true
-        }
-      ]
-    },
-    "EntityTypes": {
-      "name": "EntityTypes",
-      "className": "EntityTypes",
-      "classNameSpace": "PlayFab.Client.Models",
-      "assembly": "PlayFab.Client.Models",
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "title"
-        },
-        {
-          "name": "master_player_account"
-        },
-        {
-          "name": "title_player_account"
-        },
-        {
-          "name": "character"
-        },
-        {
-          "name": "group"
-        },
-        {
-          "name": "service"
         }
       ]
     },
@@ -5431,6 +5411,54 @@
         }
       ]
     },
+    "GetPlayFabIDsFromXboxLiveIDsRequest": {
+      "name": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "className": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Sandbox",
+          "description": "The ID of Xbox Live sandbox.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxLiveAccountIDs",
+          "description": "Array of unique Xbox Live account identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromXboxLiveIDsResult": {
+      "name": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "className": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "XboxLiveAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "className": "GetPublisherDataRequest",
@@ -6449,7 +6477,7 @@
         },
         {
           "name": "Quantity",
-          "description": "How many of this item to purchase.",
+          "description": "How many of this item to purchase. Min 1, maximum 25.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -7013,9 +7041,6 @@
       "className": "LinkXboxAccountRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isRequest": true,
       "properties": [
         {
@@ -7039,9 +7064,6 @@
       "className": "LinkXboxAccountResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isResult": true,
       "properties": []
     },
@@ -7242,6 +7264,9 @@
         },
         {
           "name": "FacebookInstantGames"
+        },
+        {
+          "name": "OpenIdConnect"
         }
       ]
     },
@@ -7351,7 +7376,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7417,7 +7448,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7462,7 +7499,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7521,7 +7564,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7580,7 +7629,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7632,7 +7687,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7704,7 +7765,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7790,7 +7857,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7863,7 +7936,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7915,7 +7994,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -7960,7 +8045,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -8036,7 +8127,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -8095,7 +8192,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -8161,7 +8264,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -8206,7 +8315,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -8232,9 +8347,6 @@
       "className": "LoginWithXboxRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isRequest": true,
       "properties": [
         {
@@ -8261,7 +8373,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -9580,7 +9698,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -9712,7 +9836,13 @@
         },
         {
           "name": "LoginTitlePlayerAccountEntity",
-          "description": "Flag to automatically login the player's title_player_account and return the associated entity token.",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -10498,6 +10628,138 @@
         }
       ]
     },
+    "StartLinkOpenIdConnectRequest": {
+      "name": "StartLinkOpenIdConnectRequest",
+      "className": "StartLinkOpenIdConnectRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ConnectionId",
+          "description": "A name that identifies which configured OpenID Connect provider relationship to use. Maximum 100 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ForceLink",
+          "description": "If another user is already linked to the OpenId Connect user, unlink the other user and re-link.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        }
+      ]
+    },
+    "StartLinkOpenIdConnectResponse": {
+      "name": "StartLinkOpenIdConnectResponse",
+      "className": "StartLinkOpenIdConnectResponse",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "LoginUrl",
+          "description": "Pre-formatted login URL for login to the requested OpenID Connect provider",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "StartLoginWithOpenIdConnectRequest": {
+      "name": "StartLoginWithOpenIdConnectRequest",
+      "className": "StartLoginWithOpenIdConnectRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ConnectionId",
+          "description": "A name that identifies which configured OpenID Connect provider relationship to use. Maximum 100 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "EncryptedRequest",
+          "description": "Base64 encoded body that is encrypted with the Title's public RSA key (Enterprise Only).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "PlayerSecret",
+          "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "StartLoginWithOpenIdConnectResponse": {
+      "name": "StartLoginWithOpenIdConnectResponse",
+      "className": "StartLoginWithOpenIdConnectResponse",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "LoginUrl",
+          "description": "Pre-formatted login URL for login to the requested OpenID Connect provider",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "StartPurchaseRequest": {
       "name": "StartPurchaseRequest",
       "className": "StartPurchaseRequest",
@@ -11208,6 +11470,25 @@
         }
       ]
     },
+    "UninkOpenIdConnectRequest": {
+      "name": "UninkOpenIdConnectRequest",
+      "className": "UninkOpenIdConnectRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ConnectionId",
+          "description": "A name that identifies which configured OpenID Connect provider relationship to use. Maximum 100 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "UnlinkAndroidDeviceIDRequest": {
       "name": "UnlinkAndroidDeviceIDRequest",
       "className": "UnlinkAndroidDeviceIDRequest",
@@ -11475,9 +11756,6 @@
       "className": "UnlinkXboxAccountRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isRequest": true,
       "properties": [
         {
@@ -11494,9 +11772,6 @@
       "className": "UnlinkXboxAccountResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "AnyInclusiveFlags": [
-        "XBox"
-      ],
       "isResult": true,
       "properties": []
     },
@@ -11941,6 +12216,14 @@
           "optional": true
         },
         {
+          "name": "FacebookInstantGamesIdInfo",
+          "description": "Facebook Instant Games account information, if a Facebook Instant Games account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserFacebookInstantGamesIdInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "GameCenterInfo",
           "description": "User Gamecenter information, if a Gamecenter account has been linked",
           "jsontype": "Object",
@@ -11969,6 +12252,23 @@
           "description": "User Kongregate account information, if a Kongregate account has been linked",
           "jsontype": "Object",
           "actualtype": "UserKongregateInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "NintendoSwitchDeviceIdInfo",
+          "description": "Nintendo Switch account information, if a Nintendo Switch account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserNintendoSwitchDeviceIdInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "OpenIdInfo",
+          "description": "OpenID Connect information, if any OpenID Connect accounts have been linked",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UserOpenIdInfo",
           "isclass": true,
           "optional": true
         },
@@ -12024,6 +12324,14 @@
           "description": "User account name in the PlayFab service",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "WindowsHelloInfo",
+          "description": "Windows Hello account information, if a Windows Hello account has been linked",
+          "jsontype": "Object",
+          "actualtype": "UserWindowsHelloInfo",
+          "isclass": true,
           "optional": true
         },
         {
@@ -12134,6 +12442,21 @@
         }
       ]
     },
+    "UserFacebookInstantGamesIdInfo": {
+      "name": "UserFacebookInstantGamesIdInfo",
+      "className": "UserFacebookInstantGamesIdInfo",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "FacebookInstantGamesId",
+          "description": "Facebook Instant Games ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UserGameCenterInfo": {
       "name": "UserGameCenterInfo",
       "className": "UserGameCenterInfo",
@@ -12222,6 +12545,50 @@
         }
       ]
     },
+    "UserNintendoSwitchDeviceIdInfo": {
+      "name": "UserNintendoSwitchDeviceIdInfo",
+      "className": "UserNintendoSwitchDeviceIdInfo",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "NintendoSwitchDeviceId",
+          "description": "Nintendo Switch Device ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserOpenIdInfo": {
+      "name": "UserOpenIdInfo",
+      "className": "UserOpenIdInfo",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "ConnectionId",
+          "description": "OpenID Connection ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Issuer",
+          "description": "OpenID Issuer",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Subject",
+          "description": "OpenID Subject",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UserOrigination": {
       "name": "UserOrigination",
       "className": "UserOrigination",
@@ -12291,6 +12658,9 @@
         },
         {
           "name": "FacebookInstantGamesId"
+        },
+        {
+          "name": "OpenIdConnect"
         }
       ]
     },
@@ -12480,6 +12850,28 @@
         {
           "name": "TwitchUserName",
           "description": "Twitch Username",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserWindowsHelloInfo": {
+      "name": "UserWindowsHelloInfo",
+      "className": "UserWindowsHelloInfo",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "WindowsHelloDeviceName",
+          "description": "Windows Hello Device Name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "WindowsHelloPublicKeyHash",
+          "description": "Windows Hello Public Key Hash",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -12854,6 +13246,31 @@
           "optional": true
         }
       ]
+    },
+    "XboxLiveAccountPlayFabIdPair": {
+      "name": "XboxLiveAccountPlayFabIdPair",
+      "className": "XboxLiveAccountPlayFabIdPair",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxLiveAccountId",
+          "description": "Unique Xbox Live identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
@@ -12876,6 +13293,7 @@
         "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromSteamIDs",
         "GetPlayFabIDsFromTwitchIDs",
+        "GetPlayFabIDsFromXboxLiveIDs",
         "GetUserCombinedInfo",
         "LinkAndroidDeviceID",
         "LinkCustomID",
@@ -12895,6 +13313,7 @@
         "RemoveGenericID",
         "ReportPlayer",
         "SendAccountRecoveryEmail",
+        "StartLinkOpenIdConnect",
         "UnlinkAndroidDeviceID",
         "UnlinkCustomID",
         "UnlinkFacebookAccount",
@@ -12904,6 +13323,7 @@
         "UnlinkIOSDeviceID",
         "UnlinkKongregate",
         "UnlinkNintendoSwitchDeviceId",
+        "UnlinkOpenIdConnect",
         "UnlinkPSNAccount",
         "UnlinkSteamAccount",
         "UnlinkTwitch",
@@ -12956,7 +13376,8 @@
         "LoginWithXbox",
         "RegisterPlayFabUser",
         "RegisterWithWindowsHello",
-        "SetPlayerSecret"
+        "SetPlayerSecret",
+        "StartLoginWithOpenIdConnect"
       ]
     },
     {
@@ -13397,9 +13818,6 @@
       "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"CatalogVersion\": \"XboxItems\"\r\n}",
       "result": "ConsumeXboxEntitlementsResult",
       "resultExample": "",
-      "AllInclusiveFlags": [
-        "XBox"
-      ],
       "seeAlso": [
         "Client/LoginWithXbox"
       ],
@@ -14267,6 +14685,26 @@
       ]
     },
     {
+      "name": "GetPlayFabIDsFromXboxLiveIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of XboxLive identifiers.",
+      "resultDetails": "For XboxLive identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/GetPlayFabIDsFromXboxLiveIDs",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromXboxLiveIDsRequest",
+      "requestExample": "{\r\n  \"XboxLiveAccountIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ],\r\n  \"Sandbox\": \"RETAIL\"\r\n}",
+      "result": "GetPlayFabIDsFromXboxLiveIDsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"XboxLiveAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"XboxLiveAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "AccountNotFound"
+      ]
+    },
+    {
       "name": "GetPublisherData",
       "summary": "Retrieves the key-value store of custom publisher settings",
       "requestDetails": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. For more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning the newest value.",
@@ -14912,9 +15350,6 @@
       "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\"\r\n}",
       "result": "LinkXboxAccountResult",
       "resultExample": "",
-      "AllInclusiveFlags": [
-        "XBox"
-      ],
       "seeAlso": [
         "Client/LoginWithXbox",
         "Client/UnlinkXboxAccount"
@@ -15352,9 +15787,6 @@
       "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n  \"CreateAccount\": false,\r\n  \"TitleId\": \"1\"\r\n}",
       "result": "LoginResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\r\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
-      "AllInclusiveFlags": [
-        "XBox"
-      ],
       "seeAlso": [
         "Client/LinkXboxAccount",
         "Client/UnlinkXboxAccount"
@@ -15507,7 +15939,7 @@
       "method": "POST",
       "request": "RefreshPSNAuthTokenRequest",
       "requestExample": "{\r\n  \"AuthCode\": \"LKJDG7DDE\",\r\n  \"RedirectUri\": \"orbis://games\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "AllInclusiveFlags": [
         "Playstation"
@@ -15686,7 +16118,7 @@
       "method": "POST",
       "request": "DeviceInfoRequest",
       "requestExample": "{\r\n  \"Info\": {\r\n    \"UserAgent\": \"Some Browser\",\r\n    \"ScreenResolution\": \"640x480\",\r\n    \"processorCount\": \"2\"\r\n  }\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": "",
       "errors": [
         "BodyTooLarge",
@@ -15863,6 +16295,53 @@
       "errors": [
         "APINotEnabledForGameClientAccess",
         "BuildNotFound"
+      ]
+    },
+    {
+      "name": "StartLinkOpenIdConnect",
+      "summary": "Creates a linking authentication session based on an existing relationship between a title and an Open ID Connect provider, returning a login URL for the provider that must be used to authenticate the user to complete the link process.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/StartLinkOpenIdConnect",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "StartLinkOpenIdConnectRequest",
+      "requestExample": "{\r\n  \"ConnectionId\": \"exampleprovider\"\r\n}",
+      "result": "StartLinkOpenIdConnectResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LoginUrl\": \"https://login.example.com/authorize?client_id=5555abba&redirect_uri=https%3A%2F%2F1234.playfabapi.com%2FClient%2FCompleteLinkWithOpenIdConnect&scope=openid&response_type=code&state=fdb777bd2f89a4206095d8bf1f03b594aa8556f6\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/StartLoginWithOpenIdConnect",
+        "Client/UnlinkOpenIdConnect"
+      ],
+      "errors": [
+        "InvalidIdentityProviderId",
+        "LinkedIdentifierAlreadyClaimed"
+      ]
+    },
+    {
+      "name": "StartLoginWithOpenIdConnect",
+      "summary": "Creates a login authentication session based on an existing relationship between a title and an Open ID Connect provider, returning a login URL for the provider that must be used to authenticate the user.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/StartLoginWithOpenIdConnect",
+      "auth": "None",
+      "method": "POST",
+      "request": "StartLoginWithOpenIdConnectRequest",
+      "requestExample": "{\r\n  \"CreateAccount\": true,\r\n  \"ConnectionId\": \"exampleprovider\",\r\n  \"TitleId\": \"1234\"\r\n}",
+      "result": "StartLoginWithOpenIdConnectResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LoginUrl\": \"https://login.example.com/authorize?client_id=5555abba&redirect_uri=https%3A%2F%2F1234.playfabapi.com%2FClient%2FCompleteLoginWithOpenIdConnect&scope=openid&response_type=code&state=fdb777bd2f89a4206095d8bf1f03b594aa8556f6\"\r\n  }\r\n}",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/StartLinkOpenIdConnect"
+      ],
+      "errors": [
+        "InvalidIdentityProviderId",
+        "InvalidTitleId"
       ]
     },
     {
@@ -16088,6 +16567,28 @@
       ]
     },
     {
+      "name": "UnlinkOpenIdConnect",
+      "summary": "Unlinks an OpenID Connect account from a user's PlayFab account, based on the connection ID of an existing relationship between a title and an Open ID Connect provider.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/UnlinkOpenIdConnect",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UninkOpenIdConnectRequest",
+      "requestExample": "{\r\n  \"ConnectionId\": \"exampleprovider\"\r\n}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "AllInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Client/StartLinkOpenIdConnect"
+      ],
+      "errors": [
+        "AccountNotLinked"
+      ]
+    },
+    {
       "name": "UnlinkPSNAccount",
       "summary": "Unlinks the related PSN account from the user's PlayFab account",
       "subgroup": "Account Management",
@@ -16184,9 +16685,6 @@
       "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\"\r\n}",
       "result": "UnlinkXboxAccountResult",
       "resultExample": "",
-      "AllInclusiveFlags": [
-        "XBox"
-      ],
       "seeAlso": [
         "Client/LinkXboxAccount"
       ],
@@ -16249,7 +16747,7 @@
       "method": "POST",
       "request": "UpdateAvatarUrlRequest",
       "requestExample": "{\r\n  \"ImageUrl\": \"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50\"\r\n}",
-      "result": "EmptyResult",
+      "result": "EmptyResponse",
       "resultExample": ""
     },
     {
@@ -18071,45 +18569,45 @@
       "id": 1378,
       "name": "DuplicateDropTableId"
     },
-    "GameServerOk": {
+    "MultiplayerServerError": {
       "id": 1379,
-      "name": "GameServerOk"
+      "name": "MultiplayerServerError"
     },
-    "GameServerAccepted": {
+    "MultiplayerServerTooManyRequests": {
       "id": 1380,
-      "name": "GameServerAccepted"
+      "name": "MultiplayerServerTooManyRequests"
     },
-    "GameServerNoContent": {
+    "MultiplayerServerNoContent": {
       "id": 1381,
-      "name": "GameServerNoContent"
+      "name": "MultiplayerServerNoContent"
     },
-    "GameServerBadRequest": {
+    "MultiplayerServerBadRequest": {
       "id": 1382,
-      "name": "GameServerBadRequest"
+      "name": "MultiplayerServerBadRequest"
     },
-    "GameServerUnauthorized": {
+    "MultiplayerServerUnauthorized": {
       "id": 1383,
-      "name": "GameServerUnauthorized"
+      "name": "MultiplayerServerUnauthorized"
     },
-    "GameServerForbidden": {
+    "MultiplayerServerForbidden": {
       "id": 1384,
-      "name": "GameServerForbidden"
+      "name": "MultiplayerServerForbidden"
     },
-    "GameServerNotFound": {
+    "MultiplayerServerNotFound": {
       "id": 1385,
-      "name": "GameServerNotFound"
+      "name": "MultiplayerServerNotFound"
     },
-    "GameServerConflict": {
+    "MultiplayerServerConflict": {
       "id": 1386,
-      "name": "GameServerConflict"
+      "name": "MultiplayerServerConflict"
     },
-    "GameServerInternalServerError": {
+    "MultiplayerServerInternalServerError": {
       "id": 1387,
-      "name": "GameServerInternalServerError"
+      "name": "MultiplayerServerInternalServerError"
     },
-    "GameServerServiceUnavailable": {
+    "MultiplayerServerUnavailable": {
       "id": 1388,
-      "name": "GameServerServiceUnavailable"
+      "name": "MultiplayerServerUnavailable"
     },
     "ExplicitContentDetected": {
       "id": 1389,
@@ -18658,16 +19156,16 @@
     "NoValidCertificateForAad",
     "InvalidCertificateForAad",
     "DuplicateDropTableId",
-    "GameServerOk",
-    "GameServerAccepted",
-    "GameServerNoContent",
-    "GameServerBadRequest",
-    "GameServerUnauthorized",
-    "GameServerForbidden",
-    "GameServerNotFound",
-    "GameServerConflict",
-    "GameServerInternalServerError",
-    "GameServerServiceUnavailable",
+    "MultiplayerServerError",
+    "MultiplayerServerTooManyRequests",
+    "MultiplayerServerNoContent",
+    "MultiplayerServerBadRequest",
+    "MultiplayerServerUnauthorized",
+    "MultiplayerServerForbidden",
+    "MultiplayerServerNotFound",
+    "MultiplayerServerConflict",
+    "MultiplayerServerInternalServerError",
+    "MultiplayerServerUnavailable",
     "ExplicitContentDetected",
     "PIIContentDetected",
     "InvalidScheduledTaskParameter",
