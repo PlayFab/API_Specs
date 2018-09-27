@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "180927",
-    "title": "PlayFab Profiles API",
-    "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
+    "title": "PlayFab Localization API",
+    "description": "The Localization APIs give you the tools needed to manage language setup in your title.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,19 +24,19 @@
     "application/json"
   ],
   "paths": {
-    "/Profile/GetGlobalPolicy": {
+    "/Locale/GetLanguageList": {
       "post": {
-        "operationId": "GetGlobalPolicy",
+        "operationId": "GetLanguageList",
         "tags": [
-          "Account Management"
+          "Localization"
         ],
-        "description": "Gets the global title access policy ",
+        "description": "Retrieves the list of allowed languages, only accessible by title entities",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/GetGlobalPolicy"
+          "url": "https://api.playfab.com/documentation/localization/method/GetLanguageList"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/GetGlobalPolicyRequest"
+            "$ref": "#/parameters/GetLanguageListRequest"
           }
         ],
         "security": [
@@ -59,24 +59,15 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetGlobalPolicyResponse"
+                  "$ref": "#/responses/GetLanguageListResponse"
                 }
               },
               "example": {
                 "code": 200,
                 "status": 200,
                 "data": {
-                  "Permissions": [
-                    {
-                      "Resource": "pfrn:data--title_player_account!90901000/Profile/SomethingCool",
-                      "Action": "*",
-                      "Principal": {
-                        "ChildOf": {
-                          "EntityType": "[SELF]"
-                        }
-                      },
-                      "Comment": "An example policy"
-                    }
+                  "LanguageList": [
+                    "en"
                   ]
                 }
               }
@@ -86,334 +77,6 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Retrieves the title access policy that is used before the profile's policy is inspected during a request. If never customized this will return the default starter policy built by PlayFab.",
-        "x-seeAlso": [
-          "Profile/GetProfile"
-        ],
-        "x-errors": [
-          "NotAuthorized"
-        ]
-      }
-    },
-    "/Profile/GetProfile": {
-      "post": {
-        "operationId": "GetProfile",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Retrieves the entity's profile.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/GetProfile"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetEntityProfileRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/GetEntityProfileResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "Profile": {
-                    "Entity": {
-                      "Id": "1234567787392",
-                      "Type": "title_player_account",
-                      "TypeString": "title_player_account"
-                    },
-                    "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Given an entity type and entity identifier will retrieve the profile from the entity store. If the profile being retrieved is the caller's, then the read operation is consistent, if not it is an inconsistent read. An inconsistent read means that we do not guarantee all committed writes have occurred before reading the profile, allowing for a stale read. If consistency is important the Version Number on the result can be used to compare which version of the profile any reader has.",
-        "x-errors": [
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/Profile/GetProfiles": {
-      "post": {
-        "operationId": "GetProfiles",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Retrieves the entity's profile.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/GetProfiles"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetEntityProfilesRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/GetEntityProfilesResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "Profiles": [
-                    {
-                      "Entity": {
-                        "Id": "1234567787392",
-                        "Type": "title_player_account",
-                        "TypeString": "title_player_account"
-                      },
-                      "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Given a set of entity types and entity identifiers will retrieve all readable profiles properties for the caller. Profiles that the caller is not allowed to read will silently not be included in the results.",
-        "x-errors": [
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/Profile/SetGlobalPolicy": {
-      "post": {
-        "operationId": "SetGlobalPolicy",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Sets the global title access policy ",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetGlobalPolicy"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/SetGlobalPolicyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/SetGlobalPolicyResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {}
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Updates the title access policy that is used before the profile's policy is inspected during a request. Policies are compiled and cached for several minutes so an update here may not be reflected in behavior for a short time.",
-        "x-seeAlso": [
-          "Profile/GetProfile"
-        ],
-        "x-errors": [
-          "NotAuthorized"
-        ]
-      }
-    },
-    "/Profile/SetProfileLanguage": {
-      "post": {
-        "operationId": "SetProfileLanguage",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Updates the entity's language. The precedence hierarchy for communication to the player is Title Player Account language, Master Player Account language, and then title default language if the first two aren't set or supported.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetProfileLanguage"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/SetProfileLanguageRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/SetProfileLanguageResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "VersionNumber": 124,
-                  "OperationResult": "Updated"
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Given an entity profile, will update its language to the one passed in if the profile's version is at least the one passed in.",
-        "x-errors": [
-          "InvalidParams",
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/Profile/SetProfilePolicy": {
-      "post": {
-        "operationId": "SetProfilePolicy",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Sets the profiles access policy",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetProfilePolicy"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/SetEntityProfilePolicyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The basic wrapper around all successful api calls",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "code": {
-                  "type": "integer",
-                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-                },
-                "status": {
-                  "type": "string",
-                  "description": "The Http status code as a string."
-                },
-                "data": {
-                  "$ref": "#/responses/SetEntityProfilePolicyResponse"
-                }
-              },
-              "example": {
-                "code": 200,
-                "status": 200,
-                "data": {
-                  "Permissions": [
-                    {
-                      "Resource": "pfrn:data--title_player_account!90901000/Profile/SomethingCool",
-                      "Action": "*",
-                      "Principal": {
-                        "ChildOf": {
-                          "EntityType": "[SELF]"
-                        }
-                      },
-                      "Comment": "An example policy"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "This will set the access policy statements on the given entity profile. This is not additive, any existing statements will be replaced with the statements in this request.",
-        "x-seeAlso": [
-          "Profile/GetProfile"
-        ],
         "x-errors": [
           "NotAuthenticated",
           "NotAuthorized",
@@ -455,521 +118,36 @@
         }
       }
     },
-    "EffectType": {
-      "type": "object",
-      "enum": [
-        "Allow",
-        "Deny"
-      ]
-    },
-    "EntityDataObject": {
-      "description": "An entity object and its associated meta data.",
-      "type": "object",
-      "properties": {
-        "DataObject": {
-          "description": "Un-escaped JSON object, if DataAsObject is true.",
-          "type": "object"
-        },
-        "EscapedDataObject": {
-          "description": "Escaped string JSON body of the object, if DataAsObject is default or false.",
-          "type": "string"
-        },
-        "ObjectName": {
-          "description": "Name of this object.",
-          "type": "string"
-        }
-      }
-    },
-    "EntityKey": {
-      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
-      "type": "object",
-      "properties": {
-        "Id": {
-          "description": "Unique ID of the entity.",
-          "type": "string"
-        },
-        "Type": {
-          "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
-          "type": "string"
-        },
-        "TypeString": {
-          "description": "Alternate name for Type.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "6/1/2018",
-            "DeprecatedAfter": "7/1/2018",
-            "ObsoleteAfter": "8/1/2018",
-            "ReplacedBy": "Type"
-          }
-        }
-      },
-      "required": [
-        "Id"
-      ]
-    },
-    "EntityPermissionStatement": {
-      "type": "object",
-      "properties": {
-        "Action": {
-          "description": "The action this statement effects. May be 'Read', 'Write' or '*' for both read and write.",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "A comment about the statement. Intended solely for bookkeeping and debugging.",
-          "type": "string"
-        },
-        "Condition": {
-          "description": "Additional conditions to be applied for entity resources.",
-          "type": "object"
-        },
-        "Effect": {
-          "$ref": "#/definitions/EffectType",
-          "description": "The effect this statement will have. It may be either Allow or Deny",
-          "type": "string",
-          "x-isenum": true
-        },
-        "Principal": {
-          "description": "The principal this statement will effect.",
-          "type": "object"
-        },
-        "Resource": {
-          "description": "The resource this statements effects. Similar to 'pfrn:data--title![Title ID]/Profile/*'",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Resource",
-        "Action",
-        "Effect",
-        "Principal"
-      ]
-    },
-    "EntityProfileBody": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity id and type.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "EntityChain": {
-          "description": "The chain of responsibility for this entity. This is a representation of 'ownership'. It is constructed using the following formats (replace '[ID]' with the unique identifier for the given entity): Namespace: 'namespace![Namespace ID]' Title: 'title![Namespace ID]/[Title ID]' Master Player Account: 'master_player_account![Namespace ID]/[MasterPlayerAccount ID]' Title Player Account: 'title_player_account![Namespace ID]/[Title ID]/[MasterPlayerAccount ID]/[TitlePlayerAccount ID]' Character: 'character![Namespace ID]/[Title ID]/[MasterPlayerAccount ID]/[TitlePlayerAccount ID]/[Character ID]'",
-          "type": "string"
-        },
-        "Files": {
-          "$ref": "#/definitions/EntityProfileFileMetadata",
-          "description": "The files on this profile.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Language": {
-          "description": "The language on this profile.",
-          "type": "string"
-        },
-        "Objects": {
-          "$ref": "#/definitions/EntityDataObject",
-          "description": "The objects on this profile.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Permissions": {
-          "description": "The permissions that govern access to this entity profile and its properties. Only includes permissions set on this profile, not global statements from titles and namespaces.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityPermissionStatement"
-          },
-          "x-isclass": true
-        },
-        "VersionNumber": {
-          "description": "The version number of the profile in persistent storage at the time of the read. Used for optional optimistic concurrency during update.",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "VersionNumber"
-      ],
-      "example": {
-        "Entity": {
-          "Id": "1234567787392",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        },
-        "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
-      }
-    },
-    "EntityProfileFileMetadata": {
-      "description": "An entity file's meta data. To get a download URL call File/GetFiles API.",
-      "type": "object",
-      "properties": {
-        "Checksum": {
-          "description": "Checksum value for the file",
-          "type": "string"
-        },
-        "FileName": {
-          "description": "Name of the file",
-          "type": "string"
-        },
-        "LastModified": {
-          "description": "Last UTC time the file was modified",
-          "type": "string"
-        },
-        "Size": {
-          "description": "Storage service's reported byte count",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "Size",
-        "LastModified"
-      ]
-    },
-    "GetEntityProfileRequest": {
-      "type": "object",
-      "properties": {
-        "DataAsObject": {
-          "description": "Determines whether the objects will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON string.",
-          "type": "boolean"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "Entity"
-      ],
-      "example": {
-        "Entity": {
-          "Id": "1234567787392",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      }
-    },
-    "GetEntityProfileResponse": {
-      "type": "object",
-      "properties": {
-        "Profile": {
-          "$ref": "#/definitions/EntityProfileBody",
-          "description": "Entity profile",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Profile": {
-          "Entity": {
-            "Id": "1234567787392",
-            "Type": "title_player_account",
-            "TypeString": "title_player_account"
-          },
-          "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
-        }
-      }
-    },
-    "GetEntityProfilesRequest": {
-      "type": "object",
-      "properties": {
-        "DataAsObject": {
-          "description": "Determines whether the objects will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON string.",
-          "type": "boolean"
-        },
-        "Entities": {
-          "description": "Entity keys of the profiles to load. Must be between 1 and 25",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityKey"
-          },
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "Entities"
-      ],
-      "example": {
-        "Entities": [
-          {
-            "Id": "1234567787392",
-            "Type": "title_player_account",
-            "TypeString": "title_player_account"
-          },
-          {
-            "Id": "42434567785265",
-            "Type": "title_player_account",
-            "TypeString": "title_player_account"
-          }
-        ]
-      }
-    },
-    "GetEntityProfilesResponse": {
-      "type": "object",
-      "properties": {
-        "Profiles": {
-          "description": "Entity profiles",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityProfileBody"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Profiles": [
-          {
-            "Entity": {
-              "Id": "1234567787392",
-              "Type": "title_player_account",
-              "TypeString": "title_player_account"
-            },
-            "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
-          }
-        ]
-      }
-    },
-    "GetGlobalPolicyRequest": {
+    "GetLanguageListRequest": {
       "type": "object",
       "properties": {},
       "example": {}
     },
-    "GetGlobalPolicyResponse": {
+    "GetLanguageListResponse": {
       "type": "object",
       "properties": {
-        "Permissions": {
-          "description": "The permissions that govern access to all entities under this title or namespace.",
+        "LanguageList": {
+          "description": "The list of allowed languages, in BCP47 two-letter format",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/EntityPermissionStatement"
-          },
-          "x-isclass": true
+            "type": "string"
+          }
         }
       },
       "example": {
-        "Permissions": [
-          {
-            "Resource": "pfrn:data--title_player_account!90901000/Profile/SomethingCool",
-            "Action": "*",
-            "Principal": {
-              "ChildOf": {
-                "EntityType": "[SELF]"
-              }
-            },
-            "Comment": "An example policy"
-          }
+        "LanguageList": [
+          "en"
         ]
-      }
-    },
-    "OperationTypes": {
-      "type": "object",
-      "enum": [
-        "Created",
-        "Updated",
-        "Deleted",
-        "None"
-      ]
-    },
-    "SetEntityProfilePolicyRequest": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Statements": {
-          "description": "The statements to include in the access policy.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityPermissionStatement"
-          },
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "Entity"
-      ],
-      "example": {
-        "Statements": [
-          {
-            "Resource": "pfrn:data--*!*/Profile/Files/avatar.png",
-            "Action": "Read",
-            "Principal": {
-              "FriendOf": "true"
-            },
-            "Comment": "Allow my friends to read my avatar"
-          }
-        ],
-        "Entity": {
-          "Id": "90901000",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      }
-    },
-    "SetEntityProfilePolicyResponse": {
-      "type": "object",
-      "properties": {
-        "Permissions": {
-          "description": "The permissions that govern access to this entity profile and its properties. Only includes permissions set on this profile, not global statements from titles and namespaces.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityPermissionStatement"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Permissions": [
-          {
-            "Resource": "pfrn:data--title_player_account!90901000/Profile/SomethingCool",
-            "Action": "*",
-            "Principal": {
-              "ChildOf": {
-                "EntityType": "[SELF]"
-              }
-            },
-            "Comment": "An example policy"
-          }
-        ]
-      }
-    },
-    "SetGlobalPolicyRequest": {
-      "type": "object",
-      "properties": {
-        "Permissions": {
-          "description": "The permissions that govern access to all entities under this title or namespace.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/EntityPermissionStatement"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Permissions": [
-          {
-            "Resource": "pfrn:data--title_player_account!90901000/Profile/SomethingCool",
-            "Action": "*",
-            "Principal": {
-              "ChildOf": {
-                "EntityType": "[SELF]"
-              }
-            },
-            "Comment": "An example policy"
-          }
-        ]
-      }
-    },
-    "SetGlobalPolicyResponse": {
-      "type": "object",
-      "properties": {},
-      "example": {}
-    },
-    "SetProfileLanguageRequest": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "ExpectedVersion": {
-          "description": "The expected version of a profile to perform this update on",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "Language": {
-          "description": "The language to set on the given entity. Deletes the profile's language if passed in a null string.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "ExpectedVersion"
-      ],
-      "example": {
-        "Language": "en",
-        "ExpectedVersion": 123,
-        "Entity": {
-          "Id": "1234",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      }
-    },
-    "SetProfileLanguageResponse": {
-      "type": "object",
-      "properties": {
-        "OperationResult": {
-          "$ref": "#/definitions/OperationTypes",
-          "description": "The type of operation that occured on the profile's language",
-          "type": "string",
-          "x-isenum": true
-        },
-        "VersionNumber": {
-          "description": "The updated version of the profile after the language update",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "VersionNumber": 124,
-        "OperationResult": "Updated"
       }
     }
   },
   "parameters": {
-    "GetEntityProfileRequest": {
-      "name": "GetEntityProfileRequest",
+    "GetLanguageListRequest": {
+      "name": "GetLanguageListRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetEntityProfileRequest"
-      }
-    },
-    "GetEntityProfilesRequest": {
-      "name": "GetEntityProfilesRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/GetEntityProfilesRequest"
-      }
-    },
-    "GetGlobalPolicyRequest": {
-      "name": "GetGlobalPolicyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/GetGlobalPolicyRequest"
-      }
-    },
-    "SetEntityProfilePolicyRequest": {
-      "name": "SetEntityProfilePolicyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetEntityProfilePolicyRequest"
-      }
-    },
-    "SetGlobalPolicyRequest": {
-      "name": "SetGlobalPolicyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetGlobalPolicyRequest"
-      }
-    },
-    "SetProfileLanguageRequest": {
-      "name": "SetProfileLanguageRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetProfileLanguageRequest"
+        "$ref": "#/definitions/GetLanguageListRequest"
       }
     }
   },
@@ -980,47 +158,17 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "GetEntityProfileResponse": {
+    "GetLanguageListResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetEntityProfileResponse"
-      }
-    },
-    "GetEntityProfilesResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/GetEntityProfilesResponse"
-      }
-    },
-    "GetGlobalPolicyResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/GetGlobalPolicyResponse"
-      }
-    },
-    "SetEntityProfilePolicyResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetEntityProfilePolicyResponse"
-      }
-    },
-    "SetGlobalPolicyResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetGlobalPolicyResponse"
-      }
-    },
-    "SetProfileLanguageResponse": {
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/SetProfileLanguageResponse"
+        "$ref": "#/definitions/GetLanguageListResponse"
       }
     }
   },
   "tags": [
     {
-      "name": "Account Management",
-      "description": "https://api.playfab.com/documentation/Profiles#Account-Management"
+      "name": "Localization",
+      "description": "https://api.playfab.com/documentation/Localization#Localization"
     }
   ],
   "securityDefinitions": {
