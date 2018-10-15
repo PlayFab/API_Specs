@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "180927",
+    "version": "181015",
     "title": "PlayFab Profiles API",
     "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
     "termsOfService": "https://playfab.com/terms/",
@@ -223,6 +223,73 @@
         },
         "x-requestDetails": "Given a set of entity types and entity identifiers will retrieve all readable profiles properties for the caller. Profiles that the caller is not allowed to read will silently not be included in the results.",
         "x-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Profile/SetFriendlyName": {
+      "post": {
+        "operationId": "SetFriendlyName",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Update the friendly name of the entity",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/profiles/method/SetFriendlyName"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetFriendlyNameRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/SetFriendlyNameResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "VersionNumber": 42,
+                  "OperationResult": "Updated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity profile, will update its friendly name to the one passed in if the profile's version is equal to or newer than the specified value",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Profile/GetProfile"
+        ],
+        "x-errors": [
+          "InvalidParams",
           "NotAuthenticated",
           "NotAuthorized",
           "ProfileDoesNotExist"
@@ -563,6 +630,10 @@
           "type": "object",
           "x-isclass": true
         },
+        "FriendlyName": {
+          "description": "The friendly name of the entity. This field may serve different purposes for different entity types. i.e.: for a title player account it could represent the display name of the player, whereas on a character it could be character's name.",
+          "type": "string"
+        },
         "Language": {
           "description": "The language on this profile.",
           "type": "string"
@@ -838,6 +909,61 @@
         ]
       }
     },
+    "SetFriendlyNameRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpectedVersion": {
+          "description": "The expected version of a profile to perform this update on",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "FriendlyName": {
+          "description": "The new value to be set on Entity Profile's friendly name",
+          "type": "string"
+        }
+      },
+      "example": {
+        "FriendlyName": "My new display name",
+        "ExpectedVersion": 123,
+        "Entity": {
+          "Id": "90901000",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetFriendlyNameResponse": {
+      "type": "object",
+      "properties": {
+        "OperationResult": {
+          "$ref": "#/definitions/OperationTypes",
+          "description": "The type of operation that occured on the profile's friendly name",
+          "type": "string",
+          "x-isenum": true
+        },
+        "VersionNumber": {
+          "description": "The updated version of the profile after the friendly name update",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "example": {
+        "VersionNumber": 42,
+        "OperationResult": "Updated"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "SetGlobalPolicyRequest": {
       "type": "object",
       "properties": {
@@ -956,6 +1082,14 @@
         "$ref": "#/definitions/SetEntityProfilePolicyRequest"
       }
     },
+    "SetFriendlyNameRequest": {
+      "name": "SetFriendlyNameRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/SetFriendlyNameRequest"
+      }
+    },
     "SetGlobalPolicyRequest": {
       "name": "SetGlobalPolicyRequest",
       "in": "body",
@@ -1002,6 +1136,12 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/SetEntityProfilePolicyResponse"
+      }
+    },
+    "SetFriendlyNameResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/SetFriendlyNameResponse"
       }
     },
     "SetGlobalPolicyResponse": {
@@ -2600,6 +2740,10 @@
     "FacebookInstantGamesAuthNotConfiguredForTitle": {
       "id": 1397,
       "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
+    },
+    "EntityProfileConstraintValidationFailed": {
+      "id": 1398,
+      "name": "EntityProfileConstraintValidationFailed"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
