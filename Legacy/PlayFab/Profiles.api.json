@@ -87,6 +87,56 @@
         }
       ]
     },
+    "EntityLineage": {
+      "name": "EntityLineage",
+      "className": "EntityLineage",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "description": "The Character Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GroupId",
+          "description": "The Group Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MasterPlayerAccountId",
+          "description": "The Master Player Account Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "NamespaceId",
+          "description": "The Namespace Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "The Title Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitlePlayerAccountId",
+          "description": "The Title Player Account Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "EntityPermissionStatement": {
       "name": "EntityPermissionStatement",
       "className": "EntityPermissionStatement",
@@ -154,7 +204,7 @@
         },
         {
           "name": "EntityChain",
-          "description": "The chain of responsibility for this entity. This is a representation of 'ownership'. It is constructed using the following formats (replace '[ID]' with the unique identifier for the given entity): Namespace: 'namespace![Namespace ID]' Title: 'title![Namespace ID]/[Title ID]' Master Player Account: 'master_player_account![Namespace ID]/[MasterPlayerAccount ID]' Title Player Account: 'title_player_account![Namespace ID]/[Title ID]/[MasterPlayerAccount ID]/[TitlePlayerAccount ID]' Character: 'character![Namespace ID]/[Title ID]/[MasterPlayerAccount ID]/[TitlePlayerAccount ID]/[Character ID]'",
+          "description": "The chain of responsibility for this entity. Use Lineage.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -169,10 +219,25 @@
           "optional": true
         },
         {
+          "name": "FriendlyName",
+          "description": "The friendly name of the entity. This field may serve different purposes for different entity types. i.e.: for a title player account it could represent the display name of the player, whereas on a character it could be character's name.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Language",
           "description": "The language on this profile.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Lineage",
+          "description": "The lineage of this profile.",
+          "jsontype": "Object",
+          "actualtype": "EntityLineage",
+          "isclass": true,
           "optional": true
         },
         {
@@ -259,7 +324,7 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -414,6 +479,67 @@
         }
       ]
     },
+    "SetFriendlyNameRequest": {
+      "name": "SetFriendlyNameRequest",
+      "className": "SetFriendlyNameRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ExpectedVersion",
+          "description": "The expected version of a profile to perform this update on",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "FriendlyName",
+          "description": "The new value to be set on Entity Profile's friendly name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SetFriendlyNameResponse": {
+      "name": "SetFriendlyNameResponse",
+      "className": "SetFriendlyNameResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "OperationResult",
+          "description": "The type of operation that occured on the profile's friendly name",
+          "jsontype": "String",
+          "actualtype": "OperationTypes",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "VersionNumber",
+          "description": "The updated version of the profile after the friendly name update",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
     "SetGlobalPolicyRequest": {
       "name": "SetGlobalPolicyRequest",
       "className": "SetGlobalPolicyRequest",
@@ -503,6 +629,7 @@
         "GetGlobalPolicy",
         "GetProfile",
         "GetProfiles",
+        "SetFriendlyName",
         "SetGlobalPolicy",
         "SetProfileLanguage",
         "SetProfilePolicy"
@@ -563,6 +690,32 @@
       "result": "GetEntityProfilesResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Profiles\": [\r\n      {\r\n        \"Entity\": {\r\n          \"Id\": \"1234567787392\",\r\n          \"Type\": \"title_player_account\",\r\n          \"TypeString\": \"title_player_account\"\r\n        },\r\n        \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\r\n        \"VersionNumber\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
+        "NotAuthenticated",
+        "NotAuthorized",
+        "ProfileDoesNotExist"
+      ]
+    },
+    {
+      "name": "SetFriendlyName",
+      "summary": "Update the friendly name of the entity",
+      "requestDetails": "Given an entity profile, will update its friendly name to the one passed in if the profile's version is equal to or newer than the specified value",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Profile/SetFriendlyName",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "SetFriendlyNameRequest",
+      "requestExample": "{\r\n  \"FriendlyName\": \"My new display name\",\r\n  \"ExpectedVersion\": 123,\r\n  \"Entity\": {\r\n    \"Id\": \"90901000\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
+      "result": "SetFriendlyNameResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"VersionNumber\": 42,\r\n    \"OperationResult\": \"Updated\"\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Profile/GetProfile"
+      ],
+      "errors": [
+        "InvalidParams",
         "NotAuthenticated",
         "NotAuthorized",
         "ProfileDoesNotExist"
@@ -2184,6 +2337,26 @@
       "id": 1397,
       "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
     },
+    "EntityProfileConstraintValidationFailed": {
+      "id": 1398,
+      "name": "EntityProfileConstraintValidationFailed"
+    },
+    "PlayInsightsIngestionKeyPending": {
+      "id": 1399,
+      "name": "PlayInsightsIngestionKeyPending"
+    },
+    "PlayInsightsIngestionKeyNotFound": {
+      "id": 1400,
+      "name": "PlayInsightsIngestionKeyNotFound"
+    },
+    "StatisticTagRequired": {
+      "id": 1401,
+      "name": "StatisticTagRequired"
+    },
+    "StatisticTagInvalid": {
+      "id": 1402,
+      "name": "StatisticTagInvalid"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -2323,6 +2496,14 @@
     "MatchmakingNotEnabled": {
       "id": 2035,
       "name": "MatchmakingNotEnabled"
+    },
+    "MatchmakingGetStatisticsIdentityInvalid": {
+      "id": 2036,
+      "name": "MatchmakingGetStatisticsIdentityInvalid"
+    },
+    "MatchmakingStatisticsIdMissing": {
+      "id": 2037,
+      "name": "MatchmakingStatisticsIdMissing"
     }
   },
   "errorList": [
@@ -2714,6 +2895,11 @@
     "FacebookInstantGamesIdNotLinked",
     "InvalidFacebookInstantGamesSignature",
     "FacebookInstantGamesAuthNotConfiguredForTitle",
+    "EntityProfileConstraintValidationFailed",
+    "PlayInsightsIngestionKeyPending",
+    "PlayInsightsIngestionKeyNotFound",
+    "StatisticTagRequired",
+    "StatisticTagInvalid",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateRequestMissing",
@@ -2748,6 +2934,8 @@
     "MatchmakingMemberProfileInvalid",
     "WriteAttemptedDuringExport",
     "NintendoSwitchDeviceIdNotLinked",
-    "MatchmakingNotEnabled"
+    "MatchmakingNotEnabled",
+    "MatchmakingGetStatisticsIdentityInvalid",
+    "MatchmakingStatisticsIdMissing"
   ]
 }
