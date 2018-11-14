@@ -135,18 +135,6 @@
       "isenum": true,
       "enumvalues": [
         {
-          "name": "Standard_A1"
-        },
-        {
-          "name": "Standard_A2"
-        },
-        {
-          "name": "Standard_A3"
-        },
-        {
-          "name": "Standard_A4"
-        },
-        {
           "name": "Standard_D1_v2"
         },
         {
@@ -160,6 +148,30 @@
         },
         {
           "name": "Standard_D5_v2"
+        },
+        {
+          "name": "Standard_A1_v2"
+        },
+        {
+          "name": "Standard_A2_v2"
+        },
+        {
+          "name": "Standard_A4_v2"
+        },
+        {
+          "name": "Standard_A8_v2"
+        },
+        {
+          "name": "Standard_A1"
+        },
+        {
+          "name": "Standard_A2"
+        },
+        {
+          "name": "Standard_A3"
+        },
+        {
+          "name": "Standard_A4"
         }
       ]
     },
@@ -2676,13 +2688,6 @@
           "actualtype": "RuleType",
           "isenum": true,
           "optional": false
-        },
-        {
-          "name": "Weight",
-          "description": "The relative weight of this rule compared to others.",
-          "jsontype": "Number",
-          "actualtype": "double",
-          "optional": false
         }
       ]
     },
@@ -3052,7 +3057,7 @@
           "name": "TeamSizeBalanceRule"
         },
         {
-          "name": "DatacenterSelectionRule"
+          "name": "RegionSelectionRule"
         },
         {
           "name": "TeamDifferenceRule"
@@ -3319,6 +3324,7 @@
         "GetMultiplayerServerLogs",
         "GetRemoteLoginEndpoint",
         "GetTitleEnabledForMultiplayerServersStatus",
+        "ListArchivedMultiplayerServers",
         "ListAssetSummaries",
         "ListBuildSummaries",
         "ListCertificateSummaries",
@@ -3637,6 +3643,7 @@
         "MultiplayerServer/GetTitleEnabledForMultiplayerServersStatus"
       ],
       "errors": [
+        "CannotEnableMultiplayerServersForTitle",
         "MultiplayerServerBadRequest",
         "MultiplayerServerForbidden",
         "MultiplayerServerInternalServerError",
@@ -4000,6 +4007,31 @@
       ]
     },
     {
+      "name": "ListArchivedMultiplayerServers",
+      "summary": "Lists archived multiplayer server sessions for a build.",
+      "requestDetails": "Returns a list of archived multiplayer servers for a build in a specific region.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/MultiplayerServer/ListArchivedMultiplayerServers",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ListMultiplayerServersRequest",
+      "requestExample": "{\r\n  \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n  \"Region\": \"SouthCentralUs\"\r\n}",
+      "result": "ListMultiplayerServersResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"MultiplayerServerSummaries\": [\r\n      {\r\n        \"ServerId\": \"AMultiplayerGameServer\",\r\n        \"VmId\": \"VmID1\",\r\n        \"Region\": \"SouthCentralUs\",\r\n        \"State\": \"Active\",\r\n        \"ConnectedPlayers\": [\r\n          {\r\n            \"PlayerId\": \"10931352888739351331\"\r\n          },\r\n          {\r\n            \"PlayerId\": \"10271352123739051532\"\r\n          }\r\n        ]\r\n      },\r\n      {\r\n        \"ServerId\": \"SomeOtherMultiplayerGameServer\",\r\n        \"VmId\": \"VmID2\",\r\n        \"Region\": \"SouthCentralUs\",\r\n        \"State\": \"Terminated\",\r\n        \"ConnectedPlayers\": []\r\n      }\r\n    ],\r\n    \"PageSize\": 0\r\n  }\r\n}",
+      "seeAlso": [
+        "MultiplayerServer/RequestMultiplayerServer"
+      ],
+      "errors": [
+        "MultiplayerServerBadRequest",
+        "MultiplayerServerForbidden",
+        "MultiplayerServerInternalServerError",
+        "MultiplayerServerNotFound",
+        "MultiplayerServerUnauthorized",
+        "MultiplayerServerUnavailable"
+      ]
+    },
+    {
       "name": "ListAssetSummaries",
       "summary": "Lists multiplayer server game assets for a title.",
       "requestDetails": "Returns a list of multiplayer server game asset summaries for a title.",
@@ -4313,7 +4345,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "SetMatchmakingQueueRequest",
-      "requestExample": "{\r\n  \"MatchmakingQueue\": {\r\n    \"Name\": \"ExampleQueueName\",\r\n    \"MinMatchSize\": 7,\r\n    \"MaxMatchSize\": 8,\r\n    \"Rules\": [\r\n      {\r\n        \"Type\": \"DifferenceRule\",\r\n        \"Difference\": 10.0,\r\n        \"MergeFunction\": \"Average\",\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 0.5,\r\n          \"Limit\": 20.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeDifference\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Name\": \"ExampleName0\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"StringEqualityRule\",\r\n        \"DefaultAttributeValue\": \"ExampleDefault\",\r\n        \"Expansion\": {\r\n          \"EnabledOverrides\": [\r\n            false,\r\n            true,\r\n            true,\r\n            false\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeStringEquality\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Name\": \"ExampleName1\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"MatchTotalRule\",\r\n        \"Min\": 2.0,\r\n        \"Max\": 4.0,\r\n        \"Expansion\": {\r\n          \"MinOverrides\": [\r\n            2.0,\r\n            null,\r\n            null\r\n          ],\r\n          \"MaxOverrides\": [\r\n            4.0,\r\n            4.0,\r\n            null\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeMatchTotal\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"MatchAny\",\r\n        \"Name\": \"ExampleName2\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"SetIntersectionRule\",\r\n        \"DefaultAttributeValue\": [\r\n          \"a\",\r\n          \"b\",\r\n          \"c\"\r\n        ],\r\n        \"MinIntersectionSize\": 2,\r\n        \"Expansion\": {\r\n          \"Delta\": 2,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeSetIntersection\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Name\": \"ExampleName3\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamSizeBalanceRule\",\r\n        \"Difference\": 1,\r\n        \"Expansion\": {\r\n          \"Delta\": 1,\r\n          \"Limit\": 5,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName4\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"DatacenterSelectionRule\",\r\n        \"MaxLatency\": 250,\r\n        \"Path\": \"Latencies\",\r\n        \"Expansion\": {\r\n          \"Delta\": 10,\r\n          \"Limit\": 300,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName5\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamDifferenceRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Difference\": 2.0,\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 1.0,\r\n          \"Limit\": 5.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName6\",\r\n        \"Weight\": 0.5,\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamTicketSizeSimilarityRule\",\r\n        \"Name\": \"TeamTicketSizeSimilarityRuleExample7\",\r\n        \"Weight\": 1.0,\r\n        \"SecondsUntilOptional\": 180\r\n      }\r\n    ],\r\n    \"Teams\": [\r\n      {\r\n        \"Name\": \"monster\",\r\n        \"MinTeamSize\": 1,\r\n        \"MaxTeamSize\": 1\r\n      },\r\n      {\r\n        \"Name\": \"hunters\",\r\n        \"MinTeamSize\": 4,\r\n        \"MaxTeamSize\": 8\r\n      }\r\n    ],\r\n    \"StatisticsVisibilityToPlayers\": {\r\n      \"ShowNumberOfPlayersMatching\": true,\r\n      \"ShowTimeToMatch\": true\r\n    }\r\n  }\r\n}",
+      "requestExample": "{\r\n  \"MatchmakingQueue\": {\r\n    \"Name\": \"ExampleQueueName\",\r\n    \"MinMatchSize\": 7,\r\n    \"MaxMatchSize\": 8,\r\n    \"Rules\": [\r\n      {\r\n        \"Type\": \"DifferenceRule\",\r\n        \"Difference\": 10.0,\r\n        \"MergeFunction\": \"Average\",\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 0.5,\r\n          \"Limit\": 20.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeDifference\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName0\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"StringEqualityRule\",\r\n        \"DefaultAttributeValue\": \"ExampleDefault\",\r\n        \"Expansion\": {\r\n          \"EnabledOverrides\": [\r\n            false,\r\n            true,\r\n            true,\r\n            false\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeStringEquality\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName1\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"MatchTotalRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Min\": 2.0,\r\n        \"Max\": 4.0,\r\n        \"Weight\": 1.0,\r\n        \"Expansion\": {\r\n          \"MinOverrides\": [\r\n            2.0,\r\n            null,\r\n            null\r\n          ],\r\n          \"MaxOverrides\": [\r\n            4.0,\r\n            4.0,\r\n            null\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName2\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"SetIntersectionRule\",\r\n        \"DefaultAttributeValue\": [\r\n          \"a\",\r\n          \"b\",\r\n          \"c\"\r\n        ],\r\n        \"MinIntersectionSize\": 2,\r\n        \"Expansion\": {\r\n          \"Delta\": 2,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeSetIntersection\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName3\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamSizeBalanceRule\",\r\n        \"Difference\": 1,\r\n        \"Expansion\": {\r\n          \"Delta\": 1,\r\n          \"Limit\": 5,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName4\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"RegionSelectionRule\",\r\n        \"MaxLatency\": 250,\r\n        \"Path\": \"Latencies\",\r\n        \"Expansion\": {\r\n          \"Delta\": 10,\r\n          \"Limit\": 300,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName5\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamDifferenceRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Difference\": 2.0,\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 1.0,\r\n          \"Limit\": 5.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName6\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamTicketSizeSimilarityRule\",\r\n        \"Name\": \"TeamTicketSizeSimilarityRuleExample7\",\r\n        \"SecondsUntilOptional\": 180\r\n      }\r\n    ],\r\n    \"Teams\": [\r\n      {\r\n        \"Name\": \"monster\",\r\n        \"MinTeamSize\": 1,\r\n        \"MaxTeamSize\": 1\r\n      },\r\n      {\r\n        \"Name\": \"hunters\",\r\n        \"MinTeamSize\": 4,\r\n        \"MaxTeamSize\": 8\r\n      }\r\n    ],\r\n    \"StatisticsVisibilityToPlayers\": {\r\n      \"ShowNumberOfPlayersMatching\": true,\r\n      \"ShowTimeToMatch\": true\r\n    }\r\n  }\r\n}",
       "result": "SetMatchmakingQueueResult",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -5963,13 +5995,13 @@
       "id": 1398,
       "name": "EntityProfileConstraintValidationFailed"
     },
-    "PlayInsightsIngestionKeyPending": {
+    "TelemetryIngestionKeyPending": {
       "id": 1399,
-      "name": "PlayInsightsIngestionKeyPending"
+      "name": "TelemetryIngestionKeyPending"
     },
-    "PlayInsightsIngestionKeyNotFound": {
+    "TelemetryIngestionKeyNotFound": {
       "id": 1400,
-      "name": "PlayInsightsIngestionKeyNotFound"
+      "name": "TelemetryIngestionKeyNotFound"
     },
     "StatisticTagRequired": {
       "id": 1401,
@@ -5978,6 +6010,10 @@
     "StatisticTagInvalid": {
       "id": 1402,
       "name": "StatisticTagInvalid"
+    },
+    "DataIntegrityError": {
+      "id": 1403,
+      "name": "DataIntegrityError"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -6126,6 +6162,10 @@
     "MatchmakingStatisticsIdMissing": {
       "id": 2037,
       "name": "MatchmakingStatisticsIdMissing"
+    },
+    "CannotEnableMultiplayerServersForTitle": {
+      "id": 2038,
+      "name": "CannotEnableMultiplayerServersForTitle"
     }
   },
   "errorList": [
@@ -6518,10 +6558,11 @@
     "InvalidFacebookInstantGamesSignature",
     "FacebookInstantGamesAuthNotConfiguredForTitle",
     "EntityProfileConstraintValidationFailed",
-    "PlayInsightsIngestionKeyPending",
-    "PlayInsightsIngestionKeyNotFound",
+    "TelemetryIngestionKeyPending",
+    "TelemetryIngestionKeyNotFound",
     "StatisticTagRequired",
     "StatisticTagInvalid",
+    "DataIntegrityError",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateRequestMissing",
@@ -6558,6 +6599,7 @@
     "NintendoSwitchDeviceIdNotLinked",
     "MatchmakingNotEnabled",
     "MatchmakingGetStatisticsIdentityInvalid",
-    "MatchmakingStatisticsIdMissing"
+    "MatchmakingStatisticsIdMissing",
+    "CannotEnableMultiplayerServersForTitle"
   ]
 }
