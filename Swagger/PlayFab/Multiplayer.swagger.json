@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "180927",
+    "version": "181115",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers.",
     "termsOfService": "https://playfab.com/terms/",
@@ -77,7 +77,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingCancelTicketServerIdentityInvalid",
           "MatchmakingCancelTicketUserIdentityMismatch",
           "MatchmakingEntityInvalid",
@@ -145,7 +145,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingCreateRequestCreatorIdMissing",
           "MatchmakingCreateRequestCreatorMissing",
           "MatchmakingCreateRequestGiveUpAfterInvalid",
@@ -216,7 +216,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingCreateRequestGiveUpAfterInvalid",
           "MatchmakingCreateRequestUserListMissing",
           "MatchmakingCreateTicketServerIdentityInvalid",
@@ -286,7 +286,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingEntityInvalid",
           "MatchmakingMatchIdIdMissing",
           "MatchmakingMatchIdMissing",
@@ -349,7 +349,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingQueueConfigNotFound",
           "NotAuthorized"
         ]
@@ -428,7 +428,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingEntityInvalid",
           "MatchmakingGetMatchIdentityMismatch",
           "MatchmakingGetTicketUserMismatch",
@@ -437,6 +437,78 @@
           "MatchmakingTicketIdMissing",
           "MatchmakingTicketNotFound",
           "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/GetQueueStatistics": {
+      "post": {
+        "operationId": "GetQueueStatistics",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Get the statistics for a queue.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetQueueStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetQueueStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/GetQueueStatisticsResult"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "NumberOfPlayersMatching": 563,
+                  "TimeToMatchStatisticsInSeconds": {
+                    "Average": 2.2,
+                    "Percentile50": 2.1,
+                    "Percentile90": 2.21,
+                    "Percentile99": 3.0
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns the matchmaking statistics for a queue. These include the number of players matching and the statistics related to the time to match statistics in seconds (average and percentiles). Statistics are refreshed once every 5 minutes. Servers can access all statistics no matter what the ClientStatisticsVisibility is configured to. Clients can access statistics according to the ClientStatisticsVisibility. Client requests are forbidden if all visibility fields are false.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingEntityInvalid",
+          "MatchmakingGetStatisticsIdentityInvalid",
+          "MatchmakingQueueConfigNotFound",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingStatisticsIdMissing",
+          "MatchmakingTitleIdMissing",
+          "NotAuthorized"
         ]
       }
     },
@@ -493,7 +565,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingAlreadyJoinedTicket",
           "MatchmakingEntityInvalid",
           "MatchmakingJoinRequestUserMissing",
@@ -565,7 +637,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "NotAuthorized"
         ]
       }
@@ -623,7 +695,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "NotAuthorized"
         ]
       }
@@ -681,7 +753,7 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MatchmakingQueueConfigInvalid",
           "NotAuthorized"
         ]
@@ -746,6 +818,7 @@
                   ],
                   "RegionConfigurations": [
                     {
+                      "Region": "EastUs",
                       "Status": "Initializing",
                       "MaxServers": 10,
                       "StandbyServers": 5
@@ -785,19 +858,15 @@
           }
         },
         "x-requestDetails": "Creates a multiplayer server build with a custom container and returns information about the build creation request.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
           "MultiplayerServer/ListBuildSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized"
@@ -862,6 +931,7 @@
                   ],
                   "RegionConfigurations": [
                     {
+                      "Region": "EastUs",
                       "Status": "Initializing",
                       "MaxServers": 10,
                       "StandbyServers": 5
@@ -901,18 +971,14 @@
           }
         },
         "x-requestDetails": "Creates a multiplayer server build with a managed container and returns information about the build creation request.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
           "MultiplayerServer/ListBuildSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized"
@@ -969,17 +1035,13 @@
           }
         },
         "x-requestDetails": "Creates a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/DeleteRemoteUser",
           "MultiplayerServer/GetRemoteLoginEndpoint"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1040,17 +1102,13 @@
           }
         },
         "x-requestDetails": "Deletes a multiplayer server game asset for a title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/GetAssetUploadUrl",
           "MultiplayerServer/ListAssetSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1111,15 +1169,12 @@
           }
         },
         "x-requestDetails": "Deletes a multiplayer server build.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/GetBuild",
           "MultiplayerServer/ListBuildSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerConflict",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
@@ -1179,17 +1234,13 @@
           }
         },
         "x-requestDetails": "Deletes a multiplayer server game certificate.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/ListCertificateSummaries",
           "MultiplayerServer/UploadCertificate"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1250,17 +1301,13 @@
           }
         },
         "x-requestDetails": "Deletes a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateRemoteUser",
           "MultiplayerServer/GetRemoteLoginEndpoint"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1321,15 +1368,11 @@
           }
         },
         "x-requestDetails": "Enables the multiplayer server feature for a title and returns the enabled status. The enabled status can be Initializing, Enabled, and Disabled. It can up to 20 minutes or more for the title to be enabled for the feature. On average, it can take up to 20 minutes for the title to be enabled for the feature.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/GetTitleEnabledForMultiplayerServersStatus"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized"
@@ -1389,18 +1432,14 @@
           }
         },
         "x-requestDetails": "Gets the URL to upload assets to.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/ListAssetSummaries",
           "MultiplayerServer/ListCertificateSummaries",
           "MultiplayerServer/UploadCertificate"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1468,6 +1507,7 @@
                   ],
                   "RegionConfigurations": [
                     {
+                      "Region": "EastUs",
                       "Status": "Initializing",
                       "MaxServers": 10,
                       "StandbyServers": 5
@@ -1508,18 +1548,14 @@
           }
         },
         "x-requestDetails": "Returns the details about a multiplayer server build.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/ListBuildSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -1583,10 +1619,9 @@
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1597,19 +1632,19 @@
         ]
       }
     },
-    "/MultiplayerServer/GetCustomerContainerRegistryCredentials": {
+    "/MultiplayerServer/GetContainerRegistryCredentials": {
       "post": {
-        "operationId": "GetCustomerContainerRegistryCredentials",
+        "operationId": "GetContainerRegistryCredentials",
         "tags": [
           "MultiplayerServer"
         ],
-        "description": "Gets the credentials to the customer container registry.",
+        "description": "Gets the credentials to the container registry.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/multiplayer/method/GetCustomerContainerRegistryCredentials"
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetContainerRegistryCredentials"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/GetCustomerContainerRegistryCredentialsRequest"
+            "$ref": "#/parameters/GetContainerRegistryCredentialsRequest"
           }
         ],
         "security": [
@@ -1632,7 +1667,7 @@
                   "description": "The Http status code as a string."
                 },
                 "data": {
-                  "$ref": "#/responses/GetCustomerContainerRegistryCredentialsResponse"
+                  "$ref": "#/responses/GetContainerRegistryCredentialsResponse"
                 }
               },
               "example": {
@@ -1651,16 +1686,13 @@
           }
         },
         "x-requestDetails": "Gets credentials to the container registry where game developers can upload custom container images to before creating a new build.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
-          "MultiplayerServer/CreateBuildWithCustomContainer"
+          "MultiplayerServer/CreateBuildWithCustomContainer",
+          "MultiplayerServer/RolloverContainerRegistryCredentials"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1742,15 +1774,11 @@
           }
         },
         "x-requestDetails": "Gets multiplayer server session details for a build in a specific region.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/RequestMultiplayerServer"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -1818,10 +1846,9 @@
           "MultiplayerServer/GetMultiplayerServerDetails",
           "MultiplayerServer/RequestMultiplayerServer"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1885,16 +1912,12 @@
           }
         },
         "x-requestDetails": "Gets a remote login endpoint to a VM that is hosting a multiplayer server build in a specific region.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateRemoteUser"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -1957,15 +1980,11 @@
           }
         },
         "x-requestDetails": "Gets the status of whether a title is enabled for the multiplayer server feature. The enabled status can be Initializing, Enabled, and Disabled.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/EnableMultiplayerServersForTitle"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -2033,18 +2052,14 @@
           }
         },
         "x-requestDetails": "Returns a list of multiplayer server game asset summaries for a title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/GetAssetUploadUrl",
           "MultiplayerServer/ListCertificateSummaries",
           "MultiplayerServer/UploadCertificate"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -2105,17 +2120,13 @@
           }
         },
         "x-requestDetails": "Returns a list of summarized details of all multiplayer server builds for a title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -2185,17 +2196,157 @@
           }
         },
         "x-requestDetails": "Returns a list of multiplayer server game certificates for a title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/DeleteCertificate",
           "MultiplayerServer/UploadCertificate"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
+    "/MultiplayerServer/ListContainerImages": {
+      "post": {
+        "operationId": "ListContainerImages",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Lists custom container images for a title.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/ListContainerImages"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListContainerImagesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/ListContainerImagesResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "Images": [
+                    "ImageName1",
+                    "ImageName2"
+                  ],
+                  "PageSize": 10
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns a list of the container images that have been uploaded to the container registry for a title.",
+        "x-seeAlso": [
+          "MultiplayerServer/GetContainerRegistryCredentials",
+          "MultiplayerServer/ListContainerImageTags"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
+    "/MultiplayerServer/ListContainerImageTags": {
+      "post": {
+        "operationId": "ListContainerImageTags",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Lists the tags for a custom container image.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/ListContainerImageTags"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListContainerImageTagsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/ListContainerImageTagsResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "Tags": [
+                    "ImageTag1",
+                    "ImageTag2"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns a list of the tags for a particular container image that exists in the container registry for a title.",
+        "x-seeAlso": [
+          "MultiplayerServer/ListContainerImages"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -2280,15 +2431,11 @@
           }
         },
         "x-requestDetails": "Returns a list of multiplayer servers for a build in a specific region.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/RequestMultiplayerServer"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -2349,7 +2496,8 @@
                       "Region": "SouthCentralUs"
                     },
                     {
-                      "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net"
+                      "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                      "Region": "EastUs"
                     },
                     {
                       "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
@@ -2370,12 +2518,8 @@
           }
         },
         "x-requestDetails": "Returns a list of quality of service servers.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized"
@@ -2427,11 +2571,13 @@
                   "VirtualMachines": [
                     {
                       "VmId": "VmID1",
-                      "State": "Running"
+                      "State": "Running",
+                      "HealthStatus": "Healthy"
                     },
                     {
                       "VmId": "VmID2",
-                      "State": "Assigned"
+                      "State": "Propping",
+                      "HealthStatus": "Healthy"
                     }
                   ],
                   "PageSize": 10
@@ -2444,12 +2590,8 @@
           }
         },
         "x-requestDetails": "Returns a list of virtual machines for a title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
@@ -2464,7 +2606,7 @@
         "tags": [
           "MultiplayerServer"
         ],
-        "description": "Request a multiplayer server session.",
+        "description": "Request a multiplayer server session. Accepts tokens for title and if game client accesss is enabled, allows game client to request a server with player entity token.",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/multiplayer/method/RequestMultiplayerServer"
         },
@@ -2529,17 +2671,84 @@
           }
         },
         "x-requestDetails": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/GetMultiplayerServerDetails"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
+          "APINotEnabledForGameClientAccess",
           "MultiplayerServerBadRequest",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
+    "/MultiplayerServer/RolloverContainerRegistryCredentials": {
+      "post": {
+        "operationId": "RolloverContainerRegistryCredentials",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Rolls over the credentials to the container registry.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/RolloverContainerRegistryCredentials"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RolloverContainerRegistryCredentialsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The basic wrapper around all successful api calls",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+                },
+                "status": {
+                  "type": "string",
+                  "description": "The Http status code as a string."
+                },
+                "data": {
+                  "$ref": "#/responses/RolloverContainerRegistryCredentialsResponse"
+                }
+              },
+              "example": {
+                "code": 200,
+                "status": 200,
+                "data": {
+                  "DnsName": "registry.azurecr.io",
+                  "Username": "RegistryUser",
+                  "Password": "NewRegistryPassword"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets new credentials to the container registry where game developers can upload custom container images to before creating a new build.",
+        "x-seeAlso": [
+          "MultiplayerServer/GetContainerRegistryCredentials"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
           "MultiplayerServerNotFound",
           "MultiplayerServerTooManyRequests",
           "MultiplayerServerUnauthorized",
@@ -2597,14 +2806,11 @@
           }
         },
         "x-requestDetails": "Executes the shutdown callback from the GSDK and terminates the multiplayer server session. The callback in the GSDK will allow for graceful shutdown with a 15 minute timeoutIf graceful shutdown has not been completed before 15 minutes have elapsed, the multiplayer server session will be forcefully terminated on it's own.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/GetMultiplayerServerDetails",
           "MultiplayerServer/RequestMultiplayerServer"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -2664,18 +2870,14 @@
           }
         },
         "x-requestDetails": "Updates a multiplayer server build's regions.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
           "MultiplayerServer/ListBuildSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized"
@@ -2732,17 +2934,13 @@
           }
         },
         "x-requestDetails": "Uploads a multiplayer server game certificate.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
         "x-seeAlso": [
           "MultiplayerServer/DeleteCertificate",
           "MultiplayerServer/ListCertificateSummaries"
         ],
-        "x-errors": [
+        "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerConflict",
-          "MultiplayerServerError",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNoContent",
@@ -2798,10 +2996,7 @@
           "description": "The asset's mount path.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "AssetReferenceParams": {
       "type": "object",
@@ -2818,9 +3013,6 @@
       "required": [
         "FileName",
         "MountPath"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "AssetSummary": {
@@ -2834,42 +3026,26 @@
           "description": "The metadata associated with the asset.",
           "type": "object"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "AttributeNotSpecifiedBehavior": {
-      "type": "object",
-      "enum": [
-        "UseDefault",
-        "MatchAny"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "AttributeSource": {
-      "type": "object",
-      "enum": [
-        "User",
-        "PlayerEntity"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "AzureRegion": {
       "type": "object",
       "enum": [
+        "AustraliaEast",
+        "AustraliaSoutheast",
+        "BrazilSouth",
+        "CentralUs",
+        "EastAsia",
         "EastUs",
-        "SouthCentralUs",
-        "WestUs",
+        "EastUs2",
+        "JapanEast",
+        "JapanWest",
+        "NorthCentralUs",
         "NorthEurope",
-        "WestEurope"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
+        "SouthCentralUs",
+        "SoutheastAsia",
+        "WestEurope",
+        "WestUs"
       ]
     },
     "AzureVmSize": {
@@ -2884,9 +3060,6 @@
         "Standard_D3_v2",
         "Standard_D4_v2",
         "Standard_D5_v2"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "BuildRegion": {
@@ -2909,18 +3082,13 @@
           "x-actualtype": "int32"
         },
         "Status": {
-          "$ref": "#/definitions/BuildRegionStatus",
           "description": "The status of multiplayer servers in the build region.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
         }
       },
       "required": [
         "MaxServers",
         "StandbyServers"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "BuildRegionParams": {
@@ -2947,23 +3115,6 @@
         "Region",
         "MaxServers",
         "StandbyServers"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "BuildRegionStatus": {
-      "type": "object",
-      "enum": [
-        "Unknown",
-        "Initializing",
-        "InProbation",
-        "Succeeded",
-        "Unhealthy",
-        "PendingDeletion"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "BuildSummary": {
@@ -2985,10 +3136,7 @@
           "description": "The metadata of the build.",
           "type": "object"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CancellationReason": {
       "type": "object",
@@ -3052,9 +3200,6 @@
       "required": [
         "Name",
         "Base64EncodedValue"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "CertificateSummary": {
@@ -3068,10 +3213,7 @@
           "description": "The thumbprint for the certificate.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CognitiveServicesType": {
       "type": "object",
@@ -3090,19 +3232,14 @@
           "description": "The player ID of the player connected to the multiplayer server.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ContainerFlavor": {
       "type": "object",
       "enum": [
         "ManagedWindowsServerCore",
-        "CustomLinux"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
+        "CustomLinux",
+        "ManagedWindowsServerCorePreview"
       ]
     },
     "ContainerImageReference": {
@@ -3119,9 +3256,6 @@
       },
       "required": [
         "ImageName"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "CreateBuildWithCustomContainerRequest": {
@@ -3229,6 +3363,7 @@
         ],
         "RegionConfigurations": [
           {
+            "Region": "EastUs",
             "MaxServers": 10,
             "StandbyServers": 5
           },
@@ -3249,10 +3384,7 @@
             "GsdkAlias": "CertGsdkAlias"
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateBuildWithCustomContainerResponse": {
       "type": "object",
@@ -3354,6 +3486,7 @@
         ],
         "RegionConfigurations": [
           {
+            "Region": "EastUs",
             "Status": "Initializing",
             "MaxServers": 10,
             "StandbyServers": 5
@@ -3384,10 +3517,7 @@
           }
         ],
         "MultiplayerServerCountPerVm": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateBuildWithManagedContainerRequest": {
       "type": "object",
@@ -3484,6 +3614,7 @@
         ],
         "RegionConfigurations": [
           {
+            "Region": "EastUs",
             "MaxServers": 10,
             "StandbyServers": 5
           },
@@ -3504,10 +3635,7 @@
             "GsdkAlias": "CertGsdkAlias"
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateBuildWithManagedContainerResponse": {
       "type": "object",
@@ -3602,6 +3730,7 @@
         ],
         "RegionConfigurations": [
           {
+            "Region": "EastUs",
             "Status": "Initializing",
             "MaxServers": 10,
             "StandbyServers": 5
@@ -3632,10 +3761,7 @@
           }
         ],
         "MultiplayerServerCountPerVm": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateMatchmakingTicketRequest": {
       "type": "object",
@@ -3735,10 +3861,7 @@
         "VmId": "VmID1",
         "Username": "AUsername",
         "ExpirationTime": "2014-04-07T09:04:28"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateRemoteUserResponse": {
       "type": "object",
@@ -3755,10 +3878,7 @@
           "description": "The username for the remote user that was created.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "CreateServerMatchmakingTicketRequest": {
       "type": "object",
@@ -3808,10 +3928,7 @@
       ],
       "example": {
         "FileName": "gameserver.zip"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "DeleteBuildRequest": {
       "type": "object",
@@ -3826,10 +3943,7 @@
       ],
       "example": {
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "DeleteCertificateRequest": {
       "type": "object",
@@ -3844,10 +3958,7 @@
       ],
       "example": {
         "Name": "GameCertificate1"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "DeleteRemoteUserRequest": {
       "type": "object",
@@ -3882,25 +3993,16 @@
         "Region": "SouthCentralUs",
         "VmId": "VmID1",
         "Username": "AUsername"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "EmptyResponse": {
       "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "properties": {}
     },
     "EnableMultiplayerServersForTitleRequest": {
       "type": "object",
       "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {}
     },
     "EnableMultiplayerServersForTitleResponse": {
       "type": "object",
@@ -3912,10 +4014,7 @@
           "x-isenum": true
         }
       },
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {}
     },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
@@ -3958,10 +4057,7 @@
           "description": "The name of the game certificate. This name should match the name of a certificate that was previously uploaded to this title.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GameCertificateReferenceParams": {
       "type": "object",
@@ -3978,9 +4074,6 @@
       "required": [
         "Name",
         "GsdkAlias"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "GetAssetUploadUrlRequest": {
@@ -3996,10 +4089,7 @@
       ],
       "example": {
         "FileName": "gameserver.zip"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetAssetUploadUrlResponse": {
       "type": "object",
@@ -4016,10 +4106,7 @@
       "example": {
         "FileName": "gameserver.zip",
         "AssetUploadUrl": "https://2mxyjirehzyc6.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=2018-08-21T20%3A27%3A47.5613204Z&se=2018-08-22T01%3A27%3A47.5613204Z&spr=https&sig=SJH%2B1rgFm6%2F6EkUWVPCI5pSR49W5EbZ4L51sDBlkAtE%3D&api-version=2017-07-29"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetBuildRequest": {
       "type": "object",
@@ -4034,10 +4121,7 @@
       ],
       "example": {
         "BuildId": "53781fa8-006d-4e9c-b733-57433d579285"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetBuildResponse": {
       "type": "object",
@@ -4141,6 +4225,7 @@
         ],
         "RegionConfigurations": [
           {
+            "Region": "EastUs",
             "Status": "Initializing",
             "MaxServers": 10,
             "StandbyServers": 5
@@ -4172,10 +4257,7 @@
         ],
         "StartMultiplayerServerCommand": "C:\\Assets\\gameserver.exe -startserver",
         "MultiplayerServerCountPerVm": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetCognitiveServicesTokenRequest": {
       "type": "object",
@@ -4222,15 +4304,12 @@
         "Beta"
       ]
     },
-    "GetCustomerContainerRegistryCredentialsRequest": {
+    "GetContainerRegistryCredentialsRequest": {
       "type": "object",
       "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {}
     },
-    "GetCustomerContainerRegistryCredentialsResponse": {
+    "GetContainerRegistryCredentialsResponse": {
       "type": "object",
       "properties": {
         "DnsName": {
@@ -4250,10 +4329,7 @@
         "DnsName": "registry.azurecr.io",
         "Username": "RegistryUser",
         "Password": "RegistryPassword"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetMatchmakingQueueRequest": {
       "type": "object",
@@ -4488,10 +4564,7 @@
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "SessionId": "02bdef0e-e01e-4b29-8efe-ff9f47a06d8c",
         "Region": "SouthCentralUs"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetMultiplayerServerDetailsResponse": {
       "type": "object",
@@ -4535,10 +4608,8 @@
           "type": "string"
         },
         "State": {
-          "$ref": "#/definitions/MultiplayerServerState",
           "description": "The state of the multiplayer server.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
         },
         "VmId": {
           "description": "The virtual machine ID that the multiplayer server is located on.",
@@ -4566,10 +4637,7 @@
             "PlayerId": "10271352123739051532"
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetMultiplayerServerLogsRequest": {
       "type": "object",
@@ -4611,6 +4679,52 @@
         "Beta"
       ]
     },
+    "GetQueueStatisticsRequest": {
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The name of the queue.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "QueueName"
+      ],
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetQueueStatisticsResult": {
+      "type": "object",
+      "properties": {
+        "NumberOfPlayersMatching": {
+          "description": "The current number of players in the matchmaking queue, who are waiting to be matched.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "TimeToMatchStatisticsInSeconds": {
+          "$ref": "#/definitions/Statistics",
+          "description": "Statistics representing the time (in seconds) it takes for tickets to find a match.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "NumberOfPlayersMatching": 563,
+        "TimeToMatchStatisticsInSeconds": {
+          "Average": 2.2,
+          "Percentile50": 2.1,
+          "Percentile90": 2.21,
+          "Percentile99": 3.0
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "GetRemoteLoginEndpointRequest": {
       "type": "object",
       "properties": {
@@ -4638,10 +4752,7 @@
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "Region": "SouthCentralUs",
         "VmId": "VmID1"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetRemoteLoginEndpointResponse": {
       "type": "object",
@@ -4662,18 +4773,12 @@
       "example": {
         "IPV4Address": "10.250.24.54",
         "Port": 1234
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "GetTitleEnabledForMultiplayerServersStatusRequest": {
       "type": "object",
       "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {}
     },
     "GetTitleEnabledForMultiplayerServersStatusResponse": {
       "type": "object",
@@ -4687,10 +4792,7 @@
       },
       "example": {
         "Status": "Disabled"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "JoinMatchmakingTicketRequest": {
       "type": "object",
@@ -4747,10 +4849,7 @@
       },
       "example": {
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListAssetSummariesResponse": {
       "type": "object",
@@ -4786,10 +4885,7 @@
           }
         ],
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListBuildSummariesRequest": {
       "type": "object",
@@ -4806,10 +4902,7 @@
       },
       "example": {
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListBuildSummariesResponse": {
       "type": "object",
@@ -4834,9 +4927,6 @@
       },
       "required": [
         "PageSize"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "ListCertificateSummariesRequest": {
@@ -4854,10 +4944,7 @@
       },
       "example": {
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListCertificateSummariesResponse": {
       "type": "object",
@@ -4895,10 +4982,85 @@
           }
         ],
         "PageSize": 10
+      }
+    },
+    "ListContainerImagesRequest": {
+      "type": "object",
+      "properties": {
+        "PageSize": {
+          "description": "The page size for the request.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "description": "The skip token for the paged request.",
+          "type": "string"
+        }
       },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {
+        "PageSize": 10
+      }
+    },
+    "ListContainerImagesResponse": {
+      "type": "object",
+      "properties": {
+        "Images": {
+          "description": "The list of container images.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "PageSize": {
+          "description": "The page size on the response.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "description": "The skip token for the paged response.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PageSize"
+      ],
+      "example": {
+        "Images": [
+          "ImageName1",
+          "ImageName2"
+        ],
+        "PageSize": 10
+      }
+    },
+    "ListContainerImageTagsRequest": {
+      "type": "object",
+      "properties": {
+        "ImageName": {
+          "description": "The container images we want to list tags for.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ImageName": "imageName1"
+      }
+    },
+    "ListContainerImageTagsResponse": {
+      "type": "object",
+      "properties": {
+        "Tags": {
+          "description": "The list of tags for a particular container image.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "Tags": [
+          "ImageTag1",
+          "ImageTag2"
+        ]
+      }
     },
     "ListMatchmakingQueuesRequest": {
       "type": "object",
@@ -4954,10 +5116,7 @@
       "example": {
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "Region": "SouthCentralUs"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListMultiplayerServersResponse": {
       "type": "object",
@@ -5007,18 +5166,12 @@
             "ConnectedPlayers": []
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListQosServersRequest": {
       "type": "object",
       "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {}
     },
     "ListQosServersResponse": {
       "type": "object",
@@ -5055,7 +5208,8 @@
             "Region": "SouthCentralUs"
           },
           {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net"
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "EastUs"
           },
           {
             "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
@@ -5067,10 +5221,7 @@
           }
         ],
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListVirtualMachineSummariesRequest": {
       "type": "object",
@@ -5103,10 +5254,7 @@
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "Region": "SouthCentralUs",
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "ListVirtualMachineSummariesResponse": {
       "type": "object",
@@ -5136,18 +5284,17 @@
         "VirtualMachines": [
           {
             "VmId": "VmID1",
-            "State": "Running"
+            "State": "Running",
+            "HealthStatus": "Healthy"
           },
           {
             "VmId": "VmID2",
-            "State": "Assigned"
+            "State": "Propping",
+            "HealthStatus": "Healthy"
           }
         ],
         "PageSize": 10
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "MatchmakingPlayer": {
       "description": "A user in a matchmaking ticket.",
@@ -5236,6 +5383,20 @@
             "$ref": "#/definitions/MatchmakingQueueRule"
           },
           "x-isclass": true
+        },
+        "StatisticsVisibilityToPlayers": {
+          "$ref": "#/definitions/StatisticsVisibilityToPlayers",
+          "description": "Controls which statistics are visible to players.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Teams": {
+          "description": "The team configuration for a match. This may be null if there are no teams.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueTeam"
+          },
+          "x-isclass": true
         }
       },
       "required": [
@@ -5259,10 +5420,10 @@
               "Type": "Linear",
               "SecondsBetweenExpansions": 5
             },
-            "Name": "ExampleName0",
             "Attribute": {
               "Path": "ExampleAttributeDifference"
             },
+            "Name": "ExampleName0",
             "Weight": 0.5,
             "SecondsUntilOptional": 50
           },
@@ -5279,10 +5440,10 @@
               "Type": "Custom",
               "SecondsBetweenExpansions": 5
             },
-            "Name": "ExampleName1",
             "Attribute": {
               "Path": "ExampleAttributeStringEquality"
             },
+            "Name": "ExampleName1",
             "Weight": 0.5,
             "SecondsUntilOptional": 50
           },
@@ -5304,11 +5465,11 @@
               "Type": "Custom",
               "SecondsBetweenExpansions": 5
             },
-            "Name": "ExampleName2",
             "Attribute": {
               "Path": "ExampleAttributeMatchTotal"
             },
             "AttributeNotSpecifiedBehavior": "MatchAny",
+            "Name": "ExampleName2",
             "Weight": 0.5,
             "SecondsUntilOptional": 50
           },
@@ -5325,14 +5486,79 @@
               "Type": "Linear",
               "SecondsBetweenExpansions": 5
             },
-            "Name": "ExampleName3",
             "Attribute": {
               "Path": "ExampleAttributeSetIntersection"
             },
+            "Name": "ExampleName3",
             "Weight": 0.5,
             "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamSizeBalanceRule",
+            "Difference": 1,
+            "Expansion": {
+              "Delta": 1,
+              "Limit": 5,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName4",
+            "Weight": 0.5,
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "DatacenterSelectionRule",
+            "MaxLatency": 250,
+            "Path": "Latencies",
+            "Expansion": {
+              "Delta": 10,
+              "Limit": 300,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName5",
+            "Weight": 0.5,
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamDifferenceRule",
+            "Attribute": {
+              "Path": "ExampleAttribute"
+            },
+            "Difference": 2.0,
+            "Expansion": {
+              "Delta": 1.0,
+              "Limit": 5.0,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName6",
+            "Weight": 0.5,
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamTicketSizeSimilarityRule",
+            "Name": "TeamTicketSizeSimilarityRuleExample7",
+            "Weight": 1.0,
+            "SecondsUntilOptional": 180
           }
-        ]
+        ],
+        "Teams": [
+          {
+            "Name": "monster",
+            "MinTeamSize": 1,
+            "MaxTeamSize": 1
+          },
+          {
+            "Name": "hunters",
+            "MinTeamSize": 4,
+            "MaxTeamSize": 8
+          }
+        ],
+        "StatisticsVisibilityToPlayers": {
+          "ShowNumberOfPlayersMatching": true,
+          "ShowTimeToMatch": true
+        }
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -5341,18 +5567,6 @@
     "MatchmakingQueueRule": {
       "type": "object",
       "properties": {
-        "Attribute": {
-          "$ref": "#/definitions/QueueRuleAttribute",
-          "description": "Description of the attribute used by this rule to match tickets.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "AttributeNotSpecifiedBehavior": {
-          "$ref": "#/definitions/AttributeNotSpecifiedBehavior",
-          "description": "Describes the behavior when an attribute is not specified in the ticket creation request or in the user's entity profile.",
-          "type": "string",
-          "x-isenum": true
-        },
         "Name": {
           "description": "Friendly name chosen by developer.",
           "type": "string"
@@ -5377,26 +5591,40 @@
       "required": [
         "Type",
         "Name",
-        "Attribute",
         "Weight"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
-    "MultiplayerServerState": {
+    "MatchmakingQueueTeam": {
       "type": "object",
-      "enum": [
-        "Invalid",
-        "Initializing",
-        "StandingBy",
-        "Active",
-        "Terminating",
-        "Terminated",
-        "Quarantined",
-        "PendingAllocation",
-        "AllocationTimeout"
+      "properties": {
+        "MaxTeamSize": {
+          "description": "The maximum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MinTeamSize": {
+          "description": "The minimum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "A name to identify the team. This is case insensitive.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "MinTeamSize",
+        "MaxTeamSize"
       ],
+      "example": {
+        "Name": "red",
+        "MinTeamSize": 4,
+        "MaxTeamSize": 8
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -5427,38 +5655,14 @@
           "type": "string"
         },
         "State": {
-          "$ref": "#/definitions/MultiplayerServerState",
           "description": "The state of the multiplayer server.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
         },
         "VmId": {
           "description": "The virtual machine ID that the multiplayer server is located on.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "MultiplayerServerVirtualMachineState": {
-      "type": "object",
-      "enum": [
-        "Unknown",
-        "Unassigned",
-        "Assigned",
-        "Propping",
-        "ProppingFailed",
-        "ProppingCompleted",
-        "MultiplayerServersStartFailed",
-        "PartiallyRunning",
-        "Running",
-        "PendingResourceCleanup",
-        "MultiplayerServersRemoved"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "Port": {
       "type": "object",
@@ -5483,9 +5687,6 @@
         "Name",
         "Num",
         "Protocol"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "ProtocolType": {
@@ -5493,9 +5694,6 @@
       "enum": [
         "TCP",
         "UDP"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "QosServer": {
@@ -5511,35 +5709,7 @@
           "description": "The QoS server URL.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "QueueRuleAttribute": {
-      "type": "object",
-      "properties": {
-        "Path": {
-          "description": "Specifies which attribute in a ticket to use.",
-          "type": "string"
-        },
-        "Source": {
-          "$ref": "#/definitions/AttributeSource",
-          "description": "Specifies which source the attribute comes from.",
-          "type": "string",
-          "x-isenum": true
-        }
-      },
-      "required": [
-        "Path",
-        "Source"
-      ],
-      "example": {
-        "Path": "ExampleAttribute"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "RemoveMatchmakingQueueRequest": {
       "type": "object",
@@ -5600,10 +5770,7 @@
           "SouthCentralUs",
           "WestUs"
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "RequestMultiplayerServerResponse": {
       "type": "object",
@@ -5647,10 +5814,8 @@
           "type": "string"
         },
         "State": {
-          "$ref": "#/definitions/MultiplayerServerState",
           "description": "The state of the multiplayer server.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
         },
         "VmId": {
           "description": "The virtual machine ID that the multiplayer server is located on.",
@@ -5678,10 +5843,34 @@
             "PlayerId": "10271352123739051532"
           }
         ]
+      }
+    },
+    "RolloverContainerRegistryCredentialsRequest": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "RolloverContainerRegistryCredentialsResponse": {
+      "type": "object",
+      "properties": {
+        "DnsName": {
+          "description": "The url of the container registry.",
+          "type": "string"
+        },
+        "Password": {
+          "description": "The password for accessing the container registry.",
+          "type": "string"
+        },
+        "Username": {
+          "description": "The username for accessing the container registry.",
+          "type": "string"
+        }
       },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      "example": {
+        "DnsName": "registry.azurecr.io",
+        "Username": "RegistryUser",
+        "Password": "NewRegistryPassword"
+      }
     },
     "RuleType": {
       "type": "object",
@@ -5690,7 +5879,11 @@
         "DifferenceRule",
         "StringEqualityRule",
         "MatchTotalRule",
-        "SetIntersectionRule"
+        "SetIntersectionRule",
+        "TeamSizeBalanceRule",
+        "DatacenterSelectionRule",
+        "TeamDifferenceRule",
+        "TeamTicketSizeSimilarityRule"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -5723,10 +5916,10 @@
                 "Type": "Linear",
                 "SecondsBetweenExpansions": 5
               },
-              "Name": "ExampleName0",
               "Attribute": {
                 "Path": "ExampleAttributeDifference"
               },
+              "Name": "ExampleName0",
               "Weight": 0.5,
               "SecondsUntilOptional": 50
             },
@@ -5743,10 +5936,10 @@
                 "Type": "Custom",
                 "SecondsBetweenExpansions": 5
               },
-              "Name": "ExampleName1",
               "Attribute": {
                 "Path": "ExampleAttributeStringEquality"
               },
+              "Name": "ExampleName1",
               "Weight": 0.5,
               "SecondsUntilOptional": 50
             },
@@ -5768,11 +5961,11 @@
                 "Type": "Custom",
                 "SecondsBetweenExpansions": 5
               },
-              "Name": "ExampleName2",
               "Attribute": {
                 "Path": "ExampleAttributeMatchTotal"
               },
               "AttributeNotSpecifiedBehavior": "MatchAny",
+              "Name": "ExampleName2",
               "Weight": 0.5,
               "SecondsUntilOptional": 50
             },
@@ -5789,14 +5982,79 @@
                 "Type": "Linear",
                 "SecondsBetweenExpansions": 5
               },
-              "Name": "ExampleName3",
               "Attribute": {
                 "Path": "ExampleAttributeSetIntersection"
               },
+              "Name": "ExampleName3",
               "Weight": 0.5,
               "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamSizeBalanceRule",
+              "Difference": 1,
+              "Expansion": {
+                "Delta": 1,
+                "Limit": 5,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName4",
+              "Weight": 0.5,
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "DatacenterSelectionRule",
+              "MaxLatency": 250,
+              "Path": "Latencies",
+              "Expansion": {
+                "Delta": 10,
+                "Limit": 300,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName5",
+              "Weight": 0.5,
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamDifferenceRule",
+              "Attribute": {
+                "Path": "ExampleAttribute"
+              },
+              "Difference": 2.0,
+              "Expansion": {
+                "Delta": 1.0,
+                "Limit": 5.0,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName6",
+              "Weight": 0.5,
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamTicketSizeSimilarityRule",
+              "Name": "TeamTicketSizeSimilarityRuleExample7",
+              "Weight": 1.0,
+              "SecondsUntilOptional": 180
             }
-          ]
+          ],
+          "Teams": [
+            {
+              "Name": "monster",
+              "MinTeamSize": 1,
+              "MaxTeamSize": 1
+            },
+            {
+              "Name": "hunters",
+              "MinTeamSize": 4,
+              "MaxTeamSize": 8
+            }
+          ],
+          "StatisticsVisibilityToPlayers": {
+            "ShowNumberOfPlayersMatching": true,
+            "ShowTimeToMatch": true
+          }
         }
       },
       "x-AnyInclusiveFlags": [
@@ -5837,7 +6095,58 @@
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "Region": "SouthCentralUs",
         "SessionId": "02bdef0e-e01e-4b29-8efe-ff9f47a06d8c"
+      }
+    },
+    "Statistics": {
+      "type": "object",
+      "properties": {
+        "Average": {
+          "description": "The average.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile50": {
+          "description": "The 50th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile90": {
+          "description": "The 90th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile99": {
+          "description": "The 99th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
       },
+      "required": [
+        "Average",
+        "Percentile50",
+        "Percentile90",
+        "Percentile99"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "StatisticsVisibilityToPlayers": {
+      "type": "object",
+      "properties": {
+        "ShowNumberOfPlayersMatching": {
+          "description": "Whether to allow players to view the current number of players in the matchmaking queue.",
+          "type": "boolean"
+        },
+        "ShowTimeToMatch": {
+          "description": "Whether to allow players to view statistics representing the time it takes for tickets to find a match.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ShowNumberOfPlayersMatching",
+        "ShowTimeToMatch"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -5848,9 +6157,6 @@
         "Initializing",
         "Enabled",
         "Disabled"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "UpdateBuildRegionsRequest": {
@@ -5877,6 +6183,7 @@
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "BuildRegions": [
           {
+            "Region": "EastUs",
             "MaxServers": 10,
             "StandbyServers": 5
           },
@@ -5891,10 +6198,7 @@
             "StandbyServers": 3
           }
         ]
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "UploadCertificateRequest": {
       "type": "object",
@@ -5915,35 +6219,30 @@
           "Base64EncodedValue": "UGxheUZhYlJvY2tzISEhTGV0J3NtYWtlYWxvdG9mZ2FtZXMh",
           "Password": "PasswordForPFXCertificate"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     },
     "VirtualMachineSummary": {
       "type": "object",
       "properties": {
+        "HealthStatus": {
+          "description": "The virtual machine health status.",
+          "type": "string"
+        },
         "State": {
-          "$ref": "#/definitions/MultiplayerServerVirtualMachineState",
           "description": "The virtual machine state.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
         },
         "VmId": {
           "description": "The virtual machine ID.",
           "type": "string"
         }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
+      }
     }
   },
   "parameters": {
     "CancelMatchmakingTicketRequest": {
       "name": "CancelMatchmakingTicketRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CancelMatchmakingTicketRequest"
       }
@@ -5951,7 +6250,6 @@
     "CreateBuildWithCustomContainerRequest": {
       "name": "CreateBuildWithCustomContainerRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CreateBuildWithCustomContainerRequest"
       }
@@ -5959,7 +6257,6 @@
     "CreateBuildWithManagedContainerRequest": {
       "name": "CreateBuildWithManagedContainerRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CreateBuildWithManagedContainerRequest"
       }
@@ -5967,7 +6264,6 @@
     "CreateMatchmakingTicketRequest": {
       "name": "CreateMatchmakingTicketRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CreateMatchmakingTicketRequest"
       }
@@ -5975,7 +6271,6 @@
     "CreateRemoteUserRequest": {
       "name": "CreateRemoteUserRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CreateRemoteUserRequest"
       }
@@ -5983,7 +6278,6 @@
     "CreateServerMatchmakingTicketRequest": {
       "name": "CreateServerMatchmakingTicketRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/CreateServerMatchmakingTicketRequest"
       }
@@ -5991,7 +6285,6 @@
     "DeleteAssetRequest": {
       "name": "DeleteAssetRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/DeleteAssetRequest"
       }
@@ -5999,7 +6292,6 @@
     "DeleteBuildRequest": {
       "name": "DeleteBuildRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/DeleteBuildRequest"
       }
@@ -6007,7 +6299,6 @@
     "DeleteCertificateRequest": {
       "name": "DeleteCertificateRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/DeleteCertificateRequest"
       }
@@ -6015,7 +6306,6 @@
     "DeleteRemoteUserRequest": {
       "name": "DeleteRemoteUserRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/DeleteRemoteUserRequest"
       }
@@ -6023,7 +6313,6 @@
     "EnableMultiplayerServersForTitleRequest": {
       "name": "EnableMultiplayerServersForTitleRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/EnableMultiplayerServersForTitleRequest"
       }
@@ -6031,7 +6320,6 @@
     "GetAssetUploadUrlRequest": {
       "name": "GetAssetUploadUrlRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetAssetUploadUrlRequest"
       }
@@ -6039,7 +6327,6 @@
     "GetBuildRequest": {
       "name": "GetBuildRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetBuildRequest"
       }
@@ -6047,23 +6334,20 @@
     "GetCognitiveServicesTokenRequest": {
       "name": "GetCognitiveServicesTokenRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetCognitiveServicesTokenRequest"
       }
     },
-    "GetCustomerContainerRegistryCredentialsRequest": {
-      "name": "GetCustomerContainerRegistryCredentialsRequest",
+    "GetContainerRegistryCredentialsRequest": {
+      "name": "GetContainerRegistryCredentialsRequest",
       "in": "body",
-      "description": "",
       "schema": {
-        "$ref": "#/definitions/GetCustomerContainerRegistryCredentialsRequest"
+        "$ref": "#/definitions/GetContainerRegistryCredentialsRequest"
       }
     },
     "GetMatchmakingQueueRequest": {
       "name": "GetMatchmakingQueueRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetMatchmakingQueueRequest"
       }
@@ -6071,7 +6355,6 @@
     "GetMatchmakingTicketRequest": {
       "name": "GetMatchmakingTicketRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetMatchmakingTicketRequest"
       }
@@ -6079,7 +6362,6 @@
     "GetMatchRequest": {
       "name": "GetMatchRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetMatchRequest"
       }
@@ -6087,7 +6369,6 @@
     "GetMultiplayerServerDetailsRequest": {
       "name": "GetMultiplayerServerDetailsRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetMultiplayerServerDetailsRequest"
       }
@@ -6095,15 +6376,20 @@
     "GetMultiplayerServerLogsRequest": {
       "name": "GetMultiplayerServerLogsRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetMultiplayerServerLogsRequest"
+      }
+    },
+    "GetQueueStatisticsRequest": {
+      "name": "GetQueueStatisticsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetQueueStatisticsRequest"
       }
     },
     "GetRemoteLoginEndpointRequest": {
       "name": "GetRemoteLoginEndpointRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetRemoteLoginEndpointRequest"
       }
@@ -6111,7 +6397,6 @@
     "GetTitleEnabledForMultiplayerServersStatusRequest": {
       "name": "GetTitleEnabledForMultiplayerServersStatusRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/GetTitleEnabledForMultiplayerServersStatusRequest"
       }
@@ -6119,7 +6404,6 @@
     "JoinMatchmakingTicketRequest": {
       "name": "JoinMatchmakingTicketRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/JoinMatchmakingTicketRequest"
       }
@@ -6127,7 +6411,6 @@
     "ListAssetSummariesRequest": {
       "name": "ListAssetSummariesRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListAssetSummariesRequest"
       }
@@ -6135,7 +6418,6 @@
     "ListBuildSummariesRequest": {
       "name": "ListBuildSummariesRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListBuildSummariesRequest"
       }
@@ -6143,15 +6425,27 @@
     "ListCertificateSummariesRequest": {
       "name": "ListCertificateSummariesRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListCertificateSummariesRequest"
+      }
+    },
+    "ListContainerImagesRequest": {
+      "name": "ListContainerImagesRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ListContainerImagesRequest"
+      }
+    },
+    "ListContainerImageTagsRequest": {
+      "name": "ListContainerImageTagsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ListContainerImageTagsRequest"
       }
     },
     "ListMatchmakingQueuesRequest": {
       "name": "ListMatchmakingQueuesRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListMatchmakingQueuesRequest"
       }
@@ -6159,7 +6453,6 @@
     "ListMultiplayerServersRequest": {
       "name": "ListMultiplayerServersRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListMultiplayerServersRequest"
       }
@@ -6167,7 +6460,6 @@
     "ListQosServersRequest": {
       "name": "ListQosServersRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListQosServersRequest"
       }
@@ -6175,7 +6467,6 @@
     "ListVirtualMachineSummariesRequest": {
       "name": "ListVirtualMachineSummariesRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ListVirtualMachineSummariesRequest"
       }
@@ -6183,7 +6474,6 @@
     "RemoveMatchmakingQueueRequest": {
       "name": "RemoveMatchmakingQueueRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/RemoveMatchmakingQueueRequest"
       }
@@ -6191,15 +6481,20 @@
     "RequestMultiplayerServerRequest": {
       "name": "RequestMultiplayerServerRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/RequestMultiplayerServerRequest"
+      }
+    },
+    "RolloverContainerRegistryCredentialsRequest": {
+      "name": "RolloverContainerRegistryCredentialsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/RolloverContainerRegistryCredentialsRequest"
       }
     },
     "SetMatchmakingQueueRequest": {
       "name": "SetMatchmakingQueueRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/SetMatchmakingQueueRequest"
       }
@@ -6207,7 +6502,6 @@
     "ShutdownMultiplayerServerRequest": {
       "name": "ShutdownMultiplayerServerRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/ShutdownMultiplayerServerRequest"
       }
@@ -6215,7 +6509,6 @@
     "UpdateBuildRegionsRequest": {
       "name": "UpdateBuildRegionsRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/UpdateBuildRegionsRequest"
       }
@@ -6223,7 +6516,6 @@
     "UploadCertificateRequest": {
       "name": "UploadCertificateRequest",
       "in": "body",
-      "description": "",
       "schema": {
         "$ref": "#/definitions/UploadCertificateRequest"
       }
@@ -6296,10 +6588,10 @@
         "$ref": "#/definitions/GetCognitiveServicesTokenResponse"
       }
     },
-    "GetCustomerContainerRegistryCredentialsResponse": {
+    "GetContainerRegistryCredentialsResponse": {
       "description": "",
       "schema": {
-        "$ref": "#/definitions/GetCustomerContainerRegistryCredentialsResponse"
+        "$ref": "#/definitions/GetContainerRegistryCredentialsResponse"
       }
     },
     "GetMatchmakingQueueResult": {
@@ -6330,6 +6622,12 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/GetMultiplayerServerLogsResponse"
+      }
+    },
+    "GetQueueStatisticsResult": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/GetQueueStatisticsResult"
       }
     },
     "GetRemoteLoginEndpointResponse": {
@@ -6368,6 +6666,18 @@
         "$ref": "#/definitions/ListCertificateSummariesResponse"
       }
     },
+    "ListContainerImagesResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ListContainerImagesResponse"
+      }
+    },
+    "ListContainerImageTagsResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/ListContainerImageTagsResponse"
+      }
+    },
     "ListMatchmakingQueuesResult": {
       "description": "",
       "schema": {
@@ -6404,6 +6714,12 @@
         "$ref": "#/definitions/RequestMultiplayerServerResponse"
       }
     },
+    "RolloverContainerRegistryCredentialsResponse": {
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/RolloverContainerRegistryCredentialsResponse"
+      }
+    },
     "SetMatchmakingQueueResult": {
       "description": "",
       "schema": {
@@ -6411,9 +6727,6 @@
       }
     }
   },
-  "x-AnyInclusiveFlags": [
-    "Beta"
-  ],
   "tags": [
     {
       "name": "Matchmaking",
@@ -6454,7 +6767,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-errors": {
+  "x-ms-docs-errors": {
     "Success": {
       "name": "Success"
     },
@@ -8006,6 +8319,26 @@
       "id": 1397,
       "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
     },
+    "EntityProfileConstraintValidationFailed": {
+      "id": 1398,
+      "name": "EntityProfileConstraintValidationFailed"
+    },
+    "PlayInsightsIngestionKeyPending": {
+      "id": 1399,
+      "name": "PlayInsightsIngestionKeyPending"
+    },
+    "PlayInsightsIngestionKeyNotFound": {
+      "id": 1400,
+      "name": "PlayInsightsIngestionKeyNotFound"
+    },
+    "StatisticTagRequired": {
+      "id": 1401,
+      "name": "StatisticTagRequired"
+    },
+    "StatisticTagInvalid": {
+      "id": 1402,
+      "name": "StatisticTagInvalid"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -8145,6 +8478,14 @@
     "MatchmakingNotEnabled": {
       "id": 2035,
       "name": "MatchmakingNotEnabled"
+    },
+    "MatchmakingGetStatisticsIdentityInvalid": {
+      "id": 2036,
+      "name": "MatchmakingGetStatisticsIdentityInvalid"
+    },
+    "MatchmakingStatisticsIdMissing": {
+      "id": 2037,
+      "name": "MatchmakingStatisticsIdMissing"
     }
   }
 }
