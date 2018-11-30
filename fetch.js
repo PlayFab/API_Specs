@@ -115,8 +115,6 @@ if (argsDict["playFabUrl"])
     playFabUrl = argsDict["playFabUrl"];
 if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
-if (!playFabUrl.endsWith("apispec/"))
-    playFabUrl = playFabUrl + "apispec/";
 
 try { 
     var jsonObj = require("./TOC.json");
@@ -124,9 +122,9 @@ try {
     for (var i = 0; i < jsonObj.documents.length; ++i) 
     {
         var apiSection = jsonObj.documents[i];
-        if (apiSection.format === "LegacyPlayFabApiSpec")
+        if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger")
         {
-            GetApiFile(playFabUrl + apiSection.docKey, apiSection.relPath, apiSection.shortName);
+            GetApiFile(playFabUrl + apiSection.pfurl, apiSection.relPath, apiSection.shortName);
         }
     }
 } catch(err) {
