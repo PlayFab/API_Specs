@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "181129",
+    "version": "181212",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -482,6 +482,41 @@
           "InvalidItemProperties",
           "ItemNotFound",
           "NoRemainingUses"
+        ]
+      }
+    },
+    "/Client/ConsumePSNEntitlements": {
+      "post": {
+        "operationId": "ConsumePSNEntitlements",
+        "tags": [
+          "Platform Specific Methods"
+        ],
+        "description": "Checks for any new consumable entitlements. If any are found, they are consumed and added as PlayFab items",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/ConsumePSNEntitlements"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ConsumePSNEntitlementsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ConsumePSNEntitlementsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "ExpiredAuthToken",
+          "FailedToGetEntitlements",
+          "PSNInaccessible"
         ]
       }
     },
@@ -1842,6 +1877,40 @@
         ]
       }
     },
+    "/Client/GetPlayFabIDsFromPSNAccountIDs": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromPSNAccountIDs",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of PlayStation Network identifiers.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/GetPlayFabIDsFromPSNAccountIDs"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromPSNAccountIDsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromPSNAccountIDsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+        "x-ms-docs-errors": [
+          "AccountNotFound"
+        ]
+      }
+    },
     "/Client/GetPlayFabIDsFromSteamIDs": {
       "post": {
         "operationId": "GetPlayFabIDsFromSteamIDs",
@@ -2888,6 +2957,49 @@
         ]
       }
     },
+    "/Client/LinkPSNAccount": {
+      "post": {
+        "operationId": "LinkPSNAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the PlayStation Network account associated with the provided access code to the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/LinkPSNAccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkPSNAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LinkPSNAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LoginWithPSN",
+          "Client/UnlinkPSNAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountAlreadyLinked",
+          "InvalidPSNAuthCode",
+          "InvalidPSNAuthCode",
+          "InvalidPSNIssuerId",
+          "InvalidPublisherId",
+          "LinkedAccountAlreadyClaimed",
+          "PSNInaccessible"
+        ]
+      }
+    },
     "/Client/LinkSteamAccount": {
       "post": {
         "operationId": "LinkSteamAccount",
@@ -3562,6 +3674,50 @@
         ]
       }
     },
+    "/Client/LoginWithPSN": {
+      "post": {
+        "operationId": "LoginWithPSN",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs the user in using a PlayStation Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/LoginWithPSN"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithPSNRequest"
+          }
+        ],
+        "security": [
+          {
+            "None": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "If this is the first time a user has signed in with the PlayStation Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PSN account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PSN account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+        "x-seeAlso": [
+          "Client/LinkPSNAccount",
+          "Client/UnlinkPSNAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "InvalidPSNAuthCode",
+          "InvalidPSNIssuerId",
+          "InvalidPublisherId",
+          "InvalidTitleId",
+          "PSNInaccessible",
+          "RequestViewConstraintParamsNotAllowed"
+        ]
+      }
+    },
     "/Client/LoginWithSteam": {
       "post": {
         "operationId": "LoginWithSteam",
@@ -3943,6 +4099,40 @@
           "CharacterNotFound",
           "CouponAlreadyRedeemed",
           "CouponCodeNotFound"
+        ]
+      }
+    },
+    "/Client/RefreshPSNAuthToken": {
+      "post": {
+        "operationId": "RefreshPSNAuthToken",
+        "tags": [
+          "Platform Specific Methods"
+        ],
+        "description": "Uses the supplied OAuth code to refresh the internally cached player PSN auth token",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/RefreshPSNAuthToken"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RefreshPSNAuthTokenRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InvalidPSNAuthCode",
+          "PSNInaccessible"
         ]
       }
     },
@@ -4899,6 +5089,42 @@
         },
         "x-seeAlso": [
           "Client/LinkOpenIdConnect"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked"
+        ]
+      }
+    },
+    "/Client/UnlinkPSNAccount": {
+      "post": {
+        "operationId": "UnlinkPSNAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related PSN account from the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/client/method/UnlinkPSNAccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkPSNAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkPSNAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkPSNAccount"
         ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
@@ -6549,6 +6775,55 @@
       "example": {
         "ItemInstanceId": "a1de52",
         "RemainingUses": 4
+      }
+    },
+    "ConsumePSNEntitlementsRequest": {
+      "type": "object",
+      "properties": {
+        "CatalogVersion": {
+          "description": "Which catalog to match granted entitlements against. If null, defaults to title default catalog",
+          "type": "string"
+        },
+        "ServiceLabel": {
+          "description": "Id of the PSN service label to consume entitlements from",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ServiceLabel"
+      ],
+      "example": {
+        "ServiceLabel": 1
+      }
+    },
+    "ConsumePSNEntitlementsResult": {
+      "type": "object",
+      "properties": {
+        "ItemsGranted": {
+          "description": "Array of items granted to the player as a result of consuming entitlements.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ItemInstance"
+          },
+          "x-isUnordered": true,
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "ItemsGranted": [
+          {
+            "ItemId": "shield_level_5",
+            "ItemInstanceId": "133713371337",
+            "ItemClass": "shields",
+            "PurchaseDate": "2017-03-07T00:00:00",
+            "Expiration": "2018-10-01T00:00:00",
+            "RemainingUses": 10,
+            "Annotation": "No Annotation",
+            "CatalogVersion": "5",
+            "BundleParent": "crate block 1"
+          }
+        ]
       }
     },
     "ConsumeXboxEntitlementsRequest": {
@@ -9823,6 +10098,58 @@
         ]
       }
     },
+    "GetPlayFabIDsFromPSNAccountIDsRequest": {
+      "type": "object",
+      "properties": {
+        "IssuerId": {
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PSNAccountIDs": {
+          "description": "Array of unique PlayStation Network identifiers for which the title needs to get PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "PSNAccountIDs"
+      ],
+      "example": {
+        "PSNAccountIDs": [
+          "857498576495",
+          "759374651209"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromPSNAccountIDsResult": {
+      "description": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PSNAccountPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "PSNAccountId": "857498576495",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "PSNAccountId": "759374651209",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "type": "object",
       "properties": {
@@ -11035,6 +11362,40 @@
         "IdToken": "eyJraWQi..."
       }
     },
+    "LinkPSNAccountRequest": {
+      "type": "object",
+      "properties": {
+        "AuthCode": {
+          "description": "Authentication code provided by the PlayStation Network.",
+          "type": "string"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IssuerId": {
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "RedirectUri": {
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "AuthCode",
+        "RedirectUri"
+      ],
+      "example": {
+        "AuthCode": "LKJDG7DDE",
+        "RedirectUri": "orbis://games"
+      }
+    },
+    "LinkPSNAccountResult": {
+      "type": "object",
+      "properties": {}
+    },
     "LinkSteamAccountRequest": {
       "description": "Steam authentication is accomplished with the Steam Session Ticket. More information on the Ticket can be\nfound in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication\nto work, the title must be configured with the Steam Application ID and Publisher Key in the PlayFab Game Manager (under Properties).\nInformation on creating a Publisher Key (referred to as the Secret Key in PlayFab) for your title can be found here:\nhttps://partner.steamgames.com/documentation/webapi#publisherkey.",
       "type": "object",
@@ -11770,6 +12131,56 @@
       "example": {
         "Username": "theuser",
         "Password": "thepassword",
+        "TitleId": "1"
+      }
+    },
+    "LoginWithPSNRequest": {
+      "description": "If this is the first time a user has signed in with the PlayStation Network account and CreateAccount\nis set to true, a new PlayFab account will be created and linked to the PSN account. In this case, no email or username will be\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PSN account, an error indicating this will\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
+      "type": "object",
+      "properties": {
+        "AuthCode": {
+          "description": "Auth code provided by the PSN OAuth provider.",
+          "type": "string"
+        },
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "EncryptedRequest": {
+          "description": "Base64 encoded body that is encrypted with the Title's public RSA key (Enterprise Only).",
+          "type": "string"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IssuerId": {
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PlayerSecret": {
+          "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
+          "type": "string"
+        },
+        "RedirectUri": {
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TitleId"
+      ],
+      "example": {
+        "AuthCode": "LKJ6D896D",
+        "RedirectUri": "orbis://games",
+        "CreateAccount": false,
         "TitleId": "1"
       }
     },
@@ -12613,6 +13024,19 @@
         "ActivationTime": "2015-12-05T10:02:01"
       }
     },
+    "PSNAccountPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation Network identifier.",
+          "type": "string"
+        },
+        "PSNAccountId": {
+          "description": "Unique PlayStation Network identifier for a user.",
+          "type": "string"
+        }
+      }
+    },
     "PurchaseItemRequest": {
       "description": "Please note that the processing time for inventory grants and purchases increases fractionally\nthe more items are in the inventory, and the more items are in the grant/purchase operation (with each item in a bundle being a\ndistinct add).",
       "type": "object",
@@ -12753,6 +13177,32 @@
             "BundleParent": "crate block 1"
           }
         ]
+      }
+    },
+    "RefreshPSNAuthTokenRequest": {
+      "type": "object",
+      "properties": {
+        "AuthCode": {
+          "description": "Auth code returned by PSN OAuth system.",
+          "type": "string"
+        },
+        "IssuerId": {
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "RedirectUri": {
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "AuthCode",
+        "RedirectUri"
+      ],
+      "example": {
+        "AuthCode": "LKJDG7DDE",
+        "RedirectUri": "orbis://games"
       }
     },
     "Region": {
@@ -13971,6 +14421,15 @@
       }
     },
     "UnlinkNintendoSwitchDeviceIdResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "UnlinkPSNAccountRequest": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "UnlinkPSNAccountResult": {
       "type": "object",
       "properties": {}
     },
@@ -15283,6 +15742,13 @@
         "$ref": "#/definitions/ConsumeItemRequest"
       }
     },
+    "ConsumePSNEntitlementsRequest": {
+      "name": "ConsumePSNEntitlementsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ConsumePSNEntitlementsRequest"
+      }
+    },
     "ConsumeXboxEntitlementsRequest": {
       "name": "ConsumeXboxEntitlementsRequest",
       "in": "body",
@@ -15543,6 +16009,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest"
       }
     },
+    "GetPlayFabIDsFromPSNAccountIDsRequest": {
+      "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromPSNAccountIDsRequest"
+      }
+    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "name": "GetPlayFabIDsFromSteamIDsRequest",
       "in": "body",
@@ -15735,6 +16208,13 @@
         "$ref": "#/definitions/LinkOpenIdConnectRequest"
       }
     },
+    "LinkPSNAccountRequest": {
+      "name": "LinkPSNAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkPSNAccountRequest"
+      }
+    },
     "LinkSteamAccountRequest": {
       "name": "LinkSteamAccountRequest",
       "in": "body",
@@ -15866,6 +16346,14 @@
         "$ref": "#/definitions/LoginWithPlayFabRequest"
       }
     },
+    "LoginWithPSNRequest": {
+      "name": "LoginWithPSNRequest",
+      "in": "body",
+      "description": "If this is the first time a user has signed in with the PlayStation Network account and CreateAccount\nis set to true, a new PlayFab account will be created and linked to the PSN account. In this case, no email or username will be\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PSN account, an error indicating this will\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithPSNRequest"
+      }
+    },
     "LoginWithSteamRequest": {
       "name": "LoginWithSteamRequest",
       "in": "body",
@@ -15934,6 +16422,13 @@
       "description": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This\noperation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already\nconsumed code, or a code which has not yet been created in the service, will result in an error.",
       "schema": {
         "$ref": "#/definitions/RedeemCouponRequest"
+      }
+    },
+    "RefreshPSNAuthTokenRequest": {
+      "name": "RefreshPSNAuthTokenRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/RefreshPSNAuthTokenRequest"
       }
     },
     "RegisterForIOSPushNotificationRequest": {
@@ -16119,6 +16614,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkNintendoSwitchDeviceIdRequest"
+      }
+    },
+    "UnlinkPSNAccountRequest": {
+      "name": "UnlinkPSNAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkPSNAccountRequest"
       }
     },
     "UnlinkSteamAccountRequest": {
@@ -16582,6 +17084,44 @@
           "data": {
             "ItemInstanceId": "a1de52",
             "RemainingUses": 4
+          }
+        }
+      }
+    },
+    "ConsumePSNEntitlementsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ConsumePSNEntitlementsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ItemsGranted": [
+              {
+                "ItemId": "shield_level_5",
+                "ItemInstanceId": "133713371337",
+                "ItemClass": "shields",
+                "PurchaseDate": "2017-03-07T00:00:00",
+                "Expiration": "2018-10-01T00:00:00",
+                "RemainingUses": 10,
+                "Annotation": "No Annotation",
+                "CatalogVersion": "5",
+                "BundleParent": "crate block 1"
+              }
+            ]
           }
         }
       }
@@ -18135,6 +18675,41 @@
         }
       }
     },
+    "GetPlayFabIDsFromPSNAccountIDsResult": {
+      "description": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromPSNAccountIDsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "PSNAccountId": "857498576495",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "PSNAccountId": "759374651209",
+                "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
     "GetPlayFabIDsFromSteamIDsResult": {
       "description": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
       "schema": {
@@ -18855,6 +19430,25 @@
           },
           "data": {
             "$ref": "#/definitions/LinkNintendoSwitchDeviceIdResult"
+          }
+        }
+      }
+    },
+    "LinkPSNAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LinkPSNAccountResult"
           }
         }
       }
@@ -19700,6 +20294,25 @@
         }
       }
     },
+    "UnlinkPSNAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkPSNAccountResult"
+          }
+        }
+      }
+    },
     "UnlinkSteamAccountResult": {
       "description": "",
       "schema": {
@@ -20167,7 +20780,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors": {
+  "x-ms-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -21742,6 +22355,18 @@
     "DataIntegrityError": {
       "id": 1403,
       "name": "DataIntegrityError"
+    },
+    "VirtualCurrencyCannotBeSetToOlderVersion": {
+      "id": 1404,
+      "name": "VirtualCurrencyCannotBeSetToOlderVersion"
+    },
+    "VirtualCurrencyMustBeWithinIntegerRange": {
+      "id": 1405,
+      "name": "VirtualCurrencyMustBeWithinIntegerRange"
+    },
+    "EmailTemplateInvalidSyntax": {
+      "id": 1406,
+      "name": "EmailTemplateInvalidSyntax"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
