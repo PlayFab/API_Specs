@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "181212",
+    "version": "181218",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -454,6 +454,42 @@
         ]
       }
     },
+    "/Server/DeletePushNotificationTemplate": {
+      "post": {
+        "operationId": "DeletePushNotificationTemplate",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Deletes push notification template for title",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/DeletePushNotificationTemplate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeletePushNotificationTemplateRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeletePushNotificationTemplateResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "PushNotificationTemplateNotFound"
+        ]
+      }
+    },
     "/Server/DeleteSharedGroup": {
       "post": {
         "operationId": "DeleteSharedGroup",
@@ -484,6 +520,48 @@
         },
         "x-ms-docs-errors": [
           "InvalidSharedGroupId"
+        ]
+      }
+    },
+    "/Server/DeleteUsers": {
+      "post": {
+        "operationId": "DeleteUsers",
+        "tags": [
+          "Player Data Management"
+        ],
+        "description": "Deletes custom data, all account linkages, and statistics.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/DeleteUsers"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteUsersRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteUsersResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Note that this action cannot be undone. It will unlink all accounts, reset any statistics and leaderboards, and clear out any stored custom data for the user. This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+        "x-deprecation": {
+          "ProposedAfter": "8/29/2018",
+          "DeprecatedAfter": "9/29/2018",
+          "ObsoleteAfter": "10/29/2018",
+          "ReplacedBy": "DeletePlayer"
+        },
+        "x-ms-docs-errors": [
+          "APINotEnabledForGameServerAccess",
+          "InvalidPublisherId",
+          "InvalidTitleId"
         ]
       }
     },
@@ -590,6 +668,45 @@
           "CloudScriptHTTPRequestError",
           "CloudScriptNotFound",
           "JavascriptException"
+        ]
+      }
+    },
+    "/Server/GetAllActionGroups": {
+      "post": {
+        "operationId": "GetAllActionGroups",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Retrieve a list of all PlayStream actions groups.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/GetAllActionGroups"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetAllActionGroupsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAllActionGroupsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-deprecation": {
+          "ProposedAfter": "8/14/2017",
+          "DeprecatedAfter": "9/14/2017",
+          "ObsoleteAfter": "10/14/2017",
+          "ReplacedBy": "GetAllSegments"
+        },
+        "x-seeAlso": [
+          "Server/GetAllSegments"
         ]
       }
     },
@@ -2239,6 +2356,54 @@
         ]
       }
     },
+    "/Server/GetUserStatistics": {
+      "post": {
+        "operationId": "GetUserStatistics",
+        "tags": [
+          "Player Data Management"
+        ],
+        "description": "Retrieves the details of all title-specific statistics for the user",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/GetUserStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetUserStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetUserStatisticsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "User statistics are numeric values which may only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+        "x-deprecation": {
+          "ProposedAfter": "3/1/2016",
+          "DeprecatedAfter": "9/10/2016",
+          "ObsoleteAfter": "10/10/2016",
+          "ReplacedBy": "GetPlayerStatistics"
+        },
+        "x-seeAlso": [
+          "Server/GetLeaderboard",
+          "Server/GetLeaderboardAroundUser",
+          "Server/GetPlayerStatistics",
+          "Server/UpdatePlayerStatistics",
+          "Server/UpdateUserStatistics"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "InvalidStatisticName"
+        ]
+      }
+    },
     "/Server/GrantCharacterToUser": {
       "post": {
         "operationId": "GrantCharacterToUser",
@@ -2416,6 +2581,51 @@
           "InvalidPublisherId",
           "InvalidXboxLiveToken",
           "LinkedAccountAlreadyClaimed"
+        ]
+      }
+    },
+    "/Server/LogEvent": {
+      "post": {
+        "operationId": "LogEvent",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Logs a custom analytics event",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/LogEvent"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LogEventRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LogEventResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automatically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
+        "x-deprecation": {
+          "ProposedAfter": "4/1/2016",
+          "DeprecatedAfter": "9/10/2016",
+          "ObsoleteAfter": "10/10/2016",
+          "ReplacedBy": "WritePlayerEvent"
+        },
+        "x-ms-docs-errors": [
+          "BodyTooLarge",
+          "CustomAnalyticsEventsNotEnabledForTitle",
+          "InvalidRequest",
+          "InvalidTypeInBody",
+          "ReservedEventName",
+          "ReservedWordInBody"
         ]
       }
     },
@@ -3121,6 +3331,57 @@
         ]
       }
     },
+    "/Server/SavePushNotificationTemplate": {
+      "post": {
+        "operationId": "SavePushNotificationTemplate",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Saves push notification template for title",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/SavePushNotificationTemplate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SavePushNotificationTemplateRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SavePushNotificationTemplateResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidLocalizedPushNotificationLanguage",
+          "InvalidParams",
+          "InvalidTitleId",
+          "MissingLocalizedPushNotificationMessage",
+          "OverLimit",
+          "PushNotificationTemplateAndroidPayloadMissingNotificationBody",
+          "PushNotificationTemplateContainsInvalidAndroidPayload",
+          "PushNotificationTemplateContainsInvalidIosPayload",
+          "PushNotificationTemplateInvalidPayload",
+          "PushNotificationTemplateInvalidSyntax",
+          "PushNotificationTemplateIosPayloadMissingNotificationBody",
+          "PushNotificationTemplateMissingDefaultVersion",
+          "PushNotificationTemplateMissingPlatformPayload",
+          "PushNotificationTemplateNoCustomPayloadForV1",
+          "PushNotificationTemplatePayloadContainsInvalidJson",
+          "TitleDefaultLanguageNotSet"
+        ]
+      }
+    },
     "/Server/SendCustomAccountRecoveryEmail": {
       "post": {
         "operationId": "SendCustomAccountRecoveryEmail",
@@ -3227,6 +3488,43 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-ms-docs-errors": [
+          "PushNotEnabledForAccount",
+          "PushServiceError"
+        ]
+      }
+    },
+    "/Server/SendPushNotificationFromTemplate": {
+      "post": {
+        "operationId": "SendPushNotificationFromTemplate",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Sends an iOS/Android Push Notification template to a specific user, if that user's device has been configured for Push Notifications in PlayFab. If a user has linked both Android and iOS devices, both will be notified.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/SendPushNotificationFromTemplate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SendPushNotificationFromTemplateRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SendPushNotificationResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
         "x-ms-docs-errors": [
           "PushNotEnabledForAccount",
           "PushServiceError"
@@ -4288,6 +4586,57 @@
         ]
       }
     },
+    "/Server/UpdateUserStatistics": {
+      "post": {
+        "operationId": "UpdateUserStatistics",
+        "tags": [
+          "Player Data Management"
+        ],
+        "description": "Updates the values of the specified title-specific statistics for the user. By default, clients are not permitted to update statistics. Developers may override this setting in the Game Manager > Settings > API Features.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/UpdateUserStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateUserStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateUserStatisticsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged. Note: For statistics configured to reset on an interval, this API call updates the current (latest) version of the player's statistic. Titles using statistic versioning for resettable leaderboards should make use of the UpdatePlayerStatistics call instead, to ensure that the proper version is updated.",
+        "x-responseDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+        "x-deprecation": {
+          "ProposedAfter": "3/1/2016",
+          "DeprecatedAfter": "9/10/2016",
+          "ObsoleteAfter": "10/10/2016",
+          "ReplacedBy": "UpdatePlayerStatistics"
+        },
+        "x-seeAlso": [
+          "Server/GetLeaderboard",
+          "Server/GetLeaderboardAroundUser",
+          "Server/GetPlayerStatistics",
+          "Server/GetUserStatistics",
+          "Server/UpdatePlayerStatistics"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "InvalidStatisticName",
+          "InvalidUserStatistics",
+          "StatisticCountLimitExceeded"
+        ]
+      }
+    },
     "/Server/WriteCharacterEvent": {
       "post": {
         "operationId": "WriteCharacterEvent",
@@ -4642,7 +4991,7 @@
       ]
     },
     "AuthenticateSessionTicketRequest": {
-      "description": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "type": "object",
       "properties": {
         "SessionTicket": {
@@ -5500,7 +5849,7 @@
       ]
     },
     "CreateSharedGroupRequest": {
-      "description": "If SharedGroupId is specified, the service will attempt to create a group with that\nidentifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
+      "description": "If SharedGroupId is specified, the service will attempt to create a group with that\r\nidentifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
       "type": "object",
       "properties": {
         "SharedGroupId": {
@@ -5692,7 +6041,7 @@
       ]
     },
     "DeleteCharacterFromUserRequest": {
-      "description": "This function will delete the specified character from the list allowed by the user, and\nwill also delete any inventory or VC currently held by that character. It will NOT delete any statistics\nassociated for this character, in order to preserve leaderboard integrity.",
+      "description": "This function will delete the specified character from the list allowed by the user, and\r\nwill also delete any inventory or VC currently held by that character. It will NOT delete any statistics\r\nassociated for this character, in order to preserve leaderboard integrity.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -5724,7 +6073,7 @@
       "example": {}
     },
     "DeletePlayerRequest": {
-      "description": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,\n                    characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.\n                    Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.\n                    Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.\n                    Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. \n                    This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "description": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,\r\n                    characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.\r\n                    Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.\r\n                    Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.\r\n                    Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. \r\n                    This API must be enabled for use as an option in the game manager website. It is disabled by default.",
       "type": "object",
       "properties": {
         "PlayFabId": {
@@ -5743,6 +6092,31 @@
       "type": "object",
       "properties": {}
     },
+    "DeletePushNotificationTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "PushNotificationTemplateId": {
+          "description": "Id of the push notification template to be deleted.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PushNotificationTemplateId"
+      ],
+      "example": {
+        "PushNotificationTemplateId": "6bc7dbf0-075a-46e9-8e84-35737a22c6a4"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeletePushNotificationTemplateResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "DeleteSharedGroupRequest": {
       "type": "object",
       "properties": {
@@ -5757,6 +6131,39 @@
       "example": {
         "SharedGroupId": "Clan Data"
       }
+    },
+    "DeleteUsersRequest": {
+      "description": "Note that this action cannot be undone. It will unlink all accounts, reset any statistics and leaderboards, and clear out any stored custom data for the user.  This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "type": "object",
+      "properties": {
+        "PlayFabIds": {
+          "description": "An array of unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "TitleId": {
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabIds",
+        "TitleId"
+      ],
+      "example": {
+        "PlayFabIds": [
+          "203945882"
+        ],
+        "TitleId": "aaa"
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"8/29/2018\",\"DeprecatedAfter\":\"9/29/2018\",\"ObsoleteAfter\":\"10/29/2018\"}"
+    },
+    "DeleteUsersResult": {
+      "type": "object",
+      "properties": {},
+      "x-deprecation": "{\"ProposedAfter\":\"8/29/2018\",\"DeprecatedAfter\":\"9/29/2018\",\"ObsoleteAfter\":\"10/29/2018\"}"
     },
     "DeregisterGameRequest": {
       "type": "object",
@@ -5800,6 +6207,16 @@
         "Type": {
           "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
           "type": "string"
+        },
+        "TypeString": {
+          "description": "Alternate name for Type.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "6/1/2018",
+            "DeprecatedAfter": "7/1/2018",
+            "ObsoleteAfter": "8/1/2018",
+            "ReplacedBy": "Type"
+          }
         }
       },
       "required": [
@@ -6531,6 +6948,20 @@
         "VirtualCurrencyCannotBeSetToOlderVersion",
         "VirtualCurrencyMustBeWithinIntegerRange",
         "EmailTemplateInvalidSyntax",
+        "EmailTemplateMissingCallback",
+        "PushNotificationTemplateInvalidPayload",
+        "InvalidLocalizedPushNotificationLanguage",
+        "MissingLocalizedPushNotificationMessage",
+        "PushNotificationTemplateMissingPlatformPayload",
+        "PushNotificationTemplatePayloadContainsInvalidJson",
+        "PushNotificationTemplateContainsInvalidIosPayload",
+        "PushNotificationTemplateContainsInvalidAndroidPayload",
+        "PushNotificationTemplateIosPayloadMissingNotificationBody",
+        "PushNotificationTemplateAndroidPayloadMissingNotificationBody",
+        "PushNotificationTemplateNotFound",
+        "PushNotificationTemplateMissingDefaultVersion",
+        "PushNotificationTemplateInvalidSyntax",
+        "PushNotificationTemplateNoCustomPayloadForV1",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingCreateRequestMissing",
@@ -6570,6 +7001,58 @@
         "MatchmakingStatisticsIdMissing",
         "CannotEnableMultiplayerServersForTitle"
       ]
+    },
+    "GetActionGroupResult": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Action Group ID",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Action Group name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "Grant beta items",
+        "Id": "12389170481"
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"8/14/2017\",\"DeprecatedAfter\":\"9/14/2017\",\"ObsoleteAfter\":\"10/14/2017\"}"
+    },
+    "GetAllActionGroupsRequest": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-deprecation": "{\"ProposedAfter\":\"8/14/2017\",\"DeprecatedAfter\":\"9/14/2017\",\"ObsoleteAfter\":\"10/14/2017\"}"
+    },
+    "GetAllActionGroupsResult": {
+      "type": "object",
+      "properties": {
+        "ActionGroups": {
+          "description": "List of Action Groups.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetActionGroupResult"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ActionGroups"
+      ],
+      "example": {
+        "ActionGroups": [
+          {
+            "Name": "Grant beta items",
+            "Id": "12389170481"
+          }
+        ]
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"8/14/2017\",\"DeprecatedAfter\":\"9/14/2017\",\"ObsoleteAfter\":\"10/14/2017\"}"
     },
     "GetAllSegmentsRequest": {
       "description": "Request has no paramaters.",
@@ -6844,7 +7327,7 @@
       }
     },
     "GetCharacterDataRequest": {
-      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set\nof custom user data will be returned.",
+      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\r\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set\r\nof custom user data will be returned.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -6926,7 +7409,7 @@
       }
     },
     "GetCharacterInventoryRequest": {
-      "description": "All items currently in the character inventory will be returned, irrespective of how they were acquired\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\nin the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
+      "description": "All items currently in the character inventory will be returned, irrespective of how they were acquired\r\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\r\nin the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
       "type": "object",
       "properties": {
         "CatalogVersion": {
@@ -7072,7 +7555,7 @@
       }
     },
     "GetCharacterStatisticsRequest": {
-      "description": "Character statistics are similar to user statistics in that they are numeric values which\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "description": "Character statistics are similar to user statistics in that they are numeric values which\r\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -7975,7 +8458,7 @@
       }
     },
     "GetPlayerProfileRequest": {
-      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\r\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "type": "object",
       "properties": {
         "PlayFabId": {
@@ -8409,6 +8892,20 @@
     "GetPlayFabIDsFromSteamIDsRequest": {
       "type": "object",
       "properties": {
+        "SteamIDs": {
+          "description": "Deprecated: Please use SteamStringIDs",
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "x-deprecation": {
+            "ProposedAfter": "2/10/2016",
+            "DeprecatedAfter": "9/10/2016",
+            "ObsoleteAfter": "10/10/2016",
+            "ReplacedBy": "SteamStringIDs"
+          },
+          "x-actualtype": "uint64"
+        },
         "SteamStringIDs": {
           "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
           "type": "array",
@@ -8503,7 +9000,7 @@
       }
     },
     "GetPublisherDataRequest": {
-      "description": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.\nFor more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning\nthe newest value.",
+      "description": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all\r\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.\r\nFor more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning\r\nthe newest value.",
       "type": "object",
       "properties": {
         "Keys": {
@@ -8735,7 +9232,7 @@
       }
     },
     "GetTimeRequest": {
-      "description": "This query retrieves the current time from one of the servers in PlayFab. Please note that due to clock drift between servers,\nthere is a potential variance of up to 5 seconds.",
+      "description": "This query retrieves the current time from one of the servers in PlayFab. Please note that due to clock drift between servers,\r\nthere is a potential variance of up to 5 seconds.",
       "type": "object",
       "properties": {},
       "example": {}
@@ -8757,7 +9254,7 @@
       }
     },
     "GetTitleDataRequest": {
-      "description": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\nthe title without the need to create, test, and ship a new build. Note that there may up to a minute delay in between updating title data and this API call returning\nthe newest value.",
+      "description": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer\r\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\r\nthe title without the need to create, test, and ship a new build. Note that there may up to a minute delay in between updating title data and this API call returning\r\nthe newest value.",
       "type": "object",
       "properties": {
         "Keys": {
@@ -8826,7 +9323,7 @@
       }
     },
     "GetUserAccountInfoRequest": {
-      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\r\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "type": "object",
       "properties": {
         "PlayFabId": {
@@ -8911,7 +9408,7 @@
       }
     },
     "GetUserDataRequest": {
-      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user\ndata will be returned.",
+      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\r\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user\r\ndata will be returned.",
       "type": "object",
       "properties": {
         "IfChangedFromDataVersion": {
@@ -8982,7 +9479,7 @@
       }
     },
     "GetUserInventoryRequest": {
-      "description": "All items currently in the user inventory will be returned, irrespective of how they were acquired\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\nin the user's current inventory, and so will not be not included.",
+      "description": "All items currently in the user inventory will be returned, irrespective of how they were acquired\r\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\r\nin the user's current inventory, and so will not be not included.",
       "type": "object",
       "properties": {
         "PlayFabId": {
@@ -9053,6 +9550,45 @@
           }
         }
       }
+    },
+    "GetUserStatisticsRequest": {
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "User for whom statistics are being requested.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "10931252888739651331"
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"3/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
+    },
+    "GetUserStatisticsResult": {
+      "description": "User statistics are numeric values which may only be updated by a\r\nserver operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user whose statistics are being returned.",
+          "type": "string"
+        },
+        "UserStatistics": {
+          "description": "User statistics for the requested user.",
+          "type": "object",
+          "x-actualtype": "int32"
+        }
+      },
+      "example": {
+        "PlayFabId": "10931252888739651331",
+        "UserStatistics": {
+          "Headshots": 18,
+          "Kills": 47
+        }
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"3/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
     },
     "GrantCharacterToUserRequest": {
       "description": "Grants a character to the user of the type and name specified in the request.",
@@ -9197,7 +9733,7 @@
       "x-sortKey": "ItemInstanceId"
     },
     "GrantItemsToCharacterRequest": {
-      "description": "This function directly adds inventory items to the character's inventories. As\na result of this operations, the user will not be charged any transaction fee, regardless of the inventory item\ncatalog definition. Please note that the processing time for inventory grants and purchases increases fractionally\nthe more items are in the inventory, and the more items are in the grant/purchase operation.",
+      "description": "This function directly adds inventory items to the character's inventories. As\r\na result of this operations, the user will not be charged any transaction fee, regardless of the inventory item\r\ncatalog definition. Please note that the processing time for inventory grants and purchases increases fractionally\r\nthe more items are in the inventory, and the more items are in the grant/purchase operation.",
       "type": "object",
       "properties": {
         "Annotation": {
@@ -9282,7 +9818,7 @@
       }
     },
     "GrantItemsToUserRequest": {
-      "description": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\noperation.",
+      "description": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user\r\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\r\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\r\noperation.",
       "type": "object",
       "properties": {
         "Annotation": {
@@ -9363,7 +9899,7 @@
       }
     },
     "GrantItemsToUsersRequest": {
-      "description": "This function directly adds inventory items to user inventories. As a result of this operations, the user\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\noperation.",
+      "description": "This function directly adds inventory items to user inventories. As a result of this operations, the user\r\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\r\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\r\noperation.",
       "type": "object",
       "properties": {
         "CatalogVersion": {
@@ -9673,6 +10209,22 @@
         ]
       }
     },
+    "LocalizedPushNotificationProperties": {
+      "type": "object",
+      "properties": {
+        "Message": {
+          "description": "Message of the localized push notification template.",
+          "type": "string"
+        },
+        "Subject": {
+          "description": "Subject of the localized push notification template.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "LocationModel": {
       "type": "object",
       "properties": {
@@ -9703,6 +10255,61 @@
           "x-actualtype": "double"
         }
       }
+    },
+    "LogEventRequest": {
+      "description": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automatically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
+      "type": "object",
+      "properties": {
+        "Body": {
+          "description": "Contains all the data for this event. Event Values can be strings, booleans or numerics (float, double, integer, long) and must be consistent on a per-event basis (if the Value for Key 'A' in Event 'Foo' is an integer the first time it is sent, it must be an integer in all subsequent 'Foo' events). As with event names, Keys must also not use reserved words (see above). Finally, the size of the Body for an event must be less than 32KB (UTF-8 format).",
+          "type": "object"
+        },
+        "EntityId": {
+          "description": "For non player-associated events, a unique ID for the entity associated with this event. For player associated events, this must be null and PlayFabId must be set.",
+          "type": "string"
+        },
+        "EntityType": {
+          "description": "For non player-associated events, the type of entity associated with this event. For player associated events, this must be null.",
+          "type": "string"
+        },
+        "EventName": {
+          "description": "A unique event name which will be used as the table name in the Redshift database. The name will be made lower case, and cannot not contain spaces. The use of underscores is recommended, for readability. Events also cannot match reserved terms. The PlayFab reserved terms are 'log_in' and 'purchase', 'create' and 'request', while the Redshift reserved terms can be found here: http://docs.aws.amazon.com/redshift/latest/dg/r_pg_keywords.html.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "PlayFab User Id of the player associated with this event. For non-player associated events, this must be null and EntityId must be set.",
+          "type": "string"
+        },
+        "ProfileSetEvent": {
+          "description": "Flag to set event Body as profile details in the Redshift database as well as a standard event.",
+          "type": "boolean"
+        },
+        "Timestamp": {
+          "description": "Optional timestamp for this event. If null, the a timestamp is auto-assigned to the event on the server.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ProfileSetEvent"
+      ],
+      "example": {
+        "EventName": "Headshot",
+        "Body": {
+          "victim": "B76543AEAE65",
+          "gun": "sniper_rifle",
+          "x_coord": 10,
+          "y_coord": 20,
+          "z_coord": 1,
+          "damage": 1000,
+          "aim_assist": false
+        }
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"4/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
+    },
+    "LogEventResult": {
+      "type": "object",
+      "properties": {},
+      "x-deprecation": "{\"ProposedAfter\":\"4/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
     },
     "LoginIdentityProvider": {
       "type": "object",
@@ -9741,6 +10348,15 @@
           "type": "object",
           "x-isclass": true
         },
+        "LoginTitlePlayerAccountEntity": {
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "type": "boolean",
+          "x-deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018"
+          }
+        },
         "PlayerSecret": {
           "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
           "type": "string"
@@ -9756,7 +10372,7 @@
       }
     },
     "LoginWithXboxRequest": {
-      "description": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount\nis set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
+      "description": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount\r\nis set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be\r\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will\r\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
       "type": "object",
       "properties": {
         "CreateAccount": {
@@ -9768,6 +10384,15 @@
           "description": "Flags for which pieces of info to return for the user.",
           "type": "object",
           "x-isclass": true
+        },
+        "LoginTitlePlayerAccountEntity": {
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "type": "boolean",
+          "x-deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018"
+          }
         },
         "XboxToken": {
           "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
@@ -9940,7 +10565,7 @@
       }
     },
     "MoveItemToCharacterFromCharacterRequest": {
-      "description": "Transfers an item from a character to another character that is owned by the same\nuser. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the\nother character to make use of the item instead.",
+      "description": "Transfers an item from a character to another character that is owned by the same\r\nuser. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the\r\nother character to make use of the item instead.",
       "type": "object",
       "properties": {
         "GivingCharacterId": {
@@ -9979,7 +10604,7 @@
       "example": {}
     },
     "MoveItemToCharacterFromUserRequest": {
-      "description": "Transfers an item from a user to a character she owns. This will remove\nthe item from the user's inventory (until and unless it is moved back), and will enable the\ncharacter to make use of the item instead.",
+      "description": "Transfers an item from a user to a character she owns. This will remove\r\nthe item from the user's inventory (until and unless it is moved back), and will enable the\r\ncharacter to make use of the item instead.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -10012,7 +10637,7 @@
       "example": {}
     },
     "MoveItemToUserFromCharacterRequest": {
-      "description": "Transfers an item from a character to the owning user. This will remove\nthe item from the character's inventory (until and unless it is moved back), and will enable the\nuser to make use of the item instead.",
+      "description": "Transfers an item from a character to the owning user. This will remove\r\nthe item from the character's inventory (until and unless it is moved back), and will enable the\r\nuser to make use of the item instead.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -10599,6 +11224,16 @@
           "description": "Content of the message (all platforms)",
           "type": "string"
         },
+        "ScheduleDate": {
+          "description": "This field was solely for use with the PlayFab custom Push Plugin, which has been deprecated in favor of the supported platform-specific fields",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "9/26/2017",
+            "DeprecatedAfter": "10/26/2017",
+            "ObsoleteAfter": "11/26/2017",
+            "ReplacedBy": "CustomData"
+          }
+        },
         "Sound": {
           "description": "Sound file to play with the message (all platforms)",
           "type": "string"
@@ -10677,7 +11312,7 @@
       ]
     },
     "RedeemCouponRequest": {
-      "description": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This\noperation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already\nconsumed code, or a code which has not yet been created in the service, will result in an error.",
+      "description": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This\r\noperation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already\r\nconsumed code, or a code which has not yet been created in the service, will result in an error.",
       "type": "object",
       "properties": {
         "CatalogVersion": {
@@ -10735,7 +11370,7 @@
       }
     },
     "RedeemMatchmakerTicketRequest": {
-      "description": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been\nregistered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each\nof which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid\nfor the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as\nemail address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information\nfor users who have accessed the title, the recommendation is to not store this data locally.",
+      "description": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been\r\nregistered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each\r\nof which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid\r\nfor the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as\r\nemail address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information\r\nfor users who have accessed the title, the recommendation is to not store this data locally.",
       "type": "object",
       "properties": {
         "LobbyId": {
@@ -10837,6 +11472,16 @@
           "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
           "type": "string",
           "x-isenum": true
+        },
+        "ServerHost": {
+          "description": "IPV4 address of the Game Server Instance.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "7/30/2018",
+            "DeprecatedAfter": "9/30/2018",
+            "ObsoleteAfter": "10/30/2018",
+            "ReplacedBy": "ServerIPV4Address"
+          }
         },
         "ServerIPV4Address": {
           "description": "IPV4 address of the game server instance.",
@@ -11001,6 +11646,15 @@
           "description": "The number of remaining reports which may be filed today by this reporting player.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "Updated": {
+          "description": "Deprecated: Always true",
+          "type": "boolean",
+          "x-deprecation": {
+            "ProposedAfter": "5/22/2017",
+            "DeprecatedAfter": "7/22/2017",
+            "ObsoleteAfter": "8/22/2017"
+          }
         }
       },
       "required": [
@@ -11252,6 +11906,70 @@
         }
       }
     },
+    "SavePushNotificationTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "AndroidPayload": {
+          "description": "Android JSON for the notification template.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Id of the push notification template.",
+          "type": "string"
+        },
+        "IOSPayload": {
+          "description": "IOS JSON for the notification template.",
+          "type": "string"
+        },
+        "LocalizedPushNotificationTemplates": {
+          "$ref": "#/definitions/LocalizedPushNotificationProperties",
+          "description": "Dictionary of localized push notification templates.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Name of the push notification template.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Id": "6bc7dbf0-075a-46e9-8e84-35737a22c6a4",
+        "Name": "F8763A987E",
+        "AndroidPayload": "{       notification:      {          body: \"Some Message\",          title: \"Subject\",          body_loc_key: \"someLocKey\"     } }",
+        "IOSPayload": "{       aps:      {          alert:          {          body: \"Some Message\",          title: \"Subject\",          \"loc-key\": \"someLocKey\"         }      } }",
+        "LocalizedPushNotificationTemplates": {
+          "en": {
+            "Subject": "Recent Attack",
+            "Message": "You have been attacked! Go defend your base!"
+          },
+          "fr": {
+            "Subject": "Attaque récente",
+            "Message": "Vous avez été attaqué! Va défendre ta base!"
+          }
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SavePushNotificationTemplateResult": {
+      "type": "object",
+      "properties": {
+        "PushNotificationTemplateId": {
+          "description": "Id of the push notification template that was saved.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "PushNotificationTemplateId": "6bc7dbf0-075a-46e9-8e84-35737a22c6a4"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "ScriptExecutionError": {
       "type": "object",
       "properties": {
@@ -11323,6 +12041,30 @@
     "SendEmailFromTemplateResult": {
       "type": "object",
       "properties": {}
+    },
+    "SendPushNotificationFromTemplateRequest": {
+      "type": "object",
+      "properties": {
+        "PushNotificationTemplateId": {
+          "description": "Id of the push notification template.",
+          "type": "string"
+        },
+        "Recipient": {
+          "description": "PlayFabId of the push notification recipient.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Recipient",
+        "PushNotificationTemplateId"
+      ],
+      "example": {
+        "Recipient": "F8763A987E",
+        "PushNotificationTemplateId": "6bc7dbf0-075a-46e9-8e84-35737a22c6a4"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "SendPushNotificationRequest": {
       "type": "object",
@@ -11430,7 +12172,7 @@
       ]
     },
     "SetFriendTagsRequest": {
-      "description": "This operation is not additive. It will completely replace the tag list for the specified user.\nPlease note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included\nin the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
+      "description": "This operation is not additive. It will completely replace the tag list for the specified user.\r\nPlease note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included\r\nin the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
       "type": "object",
       "properties": {
         "FriendPlayFabId": {
@@ -11570,7 +12312,7 @@
       "properties": {}
     },
     "SetPublisherDataRequest": {
-      "description": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.\nIf a Key does not exist in the current dataset, it will be added with\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
+      "description": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all\r\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.\r\nIf a Key does not exist in the current dataset, it will be added with\r\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
       "type": "object",
       "properties": {
         "Key": {
@@ -11595,7 +12337,7 @@
       "properties": {}
     },
     "SetTitleDataRequest": {
-      "description": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\nthe title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer\r\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\r\nthe title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with\r\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "type": "object",
       "properties": {
         "Key": {
@@ -11754,6 +12496,17 @@
         "PlayFabId": {
           "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam identifier.",
           "type": "string"
+        },
+        "SteamId": {
+          "description": "Deprecated: Please use SteamStringId",
+          "type": "number",
+          "x-deprecation": {
+            "ProposedAfter": "2/10/2016",
+            "DeprecatedAfter": "9/10/2016",
+            "ObsoleteAfter": "10/10/2016",
+            "ReplacedBy": "SteamStringId"
+          },
+          "x-actualtype": "uint64"
         },
         "SteamStringId": {
           "description": "Unique Steam identifier for a user.",
@@ -12182,7 +12935,7 @@
       }
     },
     "UpdateCharacterDataRequest": {
-      "description": "This function performs an additive update of the arbitrary JSON object containing\nthe custom data for the user. In updating the custom data object, keys which already exist in the object will have\ntheir values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart\nfrom those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing\r\nthe custom data for the user. In updating the custom data object, keys which already exist in the object will have\r\ntheir values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart\r\nfrom those specified in the call.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -12244,7 +12997,7 @@
       }
     },
     "UpdateCharacterStatisticsRequest": {
-      "description": "Character statistics are similar to user statistics in that they are numeric values which\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "description": "Character statistics are similar to user statistics in that they are numeric values which\r\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -12279,7 +13032,7 @@
       "properties": {}
     },
     "UpdatePlayerStatisticsRequest": {
-      "description": "This operation is additive. Statistics not currently defined will be added,\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.",
+      "description": "This operation is additive. Statistics not currently defined will be added,\r\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.",
       "type": "object",
       "properties": {
         "ForceUpdate": {
@@ -12328,7 +13081,7 @@
       "properties": {}
     },
     "UpdateSharedGroupDataRequest": {
-      "description": "Note that in the case of multiple calls to write to the same shared group data keys, the\nlast write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios\nrequiring coordination of data updates, it is recommended that titles make use of user data with read permission set to\npublic, or a combination of user data and shared group data.",
+      "description": "Note that in the case of multiple calls to write to the same shared group data keys, the\r\nlast write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios\r\nrequiring coordination of data updates, it is recommended that titles make use of user data with read permission set to\r\npublic, or a combination of user data and shared group data.",
       "type": "object",
       "properties": {
         "Data": {
@@ -12370,7 +13123,7 @@
       "properties": {}
     },
     "UpdateUserDataRequest": {
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will\nbe removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\r\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will\r\nbe removed. No other key-value pairs will be changed apart from those specified in the call.",
       "type": "object",
       "properties": {
         "Data": {
@@ -12426,7 +13179,7 @@
       }
     },
     "UpdateUserInternalDataRequest": {
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be\nremoved. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\r\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be\r\nremoved. No other key-value pairs will be changed apart from those specified in the call.",
       "type": "object",
       "properties": {
         "Data": {
@@ -12459,7 +13212,7 @@
       }
     },
     "UpdateUserInventoryItemDataRequest": {
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance\nwhich belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while\nkeys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance\r\nwhich belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while\r\nkeys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "type": "object",
       "properties": {
         "CharacterId": {
@@ -12499,6 +13252,38 @@
           "Slot": "Head"
         }
       }
+    },
+    "UpdateUserStatisticsRequest": {
+      "description": "This operation is additive. Statistics not currently defined will be added,\r\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.\r\nNote: For statistics configured to reset on an interval, this API call updates the current (latest) version of the player's statistic.\r\nTitles using statistic versioning for resettable leaderboards should make use of the UpdatePlayerStatistics call instead, to ensure that the proper version is updated.",
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        },
+        "UserStatistics": {
+          "description": "Statistics to be updated with the provided values.",
+          "type": "object",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "10931252888739651331",
+        "UserStatistics": {
+          "Headshots": 18,
+          "Kills": 47
+        }
+      },
+      "x-deprecation": "{\"ProposedAfter\":\"3/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
+    },
+    "UpdateUserStatisticsResult": {
+      "description": "In addition to being available for use by the title, the statistics\r\nare used for all leaderboard operations in PlayFab.",
+      "type": "object",
+      "properties": {},
+      "x-deprecation": "{\"ProposedAfter\":\"3/1/2016\",\"DeprecatedAfter\":\"9/10/2016\",\"ObsoleteAfter\":\"10/10/2016\"}"
     },
     "UserAccountInfo": {
       "type": "object",
@@ -13207,7 +13992,7 @@
     "AuthenticateSessionTicketRequest": {
       "name": "AuthenticateSessionTicketRequest",
       "in": "body",
-      "description": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/AuthenticateSessionTicketRequest"
       }
@@ -13237,7 +14022,7 @@
     "CreateSharedGroupRequest": {
       "name": "CreateSharedGroupRequest",
       "in": "body",
-      "description": "If SharedGroupId is specified, the service will attempt to create a group with that\nidentifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
+      "description": "If SharedGroupId is specified, the service will attempt to create a group with that\r\nidentifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
       "schema": {
         "$ref": "#/definitions/CreateSharedGroupRequest"
       }
@@ -13245,7 +14030,7 @@
     "DeleteCharacterFromUserRequest": {
       "name": "DeleteCharacterFromUserRequest",
       "in": "body",
-      "description": "This function will delete the specified character from the list allowed by the user, and\nwill also delete any inventory or VC currently held by that character. It will NOT delete any statistics\nassociated for this character, in order to preserve leaderboard integrity.",
+      "description": "This function will delete the specified character from the list allowed by the user, and\r\nwill also delete any inventory or VC currently held by that character. It will NOT delete any statistics\r\nassociated for this character, in order to preserve leaderboard integrity.",
       "schema": {
         "$ref": "#/definitions/DeleteCharacterFromUserRequest"
       }
@@ -13253,9 +14038,16 @@
     "DeletePlayerRequest": {
       "name": "DeletePlayerRequest",
       "in": "body",
-      "description": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,\n                    characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.\n                    Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.\n                    Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.\n                    Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. \n                    This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "description": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances,\r\n                    characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player.\r\n                    Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list.\r\n                    Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted.\r\n                    Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. \r\n                    This API must be enabled for use as an option in the game manager website. It is disabled by default.",
       "schema": {
         "$ref": "#/definitions/DeletePlayerRequest"
+      }
+    },
+    "DeletePushNotificationTemplateRequest": {
+      "name": "DeletePushNotificationTemplateRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeletePushNotificationTemplateRequest"
       }
     },
     "DeleteSharedGroupRequest": {
@@ -13263,6 +14055,14 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/DeleteSharedGroupRequest"
+      }
+    },
+    "DeleteUsersRequest": {
+      "name": "DeleteUsersRequest",
+      "in": "body",
+      "description": "Note that this action cannot be undone. It will unlink all accounts, reset any statistics and leaderboards, and clear out any stored custom data for the user.  This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+      "schema": {
+        "$ref": "#/definitions/DeleteUsersRequest"
       }
     },
     "DeregisterGameRequest": {
@@ -13287,6 +14087,14 @@
         "$ref": "#/definitions/ExecuteCloudScriptServerRequest"
       }
     },
+    "GetAllActionGroupsRequest": {
+      "name": "GetAllActionGroupsRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/GetAllActionGroupsRequest"
+      }
+    },
     "GetAllSegmentsRequest": {
       "name": "GetAllSegmentsRequest",
       "in": "body",
@@ -13305,7 +14113,7 @@
     "GetCharacterDataRequest": {
       "name": "GetCharacterDataRequest",
       "in": "body",
-      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set\nof custom user data will be returned.",
+      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\r\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set\r\nof custom user data will be returned.",
       "schema": {
         "$ref": "#/definitions/GetCharacterDataRequest"
       }
@@ -13313,7 +14121,7 @@
     "GetCharacterInventoryRequest": {
       "name": "GetCharacterInventoryRequest",
       "in": "body",
-      "description": "All items currently in the character inventory will be returned, irrespective of how they were acquired\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\nin the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
+      "description": "All items currently in the character inventory will be returned, irrespective of how they were acquired\r\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\r\nin the user's current inventory, and so will not be not included. Also returns their virtual currency balances.",
       "schema": {
         "$ref": "#/definitions/GetCharacterInventoryRequest"
       }
@@ -13328,7 +14136,7 @@
     "GetCharacterStatisticsRequest": {
       "name": "GetCharacterStatisticsRequest",
       "in": "body",
-      "description": "Character statistics are similar to user statistics in that they are numeric values which\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "description": "Character statistics are similar to user statistics in that they are numeric values which\r\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "schema": {
         "$ref": "#/definitions/GetCharacterStatisticsRequest"
       }
@@ -13392,7 +14200,7 @@
     "GetPlayerProfileRequest": {
       "name": "GetPlayerProfileRequest",
       "in": "body",
-      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\r\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/GetPlayerProfileRequest"
       }
@@ -13473,7 +14281,7 @@
     "GetPublisherDataRequest": {
       "name": "GetPublisherDataRequest",
       "in": "body",
-      "description": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.\nFor more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning\nthe newest value.",
+      "description": "This API is designed to return publisher-specific values which can be read, but not written to, by the client. This data is shared across all\r\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API.\r\nFor more information email devrel@playfab.com. Note that there may up to a minute delay in between updating title data and this API call returning\r\nthe newest value.",
       "schema": {
         "$ref": "#/definitions/GetPublisherDataRequest"
       }
@@ -13502,7 +14310,7 @@
     "GetTimeRequest": {
       "name": "GetTimeRequest",
       "in": "body",
-      "description": "This query retrieves the current time from one of the servers in PlayFab. Please note that due to clock drift between servers,\nthere is a potential variance of up to 5 seconds.",
+      "description": "This query retrieves the current time from one of the servers in PlayFab. Please note that due to clock drift between servers,\r\nthere is a potential variance of up to 5 seconds.",
       "schema": {
         "$ref": "#/definitions/GetTimeRequest"
       }
@@ -13510,7 +14318,7 @@
     "GetTitleDataRequest": {
       "name": "GetTitleDataRequest",
       "in": "body",
-      "description": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\nthe title without the need to create, test, and ship a new build. Note that there may up to a minute delay in between updating title data and this API call returning\nthe newest value.",
+      "description": "This API is designed to return title specific values which can be read, but not written to, by the client. For example, a developer\r\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\r\nthe title without the need to create, test, and ship a new build. Note that there may up to a minute delay in between updating title data and this API call returning\r\nthe newest value.",
       "schema": {
         "$ref": "#/definitions/GetTitleDataRequest"
       }
@@ -13525,7 +14333,7 @@
     "GetUserAccountInfoRequest": {
       "name": "GetUserAccountInfoRequest",
       "in": "body",
-      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\nthe title, the recommendation is to not store this data locally.",
+      "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of\r\ncustomer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be\r\ntaken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed\r\nthe title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/GetUserAccountInfoRequest"
       }
@@ -13541,7 +14349,7 @@
     "GetUserDataRequest": {
       "name": "GetUserDataRequest",
       "in": "body",
-      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user\ndata will be returned.",
+      "description": "Data is stored as JSON key-value pairs. If the Keys parameter is provided,\r\nthe data object returned will only contain the data specific to the indicated Keys. Otherwise, the full set of custom user\r\ndata will be returned.",
       "schema": {
         "$ref": "#/definitions/GetUserDataRequest"
       }
@@ -13549,9 +14357,16 @@
     "GetUserInventoryRequest": {
       "name": "GetUserInventoryRequest",
       "in": "body",
-      "description": "All items currently in the user inventory will be returned, irrespective of how they were acquired\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\nin the user's current inventory, and so will not be not included.",
+      "description": "All items currently in the user inventory will be returned, irrespective of how they were acquired\r\n(via purchasing, grants, coupons, etc.). Items that are expired, fully consumed, or are no longer valid are not considered to be\r\nin the user's current inventory, and so will not be not included.",
       "schema": {
         "$ref": "#/definitions/GetUserInventoryRequest"
+      }
+    },
+    "GetUserStatisticsRequest": {
+      "name": "GetUserStatisticsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetUserStatisticsRequest"
       }
     },
     "GrantCharacterToUserRequest": {
@@ -13565,7 +14380,7 @@
     "GrantItemsToCharacterRequest": {
       "name": "GrantItemsToCharacterRequest",
       "in": "body",
-      "description": "This function directly adds inventory items to the character's inventories. As\na result of this operations, the user will not be charged any transaction fee, regardless of the inventory item\ncatalog definition. Please note that the processing time for inventory grants and purchases increases fractionally\nthe more items are in the inventory, and the more items are in the grant/purchase operation.",
+      "description": "This function directly adds inventory items to the character's inventories. As\r\na result of this operations, the user will not be charged any transaction fee, regardless of the inventory item\r\ncatalog definition. Please note that the processing time for inventory grants and purchases increases fractionally\r\nthe more items are in the inventory, and the more items are in the grant/purchase operation.",
       "schema": {
         "$ref": "#/definitions/GrantItemsToCharacterRequest"
       }
@@ -13573,7 +14388,7 @@
     "GrantItemsToUserRequest": {
       "name": "GrantItemsToUserRequest",
       "in": "body",
-      "description": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\noperation.",
+      "description": "This function directly adds inventory items to the user's inventories. As a result of this operations, the user\r\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\r\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\r\noperation.",
       "schema": {
         "$ref": "#/definitions/GrantItemsToUserRequest"
       }
@@ -13581,7 +14396,7 @@
     "GrantItemsToUsersRequest": {
       "name": "GrantItemsToUsersRequest",
       "in": "body",
-      "description": "This function directly adds inventory items to user inventories. As a result of this operations, the user\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\noperation.",
+      "description": "This function directly adds inventory items to user inventories. As a result of this operations, the user\r\nwill not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for\r\ninventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase\r\noperation.",
       "schema": {
         "$ref": "#/definitions/GrantItemsToUsersRequest"
       }
@@ -13601,6 +14416,14 @@
         "$ref": "#/definitions/ListUsersCharactersRequest"
       }
     },
+    "LogEventRequest": {
+      "name": "LogEventRequest",
+      "in": "body",
+      "description": "This API is designed to track analytics events. Events logged using this API will be stored in the title's Redshift database. Each unique eventName will create a distinct table within the database. Within that table, a column will be created for every unique key. Using a first-person shooter as an example, the title may need to track headshots as a distinct event. The sample request below demonstrates an example of this. In addition to the values sent, timestamps and User IDs are automatically added as 'ts' and 'user_id' to each table. The 'Headshot' table in this example would then have the schema: 'user_id'|'ts'|'victim'|'gun'|'x_coord'|'y_coord'|'z_coord'|'damage|aim_assist' and the row corresponding to this event would look like: 'EF987654ABAB012'|'2014-1-1 12:12:12'|'B76543AEAE65'|'big_bad_sniper'|10|20|1|1000|1.The PlayFab service automatically creates events for all login and purchase operations. This API is intended for game specific events only. Please note that event logging is not enabled for titles by default. If you need event logging enabled, please contact us at devrel@playfab.com for more information.",
+      "schema": {
+        "$ref": "#/definitions/LogEventRequest"
+      }
+    },
     "LoginWithServerCustomIdRequest": {
       "name": "LoginWithServerCustomIdRequest",
       "in": "body",
@@ -13611,7 +14434,7 @@
     "LoginWithXboxRequest": {
       "name": "LoginWithXboxRequest",
       "in": "body",
-      "description": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount\nis set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
+      "description": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount\r\nis set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be\r\nassociated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will\r\nbe returned, so that the title can guide the user through creation of a PlayFab account.",
       "schema": {
         "$ref": "#/definitions/LoginWithXboxRequest"
       }
@@ -13627,7 +14450,7 @@
     "MoveItemToCharacterFromCharacterRequest": {
       "name": "MoveItemToCharacterFromCharacterRequest",
       "in": "body",
-      "description": "Transfers an item from a character to another character that is owned by the same\nuser. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the\nother character to make use of the item instead.",
+      "description": "Transfers an item from a character to another character that is owned by the same\r\nuser. This will remove the item from the character's inventory (until and unless it is moved back), and will enable the\r\nother character to make use of the item instead.",
       "schema": {
         "$ref": "#/definitions/MoveItemToCharacterFromCharacterRequest"
       }
@@ -13635,7 +14458,7 @@
     "MoveItemToCharacterFromUserRequest": {
       "name": "MoveItemToCharacterFromUserRequest",
       "in": "body",
-      "description": "Transfers an item from a user to a character she owns. This will remove\nthe item from the user's inventory (until and unless it is moved back), and will enable the\ncharacter to make use of the item instead.",
+      "description": "Transfers an item from a user to a character she owns. This will remove\r\nthe item from the user's inventory (until and unless it is moved back), and will enable the\r\ncharacter to make use of the item instead.",
       "schema": {
         "$ref": "#/definitions/MoveItemToCharacterFromUserRequest"
       }
@@ -13643,7 +14466,7 @@
     "MoveItemToUserFromCharacterRequest": {
       "name": "MoveItemToUserFromCharacterRequest",
       "in": "body",
-      "description": "Transfers an item from a character to the owning user. This will remove\nthe item from the character's inventory (until and unless it is moved back), and will enable the\nuser to make use of the item instead.",
+      "description": "Transfers an item from a character to the owning user. This will remove\r\nthe item from the character's inventory (until and unless it is moved back), and will enable the\r\nuser to make use of the item instead.",
       "schema": {
         "$ref": "#/definitions/MoveItemToUserFromCharacterRequest"
       }
@@ -13658,7 +14481,7 @@
     "RedeemCouponRequest": {
       "name": "RedeemCouponRequest",
       "in": "body",
-      "description": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This\noperation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already\nconsumed code, or a code which has not yet been created in the service, will result in an error.",
+      "description": "Coupon codes can be created for any item, or set of items, in the catalog for the title. This\r\noperation causes the coupon to be consumed, and the specific items to be awarded to the user. Attempting to re-use an already\r\nconsumed code, or a code which has not yet been created in the service, will result in an error.",
       "schema": {
         "$ref": "#/definitions/RedeemCouponRequest"
       }
@@ -13666,7 +14489,7 @@
     "RedeemMatchmakerTicketRequest": {
       "name": "RedeemMatchmakerTicketRequest",
       "in": "body",
-      "description": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been\nregistered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each\nof which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid\nfor the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as\nemail address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information\nfor users who have accessed the title, the recommendation is to not store this data locally.",
+      "description": "This function is used by a Game Server Instance to validate with the PlayFab service that a user has been\r\nregistered as connected to the server. The Ticket is provided to the client either as a result of a call to StartGame or Matchmake, each\r\nof which return a Ticket specific to the Game Server Instance. This function will fail in any case where the Ticket presented is not valid\r\nfor the specific Game Server Instance making the call. Note that data returned may be Personally Identifying Information (PII), such as\r\nemail address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information\r\nfor users who have accessed the title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/RedeemMatchmakerTicketRequest"
       }
@@ -13746,6 +14569,13 @@
         "$ref": "#/definitions/RevokeInventoryItemsRequest"
       }
     },
+    "SavePushNotificationTemplateRequest": {
+      "name": "SavePushNotificationTemplateRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SavePushNotificationTemplateRequest"
+      }
+    },
     "SendCustomAccountRecoveryEmailRequest": {
       "name": "SendCustomAccountRecoveryEmailRequest",
       "in": "body",
@@ -13762,6 +14592,13 @@
         "$ref": "#/definitions/SendEmailFromTemplateRequest"
       }
     },
+    "SendPushNotificationFromTemplateRequest": {
+      "name": "SendPushNotificationFromTemplateRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SendPushNotificationFromTemplateRequest"
+      }
+    },
     "SendPushNotificationRequest": {
       "name": "SendPushNotificationRequest",
       "in": "body",
@@ -13772,7 +14609,7 @@
     "SetFriendTagsRequest": {
       "name": "SetFriendTagsRequest",
       "in": "body",
-      "description": "This operation is not additive. It will completely replace the tag list for the specified user.\nPlease note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included\nin the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
+      "description": "This operation is not additive. It will completely replace the tag list for the specified user.\r\nPlease note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included\r\nin the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
       "schema": {
         "$ref": "#/definitions/SetFriendTagsRequest"
       }
@@ -13809,7 +14646,7 @@
     "SetPublisherDataRequest": {
       "name": "SetPublisherDataRequest",
       "in": "body",
-      "description": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.\nIf a Key does not exist in the current dataset, it will be added with\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
+      "description": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all\r\ntitles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive.\r\nIf a Key does not exist in the current dataset, it will be added with\r\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email devrel@playfab.com",
       "schema": {
         "$ref": "#/definitions/SetPublisherDataRequest"
       }
@@ -13817,7 +14654,7 @@
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "in": "body",
-      "description": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\nthe title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API is designed to store title specific values which can be read, but not written to, by the client. For example, a developer\r\ncould choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update\r\nthe title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with\r\nthe specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "schema": {
         "$ref": "#/definitions/SetTitleDataRequest"
       }
@@ -13877,7 +14714,7 @@
     "UpdateCharacterDataRequest": {
       "name": "UpdateCharacterDataRequest",
       "in": "body",
-      "description": "This function performs an additive update of the arbitrary JSON object containing\nthe custom data for the user. In updating the custom data object, keys which already exist in the object will have\ntheir values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart\nfrom those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing\r\nthe custom data for the user. In updating the custom data object, keys which already exist in the object will have\r\ntheir values overwritten, while keys with null values will be removed. No other key-value pairs will be changed apart\r\nfrom those specified in the call.",
       "schema": {
         "$ref": "#/definitions/UpdateCharacterDataRequest"
       }
@@ -13885,7 +14722,7 @@
     "UpdateCharacterStatisticsRequest": {
       "name": "UpdateCharacterStatisticsRequest",
       "in": "body",
-      "description": "Character statistics are similar to user statistics in that they are numeric values which\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "description": "Character statistics are similar to user statistics in that they are numeric values which\r\nmay only be updated by a server operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
       "schema": {
         "$ref": "#/definitions/UpdateCharacterStatisticsRequest"
       }
@@ -13893,7 +14730,7 @@
     "UpdatePlayerStatisticsRequest": {
       "name": "UpdatePlayerStatisticsRequest",
       "in": "body",
-      "description": "This operation is additive. Statistics not currently defined will be added,\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.",
+      "description": "This operation is additive. Statistics not currently defined will be added,\r\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.",
       "schema": {
         "$ref": "#/definitions/UpdatePlayerStatisticsRequest"
       }
@@ -13901,7 +14738,7 @@
     "UpdateSharedGroupDataRequest": {
       "name": "UpdateSharedGroupDataRequest",
       "in": "body",
-      "description": "Note that in the case of multiple calls to write to the same shared group data keys, the\nlast write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios\nrequiring coordination of data updates, it is recommended that titles make use of user data with read permission set to\npublic, or a combination of user data and shared group data.",
+      "description": "Note that in the case of multiple calls to write to the same shared group data keys, the\r\nlast write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios\r\nrequiring coordination of data updates, it is recommended that titles make use of user data with read permission set to\r\npublic, or a combination of user data and shared group data.",
       "schema": {
         "$ref": "#/definitions/UpdateSharedGroupDataRequest"
       }
@@ -13909,7 +14746,7 @@
     "UpdateUserDataRequest": {
       "name": "UpdateUserDataRequest",
       "in": "body",
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will\nbe removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\r\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, while keys with null values will\r\nbe removed. No other key-value pairs will be changed apart from those specified in the call.",
       "schema": {
         "$ref": "#/definitions/UpdateUserDataRequest"
       }
@@ -13917,7 +14754,7 @@
     "UpdateUserInternalDataRequest": {
       "name": "UpdateUserInternalDataRequest",
       "in": "body",
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be\nremoved. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the user.\r\nIn updating the custom data object, keys which already exist in the object will have their values overwritten, keys with null values will be\r\nremoved. No other key-value pairs will be changed apart from those specified in the call.",
       "schema": {
         "$ref": "#/definitions/UpdateUserInternalDataRequest"
       }
@@ -13925,9 +14762,17 @@
     "UpdateUserInventoryItemDataRequest": {
       "name": "UpdateUserInventoryItemDataRequest",
       "in": "body",
-      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance\nwhich belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while\nkeys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
+      "description": "This function performs an additive update of the arbitrary JSON object containing the custom data for the item instance\r\nwhich belongs to the specified user. In updating the custom data object, keys which already exist in the object will have their values overwritten, while\r\nkeys with null values will be removed. No other key-value pairs will be changed apart from those specified in the call.",
       "schema": {
         "$ref": "#/definitions/UpdateUserInventoryItemDataRequest"
+      }
+    },
+    "UpdateUserStatisticsRequest": {
+      "name": "UpdateUserStatisticsRequest",
+      "in": "body",
+      "description": "This operation is additive. Statistics not currently defined will be added,\r\nwhile those already defined will be updated with the given values. All other user statistics will remain unchanged.\r\nNote: For statistics configured to reset on an interval, this API call updates the current (latest) version of the player's statistic.\r\nTitles using statistic versioning for resettable leaderboards should make use of the UpdatePlayerStatistics call instead, to ensure that the proper version is updated.",
+      "schema": {
+        "$ref": "#/definitions/UpdateUserStatisticsRequest"
       }
     },
     "WriteServerCharacterEventRequest": {
@@ -14196,6 +15041,44 @@
         }
       }
     },
+    "DeletePushNotificationTemplateResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeletePushNotificationTemplateResult"
+          }
+        }
+      }
+    },
+    "DeleteUsersResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteUsersResult"
+          }
+        }
+      }
+    },
     "DeregisterGameResponse": {
       "description": "",
       "schema": {
@@ -14301,6 +15184,37 @@
             "ExecutionTimeSeconds": 0.03670790046453476,
             "MemoryConsumedBytes": 38904,
             "APIRequestsIssued": 2
+          }
+        }
+      }
+    },
+    "GetAllActionGroupsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetAllActionGroupsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ActionGroups": [
+              {
+                "Name": "Grant beta items",
+                "Id": "12389170481"
+              }
+            ]
           }
         }
       }
@@ -15842,6 +16756,36 @@
         }
       }
     },
+    "GetUserStatisticsResult": {
+      "description": "User statistics are numeric values which may only be updated by a\r\nserver operation, in order to minimize the opportunity for unauthorized changes. In addition to\r\nbeing available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetUserStatisticsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "PlayFabId": "10931252888739651331",
+            "UserStatistics": {
+              "Headshots": 18,
+              "Kills": 47
+            }
+          }
+        }
+      }
+    },
     "GrantCharacterToUserResult": {
       "description": "",
       "schema": {
@@ -16078,6 +17022,25 @@
                 "CharacterType": "StrongWarrior"
               }
             ]
+          }
+        }
+      }
+    },
+    "LogEventResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LogEventResult"
           }
         }
       }
@@ -16558,6 +17521,32 @@
         }
       }
     },
+    "SavePushNotificationTemplateResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SavePushNotificationTemplateResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "PushNotificationTemplateId": "6bc7dbf0-075a-46e9-8e84-35737a22c6a4"
+          }
+        }
+      }
+    },
     "SendCustomAccountRecoveryEmailResult": {
       "description": "",
       "schema": {
@@ -16956,6 +17945,25 @@
           "status": "OK",
           "data": {
             "DataVersion": 8
+          }
+        }
+      }
+    },
+    "UpdateUserStatisticsResult": {
+      "description": "In addition to being available for use by the title, the statistics\r\nare used for all leaderboard operations in PlayFab.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateUserStatisticsResult"
           }
         }
       }
@@ -18662,6 +19670,62 @@
     "EmailTemplateInvalidSyntax": {
       "id": 1406,
       "name": "EmailTemplateInvalidSyntax"
+    },
+    "EmailTemplateMissingCallback": {
+      "id": 1407,
+      "name": "EmailTemplateMissingCallback"
+    },
+    "PushNotificationTemplateInvalidPayload": {
+      "id": 1408,
+      "name": "PushNotificationTemplateInvalidPayload"
+    },
+    "InvalidLocalizedPushNotificationLanguage": {
+      "id": 1409,
+      "name": "InvalidLocalizedPushNotificationLanguage"
+    },
+    "MissingLocalizedPushNotificationMessage": {
+      "id": 1410,
+      "name": "MissingLocalizedPushNotificationMessage"
+    },
+    "PushNotificationTemplateMissingPlatformPayload": {
+      "id": 1411,
+      "name": "PushNotificationTemplateMissingPlatformPayload"
+    },
+    "PushNotificationTemplatePayloadContainsInvalidJson": {
+      "id": 1412,
+      "name": "PushNotificationTemplatePayloadContainsInvalidJson"
+    },
+    "PushNotificationTemplateContainsInvalidIosPayload": {
+      "id": 1413,
+      "name": "PushNotificationTemplateContainsInvalidIosPayload"
+    },
+    "PushNotificationTemplateContainsInvalidAndroidPayload": {
+      "id": 1414,
+      "name": "PushNotificationTemplateContainsInvalidAndroidPayload"
+    },
+    "PushNotificationTemplateIosPayloadMissingNotificationBody": {
+      "id": 1415,
+      "name": "PushNotificationTemplateIosPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody": {
+      "id": 1416,
+      "name": "PushNotificationTemplateAndroidPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateNotFound": {
+      "id": 1417,
+      "name": "PushNotificationTemplateNotFound"
+    },
+    "PushNotificationTemplateMissingDefaultVersion": {
+      "id": 1418,
+      "name": "PushNotificationTemplateMissingDefaultVersion"
+    },
+    "PushNotificationTemplateInvalidSyntax": {
+      "id": 1419,
+      "name": "PushNotificationTemplateInvalidSyntax"
+    },
+    "PushNotificationTemplateNoCustomPayloadForV1": {
+      "id": 1420,
+      "name": "PushNotificationTemplateNoCustomPayloadForV1"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

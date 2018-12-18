@@ -162,6 +162,33 @@
           "name": "Standard_A8_v2"
         },
         {
+          "name": "Standard_F1"
+        },
+        {
+          "name": "Standard_F2"
+        },
+        {
+          "name": "Standard_F4"
+        },
+        {
+          "name": "Standard_F8"
+        },
+        {
+          "name": "Standard_F16"
+        },
+        {
+          "name": "Standard_F2s_v2"
+        },
+        {
+          "name": "Standard_F4s_v2"
+        },
+        {
+          "name": "Standard_F8s_v2"
+        },
+        {
+          "name": "Standard_F16s_v2"
+        },
+        {
           "name": "Standard_A1"
         },
         {
@@ -205,7 +232,7 @@
         },
         {
           "name": "Status",
-          "description": "The status of multiplayer servers in the build region.",
+          "description": "The status of multiplayer servers in the build region. Valid values are - Unknown, Initialized, Deploying, Deployed, Unhealthy.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -526,7 +553,7 @@
         },
         {
           "name": "Metadata",
-          "description": "Metadata to tag the build.",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -722,7 +749,7 @@
         },
         {
           "name": "Metadata",
-          "description": "Metadata to tag the build.",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -1336,7 +1363,7 @@
         },
         {
           "name": "BuildStatus",
-          "description": "The current build status.",
+          "description": "The current build status. Valid values are - Deploying, Deployed, DeletingRegion, Unhealthy.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1391,7 +1418,7 @@
         },
         {
           "name": "Metadata",
-          "description": "The metadata of the build.",
+          "description": "Metadata of the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -1897,7 +1924,7 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "Gets multiplayer server logs for a specific server id in a region.",
+      "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
       "isRequest": true,
       "properties": [
         {
@@ -2976,7 +3003,7 @@
         },
         {
           "name": "InitialPlayers",
-          "description": "Initial list of players (potentially matchmade) allowed to connect to the game. The game server can use this list to validate players connecting to it.",
+          "description": "Initial list of players (potentially matchmade) allowed to connect to the game. This list is passed to the game server when requested (via GSDK) and can be used to validate players connecting to it.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -2984,7 +3011,7 @@
         },
         {
           "name": "PreferredRegions",
-          "description": "The preferred regions to request a multiplayer server from.",
+          "description": "The preferred regions to request a multiplayer server from. The Multiplayer Service will iterate through the regions in the specified order and allocate a server from the first one that has servers available.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "AzureRegion",
@@ -2993,7 +3020,7 @@
         },
         {
           "name": "SessionCookie",
-          "description": "Data encoded as a string that is passed to the game server when requested. This can be used to share a cryptographic secret for servers to authenticate clients or to communicate information such as game mode or map through the request flow.",
+          "description": "Data encoded as a string that is passed to the game server when requested. This can be used to to communicate information such as game mode or map through the request flow.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3515,7 +3542,7 @@
       "request": "CreateBuildWithCustomContainerRequest",
       "requestExample": "{\r\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"/data/Assets\"\r\n    }\r\n  ],\r\n  \"ContainerRepositoryName\": \"ContainerRepositoryName\",\r\n  \"ContainerTag\": \"ContainerTag\",\r\n  \"ContainerFlavor\": \"CustomLinux\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
       "result": "CreateBuildWithCustomContainerResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"CustomLinux\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"/data/Assets\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"CustomLinux\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initialized\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Deployed\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"/data/Assets\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
       "seeAlso": [
         "MultiplayerServer/CreateBuildWithManagedContainer",
         "MultiplayerServer/DeleteBuild",
@@ -3997,8 +4024,8 @@
     },
     {
       "name": "GetMultiplayerServerLogs",
-      "summary": "Gets multiplayer server logs.",
-      "requestDetails": "Gets multiplayer server logs for a specific server id in a region.",
+      "summary": "Gets multiplayer server logs after a server has terminated.",
+      "requestDetails": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
       "subgroup": "MultiplayerServer",
       "titleTiers": null,
       "url": "/MultiplayerServer/GetMultiplayerServerLogs",
@@ -6148,6 +6175,74 @@
       "id": 1403,
       "name": "DataIntegrityError"
     },
+    "VirtualCurrencyCannotBeSetToOlderVersion": {
+      "id": 1404,
+      "name": "VirtualCurrencyCannotBeSetToOlderVersion"
+    },
+    "VirtualCurrencyMustBeWithinIntegerRange": {
+      "id": 1405,
+      "name": "VirtualCurrencyMustBeWithinIntegerRange"
+    },
+    "EmailTemplateInvalidSyntax": {
+      "id": 1406,
+      "name": "EmailTemplateInvalidSyntax"
+    },
+    "EmailTemplateMissingCallback": {
+      "id": 1407,
+      "name": "EmailTemplateMissingCallback"
+    },
+    "PushNotificationTemplateInvalidPayload": {
+      "id": 1408,
+      "name": "PushNotificationTemplateInvalidPayload"
+    },
+    "InvalidLocalizedPushNotificationLanguage": {
+      "id": 1409,
+      "name": "InvalidLocalizedPushNotificationLanguage"
+    },
+    "MissingLocalizedPushNotificationMessage": {
+      "id": 1410,
+      "name": "MissingLocalizedPushNotificationMessage"
+    },
+    "PushNotificationTemplateMissingPlatformPayload": {
+      "id": 1411,
+      "name": "PushNotificationTemplateMissingPlatformPayload"
+    },
+    "PushNotificationTemplatePayloadContainsInvalidJson": {
+      "id": 1412,
+      "name": "PushNotificationTemplatePayloadContainsInvalidJson"
+    },
+    "PushNotificationTemplateContainsInvalidIosPayload": {
+      "id": 1413,
+      "name": "PushNotificationTemplateContainsInvalidIosPayload"
+    },
+    "PushNotificationTemplateContainsInvalidAndroidPayload": {
+      "id": 1414,
+      "name": "PushNotificationTemplateContainsInvalidAndroidPayload"
+    },
+    "PushNotificationTemplateIosPayloadMissingNotificationBody": {
+      "id": 1415,
+      "name": "PushNotificationTemplateIosPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody": {
+      "id": 1416,
+      "name": "PushNotificationTemplateAndroidPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateNotFound": {
+      "id": 1417,
+      "name": "PushNotificationTemplateNotFound"
+    },
+    "PushNotificationTemplateMissingDefaultVersion": {
+      "id": 1418,
+      "name": "PushNotificationTemplateMissingDefaultVersion"
+    },
+    "PushNotificationTemplateInvalidSyntax": {
+      "id": 1419,
+      "name": "PushNotificationTemplateInvalidSyntax"
+    },
+    "PushNotificationTemplateNoCustomPayloadForV1": {
+      "id": 1420,
+      "name": "PushNotificationTemplateNoCustomPayloadForV1"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6696,6 +6791,23 @@
     "StatisticTagRequired",
     "StatisticTagInvalid",
     "DataIntegrityError",
+    "VirtualCurrencyCannotBeSetToOlderVersion",
+    "VirtualCurrencyMustBeWithinIntegerRange",
+    "EmailTemplateInvalidSyntax",
+    "EmailTemplateMissingCallback",
+    "PushNotificationTemplateInvalidPayload",
+    "InvalidLocalizedPushNotificationLanguage",
+    "MissingLocalizedPushNotificationMessage",
+    "PushNotificationTemplateMissingPlatformPayload",
+    "PushNotificationTemplatePayloadContainsInvalidJson",
+    "PushNotificationTemplateContainsInvalidIosPayload",
+    "PushNotificationTemplateContainsInvalidAndroidPayload",
+    "PushNotificationTemplateIosPayloadMissingNotificationBody",
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody",
+    "PushNotificationTemplateNotFound",
+    "PushNotificationTemplateMissingDefaultVersion",
+    "PushNotificationTemplateInvalidSyntax",
+    "PushNotificationTemplateNoCustomPayloadForV1",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateRequestMissing",

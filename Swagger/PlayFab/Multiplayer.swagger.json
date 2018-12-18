@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "181212",
+    "version": "181218",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers.",
     "termsOfService": "https://playfab.com/terms/",
@@ -24,6 +24,475 @@
     "application/json"
   ],
   "paths": {
+    "/Match/CancelMatchmakingTicket": {
+      "post": {
+        "operationId": "CancelMatchmakingTicket",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Cancel a matchmaking ticket.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/CancelMatchmakingTicket"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CancelMatchmakingTicketRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CancelMatchmakingTicketResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Only servers and ticket members can cancel a ticket. The ticket can be in four different states when it is cancelled. 1: the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage, it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. There may be race conditions between the ticket getting matched and the client making a cancellation request. The client must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket instead.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingCancelTicketServerIdentityInvalid",
+          "MatchmakingCancelTicketUserIdentityMismatch",
+          "MatchmakingEntityInvalid",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTicketAlreadyCompleted",
+          "MatchmakingTicketIdIdMissing",
+          "MatchmakingTicketIdMissing",
+          "MatchmakingTicketNotFound",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/CreateMatchmakingTicket": {
+      "post": {
+        "operationId": "CreateMatchmakingTicket",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Create a matchmaking ticket as a client.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/CreateMatchmakingTicket"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateMatchmakingTicketRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateMatchmakingTicketResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingCreateRequestCreatorIdMissing",
+          "MatchmakingCreateRequestCreatorMissing",
+          "MatchmakingCreateRequestGiveUpAfterInvalid",
+          "MatchmakingCreateRequestMissing",
+          "MatchmakingCreateTicketClientIdentityInvalid",
+          "MatchmakingEntityInvalid",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdentityMismatch",
+          "MatchmakingPlayerIdMissing",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTicketIdMissing",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/CreateServerMatchmakingTicket": {
+      "post": {
+        "operationId": "CreateServerMatchmakingTicket",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Create a matchmaking ticket as a server. The matchmaking service automatically starts matching the ticket against other matchmaking tickets.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/CreateServerMatchmakingTicket"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateServerMatchmakingTicketRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateMatchmakingTicketResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The server specifies all the members and their attributes.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingCreateRequestGiveUpAfterInvalid",
+          "MatchmakingCreateRequestUserListMissing",
+          "MatchmakingCreateTicketServerIdentityInvalid",
+          "MatchmakingEntityInvalid",
+          "MatchmakingMemberProfileInvalid",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdMissing",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTicketIdMissing",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/GetMatch": {
+      "post": {
+        "operationId": "GetMatch",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Get a match.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetMatch"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMatchRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMatchResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "When matchmaking has successfully matched together a collection of tickets, it produces a 'match' with an Id. The match contains all of the players that were matched together, and their team assigments. Only servers and ticket members can get the match.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingEntityInvalid",
+          "MatchmakingMatchIdIdMissing",
+          "MatchmakingMatchIdMissing",
+          "MatchmakingMatchNotFound",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/GetMatchmakingQueue": {
+      "post": {
+        "operationId": "GetMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "Get a matchmaking queue configuration.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetMatchmakingQueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets the current configuration for a queue.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingQueueConfigNotFound",
+          "NotAuthorized"
+        ]
+      }
+    },
+    "/Match/GetMatchmakingTicket": {
+      "post": {
+        "operationId": "GetMatchmakingTicket",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Get a matchmaking ticket by ticket Id.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetMatchmakingTicket"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMatchmakingTicketRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMatchmakingTicketResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The ticket includes the invited players, their attributes if they have joined, the ticket status, the match Id when applicable, etc. Only servers, the ticket creator and the invited players can get the ticket.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingEntityInvalid",
+          "MatchmakingGetMatchIdentityMismatch",
+          "MatchmakingGetTicketUserMismatch",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTicketIdIdMissing",
+          "MatchmakingTicketIdMissing",
+          "MatchmakingTicketNotFound",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/GetQueueStatistics": {
+      "post": {
+        "operationId": "GetQueueStatistics",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Get the statistics for a queue.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetQueueStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetQueueStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetQueueStatisticsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns the matchmaking statistics for a queue. These include the number of players matching and the statistics related to the time to match statistics in seconds (average and percentiles). Statistics are refreshed once every 5 minutes. Servers can access all statistics no matter what the ClientStatisticsVisibility is configured to. Clients can access statistics according to the ClientStatisticsVisibility. Client requests are forbidden if all visibility fields are false.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingEntityInvalid",
+          "MatchmakingGetStatisticsIdentityInvalid",
+          "MatchmakingQueueConfigNotFound",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingStatisticsIdMissing",
+          "MatchmakingTitleIdMissing",
+          "NotAuthorized"
+        ]
+      }
+    },
+    "/Match/JoinMatchmakingTicket": {
+      "post": {
+        "operationId": "JoinMatchmakingTicket",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Join a matchmaking ticket.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/JoinMatchmakingTicket"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/JoinMatchmakingTicketRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/JoinMatchmakingTicketResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingAlreadyJoinedTicket",
+          "MatchmakingEntityInvalid",
+          "MatchmakingJoinRequestUserMissing",
+          "MatchmakingJoinTicketServerIdentityInvalid",
+          "MatchmakingJoinTicketUserIdentityMismatch",
+          "MatchmakingMemberProfileInvalid",
+          "MatchmakingPlayerAttributesInvalid",
+          "MatchmakingPlayerIdentityMismatch",
+          "MatchmakingPlayerIdMissing",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTicketAlreadyCompleted",
+          "MatchmakingTicketIdIdMissing",
+          "MatchmakingTicketIdMissing",
+          "MatchmakingTicketNotFound",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
+    "/Match/ListMatchmakingQueues": {
+      "post": {
+        "operationId": "ListMatchmakingQueues",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "List all matchmaking queue configs.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/ListMatchmakingQueues"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListMatchmakingQueuesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ListMatchmakingQueuesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets a list of all the matchmaking queue configurations for the title.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthorized"
+        ]
+      }
+    },
+    "/Match/RemoveMatchmakingQueue": {
+      "post": {
+        "operationId": "RemoveMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "Remove a matchmaking queue config.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/RemoveMatchmakingQueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RemoveMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RemoveMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Deletes the configuration for a queue. This will permanently delete the configuration and players will no longer be able to match in the queue. All outstanding matchmaking tickets will be cancelled.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthorized"
+        ]
+      }
+    },
+    "/Match/SetMatchmakingQueue": {
+      "post": {
+        "operationId": "SetMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "Create or update a matchmaking queue configuration.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/SetMatchmakingQueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Use this API to create or update matchmaking queue configurations. The queue configuration defines the matchmaking rules. The matchmaking service will match tickets together according to the configured rules. Queue resources are not spun up by calling this API. Queues are created when the first ticket is submitted.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingQueueConfigInvalid",
+          "NotAuthorized"
+        ]
+      }
+    },
     "/MultiplayerServer/CreateBuildWithCustomContainer": {
       "post": {
         "operationId": "CreateBuildWithCustomContainer",
@@ -471,6 +940,51 @@
         ]
       }
     },
+    "/MultiplayerServer/GetCognitiveServicesToken": {
+      "post": {
+        "operationId": "GetCognitiveServicesToken",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Gets a token for the cognitive services based on the specified service type.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetCognitiveServicesToken"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetCognitiveServicesTokenRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetCognitiveServicesTokenResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets a token for the cognitive services where translation queries can be sent to.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/GetContainerRegistryCredentials": {
       "post": {
         "operationId": "GetContainerRegistryCredentials",
@@ -554,6 +1068,55 @@
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
+    "/MultiplayerServer/GetMultiplayerServerLogs": {
+      "post": {
+        "operationId": "GetMultiplayerServerLogs",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Gets multiplayer server logs after a server has terminated.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetMultiplayerServerLogs"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMultiplayerServerLogsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMultiplayerServerLogsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "MultiplayerServer/GetMultiplayerServerDetails",
+          "MultiplayerServer/RequestMultiplayerServer"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
           "MultiplayerServerUnauthorized",
           "MultiplayerServerUnavailable"
         ]
@@ -1397,7 +1960,7 @@
           "x-actualtype": "int32"
         },
         "Status": {
-          "description": "The status of multiplayer servers in the build region.",
+          "description": "The status of multiplayer servers in the build region. Valid values are - Unknown, Initialized, Deploying, Deployed, Unhealthy.",
           "type": "string"
         }
       },
@@ -1453,6 +2016,50 @@
         }
       }
     },
+    "CancellationReason": {
+      "type": "object",
+      "enum": [
+        "Requested",
+        "Internal",
+        "Timeout"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CancelMatchmakingTicketRequest": {
+      "description": "Only servers and ticket members can cancel a ticket.\r\n\r\n                The ticket can be in four different states when it is cancelled.\r\n                1: the ticket is waiting for members to join it, and it has not started matching.\r\n                    If the ticket is cancelled at this stage, it will never match.\r\n                2: the ticket is matching. If the ticket is cancelled, it will stop matching.\r\n                3: the ticket is matched. A matched ticket cannot be cancelled.\r\n                4: the ticket is already cancelled and nothing happens.\r\n\r\n                There may be race conditions between the ticket getting matched and\r\n                the client making a cancellation request. The client must handle the possibility\r\n                that the cancel request fails if a match is found before the cancellation request is processed.\r\n                We do not allow resubmitting a cancelled ticket because players\r\n                must consent to enter matchmaking again. Create a new ticket instead.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The Id of the queue to join.",
+          "type": "string"
+        },
+        "TicketId": {
+          "description": "The Id of the ticket to find a match for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketId",
+        "QueueName"
+      ],
+      "example": {
+        "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c",
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CancelMatchmakingTicketResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "Certificate": {
       "type": "object",
       "properties": {
@@ -1486,6 +2093,16 @@
           "type": "string"
         }
       }
+    },
+    "CognitiveServicesType": {
+      "type": "object",
+      "enum": [
+        "SpeechToText",
+        "TextToSpeech"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "ConnectedPlayer": {
       "type": "object",
@@ -1563,7 +2180,7 @@
           "x-isclass": true
         },
         "Metadata": {
-          "description": "Metadata to tag the build.",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "type": "object"
         },
         "MultiplayerServerCountPerVm": {
@@ -1750,13 +2367,13 @@
         "RegionConfigurations": [
           {
             "Region": "EastUs",
-            "Status": "Initializing",
+            "Status": "Initialized",
             "MaxServers": 10,
             "StandbyServers": 5
           },
           {
             "Region": "WestUs",
-            "Status": "Succeeded",
+            "Status": "Deployed",
             "MaxServers": 12,
             "StandbyServers": 8
           },
@@ -1813,7 +2430,7 @@
           "x-isclass": true
         },
         "Metadata": {
-          "description": "Metadata to tag the build.",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "type": "object"
         },
         "MultiplayerServerCountPerVm": {
@@ -2027,6 +2644,67 @@
         "MultiplayerServerCountPerVm": 10
       }
     },
+    "CreateMatchmakingTicketRequest": {
+      "description": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+      "type": "object",
+      "properties": {
+        "Creator": {
+          "$ref": "#/definitions/MatchmakingPlayer",
+          "description": "The User who created this ticket.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "GiveUpAfterSeconds": {
+          "description": "How long to attempt matching this ticket in seconds.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "MembersToMatchWith": {
+          "description": "A list of Entity Keys of other users to match with.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityKey"
+          },
+          "x-isclass": true
+        },
+        "QueueName": {
+          "description": "The Id of a match queue.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Creator",
+        "GiveUpAfterSeconds",
+        "QueueName"
+      ],
+      "example": {
+        "Creator": {},
+        "MembersToMatchWith": [],
+        "GiveUpAfterSeconds": 100,
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateMatchmakingTicketResult": {
+      "type": "object",
+      "properties": {
+        "TicketId": {
+          "description": "The Id of the ticket to find a match for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketId"
+      ],
+      "example": {
+        "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CreateRemoteUserRequest": {
       "description": "Creates a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
       "type": "object",
@@ -2084,6 +2762,42 @@
           "type": "string"
         }
       }
+    },
+    "CreateServerMatchmakingTicketRequest": {
+      "description": "The server specifies all the members and their attributes.",
+      "type": "object",
+      "properties": {
+        "GiveUpAfterSeconds": {
+          "description": "How long to attempt matching this ticket in seconds.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Members": {
+          "description": "The users who will be part of this ticket.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingPlayer"
+          },
+          "x-isclass": true
+        },
+        "QueueName": {
+          "description": "The Id of a match queue.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Members",
+        "GiveUpAfterSeconds",
+        "QueueName"
+      ],
+      "example": {
+        "Members": [],
+        "GiveUpAfterSeconds": 100,
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "DeleteAssetRequest": {
       "description": "Deletes a multiplayer server game asset for a title.",
@@ -2191,6 +2905,36 @@
       },
       "example": {}
     },
+    "EntityKey": {
+      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Unique ID of the entity.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
+          "type": "string"
+        },
+        "TypeString": {
+          "description": "Alternate name for Type.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "6/1/2018",
+            "DeprecatedAfter": "7/1/2018",
+            "ObsoleteAfter": "8/1/2018",
+            "ReplacedBy": "Type"
+          }
+        }
+      },
+      "required": [
+        "Id"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "GameCertificateReference": {
       "type": "object",
       "properties": {
@@ -2282,7 +3026,7 @@
           "type": "string"
         },
         "BuildStatus": {
-          "description": "The current build status.",
+          "description": "The current build status. Valid values are - Deploying, Deployed, DeletingRegion, Unhealthy.",
           "type": "string"
         },
         "ContainerFlavor": {
@@ -2322,7 +3066,7 @@
           "x-isclass": true
         },
         "Metadata": {
-          "description": "The metadata of the build.",
+          "description": "Metadata of the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "type": "object"
         },
         "MultiplayerServerCountPerVm": {
@@ -2411,6 +3155,52 @@
         "MultiplayerServerCountPerVm": 10
       }
     },
+    "GetCognitiveServicesTokenRequest": {
+      "description": "Gets a token for the cognitive services where translation queries can be sent to.",
+      "type": "object",
+      "properties": {
+        "CognitiveServicesType": {
+          "$ref": "#/definitions/CognitiveServicesType",
+          "description": "The type of the cognitive service for which a token is being requested.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "description": "The region the client is closest to (A service endpoint will be provided for this region or one nearest one available).",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "CognitiveServicesType",
+        "Region"
+      ],
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetCognitiveServicesTokenResponse": {
+      "type": "object",
+      "properties": {
+        "ServiceEndpoint": {
+          "description": "The url for the service where further requests can be made with the given token.",
+          "type": "string"
+        },
+        "Token": {
+          "description": "The token for the cognitive service.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+        "ServiceEndpoint": "https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "GetContainerRegistryCredentialsRequest": {
       "description": "Gets credentials to the container registry where game developers can upload custom container images to before creating a new build.",
       "type": "object",
@@ -2438,6 +3228,241 @@
         "Username": "RegistryUser",
         "Password": "RegistryPassword"
       }
+    },
+    "GetMatchmakingQueueRequest": {
+      "description": "Gets the current configuration for a queue.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The Id of the matchmaking queue to retrieve.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {
+        "MatchmakingQueue": {
+          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "description": "The matchmaking queue config.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMatchmakingTicketRequest": {
+      "description": "The ticket includes the invited players, their attributes if they have joined,\r\n                the ticket status, the match Id when applicable, etc.\r\n                Only servers, the ticket creator and the invited players can get the ticket.",
+      "type": "object",
+      "properties": {
+        "EscapeObject": {
+          "description": "Determines whether the matchmaking attributes will be returned as an escaped JSON string or as an un-escaped JSON object.",
+          "type": "boolean"
+        },
+        "QueueName": {
+          "description": "The Id of the queue to find a match for.",
+          "type": "string"
+        },
+        "TicketId": {
+          "description": "The Id of the ticket to find a match for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketId",
+        "QueueName",
+        "EscapeObject"
+      ],
+      "example": {
+        "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c",
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMatchmakingTicketResult": {
+      "type": "object",
+      "properties": {
+        "CancellationReason": {
+          "$ref": "#/definitions/CancellationReason",
+          "description": "The reason why the current ticket was canceled. This field is only set if the ticket is in canceled state.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Created": {
+          "description": "The server date and time at which ticket was created.",
+          "type": "string"
+        },
+        "Creator": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The Creator's entity key.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "GiveUpAfterSeconds": {
+          "description": "How long to attempt matching this ticket in seconds.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "MatchId": {
+          "description": "The Id of a match.",
+          "type": "string"
+        },
+        "Members": {
+          "description": "A list of Users that have joined this ticket.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingPlayer"
+          },
+          "x-isclass": true
+        },
+        "MembersToMatchWith": {
+          "description": "A list of PlayFab Ids of Users to match with.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityKey"
+          },
+          "x-isclass": true
+        },
+        "QueueName": {
+          "description": "The Id of a match queue.",
+          "type": "string"
+        },
+        "Status": {
+          "description": "The current ticket status.",
+          "type": "string"
+        },
+        "TicketId": {
+          "description": "The Id of the ticket to find a match for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketId",
+        "QueueName",
+        "Created",
+        "Status",
+        "GiveUpAfterSeconds",
+        "Members",
+        "Creator"
+      ],
+      "example": {
+        "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c",
+        "QueueName": "custom123",
+        "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
+        "Created": "2016-08-23T12:33:14",
+        "Status": "MATCHED",
+        "GiveUpAfterSeconds": 100,
+        "MembersToMatchWith": [
+          {
+            "Id": "123123123",
+            "Type": "title_player_acount",
+            "TypeString": "title_player_acount"
+          }
+        ],
+        "Members": [],
+        "Creator": {
+          "Id": "123123123",
+          "Type": "title_player_acount",
+          "TypeString": "title_player_acount"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMatchRequest": {
+      "description": "When matchmaking has successfully matched together a collection of\r\n                tickets, it produces a 'match' with an Id. The match contains all of\r\n                the players that were matched together, and their team assigments.\r\n\r\n                Only servers and ticket members can get the match.",
+      "type": "object",
+      "properties": {
+        "EscapeObject": {
+          "description": "Determines whether the matchmaking attributes will be returned as an escaped JSON string or as an un-escaped JSON object.",
+          "type": "boolean"
+        },
+        "MatchId": {
+          "description": "The Id of a match.",
+          "type": "string"
+        },
+        "QueueName": {
+          "description": "The Id of the queue to join.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "MatchId",
+        "QueueName",
+        "EscapeObject"
+      ],
+      "example": {
+        "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMatchResult": {
+      "type": "object",
+      "properties": {
+        "MatchId": {
+          "description": "The Id of a match.",
+          "type": "string"
+        },
+        "Members": {
+          "description": "A list of Users that are matched together, along with their team assignments.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingPlayerWithTeamAssignment"
+          },
+          "x-isclass": true
+        },
+        "RegionPreferences": {
+          "description": "A list of regions that the match could be played in sorted by preference. This value is only set if the queue has a region selection rule.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ServerDetails": {
+          "$ref": "#/definitions/ServerDetails",
+          "description": "The details of the server that the match has been allocated to.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "MatchId",
+        "Members"
+      ],
+      "example": {
+        "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
+        "Members": [],
+        "RegionPreferences": [
+          "Region1",
+          "Region2"
+        ],
+        "ServerDetails": {
+          "IPV4Address": "10.250.24.54",
+          "Ports": [
+            {
+              "Name": "PortName",
+              "Num": 1243
+            }
+          ]
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "GetMultiplayerServerDetailsRequest": {
       "description": "Gets multiplayer server session details for a build in a specific region.",
@@ -2546,6 +3571,94 @@
         ]
       }
     },
+    "GetMultiplayerServerLogsRequest": {
+      "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+      "type": "object",
+      "properties": {
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "description": "The region of the multiplayer server to get logs for.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "ServerId": {
+          "description": "The server ID of multiplayer server to get logs for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Region",
+        "ServerId"
+      ],
+      "example": {
+        "Region": "SouthCentralUs",
+        "ServerId": "SomeServerId"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetMultiplayerServerLogsResponse": {
+      "type": "object",
+      "properties": {
+        "LogDownloadUrl": {
+          "type": "string"
+        }
+      },
+      "example": {
+        "LogDownloadUrl": "TheLogDownloadUrl"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetQueueStatisticsRequest": {
+      "description": "Returns the matchmaking statistics for a queue. These include the number of players matching\r\n                and the statistics related to the time to match statistics in seconds (average and percentiles).\r\n                Statistics are refreshed once every 5 minutes.\r\n\r\n                Servers can access all statistics no matter what the ClientStatisticsVisibility is configured to.\r\n                Clients can access statistics according to the ClientStatisticsVisibility.\r\n                Client requests are forbidden if all visibility fields are false.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The name of the queue.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "QueueName"
+      ],
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetQueueStatisticsResult": {
+      "type": "object",
+      "properties": {
+        "NumberOfPlayersMatching": {
+          "description": "The current number of players in the matchmaking queue, who are waiting to be matched.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "TimeToMatchStatisticsInSeconds": {
+          "$ref": "#/definitions/Statistics",
+          "description": "Statistics representing the time (in seconds) it takes for tickets to find a match.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "NumberOfPlayersMatching": 563,
+        "TimeToMatchStatisticsInSeconds": {
+          "Average": 2.2,
+          "Percentile50": 2.1,
+          "Percentile90": 2.21,
+          "Percentile99": 3
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "GetRemoteLoginEndpointRequest": {
       "description": "Gets a remote login endpoint to a VM that is hosting a multiplayer server build in a specific region.",
       "type": "object",
@@ -2616,6 +3729,47 @@
       "example": {
         "Status": "Disabled"
       }
+    },
+    "JoinMatchmakingTicketRequest": {
+      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking\r\n                attributes. Players can join a ticket if and only if their EntityKeys are\r\n                already listed in the ticket's Members list.\r\n\r\n                The matchmaking service automatically starts matching the ticket against\r\n                other matchmaking tickets once all players have joined the ticket.\r\n                It is not possible to join a ticket once it has started matching.",
+      "type": "object",
+      "properties": {
+        "Member": {
+          "$ref": "#/definitions/MatchmakingPlayer",
+          "description": "The User who wants to join the ticket. Their Id must be listed in PlayFabIdsToMatchWith.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "QueueName": {
+          "description": "The Id of the queue to join.",
+          "type": "string"
+        },
+        "TicketId": {
+          "description": "The Id of the ticket to find a match for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "TicketId",
+        "QueueName",
+        "Member"
+      ],
+      "example": {
+        "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c",
+        "QueueName": "custom123",
+        "Member": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "JoinMatchmakingTicketResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "ListAssetSummariesRequest": {
       "description": "Returns a list of multiplayer server game asset summaries for a title.",
@@ -2850,6 +4004,31 @@
         ]
       }
     },
+    "ListMatchmakingQueuesRequest": {
+      "description": "Gets a list of all the matchmaking queue configurations for the title.",
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ListMatchmakingQueuesResult": {
+      "type": "object",
+      "properties": {
+        "MatchMakingQueues": {
+          "description": "The list of matchmaking queue configs for this title.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueConfig"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "ListMultiplayerServersRequest": {
       "description": "Returns a list of multiplayer servers for a build in a specific region.",
       "type": "object",
@@ -3065,6 +4244,340 @@
         "PageSize": 10
       }
     },
+    "MatchmakingPlayer": {
+      "description": "A user in a matchmaking ticket.",
+      "type": "object",
+      "properties": {
+        "Attributes": {
+          "$ref": "#/definitions/MatchmakingPlayerAttributes",
+          "description": "The user's attributes custom to the title.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity key of the matchmaking user.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "MatchmakingPlayerAttributes": {
+      "description": "The matchmaking attributes for a user.",
+      "type": "object",
+      "properties": {
+        "DataObject": {
+          "description": "A data object representing a user's attributes.",
+          "type": "object"
+        },
+        "EscapedDataObject": {
+          "description": "An escaped data object representing a user's attributes.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "MatchmakingPlayerWithTeamAssignment": {
+      "description": "A player in a created matchmaking match with a team assignment.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity key of the matchmaking user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TeamId": {
+          "description": "The Id of the team the User has been assigned to by matchmaking.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "MatchmakingQueueConfig": {
+      "type": "object",
+      "properties": {
+        "BuildId": {
+          "description": "This is the buildId that will be used to allocate the thunderhead server for the match.",
+          "type": "string"
+        },
+        "MaxMatchSize": {
+          "description": "Maximum number of players in a match.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MinMatchSize": {
+          "description": "Minimum number of players in a match.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "Unique identifier for a Queue. Chosen by the developer.",
+          "type": "string"
+        },
+        "Rules": {
+          "description": "List of rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueRule"
+          },
+          "x-isclass": true
+        },
+        "StatisticsVisibilityToPlayers": {
+          "$ref": "#/definitions/StatisticsVisibilityToPlayers",
+          "description": "Controls which statistics are visible to players.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Teams": {
+          "description": "The team configuration for a match. This may be null if there are no teams.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueTeam"
+          },
+          "x-isclass": true
+        },
+        "ThunderheadEnabled": {
+          "description": "Boolean flag to enable thunderhead allocation for the queue.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Name",
+        "MinMatchSize",
+        "MaxMatchSize",
+        "ThunderheadEnabled"
+      ],
+      "example": {
+        "Name": "ExampleQueueName",
+        "MinMatchSize": 7,
+        "MaxMatchSize": 8,
+        "ThunderheadEnabled": true,
+        "BuildId": "065a3208-39af-4691-8794-5f774c367ac2",
+        "Rules": [
+          {
+            "Type": "DifferenceRule",
+            "Difference": 10,
+            "MergeFunction": "Average",
+            "DefaultAttributeValue": 0,
+            "Expansion": {
+              "Delta": 0.5,
+              "Limit": 20,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeDifference"
+            },
+            "Weight": 1,
+            "Name": "ExampleName0",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "StringEqualityRule",
+            "DefaultAttributeValue": "ExampleDefault",
+            "Expansion": {
+              "EnabledOverrides": [
+                false,
+                true,
+                true,
+                false
+              ],
+              "Type": "Custom",
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeStringEquality"
+            },
+            "Weight": 1,
+            "Name": "ExampleName1",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "MatchTotalRule",
+            "Attribute": {
+              "Path": "ExampleAttribute"
+            },
+            "Min": 2,
+            "Max": 4,
+            "Weight": 1,
+            "Expansion": {
+              "MinOverrides": [
+                2,
+                null,
+                null
+              ],
+              "MaxOverrides": [
+                4,
+                4,
+                null
+              ],
+              "Type": "Custom",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName2",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "SetIntersectionRule",
+            "DefaultAttributeValue": [
+              "a",
+              "b",
+              "c"
+            ],
+            "MinIntersectionSize": 2,
+            "Expansion": {
+              "Delta": 2,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeSetIntersection"
+            },
+            "Weight": 1,
+            "Name": "ExampleName3",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamSizeBalanceRule",
+            "Difference": 1,
+            "Expansion": {
+              "Delta": 1,
+              "Limit": 5,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName4",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "RegionSelectionRule",
+            "MaxLatency": 250,
+            "Path": "Latencies",
+            "Expansion": {
+              "Delta": 10,
+              "Limit": 300,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Weight": 1,
+            "Name": "ExampleName5",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamDifferenceRule",
+            "Attribute": {
+              "Path": "ExampleAttribute"
+            },
+            "Difference": 2,
+            "Expansion": {
+              "Delta": 1,
+              "Limit": 5,
+              "Type": "Linear",
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "ExampleName6",
+            "SecondsUntilOptional": 50
+          },
+          {
+            "Type": "TeamTicketSizeSimilarityRule",
+            "Name": "TeamTicketSizeSimilarityRuleExample7",
+            "SecondsUntilOptional": 180
+          }
+        ],
+        "Teams": [
+          {
+            "Name": "monster",
+            "MinTeamSize": 1,
+            "MaxTeamSize": 1
+          },
+          {
+            "Name": "hunters",
+            "MinTeamSize": 4,
+            "MaxTeamSize": 8
+          }
+        ],
+        "StatisticsVisibilityToPlayers": {
+          "ShowNumberOfPlayersMatching": true,
+          "ShowTimeToMatch": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "MatchmakingQueueRule": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Type": {
+          "$ref": "#/definitions/RuleType",
+          "description": "Type of rule being described.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "Type",
+        "Name"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "MatchmakingQueueTeam": {
+      "type": "object",
+      "properties": {
+        "MaxTeamSize": {
+          "description": "The maximum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MinTeamSize": {
+          "description": "The minimum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "A name to identify the team. This is case insensitive.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "MinTeamSize",
+        "MaxTeamSize"
+      ],
+      "example": {
+        "Name": "red",
+        "MinTeamSize": 4,
+        "MaxTeamSize": 8
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "MultiplayerServerSummary": {
       "type": "object",
       "properties": {
@@ -3151,6 +4664,29 @@
         }
       }
     },
+    "RemoveMatchmakingQueueRequest": {
+      "description": "Deletes the configuration for a queue. This will permanently delete the \r\n                configuration and players will no longer be able to match in the queue.\r\n                All outstanding matchmaking tickets will be cancelled.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The Id of the matchmaking queue to remove.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "RemoveMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "RequestMultiplayerServerRequest": {
       "description": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
       "type": "object",
@@ -3160,14 +4696,14 @@
           "type": "string"
         },
         "InitialPlayers": {
-          "description": "Initial list of players (potentially matchmade) allowed to connect to the game. The game server can use this list to validate players connecting to it.",
+          "description": "Initial list of players (potentially matchmade) allowed to connect to the game. This list is passed to the game server when requested (via GSDK) and can be used to validate players connecting to it.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "PreferredRegions": {
-          "description": "The preferred regions to request a multiplayer server from.",
+          "description": "The preferred regions to request a multiplayer server from. The Multiplayer Service will iterate through the regions in the specified order and allocate a server from the first one that has servers available.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/AzureRegion"
@@ -3175,7 +4711,7 @@
           "x-isenum": true
         },
         "SessionCookie": {
-          "description": "Data encoded as a string that is passed to the game server when requested. This can be used to share a cryptographic secret for servers to authenticate clients or to communicate information such as game mode or map through the request flow.",
+          "description": "Data encoded as a string that is passed to the game server when requested. This can be used to to communicate information such as game mode or map through the request flow.",
           "type": "string"
         },
         "SessionId": {
@@ -3308,6 +4844,234 @@
         "Password": "NewRegistryPassword"
       }
     },
+    "RuleType": {
+      "type": "object",
+      "enum": [
+        "Unknown",
+        "DifferenceRule",
+        "StringEqualityRule",
+        "MatchTotalRule",
+        "SetIntersectionRule",
+        "TeamSizeBalanceRule",
+        "RegionSelectionRule",
+        "TeamDifferenceRule",
+        "TeamTicketSizeSimilarityRule"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ServerDetails": {
+      "type": "object",
+      "properties": {
+        "IPV4Address": {
+          "description": "The IPv4 address of the virtual machine that is hosting this multiplayer server.",
+          "type": "string"
+        },
+        "Ports": {
+          "description": "The ports the multiplayer server uses.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Port"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "IPV4Address",
+        "Ports"
+      ],
+      "example": {
+        "IPV4Address": "10.250.24.54",
+        "Ports": [
+          {
+            "Name": "PortName",
+            "Num": 1243
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetMatchmakingQueueRequest": {
+      "description": "Use this API to create or update matchmaking queue configurations. The queue\r\n                configuration defines the matchmaking rules. The matchmaking service will match\r\n                tickets together according to the configured rules. Queue resources are not\r\n                spun up by calling this API. Queues are created when the first ticket is submitted.",
+      "type": "object",
+      "properties": {
+        "MatchmakingQueue": {
+          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "description": "The matchmaking queue config.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "MatchmakingQueue": {
+          "Name": "ExampleQueueName",
+          "MinMatchSize": 7,
+          "MaxMatchSize": 8,
+          "ThunderheadEnabled": true,
+          "BuildId": "065a3208-39af-4691-8794-5f774c367ac2",
+          "Rules": [
+            {
+              "Type": "DifferenceRule",
+              "Difference": 10,
+              "MergeFunction": "Average",
+              "DefaultAttributeValue": 0,
+              "Expansion": {
+                "Delta": 0.5,
+                "Limit": 20,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeDifference"
+              },
+              "Weight": 1,
+              "Name": "ExampleName0",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "StringEqualityRule",
+              "DefaultAttributeValue": "ExampleDefault",
+              "Expansion": {
+                "EnabledOverrides": [
+                  false,
+                  true,
+                  true,
+                  false
+                ],
+                "Type": "Custom",
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeStringEquality"
+              },
+              "Weight": 1,
+              "Name": "ExampleName1",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "MatchTotalRule",
+              "Attribute": {
+                "Path": "ExampleAttribute"
+              },
+              "Min": 2,
+              "Max": 4,
+              "Weight": 1,
+              "Expansion": {
+                "MinOverrides": [
+                  2,
+                  null,
+                  null
+                ],
+                "MaxOverrides": [
+                  4,
+                  4,
+                  null
+                ],
+                "Type": "Custom",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName2",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "SetIntersectionRule",
+              "DefaultAttributeValue": [
+                "a",
+                "b",
+                "c"
+              ],
+              "MinIntersectionSize": 2,
+              "Expansion": {
+                "Delta": 2,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeSetIntersection"
+              },
+              "Weight": 1,
+              "Name": "ExampleName3",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamSizeBalanceRule",
+              "Difference": 1,
+              "Expansion": {
+                "Delta": 1,
+                "Limit": 5,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName4",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "RegionSelectionRule",
+              "MaxLatency": 250,
+              "Path": "Latencies",
+              "Expansion": {
+                "Delta": 10,
+                "Limit": 300,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Weight": 1,
+              "Name": "ExampleName5",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamDifferenceRule",
+              "Attribute": {
+                "Path": "ExampleAttribute"
+              },
+              "Difference": 2,
+              "Expansion": {
+                "Delta": 1,
+                "Limit": 5,
+                "Type": "Linear",
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "ExampleName6",
+              "SecondsUntilOptional": 50
+            },
+            {
+              "Type": "TeamTicketSizeSimilarityRule",
+              "Name": "TeamTicketSizeSimilarityRuleExample7",
+              "SecondsUntilOptional": 180
+            }
+          ],
+          "Teams": [
+            {
+              "Name": "monster",
+              "MinTeamSize": 1,
+              "MaxTeamSize": 1
+            },
+            {
+              "Name": "hunters",
+              "MinTeamSize": 4,
+              "MaxTeamSize": 8
+            }
+          ],
+          "StatisticsVisibilityToPlayers": {
+            "ShowNumberOfPlayersMatching": true,
+            "ShowTimeToMatch": true
+          }
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "ShutdownMultiplayerServerRequest": {
       "description": "Executes the shutdown callback from the GSDK and terminates the multiplayer server session. The callback in the GSDK will allow for graceful shutdown with a 15 minute timeoutIf graceful shutdown has not been completed before 15 minutes have elapsed, the multiplayer server session will be forcefully terminated on it's own.",
       "type": "object",
@@ -3337,6 +5101,60 @@
         "Region": "SouthCentralUs",
         "SessionId": "02bdef0e-e01e-4b29-8efe-ff9f47a06d8c"
       }
+    },
+    "Statistics": {
+      "type": "object",
+      "properties": {
+        "Average": {
+          "description": "The average.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile50": {
+          "description": "The 50th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile90": {
+          "description": "The 90th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Percentile99": {
+          "description": "The 99th percentile.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "Average",
+        "Percentile50",
+        "Percentile90",
+        "Percentile99"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "StatisticsVisibilityToPlayers": {
+      "type": "object",
+      "properties": {
+        "ShowNumberOfPlayersMatching": {
+          "description": "Whether to allow players to view the current number of players in the matchmaking queue.",
+          "type": "boolean"
+        },
+        "ShowTimeToMatch": {
+          "description": "Whether to allow players to view statistics representing the time it takes for tickets to find a match.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ShowNumberOfPlayersMatching",
+        "ShowTimeToMatch"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "TitleMultiplayerServerEnabledStatus": {
       "type": "object",
@@ -3429,6 +5247,14 @@
     }
   },
   "parameters": {
+    "CancelMatchmakingTicketRequest": {
+      "name": "CancelMatchmakingTicketRequest",
+      "in": "body",
+      "description": "Only servers and ticket members can cancel a ticket.\r\n\r\n                The ticket can be in four different states when it is cancelled.\r\n                1: the ticket is waiting for members to join it, and it has not started matching.\r\n                    If the ticket is cancelled at this stage, it will never match.\r\n                2: the ticket is matching. If the ticket is cancelled, it will stop matching.\r\n                3: the ticket is matched. A matched ticket cannot be cancelled.\r\n                4: the ticket is already cancelled and nothing happens.\r\n\r\n                There may be race conditions between the ticket getting matched and\r\n                the client making a cancellation request. The client must handle the possibility\r\n                that the cancel request fails if a match is found before the cancellation request is processed.\r\n                We do not allow resubmitting a cancelled ticket because players\r\n                must consent to enter matchmaking again. Create a new ticket instead.",
+      "schema": {
+        "$ref": "#/definitions/CancelMatchmakingTicketRequest"
+      }
+    },
     "CreateBuildWithCustomContainerRequest": {
       "name": "CreateBuildWithCustomContainerRequest",
       "in": "body",
@@ -3445,12 +5271,28 @@
         "$ref": "#/definitions/CreateBuildWithManagedContainerRequest"
       }
     },
+    "CreateMatchmakingTicketRequest": {
+      "name": "CreateMatchmakingTicketRequest",
+      "in": "body",
+      "description": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+      "schema": {
+        "$ref": "#/definitions/CreateMatchmakingTicketRequest"
+      }
+    },
     "CreateRemoteUserRequest": {
       "name": "CreateRemoteUserRequest",
       "in": "body",
       "description": "Creates a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
       "schema": {
         "$ref": "#/definitions/CreateRemoteUserRequest"
+      }
+    },
+    "CreateServerMatchmakingTicketRequest": {
+      "name": "CreateServerMatchmakingTicketRequest",
+      "in": "body",
+      "description": "The server specifies all the members and their attributes.",
+      "schema": {
+        "$ref": "#/definitions/CreateServerMatchmakingTicketRequest"
       }
     },
     "DeleteAssetRequest": {
@@ -3509,6 +5351,14 @@
         "$ref": "#/definitions/GetBuildRequest"
       }
     },
+    "GetCognitiveServicesTokenRequest": {
+      "name": "GetCognitiveServicesTokenRequest",
+      "in": "body",
+      "description": "Gets a token for the cognitive services where translation queries can be sent to.",
+      "schema": {
+        "$ref": "#/definitions/GetCognitiveServicesTokenRequest"
+      }
+    },
     "GetContainerRegistryCredentialsRequest": {
       "name": "GetContainerRegistryCredentialsRequest",
       "in": "body",
@@ -3517,12 +5367,52 @@
         "$ref": "#/definitions/GetContainerRegistryCredentialsRequest"
       }
     },
+    "GetMatchmakingQueueRequest": {
+      "name": "GetMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Gets the current configuration for a queue.",
+      "schema": {
+        "$ref": "#/definitions/GetMatchmakingQueueRequest"
+      }
+    },
+    "GetMatchmakingTicketRequest": {
+      "name": "GetMatchmakingTicketRequest",
+      "in": "body",
+      "description": "The ticket includes the invited players, their attributes if they have joined,\r\n                the ticket status, the match Id when applicable, etc.\r\n                Only servers, the ticket creator and the invited players can get the ticket.",
+      "schema": {
+        "$ref": "#/definitions/GetMatchmakingTicketRequest"
+      }
+    },
+    "GetMatchRequest": {
+      "name": "GetMatchRequest",
+      "in": "body",
+      "description": "When matchmaking has successfully matched together a collection of\r\n                tickets, it produces a 'match' with an Id. The match contains all of\r\n                the players that were matched together, and their team assigments.\r\n\r\n                Only servers and ticket members can get the match.",
+      "schema": {
+        "$ref": "#/definitions/GetMatchRequest"
+      }
+    },
     "GetMultiplayerServerDetailsRequest": {
       "name": "GetMultiplayerServerDetailsRequest",
       "in": "body",
       "description": "Gets multiplayer server session details for a build in a specific region.",
       "schema": {
         "$ref": "#/definitions/GetMultiplayerServerDetailsRequest"
+      }
+    },
+    "GetMultiplayerServerLogsRequest": {
+      "name": "GetMultiplayerServerLogsRequest",
+      "in": "body",
+      "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+      "schema": {
+        "$ref": "#/definitions/GetMultiplayerServerLogsRequest"
+      }
+    },
+    "GetQueueStatisticsRequest": {
+      "name": "GetQueueStatisticsRequest",
+      "in": "body",
+      "description": "Returns the matchmaking statistics for a queue. These include the number of players matching\r\n                and the statistics related to the time to match statistics in seconds (average and percentiles).\r\n                Statistics are refreshed once every 5 minutes.\r\n\r\n                Servers can access all statistics no matter what the ClientStatisticsVisibility is configured to.\r\n                Clients can access statistics according to the ClientStatisticsVisibility.\r\n                Client requests are forbidden if all visibility fields are false.",
+      "schema": {
+        "$ref": "#/definitions/GetQueueStatisticsRequest"
       }
     },
     "GetRemoteLoginEndpointRequest": {
@@ -3539,6 +5429,14 @@
       "description": "Gets the status of whether a title is enabled for the multiplayer server feature. The enabled status can be Initializing, Enabled, and Disabled.",
       "schema": {
         "$ref": "#/definitions/GetTitleEnabledForMultiplayerServersStatusRequest"
+      }
+    },
+    "JoinMatchmakingTicketRequest": {
+      "name": "JoinMatchmakingTicketRequest",
+      "in": "body",
+      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking\r\n                attributes. Players can join a ticket if and only if their EntityKeys are\r\n                already listed in the ticket's Members list.\r\n\r\n                The matchmaking service automatically starts matching the ticket against\r\n                other matchmaking tickets once all players have joined the ticket.\r\n                It is not possible to join a ticket once it has started matching.",
+      "schema": {
+        "$ref": "#/definitions/JoinMatchmakingTicketRequest"
       }
     },
     "ListAssetSummariesRequest": {
@@ -3581,6 +5479,14 @@
         "$ref": "#/definitions/ListContainerImageTagsRequest"
       }
     },
+    "ListMatchmakingQueuesRequest": {
+      "name": "ListMatchmakingQueuesRequest",
+      "in": "body",
+      "description": "Gets a list of all the matchmaking queue configurations for the title.",
+      "schema": {
+        "$ref": "#/definitions/ListMatchmakingQueuesRequest"
+      }
+    },
     "ListMultiplayerServersRequest": {
       "name": "ListMultiplayerServersRequest",
       "in": "body",
@@ -3605,6 +5511,14 @@
         "$ref": "#/definitions/ListVirtualMachineSummariesRequest"
       }
     },
+    "RemoveMatchmakingQueueRequest": {
+      "name": "RemoveMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Deletes the configuration for a queue. This will permanently delete the \r\n                configuration and players will no longer be able to match in the queue.\r\n                All outstanding matchmaking tickets will be cancelled.",
+      "schema": {
+        "$ref": "#/definitions/RemoveMatchmakingQueueRequest"
+      }
+    },
     "RequestMultiplayerServerRequest": {
       "name": "RequestMultiplayerServerRequest",
       "in": "body",
@@ -3619,6 +5533,14 @@
       "description": "Gets new credentials to the container registry where game developers can upload custom container images to before creating a new build.",
       "schema": {
         "$ref": "#/definitions/RolloverContainerRegistryCredentialsRequest"
+      }
+    },
+    "SetMatchmakingQueueRequest": {
+      "name": "SetMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Use this API to create or update matchmaking queue configurations. The queue\r\n                configuration defines the matchmaking rules. The matchmaking service will match\r\n                tickets together according to the configured rules. Queue resources are not\r\n                spun up by calling this API. Queues are created when the first ticket is submitted.",
+      "schema": {
+        "$ref": "#/definitions/SetMatchmakingQueueRequest"
       }
     },
     "ShutdownMultiplayerServerRequest": {
@@ -3651,6 +5573,30 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "CancelMatchmakingTicketResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CancelMatchmakingTicketResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
       }
     },
     "CreateBuildWithCustomContainerResponse": {
@@ -3692,13 +5638,13 @@
             "RegionConfigurations": [
               {
                 "Region": "EastUs",
-                "Status": "Initializing",
+                "Status": "Initialized",
                 "MaxServers": 10,
                 "StandbyServers": 5
               },
               {
                 "Region": "WestUs",
-                "Status": "Succeeded",
+                "Status": "Deployed",
                 "MaxServers": 12,
                 "StandbyServers": 8
               },
@@ -3794,6 +5740,32 @@
               }
             ],
             "MultiplayerServerCountPerVm": 10
+          }
+        }
+      }
+    },
+    "CreateMatchmakingTicketResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateMatchmakingTicketResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c"
           }
         }
       }
@@ -3960,6 +5932,33 @@
         }
       }
     },
+    "GetCognitiveServicesTokenResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetCognitiveServicesTokenResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+            "ServiceEndpoint": "https://westus.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1"
+          }
+        }
+      }
+    },
     "GetContainerRegistryCredentialsResponse": {
       "description": "",
       "schema": {
@@ -3984,6 +5983,109 @@
             "DnsName": "registry.azurecr.io",
             "Username": "RegistryUser",
             "Password": "RegistryPassword"
+          }
+        }
+      }
+    },
+    "GetMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMatchmakingQueueResult"
+          }
+        }
+      }
+    },
+    "GetMatchmakingTicketResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMatchmakingTicketResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "TicketId": "1c4b0daa-150e-47ae-9923-d770c0f9b07c",
+            "QueueName": "custom123",
+            "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
+            "Created": "2016-08-23T12:33:14",
+            "Status": "MATCHED",
+            "GiveUpAfterSeconds": 100,
+            "MembersToMatchWith": [
+              {
+                "Id": "123123123",
+                "Type": "title_player_acount",
+                "TypeString": "title_player_acount"
+              }
+            ],
+            "Members": [],
+            "Creator": {
+              "Id": "123123123",
+              "Type": "title_player_acount",
+              "TypeString": "title_player_acount"
+            }
+          }
+        }
+      }
+    },
+    "GetMatchResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMatchResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "MatchId": "4e0c5fd7-80e9-4744-b0ce-061a7f067ff5",
+            "Members": [],
+            "RegionPreferences": [
+              "Region1",
+              "Region2"
+            ],
+            "ServerDetails": {
+              "IPV4Address": "10.250.24.54",
+              "Ports": [
+                {
+                  "Name": "PortName",
+                  "Num": 1243
+                }
+              ]
+            }
           }
         }
       }
@@ -4029,6 +6131,64 @@
                 "PlayerId": "10271352123739051532"
               }
             ]
+          }
+        }
+      }
+    },
+    "GetMultiplayerServerLogsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMultiplayerServerLogsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "LogDownloadUrl": "TheLogDownloadUrl"
+          }
+        }
+      }
+    },
+    "GetQueueStatisticsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetQueueStatisticsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "NumberOfPlayersMatching": 563,
+            "TimeToMatchStatisticsInSeconds": {
+              "Average": 2.2,
+              "Percentile50": 2.1,
+              "Percentile90": 2.21,
+              "Percentile99": 3
+            }
           }
         }
       }
@@ -4083,6 +6243,30 @@
           "data": {
             "Status": "Disabled"
           }
+        }
+      }
+    },
+    "JoinMatchmakingTicketResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/JoinMatchmakingTicketResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
         }
       }
     },
@@ -4234,6 +6418,25 @@
         }
       }
     },
+    "ListMatchmakingQueuesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ListMatchmakingQueuesResult"
+          }
+        }
+      }
+    },
     "ListMultiplayerServersResponse": {
       "description": "",
       "schema": {
@@ -4370,6 +6573,25 @@
         }
       }
     },
+    "RemoveMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RemoveMatchmakingQueueResult"
+          }
+        }
+      }
+    },
     "RequestMultiplayerServerResponse": {
       "description": "",
       "schema": {
@@ -4440,6 +6662,25 @@
             "DnsName": "registry.azurecr.io",
             "Username": "RegistryUser",
             "Password": "NewRegistryPassword"
+          }
+        }
+      }
+    },
+    "SetMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetMatchmakingQueueResult"
           }
         }
       }
@@ -6072,6 +8313,62 @@
     "EmailTemplateInvalidSyntax": {
       "id": 1406,
       "name": "EmailTemplateInvalidSyntax"
+    },
+    "EmailTemplateMissingCallback": {
+      "id": 1407,
+      "name": "EmailTemplateMissingCallback"
+    },
+    "PushNotificationTemplateInvalidPayload": {
+      "id": 1408,
+      "name": "PushNotificationTemplateInvalidPayload"
+    },
+    "InvalidLocalizedPushNotificationLanguage": {
+      "id": 1409,
+      "name": "InvalidLocalizedPushNotificationLanguage"
+    },
+    "MissingLocalizedPushNotificationMessage": {
+      "id": 1410,
+      "name": "MissingLocalizedPushNotificationMessage"
+    },
+    "PushNotificationTemplateMissingPlatformPayload": {
+      "id": 1411,
+      "name": "PushNotificationTemplateMissingPlatformPayload"
+    },
+    "PushNotificationTemplatePayloadContainsInvalidJson": {
+      "id": 1412,
+      "name": "PushNotificationTemplatePayloadContainsInvalidJson"
+    },
+    "PushNotificationTemplateContainsInvalidIosPayload": {
+      "id": 1413,
+      "name": "PushNotificationTemplateContainsInvalidIosPayload"
+    },
+    "PushNotificationTemplateContainsInvalidAndroidPayload": {
+      "id": 1414,
+      "name": "PushNotificationTemplateContainsInvalidAndroidPayload"
+    },
+    "PushNotificationTemplateIosPayloadMissingNotificationBody": {
+      "id": 1415,
+      "name": "PushNotificationTemplateIosPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody": {
+      "id": 1416,
+      "name": "PushNotificationTemplateAndroidPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateNotFound": {
+      "id": 1417,
+      "name": "PushNotificationTemplateNotFound"
+    },
+    "PushNotificationTemplateMissingDefaultVersion": {
+      "id": 1418,
+      "name": "PushNotificationTemplateMissingDefaultVersion"
+    },
+    "PushNotificationTemplateInvalidSyntax": {
+      "id": 1419,
+      "name": "PushNotificationTemplateInvalidSyntax"
+    },
+    "PushNotificationTemplateNoCustomPayloadForV1": {
+      "id": 1420,
+      "name": "PushNotificationTemplateNoCustomPayloadForV1"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

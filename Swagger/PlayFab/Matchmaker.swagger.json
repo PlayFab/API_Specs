@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "181212",
+    "version": "181218",
     "title": "PlayFab Matchmaker API",
     "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
     "termsOfService": "https://playfab.com/terms/",
@@ -58,6 +58,52 @@
           "Matchmaker/PlayerLeft",
           "Matchmaker/StartGame",
           "Matchmaker/UserInfo"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidParams"
+        ]
+      }
+    },
+    "/Matchmaker/DeregisterGame": {
+      "post": {
+        "operationId": "DeregisterGame",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Inform the matchmaker that a Game Server Instance is removed.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/matchmaker/method/DeregisterGame"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeregisterGameRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeregisterGameResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-deprecation": {
+          "ProposedAfter": "09/19/2016",
+          "DeprecatedAfter": "10/19/2016",
+          "ObsoleteAfter": "11/19/2016",
+          "ReplacedBy": "Server/DeregisterGame"
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Server/DeregisterGame",
+          "Server/RegisterGame"
         ],
         "x-ms-docs-errors": [
           "InvalidParams"
@@ -139,6 +185,54 @@
         ],
         "x-ms-docs-errors": [
           "InvalidParams"
+        ]
+      }
+    },
+    "/Matchmaker/RegisterGame": {
+      "post": {
+        "operationId": "RegisterGame",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Inform the matchmaker that a new Game Server Instance is added.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/matchmaker/method/RegisterGame"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RegisterGameRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RegisterGameResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-deprecation": {
+          "ProposedAfter": "09/19/2016",
+          "DeprecatedAfter": "10/19/2016",
+          "ObsoleteAfter": "11/19/2016",
+          "ReplacedBy": "Server/RegisterGame"
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Server/DeregisterGame",
+          "Server/RegisterGame"
+        ],
+        "x-ms-docs-errors": [
+          "BuildNotFound",
+          "InvalidParams",
+          "InvalidRequest"
         ]
       }
     },
@@ -256,7 +350,7 @@
       }
     },
     "AuthUserRequest": {
-      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\nAuthorizationTicket in this call.",
+      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\r\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\r\nAuthorizationTicket in this call.",
       "type": "object",
       "properties": {
         "AuthorizationTicket": {
@@ -290,6 +384,33 @@
         "Authorized": true,
         "PlayFabId": "23990802934"
       }
+    },
+    "DeregisterGameRequest": {
+      "type": "object",
+      "properties": {
+        "LobbyId": {
+          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "LobbyId"
+      ],
+      "example": {
+        "LobbyId": "8285313"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
+    },
+    "DeregisterGameResponse": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
     },
     "ItemInstance": {
       "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item instance (such as Tags, Description, or Custom Data that are set on the root catalog item), a call to GetCatalogItems is required. The Item ID of the instance can then be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set here from a call to UpdateUserInventoryItemCustomData.",
@@ -440,6 +561,96 @@
         "Australia"
       ]
     },
+    "RegisterGameRequest": {
+      "type": "object",
+      "properties": {
+        "Build": {
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "type": "string"
+        },
+        "GameMode": {
+          "description": "Game Mode the Game Server instance is running. Note that this must be defined in the Game Modes tab in the PlayFab Game Manager, along with the Build ID (the same Game Mode can be defined for multiple Build IDs).",
+          "type": "string"
+        },
+        "LobbyId": {
+          "description": "Previous lobby id if re-registering an existing game.",
+          "type": "string"
+        },
+        "Region": {
+          "$ref": "#/definitions/Region",
+          "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "ServerHost": {
+          "description": "IPV4 address of the Game Server Instance.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "7/30/2018",
+            "DeprecatedAfter": "9/30/2018",
+            "ObsoleteAfter": "10/30/2018",
+            "ReplacedBy": "ServerIPV4Address"
+          }
+        },
+        "ServerIPV4Address": {
+          "description": "IPV4 address of the game server instance.",
+          "type": "string"
+        },
+        "ServerIPV6Address": {
+          "description": "IPV6 address (if any) of the game server instance.",
+          "type": "string"
+        },
+        "ServerPort": {
+          "description": "Port number for communication with the Game Server Instance.",
+          "type": "string"
+        },
+        "ServerPublicDNSName": {
+          "description": "Public DNS name (if any) of the server",
+          "type": "string"
+        },
+        "Tags": {
+          "description": "Tags for the Game Server Instance",
+          "type": "object"
+        }
+      },
+      "required": [
+        "ServerPort",
+        "Build",
+        "Region",
+        "GameMode"
+      ],
+      "example": {
+        "ServerHost": "118.129.31.244",
+        "ServerPort": "9984",
+        "Build": "11_034234.13",
+        "Region": "USEast",
+        "GameMode": "FreeForAll",
+        "Tags": {
+          "level_cap": "high",
+          "no_smoking": "1"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
+    },
+    "RegisterGameResponse": {
+      "type": "object",
+      "properties": {
+        "LobbyId": {
+          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "LobbyId": "8285313"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
+    },
     "StartGameRequest": {
       "type": "object",
       "properties": {
@@ -485,6 +696,16 @@
         "GameID": {
           "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
           "type": "string"
+        },
+        "ServerHostname": {
+          "description": "IPV4 address of the new Game Server Instance.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "7/30/2018",
+            "DeprecatedAfter": "9/30/2018",
+            "ObsoleteAfter": "10/30/2018",
+            "ReplacedBy": "ServerIPV4Address"
+          }
         },
         "ServerIPV4Address": {
           "description": "IPV4 address of the server",
@@ -650,9 +871,16 @@
     "AuthUserRequest": {
       "name": "AuthUserRequest",
       "in": "body",
-      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\nAuthorizationTicket in this call.",
+      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\r\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\r\nAuthorizationTicket in this call.",
       "schema": {
         "$ref": "#/definitions/AuthUserRequest"
+      }
+    },
+    "DeregisterGameRequest": {
+      "name": "DeregisterGameRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeregisterGameRequest"
       }
     },
     "PlayerJoinedRequest": {
@@ -667,6 +895,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/PlayerLeftRequest"
+      }
+    },
+    "RegisterGameRequest": {
+      "name": "RegisterGameRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/RegisterGameRequest"
       }
     },
     "StartGameRequest": {
@@ -718,6 +953,25 @@
         }
       }
     },
+    "DeregisterGameResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeregisterGameResponse"
+          }
+        }
+      }
+    },
     "PlayerJoinedResponse": {
       "description": "",
       "schema": {
@@ -752,6 +1006,32 @@
           },
           "data": {
             "$ref": "#/definitions/PlayerLeftResponse"
+          }
+        }
+      }
+    },
+    "RegisterGameResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RegisterGameResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "LobbyId": "8285313"
           }
         }
       }
@@ -2460,6 +2740,62 @@
     "EmailTemplateInvalidSyntax": {
       "id": 1406,
       "name": "EmailTemplateInvalidSyntax"
+    },
+    "EmailTemplateMissingCallback": {
+      "id": 1407,
+      "name": "EmailTemplateMissingCallback"
+    },
+    "PushNotificationTemplateInvalidPayload": {
+      "id": 1408,
+      "name": "PushNotificationTemplateInvalidPayload"
+    },
+    "InvalidLocalizedPushNotificationLanguage": {
+      "id": 1409,
+      "name": "InvalidLocalizedPushNotificationLanguage"
+    },
+    "MissingLocalizedPushNotificationMessage": {
+      "id": 1410,
+      "name": "MissingLocalizedPushNotificationMessage"
+    },
+    "PushNotificationTemplateMissingPlatformPayload": {
+      "id": 1411,
+      "name": "PushNotificationTemplateMissingPlatformPayload"
+    },
+    "PushNotificationTemplatePayloadContainsInvalidJson": {
+      "id": 1412,
+      "name": "PushNotificationTemplatePayloadContainsInvalidJson"
+    },
+    "PushNotificationTemplateContainsInvalidIosPayload": {
+      "id": 1413,
+      "name": "PushNotificationTemplateContainsInvalidIosPayload"
+    },
+    "PushNotificationTemplateContainsInvalidAndroidPayload": {
+      "id": 1414,
+      "name": "PushNotificationTemplateContainsInvalidAndroidPayload"
+    },
+    "PushNotificationTemplateIosPayloadMissingNotificationBody": {
+      "id": 1415,
+      "name": "PushNotificationTemplateIosPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody": {
+      "id": 1416,
+      "name": "PushNotificationTemplateAndroidPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateNotFound": {
+      "id": 1417,
+      "name": "PushNotificationTemplateNotFound"
+    },
+    "PushNotificationTemplateMissingDefaultVersion": {
+      "id": 1418,
+      "name": "PushNotificationTemplateMissingDefaultVersion"
+    },
+    "PushNotificationTemplateInvalidSyntax": {
+      "id": 1419,
+      "name": "PushNotificationTemplateInvalidSyntax"
+    },
+    "PushNotificationTemplateNoCustomPayloadForV1": {
+      "id": 1420,
+      "name": "PushNotificationTemplateNoCustomPayloadForV1"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
