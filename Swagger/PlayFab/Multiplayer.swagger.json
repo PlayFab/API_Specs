@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "181218",
+    "version": "190123",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1867,7 +1867,7 @@
       "type": "object",
       "properties": {
         "FileName": {
-          "description": "The asset's file name. This must be a filename with the .zip, .tar, or .tar.gz extension.",
+          "description": "The asset's file name.",
           "type": "string"
         },
         "MountPath": {
@@ -1910,7 +1910,9 @@
         "SouthCentralUs",
         "SoutheastAsia",
         "WestEurope",
-        "WestUs"
+        "WestUs",
+        "ChinaEast2",
+        "ChinaNorth2"
       ]
     },
     "AzureVmSize": {
@@ -1943,6 +1945,12 @@
     "BuildRegion": {
       "type": "object",
       "properties": {
+        "CurrentServerStats": {
+          "$ref": "#/definitions/CurrentServerStats",
+          "description": "The current multiplayer server stats for the region.",
+          "type": "object",
+          "x-isclass": true
+        },
         "MaxServers": {
           "description": "The maximum number of multiplayer servers for the region.",
           "type": "number",
@@ -2799,12 +2807,43 @@
         "Beta"
       ]
     },
+    "CurrentServerStats": {
+      "type": "object",
+      "properties": {
+        "Active": {
+          "description": "The number of active multiplayer servers.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Propping": {
+          "description": "The number of multiplayer servers still downloading game resources (such as assets).",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StandingBy": {
+          "description": "The number of standingby multiplayer servers.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Total": {
+          "description": "The total number of multiplayer servers.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Active",
+        "StandingBy",
+        "Propping",
+        "Total"
+      ]
+    },
     "DeleteAssetRequest": {
       "description": "Deletes a multiplayer server game asset for a title.",
       "type": "object",
       "properties": {
         "FileName": {
-          "description": "The filename of the asset to delete. This must be a filename with the .zip, .tar, or .tar.gz extension.",
+          "description": "The filename of the asset to delete.",
           "type": "string"
         }
       },
@@ -2970,7 +3009,7 @@
       "type": "object",
       "properties": {
         "FileName": {
-          "description": "The asset's file name to get the upload URL for. This must be a filename with the .zip, .tar, or .tar.gz extension.",
+          "description": "The asset's file name to get the upload URL for.",
           "type": "string"
         }
       },
@@ -2989,7 +3028,7 @@
           "type": "string"
         },
         "FileName": {
-          "description": "The asset's file name to get the upload URL for. This must be a filename will be a file with the .zip, .tar, or .tar.gz extension.",
+          "description": "The asset's file name to get the upload URL for.",
           "type": "string"
         }
       },
@@ -3124,19 +3163,33 @@
             "Region": "EastUs",
             "Status": "Initializing",
             "MaxServers": 10,
-            "StandbyServers": 5
+            "StandbyServers": 5,
+            "CurrentServerStats": {
+              "Propping": 5,
+              "Total": 5
+            }
           },
           {
             "Region": "WestUs",
             "Status": "Succeeded",
             "MaxServers": 12,
-            "StandbyServers": 8
+            "StandbyServers": 8,
+            "CurrentServerStats": {
+              "Active": 1,
+              "StandingBy": 7,
+              "Propping": 1,
+              "Total": 9
+            }
           },
           {
             "Region": "NorthEurope",
             "Status": "Unhealthy",
             "MaxServers": 7,
-            "StandbyServers": 3
+            "StandbyServers": 3,
+            "CurrentServerStats": {
+              "Propping": 3,
+              "Total": 3
+            }
           }
         ],
         "GameAssetReferences": [
@@ -3152,7 +3205,7 @@
           }
         ],
         "StartMultiplayerServerCommand": "C:\\Assets\\gameserver.exe -startserver",
-        "MultiplayerServerCountPerVm": 10
+        "MultiplayerServerCountPerVm": 1
       }
     },
     "GetCognitiveServicesTokenRequest": {
@@ -5899,19 +5952,33 @@
                 "Region": "EastUs",
                 "Status": "Initializing",
                 "MaxServers": 10,
-                "StandbyServers": 5
+                "StandbyServers": 5,
+                "CurrentServerStats": {
+                  "Propping": 5,
+                  "Total": 5
+                }
               },
               {
                 "Region": "WestUs",
                 "Status": "Succeeded",
                 "MaxServers": 12,
-                "StandbyServers": 8
+                "StandbyServers": 8,
+                "CurrentServerStats": {
+                  "Active": 1,
+                  "StandingBy": 7,
+                  "Propping": 1,
+                  "Total": 9
+                }
               },
               {
                 "Region": "NorthEurope",
                 "Status": "Unhealthy",
                 "MaxServers": 7,
-                "StandbyServers": 3
+                "StandbyServers": 3,
+                "CurrentServerStats": {
+                  "Propping": 3,
+                  "Total": 3
+                }
               }
             ],
             "GameAssetReferences": [
@@ -5927,7 +5994,7 @@
               }
             ],
             "StartMultiplayerServerCommand": "C:\\Assets\\gameserver.exe -startserver",
-            "MultiplayerServerCountPerVm": 10
+            "MultiplayerServerCountPerVm": 1
           }
         }
       }
@@ -8369,6 +8436,10 @@
     "PushNotificationTemplateNoCustomPayloadForV1": {
       "id": 1420,
       "name": "PushNotificationTemplateNoCustomPayloadForV1"
+    },
+    "NoLeaderboardForStatistic": {
+      "id": 1421,
+      "name": "NoLeaderboardForStatistic"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
