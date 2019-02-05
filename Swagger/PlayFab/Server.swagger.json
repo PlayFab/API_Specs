@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190204",
+    "version": "190123",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -1667,40 +1667,6 @@
         "x-responseDetails": "For Nintendo Switch Device identifiers which have not been linked to PlayFab accounts, null will be returned.",
         "x-ms-docs-errors": [
           "InvalidPublisherId"
-        ]
-      }
-    },
-    "/Server/GetPlayFabIDsFromPSNAccountIDs": {
-      "post": {
-        "operationId": "GetPlayFabIDsFromPSNAccountIDs",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Retrieves the unique PlayFab identifiers for the given set of PlayStation Network identifiers.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/server/method/GetPlayFabIDsFromPSNAccountIDs"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetPlayFabIDsFromPSNAccountIDsRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetPlayFabIDsFromPSNAccountIDsResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-responseDetails": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
-        "x-ms-docs-errors": [
-          "AccountNotFound"
         ]
       }
     },
@@ -3561,7 +3527,6 @@
         ],
         "x-ms-docs-errors": [
           "PushNotEnabledForAccount",
-          "PushNotificationTemplateNotFound",
           "PushServiceError"
         ]
       }
@@ -3996,7 +3961,6 @@
           "ContainerNotOwned",
           "InvalidContainerItem",
           "InvalidItemIdInTable",
-          "InvalidItemProperties",
           "KeyNotOwned"
         ]
       }
@@ -6492,13 +6456,8 @@
       "type": "object",
       "properties": {
         "CurrentMatchmakerLobbyId": {
-          "description": "This field is not populated.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "01/28/2019",
-            "DeprecatedAfter": "03/01/2019",
-            "ObsoleteAfter": "04/01/2019"
-          }
+          "description": "Unique lobby identifier of the Game Server Instance to which this player is currently connected.",
+          "type": "string"
         },
         "FacebookInfo": {
           "$ref": "#/definitions/UserFacebookInfo",
@@ -7004,11 +6963,6 @@
         "PushNotificationTemplateInvalidSyntax",
         "PushNotificationTemplateNoCustomPayloadForV1",
         "NoLeaderboardForStatistic",
-        "TitleNewsMissingDefaultLanguage",
-        "TitleNewsNotFound",
-        "TitleNewsDuplicateLanguage",
-        "TitleNewsMissingTitleOrBody",
-        "TitleNewsInvalidLanguage",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingCreateRequestMissing",
@@ -7046,10 +7000,7 @@
         "MatchmakingNotEnabled",
         "MatchmakingGetStatisticsIdentityInvalid",
         "MatchmakingStatisticsIdMissing",
-        "CannotEnableMultiplayerServersForTitle",
-        "TitleConfigNotFound",
-        "TitleConfigUpdateConflict",
-        "TitleConfigSerializationError"
+        "CannotEnableMultiplayerServersForTitle"
       ]
     },
     "GetActionGroupResult": {
@@ -8939,58 +8890,6 @@
         ]
       }
     },
-    "GetPlayFabIDsFromPSNAccountIDsRequest": {
-      "type": "object",
-      "properties": {
-        "IssuerId": {
-          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "PSNAccountIDs": {
-          "description": "Array of unique PlayStation Network identifiers for which the title needs to get PlayFab identifiers.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        }
-      },
-      "required": [
-        "PSNAccountIDs"
-      ],
-      "example": {
-        "PSNAccountIDs": [
-          "857498576495",
-          "759374651209"
-        ]
-      }
-    },
-    "GetPlayFabIDsFromPSNAccountIDsResult": {
-      "description": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
-      "type": "object",
-      "properties": {
-        "Data": {
-          "description": "Mapping of PlayStation Network identifiers to PlayFab identifiers.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PSNAccountPlayFabIdPair"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Data": [
-          {
-            "PSNAccountId": "857498576495",
-            "PlayFabId": "5a446c83645201"
-          },
-          {
-            "PSNAccountId": "759374651209",
-            "PlayFabId": "6345cd25a6c7cc"
-          }
-        ]
-      }
-    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "type": "object",
       "properties": {
@@ -9406,7 +9305,7 @@
       "type": "object",
       "properties": {
         "News": {
-          "description": "Array of localized news items.",
+          "description": "Array of news items.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/TitleNewsItem"
@@ -11306,19 +11205,6 @@
         "ActivationTime": "2015-12-05T10:02:01"
       }
     },
-    "PSNAccountPlayFabIdPair": {
-      "type": "object",
-      "properties": {
-        "PlayFabId": {
-          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation Network identifier.",
-          "type": "string"
-        },
-        "PSNAccountId": {
-          "description": "Unique PlayStation Network identifier for a user.",
-          "type": "string"
-        }
-      }
-    },
     "PushNotificationPackage": {
       "type": "object",
       "properties": {
@@ -12767,7 +12653,7 @@
       "type": "object",
       "properties": {
         "Body": {
-          "description": "News item body.",
+          "description": "News item text.",
           "type": "string"
         },
         "NewsId": {
@@ -12775,7 +12661,7 @@
           "type": "string"
         },
         "Timestamp": {
-          "description": "Date and time when the news item was posted.",
+          "description": "Date and time when the news items was posted.",
           "type": "string"
         },
         "Title": {
@@ -14377,13 +14263,6 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest"
-      }
-    },
-    "GetPlayFabIDsFromPSNAccountIDsRequest": {
-      "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/GetPlayFabIDsFromPSNAccountIDsRequest"
       }
     },
     "GetPlayFabIDsFromSteamIDsRequest": {
@@ -16403,41 +16282,6 @@
               },
               {
                 "NintendoSwitchDeviceId": "526f79204261747479",
-                "PlayFabId": "6345cd25a6c7cc"
-              }
-            ]
-          }
-        }
-      }
-    },
-    "GetPlayFabIDsFromPSNAccountIDsResult": {
-      "description": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetPlayFabIDsFromPSNAccountIDsResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "Data": [
-              {
-                "PSNAccountId": "857498576495",
-                "PlayFabId": "5a446c83645201"
-              },
-              {
-                "PSNAccountId": "759374651209",
                 "PlayFabId": "6345cd25a6c7cc"
               }
             ]
@@ -19888,26 +19732,6 @@
       "id": 1421,
       "name": "NoLeaderboardForStatistic"
     },
-    "TitleNewsMissingDefaultLanguage": {
-      "id": 1422,
-      "name": "TitleNewsMissingDefaultLanguage"
-    },
-    "TitleNewsNotFound": {
-      "id": 1423,
-      "name": "TitleNewsNotFound"
-    },
-    "TitleNewsDuplicateLanguage": {
-      "id": 1424,
-      "name": "TitleNewsDuplicateLanguage"
-    },
-    "TitleNewsMissingTitleOrBody": {
-      "id": 1425,
-      "name": "TitleNewsMissingTitleOrBody"
-    },
-    "TitleNewsInvalidLanguage": {
-      "id": 1426,
-      "name": "TitleNewsInvalidLanguage"
-    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -20059,18 +19883,6 @@
     "CannotEnableMultiplayerServersForTitle": {
       "id": 2038,
       "name": "CannotEnableMultiplayerServersForTitle"
-    },
-    "TitleConfigNotFound": {
-      "id": 3001,
-      "name": "TitleConfigNotFound"
-    },
-    "TitleConfigUpdateConflict": {
-      "id": 3002,
-      "name": "TitleConfigUpdateConflict"
-    },
-    "TitleConfigSerializationError": {
-      "id": 3003,
-      "name": "TitleConfigSerializationError"
     }
   }
 }

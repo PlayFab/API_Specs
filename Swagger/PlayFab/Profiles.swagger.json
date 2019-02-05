@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190204",
+    "version": "190123",
     "title": "PlayFab Profiles API",
     "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
     "termsOfService": "https://playfab.com/terms/",
@@ -133,19 +133,19 @@
         ]
       }
     },
-    "/Profile/SetDisplayName": {
+    "/Profile/SetFriendlyName": {
       "post": {
-        "operationId": "SetDisplayName",
+        "operationId": "SetFriendlyName",
         "tags": [
           "Account Management"
         ],
-        "description": "Update the display name of the entity",
+        "description": "Update the friendly name of the entity",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetDisplayName"
+          "url": "https://api.playfab.com/documentation/profiles/method/SetFriendlyName"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/SetDisplayNameRequest"
+            "$ref": "#/parameters/SetFriendlyNameRequest"
           }
         ],
         "security": [
@@ -155,13 +155,13 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/SetDisplayNameResponse"
+            "$ref": "#/responses/SetFriendlyNameResponse"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to or newer than the specified value",
+        "x-requestDetails": "Given an entity profile, will update its friendly name to the one passed in if the profile's version is equal to or newer than the specified value",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -444,10 +444,6 @@
     "EntityProfileBody": {
       "type": "object",
       "properties": {
-        "DisplayName": {
-          "description": "The display name of the entity. This field may serve different purposes for different entity types. i.e.: for a title player account it could represent the display name of the player, whereas on a character it could be character's name.",
-          "type": "string"
-        },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
           "description": "The entity id and type.",
@@ -463,6 +459,10 @@
           "description": "The files on this profile.",
           "type": "object",
           "x-isclass": true
+        },
+        "FriendlyName": {
+          "description": "The friendly name of the entity. This field may serve different purposes for different entity types. i.e.: for a title player account it could represent the display name of the player, whereas on a character it could be character's name.",
+          "type": "string"
         },
         "Language": {
           "description": "The language on this profile.",
@@ -679,62 +679,6 @@
         "None"
       ]
     },
-    "SetDisplayNameRequest": {
-      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to or newer than the specified value",
-      "type": "object",
-      "properties": {
-        "DisplayName": {
-          "description": "The new value to be set on Entity Profile's display name",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "ExpectedVersion": {
-          "description": "The expected version of a profile to perform this update on",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "DisplayName": "My new display name",
-        "ExpectedVersion": 123,
-        "Entity": {
-          "Id": "90901000",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "SetDisplayNameResponse": {
-      "type": "object",
-      "properties": {
-        "OperationResult": {
-          "$ref": "#/definitions/OperationTypes",
-          "description": "The type of operation that occured on the profile's display name",
-          "type": "string",
-          "x-isenum": true
-        },
-        "VersionNumber": {
-          "description": "The updated version of the profile after the display name update",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "VersionNumber": 42,
-        "OperationResult": "Updated"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
     "SetEntityProfilePolicyRequest": {
       "description": "This will set the access policy statements on the given entity profile. This is not additive, any existing statements will be replaced with the statements in this request.",
       "type": "object",
@@ -801,6 +745,62 @@
           }
         ]
       }
+    },
+    "SetFriendlyNameRequest": {
+      "description": "Given an entity profile, will update its friendly name to the one passed in if the profile's version is equal to or newer than the specified value",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpectedVersion": {
+          "description": "The expected version of a profile to perform this update on",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "FriendlyName": {
+          "description": "The new value to be set on Entity Profile's friendly name",
+          "type": "string"
+        }
+      },
+      "example": {
+        "FriendlyName": "My new display name",
+        "ExpectedVersion": 123,
+        "Entity": {
+          "Id": "90901000",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetFriendlyNameResponse": {
+      "type": "object",
+      "properties": {
+        "OperationResult": {
+          "$ref": "#/definitions/OperationTypes",
+          "description": "The type of operation that occured on the profile's friendly name",
+          "type": "string",
+          "x-isenum": true
+        },
+        "VersionNumber": {
+          "description": "The updated version of the profile after the friendly name update",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "example": {
+        "VersionNumber": 42,
+        "OperationResult": "Updated"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "SetGlobalPolicyRequest": {
       "description": "Updates the title access policy that is used before the profile's policy is inspected during a request. Policies are compiled and cached for several minutes so an update here may not be reflected in behavior for a short time.",
@@ -914,20 +914,20 @@
         "$ref": "#/definitions/GetGlobalPolicyRequest"
       }
     },
-    "SetDisplayNameRequest": {
-      "name": "SetDisplayNameRequest",
-      "in": "body",
-      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to or newer than the specified value",
-      "schema": {
-        "$ref": "#/definitions/SetDisplayNameRequest"
-      }
-    },
     "SetEntityProfilePolicyRequest": {
       "name": "SetEntityProfilePolicyRequest",
       "in": "body",
       "description": "This will set the access policy statements on the given entity profile. This is not additive, any existing statements will be replaced with the statements in this request.",
       "schema": {
         "$ref": "#/definitions/SetEntityProfilePolicyRequest"
+      }
+    },
+    "SetFriendlyNameRequest": {
+      "name": "SetFriendlyNameRequest",
+      "in": "body",
+      "description": "Given an entity profile, will update its friendly name to the one passed in if the profile's version is equal to or newer than the specified value",
+      "schema": {
+        "$ref": "#/definitions/SetFriendlyNameRequest"
       }
     },
     "SetGlobalPolicyRequest": {
@@ -1059,33 +1059,6 @@
         }
       }
     },
-    "SetDisplayNameResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/SetDisplayNameResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "VersionNumber": 42,
-            "OperationResult": "Updated"
-          }
-        }
-      }
-    },
     "SetEntityProfilePolicyResponse": {
       "description": "",
       "schema": {
@@ -1119,6 +1092,33 @@
                 "Comment": "An example policy"
               }
             ]
+          }
+        }
+      }
+    },
+    "SetFriendlyNameResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetFriendlyNameResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "VersionNumber": 42,
+            "OperationResult": "Updated"
           }
         }
       }
@@ -2855,26 +2855,6 @@
       "id": 1421,
       "name": "NoLeaderboardForStatistic"
     },
-    "TitleNewsMissingDefaultLanguage": {
-      "id": 1422,
-      "name": "TitleNewsMissingDefaultLanguage"
-    },
-    "TitleNewsNotFound": {
-      "id": 1423,
-      "name": "TitleNewsNotFound"
-    },
-    "TitleNewsDuplicateLanguage": {
-      "id": 1424,
-      "name": "TitleNewsDuplicateLanguage"
-    },
-    "TitleNewsMissingTitleOrBody": {
-      "id": 1425,
-      "name": "TitleNewsMissingTitleOrBody"
-    },
-    "TitleNewsInvalidLanguage": {
-      "id": 1426,
-      "name": "TitleNewsInvalidLanguage"
-    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -3026,18 +3006,6 @@
     "CannotEnableMultiplayerServersForTitle": {
       "id": 2038,
       "name": "CannotEnableMultiplayerServersForTitle"
-    },
-    "TitleConfigNotFound": {
-      "id": 3001,
-      "name": "TitleConfigNotFound"
-    },
-    "TitleConfigUpdateConflict": {
-      "id": 3002,
-      "name": "TitleConfigUpdateConflict"
-    },
-    "TitleConfigSerializationError": {
-      "id": 3003,
-      "name": "TitleConfigSerializationError"
     }
   }
 }
