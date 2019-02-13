@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190123",
+    "version": "190205",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -61,6 +61,42 @@
         ],
         "x-ms-docs-errors": [
           "TaskInstanceNotFound"
+        ]
+      }
+    },
+    "/Admin/AddLocalizedNews": {
+      "post": {
+        "operationId": "AddLocalizedNews",
+        "tags": [
+          "Title-Wide Data Management"
+        ],
+        "description": "Update news item to include localized version",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/admin/method/AddLocalizedNews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/AddLocalizedNewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddLocalizedNewsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InvalidParams",
+          "TitleNewsDuplicateLanguage",
+          "TitleNewsInvalidLanguage",
+          "TitleNewsNotFound"
         ]
       }
     },
@@ -1563,6 +1599,7 @@
         "x-ms-docs-errors": [
           "ExpiredContinuationToken",
           "InvalidContinuationToken",
+          "InvalidSearchTerm",
           "SegmentNotFound"
         ]
       }
@@ -3749,6 +3786,9 @@
         "x-seeAlso": [
           "Admin/CreatePlayerSharedSecret",
           "Admin/GetPlayerSharedSecrets"
+        ],
+        "x-ms-docs-errors": [
+          "SecretKeyNotFound"
         ]
       }
     },
@@ -4411,11 +4451,49 @@
         "AttributedAt"
       ]
     },
+    "AddLocalizedNewsRequest": {
+      "type": "object",
+      "properties": {
+        "Body": {
+          "description": "Localized body text of the news.",
+          "type": "string"
+        },
+        "Language": {
+          "description": "Language of the news item.",
+          "type": "string"
+        },
+        "NewsId": {
+          "description": "Unique id of the updated news item.",
+          "type": "string"
+        },
+        "Title": {
+          "description": "Localized title (headline) of the news item.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "NewsId",
+        "Language",
+        "Title",
+        "Body"
+      ],
+      "example": {
+        "NewsId": "74623b12-6c80-ee4b-7c3b-58e638aa62bd",
+        "Language": "en",
+        "Title": "News of the Day",
+        "Body": "<b>We have a new object to buy!</b>"
+      }
+    },
+    "AddLocalizedNewsResult": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
     "AddNewsRequest": {
       "type": "object",
       "properties": {
         "Body": {
-          "description": "Body text of the news",
+          "description": "Default body text of the news.",
           "type": "string"
         },
         "Timestamp": {
@@ -4423,7 +4501,7 @@
           "type": "string"
         },
         "Title": {
-          "description": "Title (headline) of the news item",
+          "description": "Default title (headline) of the news item.",
           "type": "string"
         }
       },
@@ -6719,6 +6797,12 @@
         "PushNotificationTemplateInvalidSyntax",
         "PushNotificationTemplateNoCustomPayloadForV1",
         "NoLeaderboardForStatistic",
+        "TitleNewsMissingDefaultLanguage",
+        "TitleNewsNotFound",
+        "TitleNewsDuplicateLanguage",
+        "TitleNewsMissingTitleOrBody",
+        "TitleNewsInvalidLanguage",
+        "EmailRecipientBlacklisted",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingCreateRequestMissing",
@@ -6756,7 +6840,10 @@
         "MatchmakingNotEnabled",
         "MatchmakingGetStatisticsIdentityInvalid",
         "MatchmakingStatisticsIdMissing",
-        "CannotEnableMultiplayerServersForTitle"
+        "CannotEnableMultiplayerServersForTitle",
+        "TitleConfigNotFound",
+        "TitleConfigUpdateConflict",
+        "TitleConfigSerializationError"
       ]
     },
     "GetActionGroupResult": {
@@ -12802,6 +12889,13 @@
         "$ref": "#/definitions/AbortTaskInstanceRequest"
       }
     },
+    "AddLocalizedNewsRequest": {
+      "name": "AddLocalizedNewsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/AddLocalizedNewsRequest"
+      }
+    },
     "AddNewsRequest": {
       "name": "AddNewsRequest",
       "in": "body",
@@ -13555,6 +13649,30 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "AddLocalizedNewsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/AddLocalizedNewsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
       }
     },
     "AddNewsResult": {
@@ -18147,6 +18265,30 @@
       "id": 1421,
       "name": "NoLeaderboardForStatistic"
     },
+    "TitleNewsMissingDefaultLanguage": {
+      "id": 1422,
+      "name": "TitleNewsMissingDefaultLanguage"
+    },
+    "TitleNewsNotFound": {
+      "id": 1423,
+      "name": "TitleNewsNotFound"
+    },
+    "TitleNewsDuplicateLanguage": {
+      "id": 1424,
+      "name": "TitleNewsDuplicateLanguage"
+    },
+    "TitleNewsMissingTitleOrBody": {
+      "id": 1425,
+      "name": "TitleNewsMissingTitleOrBody"
+    },
+    "TitleNewsInvalidLanguage": {
+      "id": 1426,
+      "name": "TitleNewsInvalidLanguage"
+    },
+    "EmailRecipientBlacklisted": {
+      "id": 1427,
+      "name": "EmailRecipientBlacklisted"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -18298,6 +18440,18 @@
     "CannotEnableMultiplayerServersForTitle": {
       "id": 2038,
       "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "TitleConfigNotFound": {
+      "id": 3001,
+      "name": "TitleConfigNotFound"
+    },
+    "TitleConfigUpdateConflict": {
+      "id": 3002,
+      "name": "TitleConfigUpdateConflict"
+    },
+    "TitleConfigSerializationError": {
+      "id": 3003,
+      "name": "TitleConfigSerializationError"
     }
   }
 }
