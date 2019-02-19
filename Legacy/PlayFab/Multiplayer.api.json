@@ -1,9 +1,10 @@
 {
   "name": "Multiplayer",
   "url": "/Multiplayer",
-  "description": "API methods for managing multiplayer servers.",
+  "description": "API methods for managing multiplayer servers. API methods for managing parties.",
   "apiDescriptionList": [
-    "API methods for managing multiplayer servers."
+    "API methods for managing multiplayer servers.",
+    "API methods for managing parties."
   ],
   "datatypes": {
     "AssetReference": {
@@ -1250,6 +1251,18 @@
         }
       ]
     },
+    "EnablePartiesForTitleRequest": {
+      "name": "EnablePartiesForTitleRequest",
+      "className": "EnablePartiesForTitleRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Enables the parties feature for a title.",
+      "isRequest": true,
+      "properties": []
+    },
     "EntityKey": {
       "name": "EntityKey",
       "className": "EntityKey",
@@ -1758,7 +1771,7 @@
         },
         {
           "name": "Status",
-          "description": "The current ticket status.",
+          "description": "The current ticket status. Possible values are: WaitingForPlayers, WaitingForMatch, WaitingForServer, Canceled and Matched.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2483,6 +2496,54 @@
         }
       ]
     },
+    "ListMatchmakingTicketsForPlayerRequest": {
+      "name": "ListMatchmakingTicketsForPlayerRequest",
+      "className": "ListMatchmakingTicketsForPlayerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "If the caller is a title, the EntityKey in the request is required.\r\n            If the caller is a player, then it is optional. If it is provided it must match the caller's entity.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity key for which to find the ticket Ids.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "QueueName",
+          "description": "The Id of the queue to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ListMatchmakingTicketsForPlayerResult": {
+      "name": "ListMatchmakingTicketsForPlayerResult",
+      "className": "ListMatchmakingTicketsForPlayerResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "TicketIds",
+          "description": "The list of ticket Ids the user is a member of.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "ListMultiplayerServersRequest": {
       "name": "ListMultiplayerServersRequest",
       "className": "ListMultiplayerServersRequest",
@@ -3183,6 +3244,122 @@
         }
       ]
     },
+    "RequestPartyRequest": {
+      "name": "RequestPartyRequest",
+      "className": "RequestPartyRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Requests a party session from a particular build in any of the given preferred regions.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "NetworkId",
+          "description": "A guid string network ID created track the party session over its life.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PreferredRegions",
+          "description": "The preferred regions to request a party session from. The party service will iterate through the regions in the specified order and allocate a party session from the first one that is available.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "AzureRegion",
+          "isenum": true,
+          "optional": false
+        }
+      ]
+    },
+    "RequestPartyResponse": {
+      "name": "RequestPartyResponse",
+      "className": "RequestPartyResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "ConnectedPlayers",
+          "description": "The connected players in the party.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ConnectedPlayer",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "FQDN",
+          "description": "The fully qualified domain name of the virtual machine that is hosting this party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IPV4Address",
+          "description": "The IPv4 address of the virtual machine that is hosting this party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LastStateTransitionTime",
+          "description": "The time (UTC) at which a change in the party state was observed.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "NetworkId",
+          "description": "The guid string network ID of the party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Ports",
+          "description": "The ports the party session uses.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Port",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Region",
+          "description": "The region the party session is located in.",
+          "jsontype": "String",
+          "actualtype": "AzureRegion",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "ServerId",
+          "description": "The string server ID of the party session generated by PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "State",
+          "description": "The state of the party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "VmId",
+          "description": "The virtual machine ID that the party session is located on.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "RolloverContainerRegistryCredentialsRequest": {
       "name": "RolloverContainerRegistryCredentialsRequest",
       "className": "RolloverContainerRegistryCredentialsRequest",
@@ -3518,7 +3695,8 @@
         "GetMatch",
         "GetMatchmakingTicket",
         "GetQueueStatistics",
-        "JoinMatchmakingTicket"
+        "JoinMatchmakingTicket",
+        "ListMatchmakingTicketsForPlayer"
       ]
     },
     {
@@ -3541,6 +3719,7 @@
         "DeleteCertificate",
         "DeleteRemoteUser",
         "EnableMultiplayerServersForTitle",
+        "EnablePartiesForTitle",
         "GetAssetUploadUrl",
         "GetBuild",
         "GetCognitiveServicesToken",
@@ -3559,6 +3738,7 @@
         "ListQosServers",
         "ListVirtualMachineSummaries",
         "RequestMultiplayerServer",
+        "RequestParty",
         "RolloverContainerRegistryCredentials",
         "ShutdownMultiplayerServer",
         "UpdateBuildRegions",
@@ -3584,8 +3764,8 @@
         "Beta"
       ],
       "errors": [
+        "MatchmakingCancelTicketPlayerIdentityMismatch",
         "MatchmakingCancelTicketServerIdentityInvalid",
-        "MatchmakingCancelTicketUserIdentityMismatch",
         "MatchmakingEntityInvalid",
         "MatchmakingQueueNameMissing",
         "MatchmakingTicketAlreadyCompleted",
@@ -3665,11 +3845,11 @@
         "Beta"
       ],
       "errors": [
-        "MatchmakingCreateRequestCreatorIdMissing",
-        "MatchmakingCreateRequestCreatorMissing",
-        "MatchmakingCreateRequestGiveUpAfterInvalid",
-        "MatchmakingCreateRequestMissing",
         "MatchmakingCreateTicketClientIdentityInvalid",
+        "MatchmakingCreateTicketCreatorIdMissing",
+        "MatchmakingCreateTicketCreatorMissing",
+        "MatchmakingCreateTicketGiveUpAfterInvalid",
+        "MatchmakingCreateTicketRequestMissing",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingPlayerIdentityMismatch",
@@ -3725,8 +3905,8 @@
         "Beta"
       ],
       "errors": [
-        "MatchmakingCreateRequestGiveUpAfterInvalid",
-        "MatchmakingCreateRequestUserListMissing",
+        "MatchmakingCreateTicketGiveUpAfterInvalid",
+        "MatchmakingCreateTicketMemberListMissing",
         "MatchmakingCreateTicketServerIdentityInvalid",
         "MatchmakingEntityInvalid",
         "MatchmakingMemberProfileInvalid",
@@ -3873,6 +4053,31 @@
         "MultiplayerServerForbidden",
         "MultiplayerServerInternalServerError",
         "MultiplayerServerUnauthorized"
+      ]
+    },
+    {
+      "name": "EnablePartiesForTitle",
+      "summary": "Enables the parties feature for a title.",
+      "requestDetails": "Enables the parties feature for a title.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/PartyController/EnablePartiesForTitle",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "EnablePartiesForTitleRequest",
+      "requestExample": "{}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "PartyBadRequest",
+        "PartyInternalServerError",
+        "PartyNotFound",
+        "PartyTooManyRequests",
+        "PartyUnauthorized",
+        "PartyUnavailable"
       ]
     },
     {
@@ -4047,14 +4252,14 @@
       "request": "GetMatchmakingTicketRequest",
       "requestExample": "{\r\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n  \"QueueName\": \"custom123\",\r\n  \"EscapeObject\": false\r\n}",
       "result": "GetMatchmakingTicketResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n    \"QueueName\": \"custom123\",\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Created\": \"2016-08-23T12:33:14Z\",\r\n    \"Status\": \"MATCHED\",\r\n    \"GiveUpAfterSeconds\": 100,\r\n    \"MembersToMatchWith\": [\r\n      {\r\n        \"Id\": \"123123123\",\r\n        \"Type\": \"title_player_acount\",\r\n        \"TypeString\": \"title_player_acount\"\r\n      }\r\n    ],\r\n    \"Members\": [],\r\n    \"Creator\": {\r\n      \"Id\": \"123123123\",\r\n      \"Type\": \"title_player_acount\",\r\n      \"TypeString\": \"title_player_acount\"\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n    \"QueueName\": \"custom123\",\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Created\": \"2016-08-23T12:33:14Z\",\r\n    \"Status\": \"MATCHED\",\r\n    \"GiveUpAfterSeconds\": 100,\r\n    \"MembersToMatchWith\": [\r\n      {\r\n        \"Id\": \"456456456\",\r\n        \"Type\": \"title_player_acount\",\r\n        \"TypeString\": \"title_player_acount\"\r\n      }\r\n    ],\r\n    \"Members\": [],\r\n    \"Creator\": {\r\n      \"Id\": \"123123123\",\r\n      \"Type\": \"title_player_acount\",\r\n      \"TypeString\": \"title_player_acount\"\r\n    }\r\n  }\r\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingGetMatchIdentityMismatch",
-        "MatchmakingGetTicketUserMismatch",
+        "MatchmakingGetTicketPlayerMismatch",
         "MatchmakingQueueNameMissing",
         "MatchmakingTicketIdIdMissing",
         "MatchmakingTicketIdMissing",
@@ -4140,7 +4345,6 @@
         "MatchmakingGetStatisticsIdentityInvalid",
         "MatchmakingQueueConfigNotFound",
         "MatchmakingQueueNameMissing",
-        "MatchmakingStatisticsIdMissing",
         "MatchmakingTitleIdMissing",
         "NotAuthorized"
       ]
@@ -4216,9 +4420,9 @@
       "errors": [
         "MatchmakingAlreadyJoinedTicket",
         "MatchmakingEntityInvalid",
-        "MatchmakingJoinRequestUserMissing",
+        "MatchmakingJoinTicketPlayerIdentityMismatch",
+        "MatchmakingJoinTicketPlayerMissing",
         "MatchmakingJoinTicketServerIdentityInvalid",
-        "MatchmakingJoinTicketUserIdentityMismatch",
         "MatchmakingMemberProfileInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingPlayerIdentityMismatch",
@@ -4419,6 +4623,30 @@
       ]
     },
     {
+      "name": "ListMatchmakingTicketsForPlayer",
+      "summary": "List all matchmaking ticket Ids the user is a member of.",
+      "requestDetails": "If the caller is a title, the EntityKey in the request is required. If the caller is a player, then it is optional. If it is provided it must match the caller's entity.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/ListMatchmakingTicketsForPlayer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ListMatchmakingTicketsForPlayerRequest",
+      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"123123123\",\r\n    \"Type\": \"title_player_acount\",\r\n    \"TypeString\": \"title_player_acount\"\r\n  },\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "ListMatchmakingTicketsForPlayerResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketIds\": [\r\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingEntityInvalid",
+        "MatchmakingListTicketsUnauthorized",
+        "MatchmakingPlayerIdMissing",
+        "MatchmakingQueueNameMissing",
+        "MatchmakingTitleIdMissing"
+      ]
+    },
+    {
       "name": "ListMultiplayerServers",
       "summary": "Lists multiplayer server sessions for a build.",
       "requestDetails": "Returns a list of multiplayer servers for a build in a specific region.",
@@ -4530,6 +4758,31 @@
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized",
         "MultiplayerServerUnavailable"
+      ]
+    },
+    {
+      "name": "RequestParty",
+      "summary": "Request a party session.",
+      "requestDetails": "Requests a party session from a particular build in any of the given preferred regions.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/PartyController/RequestParty",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "RequestPartyRequest",
+      "requestExample": "{\r\n  \"NetworkId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\r\n  \"PreferredRegions\": [\r\n    \"EastUs\",\r\n    \"WestUs\"\r\n  ]\r\n}",
+      "result": "RequestPartyResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"NetworkId\": \"12baef1e-e31e-2b59-2fef-ff1f38c03a8d\",\r\n    \"ServerId\": \"APartySession\",\r\n    \"VmId\": \"90c12b03-b882-2367-9a41-5a04b41f37d9\",\r\n    \"IPV4Address\": \"10.250.24.54\",\r\n    \"FQDN\": \"vm.azure.cloudapp.net\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"Region\": \"WestUs\",\r\n    \"State\": \"Active\",\r\n    \"ConnectedPlayers\": [\r\n      {\r\n        \"PlayerId\": \"52E4402DDE1E4C95\"\r\n      },\r\n      {\r\n        \"PlayerId\": \"7B82CAA355362FE8\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "PartyBadRequest",
+        "PartyInternalServerError",
+        "PartyNotFound",
+        "PartyTooManyRequests",
+        "PartyUnauthorized",
+        "PartyUnavailable"
       ]
     },
     {
@@ -6336,6 +6589,14 @@
       "id": 1427,
       "name": "EmailRecipientBlacklisted"
     },
+    "InvalidGameCenterAuthRequest": {
+      "id": 1428,
+      "name": "InvalidGameCenterAuthRequest"
+    },
+    "GameCenterAuthenticationFailed": {
+      "id": 1429,
+      "name": "GameCenterAuthenticationFailed"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6344,25 +6605,25 @@
       "id": 2002,
       "name": "MatchmakingPlayerAttributesInvalid"
     },
-    "MatchmakingCreateRequestMissing": {
+    "MatchmakingCreateTicketRequestMissing": {
       "id": 2003,
-      "name": "MatchmakingCreateRequestMissing"
+      "name": "MatchmakingCreateTicketRequestMissing"
     },
-    "MatchmakingCreateRequestCreatorMissing": {
+    "MatchmakingCreateTicketCreatorMissing": {
       "id": 2004,
-      "name": "MatchmakingCreateRequestCreatorMissing"
+      "name": "MatchmakingCreateTicketCreatorMissing"
     },
-    "MatchmakingCreateRequestCreatorIdMissing": {
+    "MatchmakingCreateTicketCreatorIdMissing": {
       "id": 2005,
-      "name": "MatchmakingCreateRequestCreatorIdMissing"
+      "name": "MatchmakingCreateTicketCreatorIdMissing"
     },
-    "MatchmakingCreateRequestUserListMissing": {
+    "MatchmakingCreateTicketMemberListMissing": {
       "id": 2006,
-      "name": "MatchmakingCreateRequestUserListMissing"
+      "name": "MatchmakingCreateTicketMemberListMissing"
     },
-    "MatchmakingCreateRequestGiveUpAfterInvalid": {
+    "MatchmakingCreateTicketGiveUpAfterInvalid": {
       "id": 2007,
-      "name": "MatchmakingCreateRequestGiveUpAfterInvalid"
+      "name": "MatchmakingCreateTicketGiveUpAfterInvalid"
     },
     "MatchmakingTicketIdMissing": {
       "id": 2008,
@@ -6392,9 +6653,9 @@
       "id": 2014,
       "name": "MatchmakingPlayerIdMissing"
     },
-    "MatchmakingJoinRequestUserMissing": {
+    "MatchmakingJoinTicketPlayerMissing": {
       "id": 2015,
-      "name": "MatchmakingJoinRequestUserMissing"
+      "name": "MatchmakingJoinTicketPlayerMissing"
     },
     "MatchmakingQueueConfigNotFound": {
       "id": 2016,
@@ -6416,25 +6677,25 @@
       "id": 2020,
       "name": "MatchmakingCreateTicketClientIdentityInvalid"
     },
-    "MatchmakingGetTicketUserMismatch": {
+    "MatchmakingGetTicketPlayerMismatch": {
       "id": 2021,
-      "name": "MatchmakingGetTicketUserMismatch"
+      "name": "MatchmakingGetTicketPlayerMismatch"
     },
     "MatchmakingJoinTicketServerIdentityInvalid": {
       "id": 2022,
       "name": "MatchmakingJoinTicketServerIdentityInvalid"
     },
-    "MatchmakingJoinTicketUserIdentityMismatch": {
+    "MatchmakingJoinTicketPlayerIdentityMismatch": {
       "id": 2023,
-      "name": "MatchmakingJoinTicketUserIdentityMismatch"
+      "name": "MatchmakingJoinTicketPlayerIdentityMismatch"
     },
     "MatchmakingCancelTicketServerIdentityInvalid": {
       "id": 2024,
       "name": "MatchmakingCancelTicketServerIdentityInvalid"
     },
-    "MatchmakingCancelTicketUserIdentityMismatch": {
+    "MatchmakingCancelTicketPlayerIdentityMismatch": {
       "id": 2025,
-      "name": "MatchmakingCancelTicketUserIdentityMismatch"
+      "name": "MatchmakingCancelTicketPlayerIdentityMismatch"
     },
     "MatchmakingGetMatchIdentityMismatch": {
       "id": 2026,
@@ -6452,9 +6713,9 @@
       "id": 2029,
       "name": "MatchmakingTicketAlreadyCompleted"
     },
-    "MatchmakingQueueNameInvalid": {
+    "MatchmakingClientTimeout": {
       "id": 2030,
-      "name": "MatchmakingQueueNameInvalid"
+      "name": "MatchmakingClientTimeout"
     },
     "MatchmakingQueueConfigInvalid": {
       "id": 2031,
@@ -6480,13 +6741,113 @@
       "id": 2036,
       "name": "MatchmakingGetStatisticsIdentityInvalid"
     },
-    "MatchmakingStatisticsIdMissing": {
+    "MatchmakingBucketOwnerNotFound": {
       "id": 2037,
-      "name": "MatchmakingStatisticsIdMissing"
+      "name": "MatchmakingBucketOwnerNotFound"
     },
     "CannotEnableMultiplayerServersForTitle": {
       "id": 2038,
       "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "MatchmakingCancelAllTicketsUnauthorized": {
+      "id": 2041,
+      "name": "MatchmakingCancelAllTicketsUnauthorized"
+    },
+    "MatchmakingListTicketsUnauthorized": {
+      "id": 2042,
+      "name": "MatchmakingListTicketsUnauthorized"
+    },
+    "MatchmakingPlayerAttributesTooLarge": {
+      "id": 2043,
+      "name": "MatchmakingPlayerAttributesTooLarge"
+    },
+    "MatchmakingNumberOfPlayersInTicketTooLarge": {
+      "id": 2044,
+      "name": "MatchmakingNumberOfPlayersInTicketTooLarge"
+    },
+    "MatchmakingMatchTotalAttributeIsNegative": {
+      "id": 2045,
+      "name": "MatchmakingMatchTotalAttributeIsNegative"
+    },
+    "MatchmakingAttributeTypeInvalid": {
+      "id": 2046,
+      "name": "MatchmakingAttributeTypeInvalid"
+    },
+    "MatchmakingMatchTotalAttributeTooLarge": {
+      "id": 2047,
+      "name": "MatchmakingMatchTotalAttributeTooLarge"
+    },
+    "MatchmakingMatchTotalAttributeSumTooLarge": {
+      "id": 2048,
+      "name": "MatchmakingMatchTotalAttributeSumTooLarge"
+    },
+    "MatchmakingTicketUnmatchable": {
+      "id": 2049,
+      "name": "MatchmakingTicketUnmatchable"
+    },
+    "MatchmakingCommonRegionMissing": {
+      "id": 2050,
+      "name": "MatchmakingCommonRegionMissing"
+    },
+    "MatchmakingLatencyMeasurementMissing": {
+      "id": 2051,
+      "name": "MatchmakingLatencyMeasurementMissing"
+    },
+    "MatchmakingStatisticsNotFound": {
+      "id": 2052,
+      "name": "MatchmakingStatisticsNotFound"
+    },
+    "MatchmakingPlayerHasNotJoinedTicket": {
+      "id": 2053,
+      "name": "MatchmakingPlayerHasNotJoinedTicket"
+    },
+    "CannotEnablePartiesForTitle": {
+      "id": 2054,
+      "name": "CannotEnablePartiesForTitle"
+    },
+    "PartyError": {
+      "id": 2055,
+      "name": "PartyError"
+    },
+    "PartyRequests": {
+      "id": 2056,
+      "name": "PartyRequests"
+    },
+    "PartyNoContent": {
+      "id": 2057,
+      "name": "PartyNoContent"
+    },
+    "PartyBadRequest": {
+      "id": 2058,
+      "name": "PartyBadRequest"
+    },
+    "PartyUnauthorized": {
+      "id": 2059,
+      "name": "PartyUnauthorized"
+    },
+    "PartyForbidden": {
+      "id": 2060,
+      "name": "PartyForbidden"
+    },
+    "PartyNotFound": {
+      "id": 2061,
+      "name": "PartyNotFound"
+    },
+    "PartyConflict": {
+      "id": 2062,
+      "name": "PartyConflict"
+    },
+    "PartyInternalServerError": {
+      "id": 2063,
+      "name": "PartyInternalServerError"
+    },
+    "PartyUnavailable": {
+      "id": 2064,
+      "name": "PartyUnavailable"
+    },
+    "PartyTooManyRequests": {
+      "id": 2065,
+      "name": "PartyTooManyRequests"
     },
     "TitleConfigNotFound": {
       "id": 3001,
@@ -6499,6 +6860,62 @@
     "TitleConfigSerializationError": {
       "id": 3003,
       "name": "TitleConfigSerializationError"
+    },
+    "CatalogEntityInvalid": {
+      "id": 4001,
+      "name": "CatalogEntityInvalid"
+    },
+    "CatalogTitleIdMissing": {
+      "id": 4002,
+      "name": "CatalogTitleIdMissing"
+    },
+    "CatalogPlayerIdMissing": {
+      "id": 4003,
+      "name": "CatalogPlayerIdMissing"
+    },
+    "CatalogClientIdentityInvalid": {
+      "id": 4004,
+      "name": "CatalogClientIdentityInvalid"
+    },
+    "CatalogOneOrMoreFilesInvalid": {
+      "id": 4005,
+      "name": "CatalogOneOrMoreFilesInvalid"
+    },
+    "CatalogItemMetadataInvalid": {
+      "id": 4006,
+      "name": "CatalogItemMetadataInvalid"
+    },
+    "CatalogItemIdInvalid": {
+      "id": 4007,
+      "name": "CatalogItemIdInvalid"
+    },
+    "CatalogSearchParameterInvalid": {
+      "id": 4008,
+      "name": "CatalogSearchParameterInvalid"
+    },
+    "CatalogFeatureDisabled": {
+      "id": 4009,
+      "name": "CatalogFeatureDisabled"
+    },
+    "CatalogConfigMissing": {
+      "id": 4100,
+      "name": "CatalogConfigMissing"
+    },
+    "CatalogConfigTooManyContentTypes": {
+      "id": 4101,
+      "name": "CatalogConfigTooManyContentTypes"
+    },
+    "CatalogConfigContentTypeTooLong": {
+      "id": 4102,
+      "name": "CatalogConfigContentTypeTooLong"
+    },
+    "CatalogConfigTooManyTags": {
+      "id": 4103,
+      "name": "CatalogConfigTooManyTags"
+    },
+    "CatalogConfigTagTooLong": {
+      "id": 4104,
+      "name": "CatalogConfigTagTooLong"
     }
   },
   "errorList": [
@@ -6920,13 +7337,15 @@
     "TitleNewsMissingTitleOrBody",
     "TitleNewsInvalidLanguage",
     "EmailRecipientBlacklisted",
+    "InvalidGameCenterAuthRequest",
+    "GameCenterAuthenticationFailed",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
-    "MatchmakingCreateRequestMissing",
-    "MatchmakingCreateRequestCreatorMissing",
-    "MatchmakingCreateRequestCreatorIdMissing",
-    "MatchmakingCreateRequestUserListMissing",
-    "MatchmakingCreateRequestGiveUpAfterInvalid",
+    "MatchmakingCreateTicketRequestMissing",
+    "MatchmakingCreateTicketCreatorMissing",
+    "MatchmakingCreateTicketCreatorIdMissing",
+    "MatchmakingCreateTicketMemberListMissing",
+    "MatchmakingCreateTicketGiveUpAfterInvalid",
     "MatchmakingTicketIdMissing",
     "MatchmakingMatchIdMissing",
     "MatchmakingMatchIdIdMissing",
@@ -6934,32 +7353,71 @@
     "MatchmakingTitleIdMissing",
     "MatchmakingTicketIdIdMissing",
     "MatchmakingPlayerIdMissing",
-    "MatchmakingJoinRequestUserMissing",
+    "MatchmakingJoinTicketPlayerMissing",
     "MatchmakingQueueConfigNotFound",
     "MatchmakingMatchNotFound",
     "MatchmakingTicketNotFound",
     "MatchmakingCreateTicketServerIdentityInvalid",
     "MatchmakingCreateTicketClientIdentityInvalid",
-    "MatchmakingGetTicketUserMismatch",
+    "MatchmakingGetTicketPlayerMismatch",
     "MatchmakingJoinTicketServerIdentityInvalid",
-    "MatchmakingJoinTicketUserIdentityMismatch",
+    "MatchmakingJoinTicketPlayerIdentityMismatch",
     "MatchmakingCancelTicketServerIdentityInvalid",
-    "MatchmakingCancelTicketUserIdentityMismatch",
+    "MatchmakingCancelTicketPlayerIdentityMismatch",
     "MatchmakingGetMatchIdentityMismatch",
     "MatchmakingPlayerIdentityMismatch",
     "MatchmakingAlreadyJoinedTicket",
     "MatchmakingTicketAlreadyCompleted",
-    "MatchmakingQueueNameInvalid",
+    "MatchmakingClientTimeout",
     "MatchmakingQueueConfigInvalid",
     "MatchmakingMemberProfileInvalid",
     "WriteAttemptedDuringExport",
     "NintendoSwitchDeviceIdNotLinked",
     "MatchmakingNotEnabled",
     "MatchmakingGetStatisticsIdentityInvalid",
-    "MatchmakingStatisticsIdMissing",
+    "MatchmakingBucketOwnerNotFound",
     "CannotEnableMultiplayerServersForTitle",
+    "MatchmakingCancelAllTicketsUnauthorized",
+    "MatchmakingListTicketsUnauthorized",
+    "MatchmakingPlayerAttributesTooLarge",
+    "MatchmakingNumberOfPlayersInTicketTooLarge",
+    "MatchmakingMatchTotalAttributeIsNegative",
+    "MatchmakingAttributeTypeInvalid",
+    "MatchmakingMatchTotalAttributeTooLarge",
+    "MatchmakingMatchTotalAttributeSumTooLarge",
+    "MatchmakingTicketUnmatchable",
+    "MatchmakingCommonRegionMissing",
+    "MatchmakingLatencyMeasurementMissing",
+    "MatchmakingStatisticsNotFound",
+    "MatchmakingPlayerHasNotJoinedTicket",
+    "CannotEnablePartiesForTitle",
+    "PartyError",
+    "PartyRequests",
+    "PartyNoContent",
+    "PartyBadRequest",
+    "PartyUnauthorized",
+    "PartyForbidden",
+    "PartyNotFound",
+    "PartyConflict",
+    "PartyInternalServerError",
+    "PartyUnavailable",
+    "PartyTooManyRequests",
     "TitleConfigNotFound",
     "TitleConfigUpdateConflict",
-    "TitleConfigSerializationError"
+    "TitleConfigSerializationError",
+    "CatalogEntityInvalid",
+    "CatalogTitleIdMissing",
+    "CatalogPlayerIdMissing",
+    "CatalogClientIdentityInvalid",
+    "CatalogOneOrMoreFilesInvalid",
+    "CatalogItemMetadataInvalid",
+    "CatalogItemIdInvalid",
+    "CatalogSearchParameterInvalid",
+    "CatalogFeatureDisabled",
+    "CatalogConfigMissing",
+    "CatalogConfigTooManyContentTypes",
+    "CatalogConfigContentTypeTooLong",
+    "CatalogConfigTooManyTags",
+    "CatalogConfigTagTooLong"
   ]
 }

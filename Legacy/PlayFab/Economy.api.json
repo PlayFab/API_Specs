@@ -1,17 +1,173 @@
 {
-  "name": "Data",
-  "url": "/Data",
-  "description": "Store arbitrary data associated with an entity. Objects are small (~1KB) JSON-compatible objects which are stored directly on the entity profile. Objects are made available for use in other PlayFab contexts, such as PlayStream events and CloudScript functions. Files can efficiently store data of any size or format. Both objects and files support a flexible permissions system to control read and write access by other entities.",
+  "name": "Economy",
+  "url": "/Economy",
+  "description": "API methods for managing the catalog. API methods for managing User Generated Content.",
   "apiDescriptionList": [
-    "Store arbitrary data associated with an entity. Objects are small (~1KB) JSON-compatible objects which are stored directly on the entity profile. Objects are made available for use in other PlayFab contexts, such as PlayStream events and CloudScript functions. Files can efficiently store data of any size or format. Both objects and files support a flexible permissions system to control read and write access by other entities."
+    "API methods for managing the catalog.",
+    "API methods for managing User Generated Content."
+  ],
+  "AnyInclusiveFlags": [
+    "Beta"
   ],
   "datatypes": {
-    "AbortFileUploadsRequest": {
-      "name": "AbortFileUploadsRequest",
-      "className": "AbortFileUploadsRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Aborts the pending upload of the requested files.",
+    "AccessPolicy": {
+      "name": "AccessPolicy",
+      "className": "AccessPolicy",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Closed"
+        },
+        {
+          "name": "Open"
+        }
+      ]
+    },
+    "CatalogItemMetadata": {
+      "name": "CatalogItemMetadata",
+      "className": "CatalogItemMetadata",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Contents",
+          "description": "The set of contents associated with this item.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Content",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ContentType",
+          "description": "The client-defined type of the item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CreationDate",
+          "description": "The date and time when this item was created.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "CreatorEntityKey",
+          "description": "The ID of the creator of this catalog item.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Description",
+          "description": "A dictionary of localized descriptions. Key is language code and localized string is the value. The neutral locale is required.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DisplayProperties",
+          "description": "Game specific properties for display purposes. This is an arbitrary JSON blob.",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        },
+        {
+          "name": "DisplayVersion",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ETag",
+          "description": "The current ETag value that can be used for optimistic concurrency in the If-None-Match header.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Id",
+          "description": "The unique ID of the catalog item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Images",
+          "description": "The images associated with this item. Images can be thumbnails or screenshots.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Image",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "IsHidden",
+          "description": "Indicates if the item is hidden",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "LastModifiedDate",
+          "description": "The date and time this item was last updated.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Platforms",
+          "description": "The platforms supported by this item.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StartDate",
+          "description": "The date of when the item will be available. If not provided then the product will appear immediately.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Tags",
+          "description": "The list of tags that are associated with this item.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Title",
+          "description": "A dictionary of localized titles. Key is language code and localized string is the value. The neutral locale is required.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "CatalogSearchRequest": {
+      "name": "CatalogSearchRequest",
+      "className": "CatalogSearchRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Only community items that have been published with the Publish Item API will be\r\n                returned by Search even for the creator. The creator should use the List Items API to\r\n                view all of their own items.",
       "isRequest": true,
       "properties": [
         {
@@ -20,55 +176,149 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": false
+          "optional": true
         },
         {
-          "name": "FileNames",
-          "description": "Names of the files to have their pending uploads aborted.",
-          "collection": "array",
+          "name": "Filter",
+          "description": "An OData filter used to refine the search query.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OrderBy",
+          "description": "An OData orderBy used to order the results of the search query.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Search",
+          "description": "The text to search for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Select",
+          "description": "An OData select query option used to augment the search results. If not defined, the default search result metadata will be returned.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Skip",
+          "description": "The number of results to skip.",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": false
         },
         {
-          "name": "ProfileVersion",
-          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
+          "name": "TitleId",
+          "description": "The ID of the title that this catalog item is associated with.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Top",
+          "description": "The number of results to retrieve.",
           "jsontype": "Number",
           "actualtype": "int32",
-          "optional": true
+          "optional": false
         }
       ]
     },
-    "AbortFileUploadsResponse": {
-      "name": "AbortFileUploadsResponse",
-      "className": "AbortFileUploadsResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
+    "CatalogSearchResult": {
+      "name": "CatalogSearchResult",
+      "className": "CatalogSearchResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity id and type.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
+          "name": "Count",
+          "description": "The total count of hits for the search query.",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         },
         {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
+          "name": "Items",
+          "description": "The paginated set of results for the search query.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
-    "DeleteFilesRequest": {
-      "name": "DeleteFilesRequest",
-      "className": "DeleteFilesRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Deletes the requested files from the entity's profile.",
+    "Content": {
+      "name": "Content",
+      "className": "Content",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MaxClientVersion",
+          "description": "The maximum client version that this content is compatible with.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MinClientVersion",
+          "description": "The minimum client version that this content is compatible with.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Tags",
+          "description": "The list of tags that are associated with this content.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Type",
+          "description": "The client-defined type of the content.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Url",
+          "description": "The Azure CDN URL for retrieval of the catalog item binary content.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "CreateDraftItemRequest": {
+      "name": "CreateDraftItemRequest",
+      "className": "CreateDraftItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
       "isRequest": true,
       "properties": [
         {
@@ -77,54 +327,135 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": false
+          "optional": true
         },
         {
-          "name": "FileNames",
-          "description": "Names of the files to be deleted.",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
-          "jsontype": "Number",
-          "actualtype": "int32",
+          "name": "Item",
+          "description": "Metadata describing the new catalog item to be created.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
           "optional": true
         }
       ]
     },
-    "DeleteFilesResponse": {
-      "name": "DeleteFilesResponse",
-      "className": "DeleteFilesResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
+    "CreateDraftItemResult": {
+      "name": "CreateDraftItemResult",
+      "className": "CreateDraftItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": [
         {
+          "name": "Item",
+          "description": "Updated metadata describing the catalog item just created.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "CreateUploadUrlsRequest": {
+      "name": "CreateUploadUrlsRequest",
+      "className": "CreateUploadUrlsRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST\r\n                API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs\r\n                returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "isRequest": true,
+      "properties": [
+        {
           "name": "Entity",
-          "description": "The entity id and type.",
+          "description": "The entity to perform this action on.",
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
           "optional": true
         },
         {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
+          "name": "Files",
+          "description": "Description of the files to be uploaded by the client.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UploadInfo",
+          "isclass": true,
+          "optional": true
         }
       ]
+    },
+    "CreateUploadUrlsResult": {
+      "name": "CreateUploadUrlsResult",
+      "className": "CreateUploadUrlsResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "UploadUrls",
+          "description": "Urls and metadata for the files to be uploaded by the client.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UploadUrlMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "DeleteItemRequest": {
+      "name": "DeleteItemRequest",
+      "className": "DeleteItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "ID of the catalog item to delete.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "DeleteItemResult": {
+      "name": "DeleteItemResult",
+      "className": "DeleteItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
     },
     "EntityKey": {
       "name": "EntityKey",
       "className": "EntityKey",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "properties": [
         {
@@ -156,12 +487,14 @@
         }
       ]
     },
-    "FinalizeFileUploadsRequest": {
-      "name": "FinalizeFileUploadsRequest",
-      "className": "FinalizeFileUploadsRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Finalizes the upload of the requested files. Verifies that the files have been successfully uploaded and moves the file pointers from pending to live.",
+    "GetConfigRequest": {
+      "name": "GetConfigRequest",
+      "className": "GetConfigRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isRequest": true,
       "properties": [
         {
@@ -170,100 +503,247 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetConfigResult": {
+      "name": "GetConfigResult",
+      "className": "GetConfigResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Config",
+          "jsontype": "Object",
+          "actualtype": "UserGeneratedContentConfig",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetDraftItemRequest": {
+      "name": "GetDraftItemRequest",
+      "className": "GetDraftItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "ID of the catalog item to retrieve from the working catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetDraftItemResult": {
+      "name": "GetDraftItemResult",
+      "className": "GetDraftItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Item",
+          "description": "Full metadata of the catalog item requested.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetDraftItemsRequest": {
+      "name": "GetDraftItemsRequest",
+      "className": "GetDraftItemsRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ContinuationToken",
+          "description": "An opaque token used to retrieve the next page of items created by the caller, if any are available. Should be null on initial request.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Count",
+          "description": "Number of items to retrieve. Maximum page size is 10.",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": false
         },
         {
-          "name": "FileNames",
-          "description": "Names of the files to be finalized. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetDraftItemsResult": {
+      "name": "GetDraftItemsResult",
+      "className": "GetDraftItemsResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "ContinuationToken",
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Count",
+          "description": "The total number of items created by the caller.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Items",
+          "description": "A set of items created by the caller.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPublishedItemRequest": {
+      "name": "GetPublishedItemRequest",
+      "className": "GetPublishedItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "ID of the catalog item to retrieve from the working catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "GetPublishedItemResult": {
+      "name": "GetPublishedItemResult",
+      "className": "GetPublishedItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Item",
+          "description": "Full metadata of the catalog item requested.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "Image": {
+      "name": "Image",
+      "className": "Image",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Id",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Locales",
+          "description": "The optional list of locales that are supported by this image.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "FinalizeFileUploadsResponse": {
-      "name": "FinalizeFileUploadsResponse",
-      "className": "FinalizeFileUploadsResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "isResult": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity id and type.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
           "optional": true
         },
         {
-          "name": "Metadata",
-          "description": "Collection of metadata for the entity's files",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "GetFileMetadata",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        }
-      ]
-    },
-    "GetFileMetadata": {
-      "name": "GetFileMetadata",
-      "className": "GetFileMetadata",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "properties": [
-        {
-          "name": "Checksum",
-          "description": "Checksum value for the file",
+          "name": "Tag",
+          "description": "The client-defined tag associated with this image.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
-          "name": "DownloadUrl",
-          "description": "Download URL where the file can be retrieved",
+          "name": "Type",
+          "description": "The client-defined type of this image.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
-          "name": "FileName",
-          "description": "Name of the file",
+          "name": "Url",
+          "description": "The URL for retrieval of the image.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
-        },
-        {
-          "name": "LastModified",
-          "description": "Last UTC time the file was modified",
-          "jsontype": "String",
-          "actualtype": "DateTime",
-          "optional": false
-        },
-        {
-          "name": "Size",
-          "description": "Storage service's reported byte count",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
         }
       ]
     },
-    "GetFilesRequest": {
-      "name": "GetFilesRequest",
-      "className": "GetFilesRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing. ",
+    "PublishItemRequest": {
+      "name": "PublishItemRequest",
+      "className": "PublishItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "The call kicks off a workflow to publish the item to the public catalog.\r\n                The Publish Status API should be used to monitor the publish job.",
       "isRequest": true,
       "properties": [
         {
@@ -272,311 +752,70 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "ETag",
+          "description": "ETag of the catalog item to published from the working catalog to the public catalog. Used for optimistic concurrency. If the provided ETag does not match the ETag in the current working catalog, the request will be reject. If not provided, the current version of the document in the working catalog will be published.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ItemId",
+          "description": "ID of the catalog item to publish from the working catalog to the public catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
-    "GetFilesResponse": {
-      "name": "GetFilesResponse",
-      "className": "GetFilesResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
+    "PublishItemResult": {
+      "name": "PublishItemResult",
+      "className": "PublishItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity id and type.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "Metadata",
-          "description": "Collection of metadata for the entity's files",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "GetFileMetadata",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        }
-      ]
+      "properties": []
     },
-    "GetObjectsRequest": {
-      "name": "GetObjectsRequest",
-      "className": "GetObjectsRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Gets JSON objects from an entity profile and returns it. ",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        },
-        {
-          "name": "EscapeObject",
-          "description": "Determines whether the object will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON object.",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        }
-      ]
-    },
-    "GetObjectsResponse": {
-      "name": "GetObjectsResponse",
-      "className": "GetObjectsResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "isResult": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity id and type.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "Objects",
-          "description": "Requested objects that the calling entity has access to",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "ObjectResult",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        }
-      ]
-    },
-    "InitiateFileUploadMetadata": {
-      "name": "InitiateFileUploadMetadata",
-      "className": "InitiateFileUploadMetadata",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "properties": [
-        {
-          "name": "FileName",
-          "description": "Name of the file.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "UploadUrl",
-          "description": "Location the data should be sent to via an HTTP PUT operation.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "InitiateFileUploadsRequest": {
-      "name": "InitiateFileUploadsRequest",
-      "className": "InitiateFileUploadsRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Returns URLs that may be used to upload the files for a profile 5 minutes. After using the upload calls FinalizeFileUploads must be called to move the file status from pending to live.",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        },
-        {
-          "name": "FileNames",
-          "description": "Names of the files to be set. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        }
-      ]
-    },
-    "InitiateFileUploadsResponse": {
-      "name": "InitiateFileUploadsResponse",
-      "className": "InitiateFileUploadsResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "isResult": true,
-      "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity id and type.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "UploadDetails",
-          "description": "Collection of file names and upload urls",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "InitiateFileUploadMetadata",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "ObjectResult": {
-      "name": "ObjectResult",
-      "className": "ObjectResult",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "properties": [
-        {
-          "name": "DataObject",
-          "description": "Un-escaped JSON object, if EscapeObject false or default.",
-          "jsontype": "Object",
-          "actualtype": "object",
-          "optional": true
-        },
-        {
-          "name": "EscapedDataObject",
-          "description": "Escaped string JSON body of the object, if EscapeObject is true.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ObjectName",
-          "description": "Name of the object. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "OperationTypes": {
-      "name": "OperationTypes",
-      "className": "OperationTypes",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
+    "PublishResult": {
+      "name": "PublishResult",
+      "className": "PublishResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isenum": true,
       "enumvalues": [
         {
-          "name": "Created"
+          "name": "Unknown"
         },
         {
-          "name": "Updated"
+          "name": "Pending"
         },
         {
-          "name": "Deleted"
+          "name": "Succeeded"
         },
         {
-          "name": "None"
+          "name": "Failed"
+        },
+        {
+          "name": "Canceled"
         }
       ]
     },
-    "SetObject": {
-      "name": "SetObject",
-      "className": "SetObject",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "properties": [
-        {
-          "name": "DataObject",
-          "description": "Body of the object to be saved. If empty and DeleteObject is true object will be deleted if it exists, or no operation will occur if it does not exist. Only one of Object or EscapedDataObject fields may be used.",
-          "jsontype": "Object",
-          "actualtype": "object",
-          "optional": true
-        },
-        {
-          "name": "DeleteObject",
-          "description": "Flag to indicate that this object should be deleted. Both DataObject and EscapedDataObject must not be set as well.",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": true
-        },
-        {
-          "name": "EscapedDataObject",
-          "description": "Body of the object to be saved as an escaped JSON string. If empty and DeleteObject is true object will be deleted if it exists, or no operation will occur if it does not exist. Only one of DataObject or EscapedDataObject fields may be used.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ObjectName",
-          "description": "Name of object. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        }
-      ]
-    },
-    "SetObjectInfo": {
-      "name": "SetObjectInfo",
-      "className": "SetObjectInfo",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "properties": [
-        {
-          "name": "ObjectName",
-          "description": "Name of the object",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "OperationReason",
-          "description": "Optional reason to explain why the operation was the result that it was.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "SetResult",
-          "description": "Indicates which operation was completed, either Created, Updated, Deleted or None.",
-          "jsontype": "String",
-          "actualtype": "OperationTypes",
-          "isenum": true,
-          "optional": true
-        }
-      ]
-    },
-    "SetObjectsRequest": {
-      "name": "SetObjectsRequest",
-      "className": "SetObjectsRequest",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "description": "Sets JSON objects on the requested entity profile. May include a version number to be used to perform optimistic concurrency operations during update. If the current version differs from the version in the request the request will be ignored. If no version is set on the request then the value will always be updated if the values differ. Using the version value does not guarantee a write though, ConcurrentEditError may still occur if multiple clients are attempting to update the same profile. ",
+    "PublishStatusRequest": {
+      "name": "PublishStatusRequest",
+      "className": "PublishStatusRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isRequest": true,
       "properties": [
         {
@@ -585,47 +824,218 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": false
-        },
-        {
-          "name": "ExpectedProfileVersion",
-          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the object set will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
-          "jsontype": "Number",
-          "actualtype": "int32",
           "optional": true
         },
         {
-          "name": "Objects",
-          "description": "Collection of objects to set on the profile.",
-          "collection": "array",
+          "name": "ItemId",
+          "description": "ID of the catalog item to publish from the working catalog to the public catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "PublishStatusResult": {
+      "name": "PublishStatusResult",
+      "className": "PublishStatusResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Result",
+          "description": "High level state of the publish.",
+          "jsontype": "String",
+          "actualtype": "PublishResult",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "StatusMessage",
+          "description": "Descriptive message about the current status of the publish.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SetConfigRequest": {
+      "name": "SetConfigRequest",
+      "className": "SetConfigRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Config",
           "jsontype": "Object",
-          "actualtype": "SetObject",
+          "actualtype": "UserGeneratedContentConfig",
           "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "SetConfigResult": {
+      "name": "SetConfigResult",
+      "className": "SetConfigResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
+    "UpdateDraftItemRequest": {
+      "name": "UpdateDraftItemRequest",
+      "className": "UpdateDraftItemRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Item",
+          "description": "Updated metadata describing the catalog item to be updated.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UpdateDraftItemResult": {
+      "name": "UpdateDraftItemResult",
+      "className": "UpdateDraftItemResult",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Item",
+          "description": "Updated metadata describing the catalog item just updated.",
+          "jsontype": "Object",
+          "actualtype": "CatalogItemMetadata",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "UploadInfo": {
+      "name": "UploadInfo",
+      "className": "UploadInfo",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "FileName",
+          "description": "Name of the file to be uploaded.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "FileSize",
+          "description": "Size of the file to be uploaded, in bytes.",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": false
         }
       ]
     },
-    "SetObjectsResponse": {
-      "name": "SetObjectsResponse",
-      "className": "SetObjectsResponse",
-      "classNameSpace": "PlayFab.Data.Models",
-      "assembly": "PlayFab.Data.Models",
-      "isResult": true,
+    "UploadUrlMetadata": {
+      "name": "UploadUrlMetadata",
+      "className": "UploadUrlMetadata",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": [
         {
-          "name": "ProfileVersion",
-          "description": "New version of the entity profile.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
+          "name": "FileName",
+          "description": "Name of the file for which this upload url was requested.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
-          "name": "SetResults",
-          "description": "New version of the entity profile.",
+          "name": "Id",
+          "description": "Unique identifier for the binary content to be uploaded to the target url.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Url",
+          "description": "Url for the binary content to be uploaded to.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UserGeneratedContentConfig": {
+      "name": "UserGeneratedContentConfig",
+      "className": "UserGeneratedContentConfig",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "ContentTypes",
+          "description": "The set of valid content types.",
           "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "SetObjectInfo",
-          "isclass": true,
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CreatorAccessPolicy",
+          "description": "The policy defining who is allowed to create and manage UGC.",
+          "jsontype": "String",
+          "actualtype": "AccessPolicy",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Tags",
+          "description": "The set of valid tags.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -633,173 +1043,514 @@
   },
   "subgroups": [
     {
-      "name": "File",
+      "name": "Catalog",
       "methods": [
-        "AbortFileUploads",
-        "DeleteFiles",
-        "FinalizeFileUploads",
-        "GetFiles",
-        "InitiateFileUploads"
+        "CreateDraftItem",
+        "CreateUploadUrls",
+        "DeleteItem",
+        "GetDraftItem",
+        "GetDraftItems",
+        "GetPublishedItem",
+        "GetPublishStatus",
+        "PublishItem",
+        "Search",
+        "UpdateDraftItem"
       ]
     },
     {
-      "name": "Object",
+      "name": "UserGeneratedContent",
       "methods": [
-        "GetObjects",
-        "SetObjects"
+        "CreateDraftItem",
+        "CreateUploadUrls",
+        "DeleteItem",
+        "GetConfig",
+        "GetDraftItem",
+        "GetDraftItems",
+        "GetPublishedItem",
+        "GetPublishStatus",
+        "PublishItem",
+        "Search",
+        "SetConfig",
+        "UpdateDraftItem"
       ]
     }
   ],
   "calls": [
     {
-      "name": "AbortFileUploads",
-      "summary": "Abort pending file uploads to an entity's profile.",
-      "requestDetails": "Aborts the pending upload of the requested files.",
-      "subgroup": "File",
+      "name": "CreateDraftItem",
+      "summary": "Creates a new item in the working catalog using provided metadata.",
+      "requestDetails": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
+      "subgroup": "Catalog",
       "titleTiers": null,
-      "url": "/File/AbortFileUploads",
+      "url": "/Catalog/CreateDraftItem",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "AbortFileUploadsRequest",
-      "requestExample": "{\r\n  \"FileNames\": [\r\n    \"avatar\"\r\n  ],\r\n  \"Entity\": {\r\n    \"Id\": \"ID\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "AbortFileUploadsResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 8,\r\n    \"Entity\": {\r\n      \"Id\": \"ID\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
-      "seeAlso": [
-        "File/DeleteFiles",
-        "File/FinalizeFileUploads",
-        "File/GetFiles",
-        "File/InitiateFileUploads"
+      "request": "CreateDraftItemRequest",
+      "requestExample": "{\r\n  \"Item\": {\r\n    \"Title\": {\r\n      \"neutral\": \"Neutral title\",\r\n      \"en-US\": \"US English title\"\r\n    },\r\n    \"Description\": {\r\n      \"neutral\": \"Neutral description\",\r\n      \"en-US\": \"US English description\"\r\n    },\r\n    \"ContentType\": \"example catalog item\",\r\n    \"IsHidden\": false,\r\n    \"Platforms\": [\r\n      \"android\",\r\n      \"xboxone\",\r\n      \"ios\"\r\n    ],\r\n    \"Tags\": [\r\n      \"pirates\",\r\n      \"holiday\"\r\n    ],\r\n    \"DisplayVersion\": \"1.0.0\",\r\n    \"Contents\": [\r\n      {\r\n        \"Id\": \"00000000-0000-0000-0000-000000000001\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip\",\r\n        \"MaxClientVersion\": \"2.4.1\",\r\n        \"MinClientVersion\": \"2.0.0\",\r\n        \"Tags\": [\r\n          \"pirate\",\r\n          \"desert\"\r\n        ],\r\n        \"Type\": \"textures\"\r\n      }\r\n    ],\r\n    \"Images\": [\r\n      {\r\n        \"Id\": \"00000000-0000-0000-0000-000000000003\",\r\n        \"Tag\": \"splashscreen\",\r\n        \"Type\": \"thumbnail\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg\"\r\n      }\r\n    ],\r\n    \"DisplayProperties\": {\r\n      \"mapDetails\": {\r\n        \"mapType\": \"desertIsland\",\r\n        \"gameMode\": \"capture\",\r\n        \"maxPlayers\": 16\r\n      },\r\n      \"averageMatchLengthInSeconds\": 947\r\n    },\r\n    \"ETag\": \"opaqueString\"\r\n  }\r\n}",
+      "result": "CreateDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {\r\n      \"Id\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n      \"Title\": {\r\n        \"neutral\": \"Neutral title\",\r\n        \"en-US\": \"US English title\"\r\n      },\r\n      \"Description\": {\r\n        \"neutral\": \"Neutral description\",\r\n        \"en-US\": \"US English description\"\r\n      },\r\n      \"ContentType\": \"example catalog item\",\r\n      \"CreatorEntityKey\": {\r\n        \"Id\": \"someId\",\r\n        \"Type\": \"title_player_account\",\r\n        \"TypeString\": \"title_player_account\"\r\n      },\r\n      \"IsHidden\": false,\r\n      \"Platforms\": [\r\n        \"android\",\r\n        \"xboxone\",\r\n        \"ios\"\r\n      ],\r\n      \"Tags\": [\r\n        \"pirates\",\r\n        \"holiday\"\r\n      ],\r\n      \"DisplayVersion\": \"1.0.0\",\r\n      \"CreationDate\": \"2018-08-17T22:32:10.472Z\",\r\n      \"LastModifiedDate\": \"2018-08-17T22:32:31.911Z\",\r\n      \"Contents\": [\r\n        {\r\n          \"Id\": \"00000000-0000-0000-0000-000000000001\",\r\n          \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip\",\r\n          \"MaxClientVersion\": \"2.4.1\",\r\n          \"MinClientVersion\": \"2.0.0\",\r\n          \"Tags\": [\r\n            \"pirate\",\r\n            \"desert\"\r\n          ],\r\n          \"Type\": \"textures\"\r\n        }\r\n      ],\r\n      \"Images\": [\r\n        {\r\n          \"Id\": \"00000000-0000-0000-0000-000000000003\",\r\n          \"Tag\": \"splashscreen\",\r\n          \"Type\": \"thumbnail\",\r\n          \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg\"\r\n        }\r\n      ],\r\n      \"DisplayProperties\": {\r\n        \"mapDetails\": {\r\n          \"mapType\": \"desertIsland\",\r\n          \"gameMode\": \"capture\",\r\n          \"maxPlayers\": 16\r\n        },\r\n        \"averageMatchLengthInSeconds\": 947\r\n      },\r\n      \"ETag\": \"opaqueString\"\r\n    }\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ],
       "errors": [
-        "FileNotFound",
-        "NoEntityFileOperationPending"
+        "CatalogClientIdentityInvalid",
+        "CatalogItemMetadataInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
       ]
     },
     {
-      "name": "DeleteFiles",
-      "summary": "Delete files on an entity's profile.",
-      "requestDetails": "Deletes the requested files from the entity's profile.",
-      "subgroup": "File",
+      "name": "CreateDraftItem",
+      "summary": "Creates a new community catalog item in the working catalog using provided metadata.",
+      "requestDetails": "The item will not be published to the public catalog until the user makes a call to the PublishItem API.",
+      "subgroup": "UserGeneratedContent",
       "titleTiers": null,
-      "url": "/File/DeleteFiles",
+      "url": "/UserGeneratedContent/CreateDraftItem",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "DeleteFilesRequest",
-      "requestExample": "{\r\n  \"FileNames\": [\r\n    \"game_state\",\r\n    \"avatar\"\r\n  ],\r\n  \"Entity\": {\r\n    \"Id\": \"ID\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "DeleteFilesResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 6,\r\n    \"Entity\": {\r\n      \"Id\": \"ID\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
-      "seeAlso": [
-        "File/FinalizeFileUploads",
-        "File/GetFiles",
-        "File/InitiateFileUploads"
+      "request": "CreateDraftItemRequest",
+      "requestExample": "{\r\n  \"Item\": {\r\n    \"Title\": {\r\n      \"neutral\": \"Neutral title\",\r\n      \"en-US\": \"US English title\"\r\n    },\r\n    \"Description\": {\r\n      \"neutral\": \"Neutral description\",\r\n      \"en-US\": \"US English description\"\r\n    },\r\n    \"ContentType\": \"example catalog item\",\r\n    \"IsHidden\": false,\r\n    \"Platforms\": [\r\n      \"android\",\r\n      \"xboxone\",\r\n      \"ios\"\r\n    ],\r\n    \"Tags\": [\r\n      \"pirates\",\r\n      \"holiday\"\r\n    ],\r\n    \"DisplayVersion\": \"1.0.0\",\r\n    \"Contents\": [\r\n      {\r\n        \"Id\": \"00000000-0000-0000-0000-000000000001\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip\",\r\n        \"MaxClientVersion\": \"2.4.1\",\r\n        \"MinClientVersion\": \"2.0.0\",\r\n        \"Tags\": [\r\n          \"pirate\",\r\n          \"desert\"\r\n        ],\r\n        \"Type\": \"textures\"\r\n      }\r\n    ],\r\n    \"Images\": [\r\n      {\r\n        \"Id\": \"00000000-0000-0000-0000-000000000003\",\r\n        \"Tag\": \"splashscreen\",\r\n        \"Type\": \"thumbnail\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg\"\r\n      }\r\n    ],\r\n    \"DisplayProperties\": {\r\n      \"mapDetails\": {\r\n        \"mapType\": \"desertIsland\",\r\n        \"gameMode\": \"capture\",\r\n        \"maxPlayers\": 16\r\n      },\r\n      \"averageMatchLengthInSeconds\": 947\r\n    },\r\n    \"ETag\": \"opaqueString\"\r\n  }\r\n}",
+      "result": "CreateDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {\r\n      \"Id\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n      \"Title\": {\r\n        \"neutral\": \"Neutral title\",\r\n        \"en-US\": \"US English title\"\r\n      },\r\n      \"Description\": {\r\n        \"neutral\": \"Neutral description\",\r\n        \"en-US\": \"US English description\"\r\n      },\r\n      \"ContentType\": \"example catalog item\",\r\n      \"CreatorEntityKey\": {\r\n        \"Id\": \"someId\",\r\n        \"Type\": \"title_player_account\",\r\n        \"TypeString\": \"title_player_account\"\r\n      },\r\n      \"IsHidden\": false,\r\n      \"Platforms\": [\r\n        \"android\",\r\n        \"xboxone\",\r\n        \"ios\"\r\n      ],\r\n      \"Tags\": [\r\n        \"pirates\",\r\n        \"holiday\"\r\n      ],\r\n      \"DisplayVersion\": \"1.0.0\",\r\n      \"CreationDate\": \"2018-08-17T22:32:10.472Z\",\r\n      \"LastModifiedDate\": \"2018-08-17T22:32:31.911Z\",\r\n      \"Contents\": [\r\n        {\r\n          \"Id\": \"00000000-0000-0000-0000-000000000001\",\r\n          \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip\",\r\n          \"MaxClientVersion\": \"2.4.1\",\r\n          \"MinClientVersion\": \"2.0.0\",\r\n          \"Tags\": [\r\n            \"pirate\",\r\n            \"desert\"\r\n          ],\r\n          \"Type\": \"textures\"\r\n        }\r\n      ],\r\n      \"Images\": [\r\n        {\r\n          \"Id\": \"00000000-0000-0000-0000-000000000003\",\r\n          \"Tag\": \"splashscreen\",\r\n          \"Type\": \"thumbnail\",\r\n          \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg\"\r\n        }\r\n      ],\r\n      \"DisplayProperties\": {\r\n        \"mapDetails\": {\r\n          \"mapType\": \"desertIsland\",\r\n          \"gameMode\": \"capture\",\r\n          \"maxPlayers\": 16\r\n        },\r\n        \"averageMatchLengthInSeconds\": 947\r\n      },\r\n      \"ETag\": \"opaqueString\"\r\n    }\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ],
       "errors": [
-        "EntityFileOperationPending",
-        "FileNotFound"
+        "CatalogClientIdentityInvalid",
+        "CatalogItemMetadataInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
       ]
     },
     {
-      "name": "FinalizeFileUploads",
-      "summary": "Finalize file uploads to an entity's profile.",
-      "requestDetails": "Finalizes the upload of the requested files. Verifies that the files have been successfully uploaded and moves the file pointers from pending to live.",
-      "subgroup": "File",
+      "name": "CreateUploadUrls",
+      "summary": "Creates one or more upload URLs which can be used by the client to upload raw file data.",
+      "requestDetails": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "subgroup": "Catalog",
       "titleTiers": null,
-      "url": "/File/FinalizeFileUploads",
+      "url": "/Catalog/CreateUploadUrls",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "FinalizeFileUploadsRequest",
-      "requestExample": "{\r\n  \"FileNames\": [\r\n    \"profile_configuration\",\r\n    \"game_state\"\r\n  ],\r\n  \"Entity\": {\r\n    \"Id\": \"ID\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "FinalizeFileUploadsResponse",
-      "resultExample": "",
-      "seeAlso": [
-        "File/AbortFileUploads",
-        "File/DeleteFiles",
-        "File/GetFiles",
-        "File/InitiateFileUploads"
+      "request": "CreateUploadUrlsRequest",
+      "requestExample": "{\r\n  \"Files\": [\r\n    {\r\n      \"FileName\": \"textures.zip\",\r\n      \"FileSize\": 100\r\n    },\r\n    {\r\n      \"FileName\": \"sprites.png\",\r\n      \"FileSize\": 200\r\n    }\r\n  ]\r\n}",
+      "result": "CreateUploadUrlsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UploadUrls\": [\r\n      {\r\n        \"Id\": \"11111111-1111-1111-1111-111111111111\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip\",\r\n        \"FileName\": \"textures.zip\"\r\n      },\r\n      {\r\n        \"Id\": \"22222222-2222-2222-2222-222222222222\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png\",\r\n        \"FileName\": \"sprites.png\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ],
       "errors": [
-        "FileNotFound",
-        "NoEntityFileOperationPending"
+        "CatalogClientIdentityInvalid",
+        "CatalogOneOrMoreFilesInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
       ]
     },
     {
-      "name": "GetFiles",
-      "summary": "Retrieves file metadata from an entity's profile.",
-      "requestDetails": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing. ",
-      "subgroup": "File",
+      "name": "CreateUploadUrls",
+      "summary": "Creates one or more upload URLs which can be used by the client to upload raw mod file data.",
+      "requestDetails": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "subgroup": "UserGeneratedContent",
       "titleTiers": null,
-      "url": "/File/GetFiles",
+      "url": "/UserGeneratedContent/CreateUploadUrls",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "GetFilesRequest",
-      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"ID\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "GetFilesResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 5,\r\n    \"Metadata\": {\r\n      \"game_settings\": {\r\n        \"FileName\": \"game_settings\",\r\n        \"DownloadUrl\": \"https://...\",\r\n        \"Size\": 5683,\r\n        \"Checksum\": \"97129sdlkj9129\",\r\n        \"LastModified\": \"2017-12-05T17:36:05Z\"\r\n      }\r\n    },\r\n    \"Entity\": {\r\n      \"Id\": \"ID\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
-      "seeAlso": [
-        "File/AbortFileUploads",
-        "File/DeleteFiles",
-        "File/FinalizeFileUploads",
-        "File/InitiateFileUploads"
-      ]
-    },
-    {
-      "name": "GetObjects",
-      "summary": "Retrieves objects from an entity's profile.",
-      "requestDetails": "Gets JSON objects from an entity profile and returns it. ",
-      "subgroup": "Object",
-      "titleTiers": null,
-      "url": "/Object/GetObjects",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "GetObjectsRequest",
-      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"ABC90712ABC\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "GetObjectsResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 17,\r\n    \"Objects\": {\r\n      \"gameState\": {\r\n        \"ObjectName\": \"gameState\",\r\n        \"EscapedDataObject\": \"{ \\\"Property\\\": { \\\"ValueName\\\": 5 } }\"\r\n      }\r\n    },\r\n    \"Entity\": {\r\n      \"Id\": \"ABC1234ABC\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
-      "seeAlso": [
-        "Object/SetObjects"
-      ]
-    },
-    {
-      "name": "InitiateFileUploads",
-      "summary": "Initiates file uploads to an entity's profile.",
-      "requestDetails": "Returns URLs that may be used to upload the files for a profile 5 minutes. After using the upload calls FinalizeFileUploads must be called to move the file status from pending to live.",
-      "subgroup": "File",
-      "titleTiers": null,
-      "url": "/File/InitiateFileUploads",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "InitiateFileUploadsRequest",
-      "requestExample": "{\r\n  \"FileNames\": [\r\n    \"profile_configuration\",\r\n    \"game_state\"\r\n  ],\r\n  \"Entity\": {\r\n    \"Id\": \"ID\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "InitiateFileUploadsResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 5,\r\n    \"UploadDetails\": [\r\n      {\r\n        \"FileName\": \"game_state\",\r\n        \"UploadUrl\": \"https://...\"\r\n      },\r\n      {\r\n        \"FileName\": \"profile_configuration\",\r\n        \"UploadUrl\": \"https://...\"\r\n      }\r\n    ],\r\n    \"Entity\": {\r\n      \"Id\": \"ID\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
-      "seeAlso": [
-        "File/AbortFileUploads",
-        "File/DeleteFiles",
-        "File/FinalizeFileUploads",
-        "File/GetFiles"
+      "request": "CreateUploadUrlsRequest",
+      "requestExample": "{\r\n  \"Files\": [\r\n    {\r\n      \"FileName\": \"textures.zip\",\r\n      \"FileSize\": 100\r\n    },\r\n    {\r\n      \"FileName\": \"sprites.png\",\r\n      \"FileSize\": 200\r\n    }\r\n  ]\r\n}",
+      "result": "CreateUploadUrlsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"UploadUrls\": [\r\n      {\r\n        \"Id\": \"11111111-1111-1111-1111-111111111111\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip\",\r\n        \"FileName\": \"textures.zip\"\r\n      },\r\n      {\r\n        \"Id\": \"22222222-2222-2222-2222-222222222222\",\r\n        \"Url\": \"https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png\",\r\n        \"FileName\": \"sprites.png\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ],
       "errors": [
-        "EntityFileOperationPending"
+        "CatalogClientIdentityInvalid",
+        "CatalogOneOrMoreFilesInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
       ]
     },
     {
-      "name": "SetObjects",
-      "summary": "Sets objects on an entity's profile.",
-      "requestDetails": "Sets JSON objects on the requested entity profile. May include a version number to be used to perform optimistic concurrency operations during update. If the current version differs from the version in the request the request will be ignored. If no version is set on the request then the value will always be updated if the values differ. Using the version value does not guarantee a write though, ConcurrentEditError may still occur if multiple clients are attempting to update the same profile. ",
-      "subgroup": "Object",
+      "name": "DeleteItem",
+      "summary": "Removes an item from working catalog and all published versions from the public catalog.",
+      "subgroup": "Catalog",
       "titleTiers": null,
-      "url": "/Object/SetObjects",
+      "url": "/Catalog/DeleteItem",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "SetObjectsRequest",
-      "requestExample": "{\r\n  \"ExpectedProfileVersion\": 5,\r\n  \"Objects\": [\r\n    {\r\n      \"ObjectName\": \"SaveSate\",\r\n      \"DataObject\": {\r\n        \"PlayerDetails\": {\r\n          \"LastMissionSuccess\": \"2017-06-15T11:05:19Z\",\r\n          \"LastMissionFailure\": \"2017-06-12T11:05:19Z\",\r\n          \"MapPosition\": [\r\n            22.0,\r\n            37.78\r\n          ],\r\n          \"IsPaidUpgrade\": true\r\n        },\r\n        \"GameSettings\": {\r\n          \"Screen\": \"FriendsList\",\r\n          \"Favorites\": [\r\n            \"Place 1\",\r\n            \"Place 2\"\r\n          ]\r\n        }\r\n      },\r\n      \"SimpleStatements\": {\r\n        \"Read\": [\r\n          {\r\n            \"Friend\": true\r\n          }\r\n        ],\r\n        \"Write\": [\r\n          \"Self\"\r\n        ]\r\n      }\r\n    }\r\n  ],\r\n  \"Entity\": {\r\n    \"Id\": \"A8140AB9109712B\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
-      "result": "SetObjectsResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SetResults\": [\r\n      {\r\n        \"SetResult\": \"Created\"\r\n      }\r\n    ],\r\n    \"ProfileVersion\": 5\r\n  }\r\n}",
-      "seeAlso": [
-        "Object/GetObjects"
+      "request": "DeleteItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "DeleteItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ],
       "errors": [
-        "EntityProfileVersionMismatch"
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "DeleteItem",
+      "summary": "Removes an item from working catalog and all published versions from the public catalog.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/DeleteItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "DeleteItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "DeleteItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetConfig",
+      "summary": "Gets the configuration for the user generated content catalog.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/GetConfig",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetConfigRequest",
+      "requestExample": "{}",
+      "result": "GetConfigResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Config\": {\r\n      \"CreatorAccessPolicy\": \"Open\",\r\n      \"ContentTypes\": [\r\n        \"map\",\r\n        \"skin\"\r\n      ],\r\n      \"Tags\": [\r\n        \"sword\",\r\n        \"shield\"\r\n      ]\r\n    }\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    {
+      "name": "GetDraftItem",
+      "summary": "Retrieves an item from the working catalog. This item represents the current working state of the catalog item.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/GetDraftItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetDraftItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "GetDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetDraftItem",
+      "summary": "Retrieves an item from the working catalog. This item represents the current working state of the community item.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/GetDraftItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetDraftItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "GetDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetDraftItems",
+      "summary": "Retrieves a paginated list of the items from the draft catalog.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/GetDraftItems",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetDraftItemsRequest",
+      "requestExample": "{\r\n  \"Count\": 10\r\n}",
+      "result": "GetDraftItemsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContinuationToken\": \"+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0=\",\r\n    \"Count\": 3,\r\n    \"Items\": [\r\n      {},\r\n      {},\r\n      {}\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetDraftItems",
+      "summary": "Retrieves a paginated list of the items created by a user.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/GetDraftItems",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetDraftItemsRequest",
+      "requestExample": "{\r\n  \"Count\": 10\r\n}",
+      "result": "GetDraftItemsResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContinuationToken\": \"+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0=\",\r\n    \"Count\": 3,\r\n    \"Items\": [\r\n      {},\r\n      {},\r\n      {}\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetPublishedItem",
+      "summary": "Retrieves an item from the public catalog.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/GetPublishedItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetPublishedItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "GetPublishedItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogItemIdInvalid",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetPublishedItem",
+      "summary": "Retrieves an item from the public catalog.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/GetPublishedItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetPublishedItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "GetPublishedItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogItemIdInvalid",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetPublishStatus",
+      "summary": "Gets the status of a publish of an item.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/GetPublishStatus",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "PublishStatusRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "PublishStatusResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Result\": \"Pending\",\r\n    \"StatusMessage\": \"scanning images\"\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "GetPublishStatus",
+      "summary": "Gets the status of a publish of an item.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/GetPublishStatus",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "PublishStatusRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
+      "result": "PublishStatusResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Result\": \"Pending\",\r\n    \"StatusMessage\": \"scanning images\"\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "PublishItem",
+      "summary": "Initiates a publish of an item from the working catalog to the public catalog.",
+      "requestDetails": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/PublishItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "PublishItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n  \"ETag\": \"someOpaqueString\"\r\n}",
+      "result": "PublishItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "PublishItem",
+      "summary": "Initiates a publish of a item from the working catalog to the public catalog.",
+      "requestDetails": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/PublishItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "PublishItemRequest",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n  \"ETag\": \"someOpaqueString\"\r\n}",
+      "result": "PublishItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemIdInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "Search",
+      "summary": "Execute a search against the public catalog using the provided search parameters and returns a set of paginated results.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/Search",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CatalogSearchRequest",
+      "requestExample": "{\r\n  \"Search\": \"Pirates\",\r\n  \"Filter\": \"tags/any(t:t eq 'desert') and contentType eq 'map'\",\r\n  \"OrderBy\": \"lastModifiedDate asc\",\r\n  \"Skip\": 0,\r\n  \"Top\": 10,\r\n  \"Select\": \"contents,images\"\r\n}",
+      "result": "CatalogSearchResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Count\": 261,\r\n    \"Items\": []\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogSearchParameterInvalid",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "Search",
+      "summary": "Execute a search against the public catalog using the provided search parameters and returns a set of paginated results.",
+      "requestDetails": "Only community items that have been published with the Publish Item API will be returned by Search even for the creator. The creator should use the List Items API to view all of their own items.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/Search",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CatalogSearchRequest",
+      "requestExample": "{\r\n  \"Search\": \"Pirates\",\r\n  \"Filter\": \"tags/any(t:t eq 'desert') and contentType eq 'map'\",\r\n  \"OrderBy\": \"lastModifiedDate asc\",\r\n  \"Skip\": 0,\r\n  \"Top\": 10,\r\n  \"Select\": \"contents,images\"\r\n}",
+      "result": "CatalogSearchResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Count\": 261,\r\n    \"Items\": []\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogSearchParameterInvalid",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "SetConfig",
+      "summary": "Gets the configuration for the user generated content catalog.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/SetConfig",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "SetConfigRequest",
+      "requestExample": "{\r\n  \"Config\": {\r\n    \"CreatorAccessPolicy\": \"Open\",\r\n    \"ContentTypes\": [\r\n      \"map\",\r\n      \"skin\"\r\n    ],\r\n    \"Tags\": [\r\n      \"sword\",\r\n      \"shield\"\r\n    ]\r\n  }\r\n}",
+      "result": "SetConfigResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogConfigContentTypeTooLong",
+        "CatalogConfigMissing",
+        "CatalogConfigTagTooLong",
+        "CatalogConfigTooManyContentTypes",
+        "CatalogConfigTooManyTags",
+        "NotAuthorized"
+      ]
+    },
+    {
+      "name": "UpdateDraftItem",
+      "summary": "Update the metadata for an item in the working catalog.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/UpdateDraftItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UpdateDraftItemRequest",
+      "requestExample": "{}",
+      "result": "UpdateDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemMetadataInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
+      ]
+    },
+    {
+      "name": "UpdateDraftItem",
+      "summary": "Update the metadata for an item in the working catalog.",
+      "subgroup": "UserGeneratedContent",
+      "titleTiers": null,
+      "url": "/UserGeneratedContent/UpdateDraftItem",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UpdateDraftItemRequest",
+      "requestExample": "{}",
+      "result": "UpdateDraftItemResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Item\": {}\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "CatalogClientIdentityInvalid",
+        "CatalogItemMetadataInvalid",
+        "CatalogPlayerIdMissing",
+        "CatalogTitleIdMissing"
       ]
     }
   ],
