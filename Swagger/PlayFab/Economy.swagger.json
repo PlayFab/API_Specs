@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "190225",
-    "title": "PlayFab Matchmaker API",
-    "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
+    "title": "PlayFab Economy API",
+    "description": "API methods for managing User Generated Content.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,294 +24,466 @@
     "application/json"
   ],
   "paths": {
-    "/Matchmaker/AuthUser": {
+    "/UserGeneratedContent/CreateDraftItem": {
       "post": {
-        "operationId": "AuthUser",
+        "operationId": "CreateDraftItem",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Validates a user with the PlayFab service",
+        "description": "Creates a new community catalog item in the working catalog using provided metadata.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/AuthUser"
+          "url": "https://api.playfab.com/documentation/economy/method/CreateDraftItem"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/AuthUserRequest"
+            "$ref": "#/parameters/CreateDraftItemRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/AuthUserResponse"
+            "$ref": "#/responses/CreateDraftItemResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order to securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the AuthorizationTicket in this call.",
-        "x-seeAlso": [
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
+        "x-requestDetails": "The item will not be published to the public catalog until the user makes a call to the PublishItem API.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
         ],
         "x-ms-docs-errors": [
-          "InvalidParams"
+          "CatalogClientIdentityInvalid",
+          "CatalogItemMetadataInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
         ]
       }
     },
-    "/Matchmaker/DeregisterGame": {
+    "/UserGeneratedContent/CreateUploadUrls": {
       "post": {
-        "operationId": "DeregisterGame",
+        "operationId": "CreateUploadUrls",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Inform the matchmaker that a Game Server Instance is removed.",
+        "description": "Creates one or more upload URLs which can be used by the client to upload raw mod file data.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/DeregisterGame"
+          "url": "https://api.playfab.com/documentation/economy/method/CreateUploadUrls"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/DeregisterGameRequest"
+            "$ref": "#/parameters/CreateUploadUrlsRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/DeregisterGameResponse"
+            "$ref": "#/responses/CreateUploadUrlsResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/DeregisterGame"
+        "x-requestDetails": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogOneOrMoreFilesInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/UserGeneratedContent/DeleteItem": {
+      "post": {
+        "operationId": "DeleteItem",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Removes an item from working catalog and all published versions from the public catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
         },
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
-        ],
         "x-ms-docs-errors": [
-          "InvalidParams"
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
         ]
       }
     },
-    "/Matchmaker/PlayerJoined": {
+    "/UserGeneratedContent/GetConfig": {
       "post": {
-        "operationId": "PlayerJoined",
+        "operationId": "GetConfig",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has joined the Game Server Instance specified",
+        "description": "Gets the configuration for the user generated content catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerJoined"
+          "url": "https://api.playfab.com/documentation/economy/method/GetConfig"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/PlayerJoinedRequest"
+            "$ref": "#/parameters/GetConfigRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/PlayerJoinedResponse"
+            "$ref": "#/responses/GetConfigResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-ms-docs-errors": [
-          "InvalidParams"
+        "x-AnyInclusiveFlags": [
+          "Beta"
         ]
       }
     },
-    "/Matchmaker/PlayerLeft": {
+    "/UserGeneratedContent/GetDraftItem": {
       "post": {
-        "operationId": "PlayerLeft",
+        "operationId": "GetDraftItem",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Informs the PlayFab game server hosting service that the indicated user has left the Game Server Instance specified",
+        "description": "Retrieves an item from the working catalog. This item represents the current working state of the community item.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/PlayerLeft"
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItem"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/PlayerLeftRequest"
+            "$ref": "#/parameters/GetDraftItemRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/PlayerLeftResponse"
+            "$ref": "#/responses/GetDraftItemResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/StartGame",
-          "Matchmaker/UserInfo"
-        ],
-        "x-ms-docs-errors": [
-          "InvalidParams"
-        ]
-      }
-    },
-    "/Matchmaker/RegisterGame": {
-      "post": {
-        "operationId": "RegisterGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Inform the matchmaker that a new Game Server Instance is added.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/RegisterGame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/RegisterGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/RegisterGameResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-deprecation": {
-          "ProposedAfter": "09/19/2016",
-          "DeprecatedAfter": "10/19/2016",
-          "ObsoleteAfter": "11/19/2016",
-          "ReplacedBy": "Server/RegisterGame"
         },
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
-        "x-seeAlso": [
-          "Server/DeregisterGame",
-          "Server/RegisterGame"
-        ],
         "x-ms-docs-errors": [
-          "BuildNotFound",
-          "InvalidParams",
-          "InvalidRequest"
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
         ]
       }
     },
-    "/Matchmaker/StartGame": {
+    "/UserGeneratedContent/GetDraftItems": {
       "post": {
-        "operationId": "StartGame",
+        "operationId": "GetDraftItems",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Instructs the PlayFab game server hosting service to instantiate a new Game Server Instance",
+        "description": "Retrieves a paginated list of the items created by a user.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/StartGame"
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItems"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/StartGameRequest"
+            "$ref": "#/parameters/GetDraftItemsRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/StartGameResponse"
+            "$ref": "#/responses/GetDraftItemsResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/UserInfo"
+        "x-AnyInclusiveFlags": [
+          "Beta"
         ],
         "x-ms-docs-errors": [
-          "BuildNotFound",
-          "InvalidParams"
+          "CatalogClientIdentityInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
         ]
       }
     },
-    "/Matchmaker/UserInfo": {
+    "/UserGeneratedContent/GetPublishedItem": {
       "post": {
-        "operationId": "UserInfo",
+        "operationId": "GetPublishedItem",
         "tags": [
-          "Matchmaking"
+          "UserGeneratedContent"
         ],
-        "description": "Retrieves the relevant details for a specified user, which the external match-making service can then use to compute effective matches",
+        "description": "Retrieves an item from the public catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/matchmaker/method/UserInfo"
+          "url": "https://api.playfab.com/documentation/economy/method/GetPublishedItem"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/UserInfoRequest"
+            "$ref": "#/parameters/GetPublishedItemRequest"
           }
         ],
         "security": [
           {
-            "SecretKey": []
+            "EntityToken": []
           }
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/UserInfoResponse"
+            "$ref": "#/responses/GetPublishedItemResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/StartGame"
+        "x-AnyInclusiveFlags": [
+          "Beta"
         ],
         "x-ms-docs-errors": [
-          "InvalidParams"
+          "CatalogItemIdInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/UserGeneratedContent/GetPublishStatus": {
+      "post": {
+        "operationId": "GetPublishStatus",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Gets the status of a publish of an item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetPublishStatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PublishStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PublishStatusResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/UserGeneratedContent/PublishItem": {
+      "post": {
+        "operationId": "PublishItem",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Initiates a publish of a item from the working catalog to the public catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/PublishItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PublishItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PublishItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/UserGeneratedContent/Search": {
+      "post": {
+        "operationId": "Search",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Execute a search against the public catalog using the provided search parameters and returns a set of paginated results.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/Search"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CatalogSearchRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CatalogSearchResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Only community items that have been published with the Publish Item API will be returned by Search even for the creator. The creator should use the List Items API to view all of their own items.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogSearchParameterInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/UserGeneratedContent/SetConfig": {
+      "post": {
+        "operationId": "SetConfig",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Gets the configuration for the user generated content catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SetConfig"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetConfigRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetConfigResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogConfigContentTypeTooLong",
+          "CatalogConfigMissing",
+          "CatalogConfigTagTooLong",
+          "CatalogConfigTooManyContentTypes",
+          "CatalogConfigTooManyTags",
+          "NotAuthorized"
+        ]
+      }
+    },
+    "/UserGeneratedContent/UpdateDraftItem": {
+      "post": {
+        "operationId": "UpdateDraftItem",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Update the metadata for an item in the working catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateDraftItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateDraftItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemMetadataInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
         ]
       }
     }
@@ -349,573 +521,1031 @@
         }
       }
     },
-    "AuthUserRequest": {
-      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\r\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\r\nAuthorizationTicket in this call.",
+    "AccessPolicy": {
       "type": "object",
-      "properties": {
-        "AuthorizationTicket": {
-          "description": "Session Ticket provided by the client.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "AuthorizationTicket"
+      "enum": [
+        "Closed",
+        "Open"
       ],
-      "example": {
-        "AuthorizationTicket": "9F856B4A071A9A5D-0-0-AD0-8D165320C16429B-72087E2356D29870.9D0410B3E78D8A5F"
-      }
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
-    "AuthUserResponse": {
+    "CatalogItemMetadata": {
       "type": "object",
       "properties": {
-        "Authorized": {
-          "description": "Boolean indicating if the user has been authorized to use the external match-making service.",
+        "Contents": {
+          "description": "The set of contents associated with this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Content"
+          },
+          "x-isclass": true
+        },
+        "ContentType": {
+          "description": "The client-defined type of the item.",
+          "type": "string"
+        },
+        "CreationDate": {
+          "description": "The date and time when this item was created.",
+          "type": "string"
+        },
+        "CreatorEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The ID of the creator of this catalog item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Description": {
+          "description": "A dictionary of localized descriptions. Key is language code and localized string is the value. The neutral locale is required.",
+          "type": "object"
+        },
+        "DisplayProperties": {
+          "description": "Game specific properties for display purposes. This is an arbitrary JSON blob.",
+          "type": "object"
+        },
+        "DisplayVersion": {
+          "type": "string"
+        },
+        "ETag": {
+          "description": "The current ETag value that can be used for optimistic concurrency in the If-None-Match header.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "The unique ID of the catalog item.",
+          "type": "string"
+        },
+        "Images": {
+          "description": "The images associated with this item. Images can be thumbnails or screenshots.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Image"
+          },
+          "x-isclass": true
+        },
+        "IsHidden": {
+          "description": "Indicates if the item is hidden",
           "type": "boolean"
         },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the account that has been authorized.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Authorized"
-      ],
-      "example": {
-        "Authorized": true,
-        "PlayFabId": "23990802934"
-      }
-    },
-    "DeregisterGameRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier for the Game Server Instance that is being deregistered.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId"
-      ],
-      "example": {
-        "LobbyId": "8285313"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
-    },
-    "DeregisterGameResponse": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
-    },
-    "ItemInstance": {
-      "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item instance (such as Tags, Description, or Custom Data that are set on the root catalog item), a call to GetCatalogItems is required. The Item ID of the instance can then be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set here from a call to UpdateUserInventoryItemCustomData.",
-      "type": "object",
-      "properties": {
-        "Annotation": {
-          "description": "Game specific comment associated with this instance when it was added to the user inventory.",
+        "LastModifiedDate": {
+          "description": "The date and time this item was last updated.",
           "type": "string"
         },
-        "BundleContents": {
-          "description": "Array of unique items that were awarded when this catalog item was purchased.",
+        "Platforms": {
+          "description": "The platforms supported by this item.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "BundleParent": {
-          "description": "Unique identifier for the parent inventory item, as defined in the catalog, for object which were added from a bundle or container.",
+        "StartDate": {
+          "description": "The date of when the item will be available. If not provided then the product will appear immediately.",
           "type": "string"
         },
-        "CatalogVersion": {
-          "description": "Catalog version for the inventory item, when this instance was created.",
-          "type": "string"
+        "Tags": {
+          "description": "The list of tags that are associated with this item.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
-        "CustomData": {
-          "description": "A set of custom key-value pairs on the inventory item.",
+        "Title": {
+          "description": "A dictionary of localized titles. Key is language code and localized string is the value. The neutral locale is required.",
           "type": "object"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogSearchRequest": {
+      "description": "Only community items that have been published with the Publish Item API will be\r\n                returned by Search even for the creator. The creator should use the List Items API to\r\n                view all of their own items.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
         },
-        "DisplayName": {
-          "description": "CatalogItem.DisplayName at the time this item was purchased.",
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
           "type": "string"
         },
-        "Expiration": {
-          "description": "Timestamp for when this instance will expire.",
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
           "type": "string"
         },
-        "ItemClass": {
-          "description": "Class name for the inventory item, as defined in the catalog.",
+        "Search": {
+          "description": "The text to search for.",
+          "type": "string"
+        },
+        "Select": {
+          "description": "An OData select query option used to augment the search results. If not defined, the default search result metadata will be returned.",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "TitleId": {
+          "description": "The ID of the title that this catalog item is associated with.",
+          "type": "string"
+        },
+        "Top": {
+          "description": "The number of results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Skip",
+        "Top"
+      ],
+      "example": {
+        "Search": "Pirates",
+        "Filter": "tags/any(t:t eq 'desert') and contentType eq 'map'",
+        "OrderBy": "lastModifiedDate asc",
+        "Top": 10,
+        "Select": "contents,images"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogSearchResult": {
+      "type": "object",
+      "properties": {
+        "Count": {
+          "description": "The total count of hits for the search query.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Items": {
+          "description": "The paginated set of results for the search query.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Count": 261,
+        "Items": []
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "Content": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "MaxClientVersion": {
+          "description": "The maximum client version that this content is compatible with.",
+          "type": "string"
+        },
+        "MinClientVersion": {
+          "description": "The minimum client version that this content is compatible with.",
+          "type": "string"
+        },
+        "Tags": {
+          "description": "The list of tags that are associated with this content.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Type": {
+          "description": "The client-defined type of the content.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The Azure CDN URL for retrieval of the catalog item binary content.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateDraftItemRequest": {
+      "description": "The item will not be published to the public catalog until the user makes a call to the PublishItem API.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Metadata describing the new catalog item to be created.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "ContentType": "example catalog item",
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateDraftItemResult": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the catalog item just created.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "ContentType": "example catalog item",
+          "CreatorEntityKey": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+          "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateUploadUrlsRequest": {
+      "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST\r\n                API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs\r\n                returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Files": {
+          "description": "Description of the files to be uploaded by the client.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UploadInfo"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Files": [
+          {
+            "FileName": "textures.zip",
+            "FileSize": 100
+          },
+          {
+            "FileName": "sprites.png",
+            "FileSize": 200
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateUploadUrlsResult": {
+      "type": "object",
+      "properties": {
+        "UploadUrls": {
+          "description": "Urls and metadata for the files to be uploaded by the client.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UploadUrlMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "UploadUrls": [
+          {
+            "Id": "11111111-1111-1111-1111-111111111111",
+            "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip",
+            "FileName": "textures.zip"
+          },
+          {
+            "Id": "22222222-2222-2222-2222-222222222222",
+            "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png",
+            "FileName": "sprites.png"
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteItemRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ItemId": {
+          "description": "ID of the catalog item to delete.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteItemResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityKey": {
+      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Unique ID of the entity.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "Entity type. See https://api.playfab.com/docs/tutorials/entities/entitytypes",
+          "type": "string"
+        },
+        "TypeString": {
+          "description": "Alternate name for Type.",
+          "type": "string",
+          "x-deprecation": {
+            "ProposedAfter": "6/1/2018",
+            "DeprecatedAfter": "7/1/2018",
+            "ObsoleteAfter": "8/1/2018",
+            "ReplacedBy": "Type"
+          }
+        }
+      },
+      "required": [
+        "Id"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetConfigRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetConfigResult": {
+      "type": "object",
+      "properties": {
+        "Config": {
+          "$ref": "#/definitions/UserGeneratedContentConfig",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Config": {
+          "CreatorAccessPolicy": "Open",
+          "ContentTypes": [
+            "map",
+            "skin"
+          ],
+          "Tags": [
+            "sword",
+            "shield"
+          ]
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetDraftItemRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ItemId": {
+          "description": "ID of the catalog item to retrieve from the working catalog.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetDraftItemResult": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Full metadata of the catalog item requested.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetDraftItemsRequest": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items created by the caller, if any are available. Should be null on initial request.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. Maximum page size is 10.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Count": 10
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetDraftItemsResult": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "The total number of items created by the caller.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Items": {
+          "description": "A set of items created by the caller.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0=",
+        "Count": 3,
+        "Items": [
+          {},
+          {},
+          {}
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetPublishedItemRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ItemId": {
+          "description": "ID of the catalog item to retrieve from the working catalog.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetPublishedItemResult": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Full metadata of the catalog item requested.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Locales": {
+          "description": "The optional list of locales that are supported by this image.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Tag": {
+          "description": "The client-defined tag associated with this image.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "The client-defined type of this image.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The URL for retrieval of the image.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PublishItemRequest": {
+      "description": "The call kicks off a workflow to publish the item to the public catalog.\r\n                The Publish Status API should be used to monitor the publish job.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ETag": {
+          "description": "ETag of the catalog item to published from the working catalog to the public catalog. Used for optimistic concurrency. If the provided ETag does not match the ETag in the current working catalog, the request will be reject. If not provided, the current version of the document in the working catalog will be published.",
           "type": "string"
         },
         "ItemId": {
-          "description": "Unique identifier for the inventory item, as defined in the catalog.",
-          "type": "string"
-        },
-        "ItemInstanceId": {
-          "description": "Unique item identifier for this specific instance of the item.",
-          "type": "string"
-        },
-        "PurchaseDate": {
-          "description": "Timestamp for when this instance was purchased.",
-          "type": "string"
-        },
-        "RemainingUses": {
-          "description": "Total number of remaining uses, if this is a consumable item.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "UnitCurrency": {
-          "description": "Currency type for the cost of the catalog item.",
-          "type": "string"
-        },
-        "UnitPrice": {
-          "description": "Cost of the catalog item in the given currency.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "UsesIncrementedBy": {
-          "description": "The number of uses that were added or removed to this item in this call.",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "UnitPrice"
-      ],
-      "example": {
-        "ItemId": "shield_level_5",
-        "ItemInstanceId": "133713371337",
-        "ItemClass": "shields",
-        "PurchaseDate": "2017-03-07T00:00:00",
-        "Expiration": "2018-10-01T00:00:00",
-        "RemainingUses": 10,
-        "Annotation": "No Annotation",
-        "CatalogVersion": "5",
-        "BundleParent": "crate block 1"
-      },
-      "x-sortKey": "ItemInstanceId"
-    },
-    "PlayerJoinedRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is joining. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player joining.",
+          "description": "ID of the catalog item to publish from the working catalog to the public catalog.",
           "type": "string"
         }
       },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
       "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
-      }
-    },
-    "PlayerJoinedResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "PlayerLeftRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "Unique identifier of the Game Server Instance the user is leaving. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
-          "type": "string"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier for the player leaving.",
-          "type": "string"
-        }
+        "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+        "ETag": "someOpaqueString"
       },
-      "required": [
-        "LobbyId",
-        "PlayFabId"
-      ],
-      "example": {
-        "LobbyId": "serverID",
-        "PlayFabId": "23990802934"
-      }
-    },
-    "PlayerLeftResponse": {
-      "type": "object",
-      "properties": {}
-    },
-    "Region": {
-      "type": "object",
-      "enum": [
-        "USCentral",
-        "USEast",
-        "EUWest",
-        "Singapore",
-        "Japan",
-        "Brazil",
-        "Australia"
+      "x-AnyInclusiveFlags": [
+        "Beta"
       ]
     },
-    "RegisterGameRequest": {
+    "PublishItemResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PublishResult": {
+      "type": "object",
+      "enum": [
+        "Unknown",
+        "Pending",
+        "Succeeded",
+        "Failed",
+        "Canceled"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PublishStatusRequest": {
       "type": "object",
       "properties": {
-        "Build": {
-          "description": "Unique identifier of the build running on the Game Server Instance.",
-          "type": "string"
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
         },
-        "GameMode": {
-          "description": "Game Mode the Game Server instance is running. Note that this must be defined in the Game Modes tab in the PlayFab Game Manager, along with the Build ID (the same Game Mode can be defined for multiple Build IDs).",
+        "ItemId": {
+          "description": "ID of the catalog item to publish from the working catalog to the public catalog.",
           "type": "string"
-        },
-        "LobbyId": {
-          "description": "Previous lobby id if re-registering an existing game.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
+        }
+      },
+      "example": {
+        "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PublishStatusResult": {
+      "type": "object",
+      "properties": {
+        "Result": {
+          "$ref": "#/definitions/PublishResult",
+          "description": "High level state of the publish.",
           "type": "string",
           "x-isenum": true
         },
-        "ServerHost": {
-          "description": "IPV4 address of the Game Server Instance.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "7/30/2018",
-            "DeprecatedAfter": "9/30/2018",
-            "ObsoleteAfter": "10/30/2018",
-            "ReplacedBy": "ServerIPV4Address"
-          }
-        },
-        "ServerIPV4Address": {
-          "description": "IPV4 address of the game server instance.",
+        "StatusMessage": {
+          "description": "Descriptive message about the current status of the publish.",
           "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address (if any) of the game server instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPublicDNSName": {
-          "description": "Public DNS name (if any) of the server",
-          "type": "string"
-        },
-        "Tags": {
-          "description": "Tags for the Game Server Instance",
-          "type": "object"
         }
       },
-      "required": [
-        "ServerPort",
-        "Build",
-        "Region",
-        "GameMode"
-      ],
       "example": {
-        "ServerHost": "118.129.31.244",
-        "ServerPort": "9984",
-        "Build": "11_034234.13",
-        "Region": "USEast",
-        "GameMode": "FreeForAll",
-        "Tags": {
-          "level_cap": "high",
-          "no_smoking": "1"
+        "Result": "Pending",
+        "StatusMessage": "scanning images"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetConfigRequest": {
+      "type": "object",
+      "properties": {
+        "Config": {
+          "$ref": "#/definitions/UserGeneratedContentConfig",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Config": {
+          "CreatorAccessPolicy": "Open",
+          "ContentTypes": [
+            "map",
+            "skin"
+          ],
+          "Tags": [
+            "sword",
+            "shield"
+          ]
         }
       },
       "x-AnyInclusiveFlags": [
         "Beta"
-      ],
-      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
+      ]
     },
-    "RegisterGameResponse": {
+    "SetConfigResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateDraftItemRequest": {
       "type": "object",
       "properties": {
-        "LobbyId": {
-          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
-          "type": "string"
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the catalog item to be updated.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateDraftItemResult": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the catalog item just updated.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "example": {
-        "LobbyId": "8285313"
+        "Item": {}
       },
       "x-AnyInclusiveFlags": [
         "Beta"
-      ],
-      "x-deprecation": "{\"ProposedAfter\":\"09/19/2016\",\"DeprecatedAfter\":\"10/19/2016\",\"ObsoleteAfter\":\"11/19/2016\"}"
+      ]
     },
-    "StartGameRequest": {
+    "UploadInfo": {
       "type": "object",
       "properties": {
-        "Build": {
-          "description": "Unique identifier of the previously uploaded build executable which is to be started.",
+        "FileName": {
+          "description": "Name of the file to be uploaded.",
           "type": "string"
         },
-        "CustomCommandLineData": {
-          "description": "Custom command line argument when starting game server process.",
-          "type": "string"
-        },
-        "ExternalMatchmakerEventEndpoint": {
-          "description": "HTTP endpoint URL for receiving game status events, if using an external matchmaker. When the game ends, PlayFab will make a POST request to this URL with the X-SecretKey header set to the value of the game's secret and an application/json body of { \"EventName\": \"game_ended\", \"GameID\": \"<gameid>\" }.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game mode for this Game Server Instance.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region with which to associate the server, for filtering.",
-          "type": "string",
-          "x-isenum": true
-        }
-      },
-      "required": [
-        "Build",
-        "Region",
-        "GameMode",
-        "ExternalMatchmakerEventEndpoint"
-      ],
-      "example": {
-        "Build": "6.01",
-        "GameMode": "capture_the_flag",
-        "CustomCommandLineData": "custom_gameserver_commandline_parameter",
-        "ExternalMatchmakerEventEndpoint": "https://yourmatchmaker.com/gamestatusevents/"
-      }
-    },
-    "StartGameResponse": {
-      "type": "object",
-      "properties": {
-        "GameID": {
-          "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerHostname": {
-          "description": "IPV4 address of the new Game Server Instance.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "7/30/2018",
-            "DeprecatedAfter": "9/30/2018",
-            "ObsoleteAfter": "10/30/2018",
-            "ReplacedBy": "ServerIPV4Address"
-          }
-        },
-        "ServerIPV4Address": {
-          "description": "IPV4 address of the server",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "ServerPublicDNSName": {
-          "description": "Public DNS name (if any) of the server",
-          "type": "string"
-        }
-      },
-      "required": [
-        "ServerPort"
-      ],
-      "example": {
-        "GameID": "1913398545777970887",
-        "ServerHostname": "14.57.243.85",
-        "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-        "ServerPort": 1200
-      }
-    },
-    "UserInfoRequest": {
-      "type": "object",
-      "properties": {
-        "MinCatalogVersion": {
-          "description": "Minimum catalog version for which data is requested (filters the results to only contain inventory items which have a catalog version of this or higher).",
+        "FileSize": {
+          "description": "Size of the file to be uploaded, in bytes.",
           "type": "number",
           "x-actualtype": "int32"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information is being requested.",
-          "type": "string"
         }
       },
       "required": [
-        "PlayFabId",
-        "MinCatalogVersion"
+        "FileSize"
       ],
-      "example": {
-        "PlayFabId": "23990802934",
-        "MinCatalogVersion": 4
-      }
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
-    "UserInfoResponse": {
+    "UploadUrlMetadata": {
       "type": "object",
       "properties": {
-        "Inventory": {
-          "description": "Array of inventory items in the user's current inventory.",
+        "FileName": {
+          "description": "Name of the file for which this upload url was requested.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Unique identifier for the binary content to be uploaded to the target url.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "Url for the binary content to be uploaded to.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UserGeneratedContentConfig": {
+      "type": "object",
+      "properties": {
+        "ContentTypes": {
+          "description": "The set of valid content types.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/ItemInstance"
-          },
-          "x-isUnordered": true,
-          "x-isclass": true
-        },
-        "IsDeveloper": {
-          "description": "Boolean indicating whether the user is a developer.",
-          "type": "boolean"
-        },
-        "PlayFabId": {
-          "description": "PlayFab unique identifier of the user whose information was requested.",
-          "type": "string"
-        },
-        "SteamId": {
-          "description": "Steam unique identifier, if the user has an associated Steam account.",
-          "type": "string"
-        },
-        "TitleDisplayName": {
-          "description": "Title specific display name, if set.",
-          "type": "string"
-        },
-        "Username": {
-          "description": "PlayFab unique user name.",
-          "type": "string"
-        },
-        "VirtualCurrency": {
-          "description": "Array of virtual currency balance(s) belonging to the user.",
-          "type": "object",
-          "x-actualtype": "int32"
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "$ref": "#/definitions/VirtualCurrencyRechargeTime",
-          "description": "Array of remaining times and timestamps for virtual currencies.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "IsDeveloper"
-      ],
-      "example": {
-        "PlayFabId": "23990802934",
-        "Username": "username",
-        "TitleDisplayName": "titlespecificdisplayname",
-        "Inventory": [
-          {
-            "ItemId": "shield_level_5",
-            "ItemInstanceId": "9879843",
-            "ItemClass": "shields",
-            "CatalogVersion": "5"
-          },
-          {
-            "ItemId": "energy_boost_1",
-            "ItemInstanceId": "3854637",
-            "ItemClass": "boosts",
-            "RemainingUses": 4,
-            "CatalogVersion": "5"
-          }
-        ],
-        "VirtualCurrency": {
-          "GC": 1500,
-          "ZZ": 225
-        },
-        "VirtualCurrencyRechargeTimes": {
-          "GC": {
-            "SecondsToRecharge": 3600,
-            "RechargeTime": "2014-01-01T12:00:00",
-            "RechargeMax": 50
+            "type": "string"
           }
         },
-        "SteamId": "1234"
-      }
-    },
-    "VirtualCurrencyRechargeTime": {
-      "type": "object",
-      "properties": {
-        "RechargeMax": {
-          "description": "Maximum value to which the regenerating currency will automatically increment. Note that it can exceed this value through use of the AddUserVirtualCurrency API call. However, it will not regenerate automatically until it has fallen below this value.",
-          "type": "number",
-          "x-actualtype": "int32"
+        "CreatorAccessPolicy": {
+          "$ref": "#/definitions/AccessPolicy",
+          "description": "The policy defining who is allowed to create and manage UGC.",
+          "type": "string",
+          "x-isenum": true
         },
-        "RechargeTime": {
-          "description": "Server timestamp in UTC indicating the next time the virtual currency will be incremented.",
-          "type": "string"
-        },
-        "SecondsToRecharge": {
-          "description": "Time remaining (in seconds) before the next recharge increment of the virtual currency.",
-          "type": "number",
-          "x-actualtype": "int32"
+        "Tags": {
+          "description": "The set of valid tags.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
-      "required": [
-        "SecondsToRecharge",
-        "RechargeTime",
-        "RechargeMax"
-      ],
-      "example": {
-        "SecondsToRecharge": 3600,
-        "RechargeTime": "2014-01-01T12:00:00",
-        "RechargeMax": 50
-      }
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     }
   },
   "parameters": {
-    "AuthUserRequest": {
-      "name": "AuthUserRequest",
+    "CatalogSearchRequest": {
+      "name": "CatalogSearchRequest",
       "in": "body",
-      "description": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order\r\nto securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the\r\nAuthorizationTicket in this call.",
+      "description": "Only community items that have been published with the Publish Item API will be\r\n                returned by Search even for the creator. The creator should use the List Items API to\r\n                view all of their own items.",
       "schema": {
-        "$ref": "#/definitions/AuthUserRequest"
+        "$ref": "#/definitions/CatalogSearchRequest"
       }
     },
-    "DeregisterGameRequest": {
-      "name": "DeregisterGameRequest",
+    "CreateDraftItemRequest": {
+      "name": "CreateDraftItemRequest",
       "in": "body",
+      "description": "The item will not be published to the public catalog until the user makes a call to the PublishItem API.",
       "schema": {
-        "$ref": "#/definitions/DeregisterGameRequest"
+        "$ref": "#/definitions/CreateDraftItemRequest"
       }
     },
-    "PlayerJoinedRequest": {
-      "name": "PlayerJoinedRequest",
+    "CreateUploadUrlsRequest": {
+      "name": "CreateUploadUrlsRequest",
       "in": "body",
+      "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST\r\n                API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs\r\n                returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
       "schema": {
-        "$ref": "#/definitions/PlayerJoinedRequest"
+        "$ref": "#/definitions/CreateUploadUrlsRequest"
       }
     },
-    "PlayerLeftRequest": {
-      "name": "PlayerLeftRequest",
+    "DeleteItemRequest": {
+      "name": "DeleteItemRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/PlayerLeftRequest"
+        "$ref": "#/definitions/DeleteItemRequest"
       }
     },
-    "RegisterGameRequest": {
-      "name": "RegisterGameRequest",
+    "GetConfigRequest": {
+      "name": "GetConfigRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/RegisterGameRequest"
+        "$ref": "#/definitions/GetConfigRequest"
       }
     },
-    "StartGameRequest": {
-      "name": "StartGameRequest",
+    "GetDraftItemRequest": {
+      "name": "GetDraftItemRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/StartGameRequest"
+        "$ref": "#/definitions/GetDraftItemRequest"
       }
     },
-    "UserInfoRequest": {
-      "name": "UserInfoRequest",
+    "GetDraftItemsRequest": {
+      "name": "GetDraftItemsRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/UserInfoRequest"
+        "$ref": "#/definitions/GetDraftItemsRequest"
+      }
+    },
+    "GetPublishedItemRequest": {
+      "name": "GetPublishedItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPublishedItemRequest"
+      }
+    },
+    "PublishItemRequest": {
+      "name": "PublishItemRequest",
+      "in": "body",
+      "description": "The call kicks off a workflow to publish the item to the public catalog.\r\n                The Publish Status API should be used to monitor the publish job.",
+      "schema": {
+        "$ref": "#/definitions/PublishItemRequest"
+      }
+    },
+    "PublishStatusRequest": {
+      "name": "PublishStatusRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/PublishStatusRequest"
+      }
+    },
+    "SetConfigRequest": {
+      "name": "SetConfigRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SetConfigRequest"
+      }
+    },
+    "UpdateDraftItemRequest": {
+      "name": "UpdateDraftItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UpdateDraftItemRequest"
       }
     }
   },
@@ -926,7 +1556,7 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "AuthUserResponse": {
+    "CatalogSearchResult": {
       "description": "",
       "schema": {
         "type": "object",
@@ -940,20 +1570,20 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/AuthUserResponse"
+            "$ref": "#/definitions/CatalogSearchResult"
           }
         },
         "example": {
           "code": 200,
           "status": "OK",
           "data": {
-            "Authorized": true,
-            "PlayFabId": "23990802934"
+            "Count": 261,
+            "Items": []
           }
         }
       }
     },
-    "DeregisterGameResponse": {
+    "CreateDraftItemResult": {
       "description": "",
       "schema": {
         "type": "object",
@@ -967,76 +1597,78 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/DeregisterGameResponse"
-          }
-        }
-      }
-    },
-    "PlayerJoinedResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/PlayerJoinedResponse"
-          }
-        }
-      }
-    },
-    "PlayerLeftResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/PlayerLeftResponse"
-          }
-        }
-      }
-    },
-    "RegisterGameResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/RegisterGameResponse"
+            "$ref": "#/definitions/CreateDraftItemResult"
           }
         },
         "example": {
           "code": 200,
           "status": "OK",
           "data": {
-            "LobbyId": "8285313"
+            "Item": {
+              "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+              "Title": {
+                "neutral": "Neutral title",
+                "en-US": "US English title"
+              },
+              "Description": {
+                "neutral": "Neutral description",
+                "en-US": "US English description"
+              },
+              "ContentType": "example catalog item",
+              "CreatorEntityKey": {
+                "Id": "someId",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+              },
+              "IsHidden": false,
+              "Platforms": [
+                "android",
+                "xboxone",
+                "ios"
+              ],
+              "Tags": [
+                "pirates",
+                "holiday"
+              ],
+              "DisplayVersion": "1.0.0",
+              "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+              "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+              "Contents": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000001",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                  "MaxClientVersion": "2.4.1",
+                  "MinClientVersion": "2.0.0",
+                  "Tags": [
+                    "pirate",
+                    "desert"
+                  ],
+                  "Type": "textures"
+                }
+              ],
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "splashscreen",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                }
+              ],
+              "DisplayProperties": {
+                "mapDetails": {
+                  "mapType": "desertIsland",
+                  "gameMode": "capture",
+                  "maxPlayers": 16
+                },
+                "averageMatchLengthInSeconds": 947
+              },
+              "ETag": "opaqueString"
+            }
           }
         }
       }
     },
-    "StartGameResponse": {
+    "CreateUploadUrlsResult": {
       "description": "",
       "schema": {
         "type": "object",
@@ -1050,81 +1682,282 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/StartGameResponse"
+            "$ref": "#/definitions/CreateUploadUrlsResult"
           }
         },
         "example": {
           "code": 200,
           "status": "OK",
           "data": {
-            "GameID": "1913398545777970887",
-            "ServerHostname": "14.57.243.85",
-            "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-            "ServerPort": 1200
-          }
-        }
-      }
-    },
-    "UserInfoResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/UserInfoResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "PlayFabId": "23990802934",
-            "Username": "username",
-            "TitleDisplayName": "titlespecificdisplayname",
-            "Inventory": [
+            "UploadUrls": [
               {
-                "ItemId": "shield_level_5",
-                "ItemInstanceId": "9879843",
-                "ItemClass": "shields",
-                "CatalogVersion": "5"
+                "Id": "11111111-1111-1111-1111-111111111111",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip",
+                "FileName": "textures.zip"
               },
               {
-                "ItemId": "energy_boost_1",
-                "ItemInstanceId": "3854637",
-                "ItemClass": "boosts",
-                "RemainingUses": 4,
-                "CatalogVersion": "5"
+                "Id": "22222222-2222-2222-2222-222222222222",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png",
+                "FileName": "sprites.png"
               }
-            ],
-            "VirtualCurrency": {
-              "GC": 1500,
-              "ZZ": 225
-            },
-            "VirtualCurrencyRechargeTimes": {
-              "GC": {
-                "SecondsToRecharge": 3600,
-                "RechargeTime": "2014-01-01T12:00:00",
-                "RechargeMax": 50
-              }
-            },
-            "SteamId": "1234"
+            ]
+          }
+        }
+      }
+    },
+    "DeleteItemResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "GetConfigResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetConfigResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Config": {
+              "CreatorAccessPolicy": "Open",
+              "ContentTypes": [
+                "map",
+                "skin"
+              ],
+              "Tags": [
+                "sword",
+                "shield"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "GetDraftItemResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetDraftItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {}
+          }
+        }
+      }
+    },
+    "GetDraftItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetDraftItemsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0=",
+            "Count": 3,
+            "Items": [
+              {},
+              {},
+              {}
+            ]
+          }
+        }
+      }
+    },
+    "GetPublishedItemResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPublishedItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {}
+          }
+        }
+      }
+    },
+    "PublishItemResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/PublishItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "PublishStatusResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/PublishStatusResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Result": "Pending",
+            "StatusMessage": "scanning images"
+          }
+        }
+      }
+    },
+    "SetConfigResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetConfigResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "UpdateDraftItemResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateDraftItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {}
           }
         }
       }
     }
   },
+  "x-AnyInclusiveFlags": [
+    "Beta"
+  ],
   "tags": [
     {
-      "name": "Matchmaking",
-      "description": "https://api.playfab.com/documentation/Matchmaker#Matchmaking"
+      "name": "UserGeneratedContent",
+      "description": "https://api.playfab.com/documentation/Economy#UserGeneratedContent"
     }
   ],
   "securityDefinitions": {

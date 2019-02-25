@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190219",
+    "version": "190225",
     "title": "PlayFab CloudScript API",
     "description": "API methods for executing CloudScript using an Entity Profile",
     "termsOfService": "https://playfab.com/terms/",
@@ -62,6 +62,119 @@
           "JavascriptException"
         ]
       }
+    },
+    "/CloudScript/ExecuteFunction": {
+      "post": {
+        "operationId": "ExecuteFunction",
+        "tags": [
+          "Server-Side Cloud Script"
+        ],
+        "description": "Cloud Script is one of PlayFab's most versatile features. It allows client code to request execution of any kind of custom server-side functionality you can implement, and it can be used in conjunction with virtually anything.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/cloudscript/method/ExecuteFunction"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ExecuteFunctionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ExecuteFunctionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Executes an Azure Function with the entity profile that is defined in the request.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidEntityType",
+          "NoSecretKeyEnabledForCloudScript"
+        ]
+      }
+    },
+    "/CloudScript/GetArgumentsForExecuteFunction": {
+      "post": {
+        "operationId": "GetArgumentsForExecuteFunction",
+        "tags": [
+          "Server-Side Cloud Script"
+        ],
+        "description": "Cloud Script is one of PlayFab's most versatile features. It allows client code to request execution of any kind of custom server-side functionality you can implement, and it can be used in conjunction with virtually anything.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/cloudscript/method/GetArgumentsForExecuteFunction"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetArgumentsForExecuteFunctionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetArgumentsForExecuteFunctionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns a data structure that can be used to pass to an Azure Function locally.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidEntityType",
+          "NoSecretKeyEnabledForCloudScript"
+        ]
+      }
+    },
+    "/CloudScript/RegisterFunction": {
+      "post": {
+        "operationId": "RegisterFunction",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Registers an Azure function with a title.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/cloudscript/method/RegisterFunction"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RegisterFunctionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "InternalServerError"
+        ]
+      }
     }
   },
   "definitions": {
@@ -105,6 +218,44 @@
         "Specific"
       ]
     },
+    "EffectType": {
+      "type": "object",
+      "enum": [
+        "Allow",
+        "Deny"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EmptyResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityDataObject": {
+      "description": "An entity object and its associated meta data.",
+      "type": "object",
+      "properties": {
+        "DataObject": {
+          "description": "Un-escaped JSON object, if DataAsObject is true.",
+          "type": "object"
+        },
+        "EscapedDataObject": {
+          "description": "Escaped string JSON body of the object, if DataAsObject is default or false.",
+          "type": "string"
+        },
+        "ObjectName": {
+          "description": "Name of this object.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "type": "object",
@@ -130,6 +281,197 @@
       },
       "required": [
         "Id"
+      ]
+    },
+    "EntityLineage": {
+      "type": "object",
+      "properties": {
+        "CharacterId": {
+          "description": "The Character Id of the associated entity.",
+          "type": "string"
+        },
+        "GroupId": {
+          "description": "The Group Id of the associated entity.",
+          "type": "string"
+        },
+        "MasterPlayerAccountId": {
+          "description": "The Master Player Account Id of the associated entity.",
+          "type": "string"
+        },
+        "NamespaceId": {
+          "description": "The Namespace Id of the associated entity.",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "The Title Id of the associated entity.",
+          "type": "string"
+        },
+        "TitlePlayerAccountId": {
+          "description": "The Title Player Account Id of the associated entity.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityPermissionStatement": {
+      "type": "object",
+      "properties": {
+        "Action": {
+          "description": "The action this statement effects. May be 'Read', 'Write' or '*' for both read and write.",
+          "type": "string"
+        },
+        "Comment": {
+          "description": "A comment about the statement. Intended solely for bookkeeping and debugging.",
+          "type": "string"
+        },
+        "Condition": {
+          "description": "Additional conditions to be applied for entity resources.",
+          "type": "object"
+        },
+        "Effect": {
+          "$ref": "#/definitions/EffectType",
+          "description": "The effect this statement will have. It may be either Allow or Deny",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Principal": {
+          "description": "The principal this statement will effect.",
+          "type": "object"
+        },
+        "Resource": {
+          "description": "The resource this statements effects. Similar to 'pfrn:data--title![Title ID]/Profile/*'",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Resource",
+        "Action",
+        "Effect",
+        "Principal"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityProfileBody": {
+      "type": "object",
+      "properties": {
+        "DisplayName": {
+          "description": "The display name of the entity. This field may serve different purposes for different entity types. i.e.: for a title player account it could represent the display name of the player, whereas on a character it could be character's name.",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EntityChain": {
+          "description": "The chain of responsibility for this entity. Use Lineage.",
+          "type": "string"
+        },
+        "Files": {
+          "$ref": "#/definitions/EntityProfileFileMetadata",
+          "description": "The files on this profile.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Language": {
+          "description": "The language on this profile.",
+          "type": "string"
+        },
+        "Lineage": {
+          "$ref": "#/definitions/EntityLineage",
+          "description": "The lineage of this profile.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Objects": {
+          "$ref": "#/definitions/EntityDataObject",
+          "description": "The objects on this profile.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Permissions": {
+          "description": "The permissions that govern access to this entity profile and its properties. Only includes permissions set on this profile, not global statements from titles and namespaces.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityPermissionStatement"
+          },
+          "x-isclass": true
+        },
+        "VersionNumber": {
+          "description": "The version number of the profile in persistent storage at the time of the read. Used for optional optimistic concurrency during update.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "VersionNumber"
+      ],
+      "example": {
+        "Entity": {
+          "Id": "1234567787392",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "EntityChain": "title_player_account!09839712/1289749013/19073097/1234567787392"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityProfileFileMetadata": {
+      "description": "An entity file's meta data. To get a download URL call File/GetFiles API.",
+      "type": "object",
+      "properties": {
+        "Checksum": {
+          "description": "Checksum value for the file",
+          "type": "string"
+        },
+        "FileName": {
+          "description": "Name of the file",
+          "type": "string"
+        },
+        "LastModified": {
+          "description": "Last UTC time the file was modified",
+          "type": "string"
+        },
+        "Size": {
+          "description": "Storage service's reported byte count",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Size",
+        "LastModified"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityRequest": {
+      "type": "object",
+      "properties": {
+        "EntityProfile": {
+          "$ref": "#/definitions/EntityProfileBody",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FunctionParameter": {
+          "type": "object"
+        },
+        "RequestorEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
       ]
     },
     "ExecuteCloudScriptResult": {
@@ -271,11 +613,136 @@
         "RevisionSelection": "Live",
         "GeneratePlayStreamEvent": true,
         "Entity": {
-          "Id": "master_player_account",
-          "Type": "aaa",
-          "TypeString": "aaa"
+          "Id": "aaa",
+          "Type": "master_player_account",
+          "TypeString": "master_player_account"
         }
       }
+    },
+    "ExecuteFunctionRequest": {
+      "description": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FunctionName": {
+          "description": "The name of the CloudScript function to execute",
+          "type": "string"
+        },
+        "FunctionParameter": {
+          "description": "Object that is passed in to the function as the args parameter of the entity data structure",
+          "type": "object"
+        },
+        "GeneratePlayStreamEvent": {
+          "description": "Generate a 'entity_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "FunctionName"
+      ],
+      "example": {
+        "FunctionName": "levelCompleted",
+        "FunctionParameter": {
+          "level": 3,
+          "points": 400
+        },
+        "GeneratePlayStreamEvent": true,
+        "Entity": {
+          "Id": "aaa",
+          "Type": "master_player_account",
+          "TypeString": "master_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ExecuteFunctionResult": {
+      "type": "object",
+      "properties": {
+        "ExecutionTimeSeconds": {
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "FunctionName": {
+          "type": "string"
+        },
+        "FunctionResult": {
+          "type": "object"
+        },
+        "FunctionResultTooLarge": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ExecutionTimeSeconds"
+      ],
+      "example": {
+        "ExecutionTimeSeconds": 0.03670790046453476,
+        "FunctionResult": {
+          "newScore": 25
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetArgumentsForExecuteFunctionRequest": {
+      "description": "Returns a data structure that can be used to pass to an Azure Function locally.",
+      "type": "object",
+      "properties": {
+        "CallingEntity": {
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Request": {
+          "$ref": "#/definitions/ExecuteFunctionRequest",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "CallingEntity": "abc123def4546",
+        "Request": {
+          "FunctionName": "levelCompleted",
+          "FunctionParameter": {
+            "level": 3,
+            "points": 400
+          },
+          "GeneratePlayStreamEvent": true,
+          "Entity": {
+            "Id": "master_player_account",
+            "Type": "aaa",
+            "TypeString": "aaa"
+          }
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetArgumentsForExecuteFunctionResult": {
+      "type": "object",
+      "properties": {
+        "Request": {
+          "$ref": "#/definitions/EntityRequest",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "LogStatement": {
       "type": "object",
@@ -292,6 +759,37 @@
           "type": "string"
         }
       }
+    },
+    "RegisterFunctionRequest": {
+      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FunctionName": {
+          "description": "The name of the function to register",
+          "type": "string"
+        },
+        "FunctionUrl": {
+          "description": "Full URL for Azure Function that implements the function.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "FunctionName",
+        "FunctionUrl"
+      ],
+      "example": {
+        "FunctionName": "functionName",
+        "FunctionUrl": "http://function.url"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "ScriptExecutionError": {
       "type": "object",
@@ -319,6 +817,30 @@
       "schema": {
         "$ref": "#/definitions/ExecuteEntityCloudScriptRequest"
       }
+    },
+    "ExecuteFunctionRequest": {
+      "name": "ExecuteFunctionRequest",
+      "in": "body",
+      "description": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "schema": {
+        "$ref": "#/definitions/ExecuteFunctionRequest"
+      }
+    },
+    "GetArgumentsForExecuteFunctionRequest": {
+      "name": "GetArgumentsForExecuteFunctionRequest",
+      "in": "body",
+      "description": "Returns a data structure that can be used to pass to an Azure Function locally.",
+      "schema": {
+        "$ref": "#/definitions/GetArgumentsForExecuteFunctionRequest"
+      }
+    },
+    "RegisterFunctionRequest": {
+      "name": "RegisterFunctionRequest",
+      "in": "body",
+      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+      "schema": {
+        "$ref": "#/definitions/RegisterFunctionRequest"
+      }
     }
   },
   "responses": {
@@ -326,6 +848,25 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "EmptyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/EmptyResult"
+          }
+        }
       }
     },
     "ExecuteCloudScriptResult": {
@@ -372,9 +913,61 @@
           }
         }
       }
+    },
+    "ExecuteFunctionResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ExecuteFunctionResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ExecutionTimeSeconds": 0.03670790046453476,
+            "FunctionResult": {
+              "newScore": 25
+            }
+          }
+        }
+      }
+    },
+    "GetArgumentsForExecuteFunctionResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetArgumentsForExecuteFunctionResult"
+          }
+        }
+      }
     }
   },
   "tags": [
+    {
+      "name": "Account Management",
+      "description": "https://api.playfab.com/documentation/CloudScript#Account-Management"
+    },
     {
       "name": "Server-Side Cloud Script",
       "description": "https://api.playfab.com/documentation/CloudScript#Server-Side-Cloud-Script"
@@ -2086,6 +2679,66 @@
       "id": 1429,
       "name": "GameCenterAuthenticationFailed"
     },
+    "CannotEnablePartiesForTitle": {
+      "id": 1430,
+      "name": "CannotEnablePartiesForTitle"
+    },
+    "PartyError": {
+      "id": 1431,
+      "name": "PartyError"
+    },
+    "PartyRequests": {
+      "id": 1432,
+      "name": "PartyRequests"
+    },
+    "PartyNoContent": {
+      "id": 1433,
+      "name": "PartyNoContent"
+    },
+    "PartyBadRequest": {
+      "id": 1434,
+      "name": "PartyBadRequest"
+    },
+    "PartyUnauthorized": {
+      "id": 1435,
+      "name": "PartyUnauthorized"
+    },
+    "PartyForbidden": {
+      "id": 1436,
+      "name": "PartyForbidden"
+    },
+    "PartyNotFound": {
+      "id": 1437,
+      "name": "PartyNotFound"
+    },
+    "PartyConflict": {
+      "id": 1438,
+      "name": "PartyConflict"
+    },
+    "PartyInternalServerError": {
+      "id": 1439,
+      "name": "PartyInternalServerError"
+    },
+    "PartyUnavailable": {
+      "id": 1440,
+      "name": "PartyUnavailable"
+    },
+    "PartyTooManyRequests": {
+      "id": 1441,
+      "name": "PartyTooManyRequests"
+    },
+    "PushNotificationTemplateMissingName": {
+      "id": 1442,
+      "name": "PushNotificationTemplateMissingName"
+    },
+    "CannotEnableMultiplayerServersForTitle": {
+      "id": 1443,
+      "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 1444,
+      "name": "WriteAttemptedDuringExport"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -2214,10 +2867,6 @@
       "id": 2032,
       "name": "MatchmakingMemberProfileInvalid"
     },
-    "WriteAttemptedDuringExport": {
-      "id": 2033,
-      "name": "WriteAttemptedDuringExport"
-    },
     "NintendoSwitchDeviceIdNotLinked": {
       "id": 2034,
       "name": "NintendoSwitchDeviceIdNotLinked"
@@ -2233,10 +2882,6 @@
     "MatchmakingBucketOwnerNotFound": {
       "id": 2037,
       "name": "MatchmakingBucketOwnerNotFound"
-    },
-    "CannotEnableMultiplayerServersForTitle": {
-      "id": 2038,
-      "name": "CannotEnableMultiplayerServersForTitle"
     },
     "MatchmakingCancelAllTicketsUnauthorized": {
       "id": 2041,
@@ -2290,53 +2935,9 @@
       "id": 2053,
       "name": "MatchmakingPlayerHasNotJoinedTicket"
     },
-    "CannotEnablePartiesForTitle": {
+    "MatchmakingRateLimitExceeded": {
       "id": 2054,
-      "name": "CannotEnablePartiesForTitle"
-    },
-    "PartyError": {
-      "id": 2055,
-      "name": "PartyError"
-    },
-    "PartyRequests": {
-      "id": 2056,
-      "name": "PartyRequests"
-    },
-    "PartyNoContent": {
-      "id": 2057,
-      "name": "PartyNoContent"
-    },
-    "PartyBadRequest": {
-      "id": 2058,
-      "name": "PartyBadRequest"
-    },
-    "PartyUnauthorized": {
-      "id": 2059,
-      "name": "PartyUnauthorized"
-    },
-    "PartyForbidden": {
-      "id": 2060,
-      "name": "PartyForbidden"
-    },
-    "PartyNotFound": {
-      "id": 2061,
-      "name": "PartyNotFound"
-    },
-    "PartyConflict": {
-      "id": 2062,
-      "name": "PartyConflict"
-    },
-    "PartyInternalServerError": {
-      "id": 2063,
-      "name": "PartyInternalServerError"
-    },
-    "PartyUnavailable": {
-      "id": 2064,
-      "name": "PartyUnavailable"
-    },
-    "PartyTooManyRequests": {
-      "id": 2065,
-      "name": "PartyTooManyRequests"
+      "name": "MatchmakingRateLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,

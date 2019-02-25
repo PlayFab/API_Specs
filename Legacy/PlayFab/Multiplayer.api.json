@@ -321,6 +321,45 @@
         }
       ]
     },
+    "CancelAllMatchmakingTicketsForPlayerRequest": {
+      "name": "CancelAllMatchmakingTicketsForPlayerRequest",
+      "className": "CancelAllMatchmakingTicketsForPlayerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Cancels all tickets of which the player is a member in a given queue that are not\r\n                cancelled or matched. This API is useful if you lose track of what tickets\r\n                the player is a member of (if the title crashes for instance) and want to\r\n                \"reset\".\r\n\r\n                The Entity field is optional if the caller is a player and defaults to that\r\n                player. Players may not cancel tickets for other people.\r\n\r\n                The Entity field is required if the caller is a server (authenticated as\r\n                the title).",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity key of the player whose tickets should be canceled.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "QueueName",
+          "description": "The Id of the queue from which a player's tickets should be canceled.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CancelAllMatchmakingTicketsForPlayerResult": {
+      "name": "CancelAllMatchmakingTicketsForPlayerResult",
+      "className": "CancelAllMatchmakingTicketsForPlayerResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
     "CancellationReason": {
       "name": "CancellationReason",
       "className": "CancellationReason",
@@ -3256,8 +3295,8 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "NetworkId",
-          "description": "A guid string network ID created track the party session over its life.",
+          "name": "PartyId",
+          "description": "A guid string party ID created track the party session over its life.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -3269,6 +3308,20 @@
           "jsontype": "String",
           "actualtype": "AzureRegion",
           "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "SessionCookie",
+          "description": "Data encoded as a string that is passed to the party when requested. This can be used to to communicate information such as party type through the request flow.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Version",
+          "description": "The client version for the party being requested.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": false
         }
       ]
@@ -3689,6 +3742,7 @@
     {
       "name": "Matchmaking",
       "methods": [
+        "CancelAllMatchmakingTicketsForPlayer",
         "CancelMatchmakingTicket",
         "CreateMatchmakingTicket",
         "CreateServerMatchmakingTicket",
@@ -3747,6 +3801,30 @@
     }
   ],
   "calls": [
+    {
+      "name": "CancelAllMatchmakingTicketsForPlayer",
+      "summary": "Cancel all active tickets the player is a member of in a given queue.",
+      "requestDetails": "Cancels all tickets of which the player is a member in a given queue that are not cancelled or matched. This API is useful if you lose track of what tickets the player is a member of (if the title crashes for instance) and want to \"reset\". The Entity field is optional if the caller is a player and defaults to that player. Players may not cancel tickets for other people. The Entity field is required if the caller is a server (authenticated as the title).",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/CancelAllMatchmakingTicketsForPlayer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CancelAllMatchmakingTicketsForPlayerRequest",
+      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"123123123\",\r\n    \"Type\": \"title_player_acount\",\r\n    \"TypeString\": \"title_player_acount\"\r\n  },\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "CancelAllMatchmakingTicketsForPlayerResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingCancelAllTicketsUnauthorized",
+        "MatchmakingEntityInvalid",
+        "MatchmakingPlayerIdMissing",
+        "MatchmakingQueueNameMissing",
+        "MatchmakingTitleIdMissing"
+      ]
+    },
     {
       "name": "CancelMatchmakingTicket",
       "summary": "Cancel a matchmaking ticket.",
@@ -4061,7 +4139,7 @@
       "requestDetails": "Enables the parties feature for a title.",
       "subgroup": "MultiplayerServer",
       "titleTiers": null,
-      "url": "/PartyController/EnablePartiesForTitle",
+      "url": "/Party/EnablePartiesForTitle",
       "auth": "EntityToken",
       "method": "POST",
       "request": "EnablePartiesForTitleRequest",
@@ -4766,11 +4844,11 @@
       "requestDetails": "Requests a party session from a particular build in any of the given preferred regions.",
       "subgroup": "MultiplayerServer",
       "titleTiers": null,
-      "url": "/PartyController/RequestParty",
+      "url": "/Party/RequestParty",
       "auth": "EntityToken",
       "method": "POST",
       "request": "RequestPartyRequest",
-      "requestExample": "{\r\n  \"NetworkId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\r\n  \"PreferredRegions\": [\r\n    \"EastUs\",\r\n    \"WestUs\"\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"PartyId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\r\n  \"PreferredRegions\": [\r\n    \"EastUs\",\r\n    \"WestUs\"\r\n  ],\r\n  \"SessionCookie\": \"FooBarCookie\",\r\n  \"Version\": \"0.1\"\r\n}",
       "result": "RequestPartyResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"NetworkId\": \"12baef1e-e31e-2b59-2fef-ff1f38c03a8d\",\r\n    \"ServerId\": \"APartySession\",\r\n    \"VmId\": \"90c12b03-b882-2367-9a41-5a04b41f37d9\",\r\n    \"IPV4Address\": \"10.250.24.54\",\r\n    \"FQDN\": \"vm.azure.cloudapp.net\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"Region\": \"WestUs\",\r\n    \"State\": \"Active\",\r\n    \"ConnectedPlayers\": [\r\n      {\r\n        \"PlayerId\": \"52E4402DDE1E4C95\"\r\n      },\r\n      {\r\n        \"PlayerId\": \"7B82CAA355362FE8\"\r\n      }\r\n    ]\r\n  }\r\n}",
       "AnyInclusiveFlags": [
@@ -6597,6 +6675,66 @@
       "id": 1429,
       "name": "GameCenterAuthenticationFailed"
     },
+    "CannotEnablePartiesForTitle": {
+      "id": 1430,
+      "name": "CannotEnablePartiesForTitle"
+    },
+    "PartyError": {
+      "id": 1431,
+      "name": "PartyError"
+    },
+    "PartyRequests": {
+      "id": 1432,
+      "name": "PartyRequests"
+    },
+    "PartyNoContent": {
+      "id": 1433,
+      "name": "PartyNoContent"
+    },
+    "PartyBadRequest": {
+      "id": 1434,
+      "name": "PartyBadRequest"
+    },
+    "PartyUnauthorized": {
+      "id": 1435,
+      "name": "PartyUnauthorized"
+    },
+    "PartyForbidden": {
+      "id": 1436,
+      "name": "PartyForbidden"
+    },
+    "PartyNotFound": {
+      "id": 1437,
+      "name": "PartyNotFound"
+    },
+    "PartyConflict": {
+      "id": 1438,
+      "name": "PartyConflict"
+    },
+    "PartyInternalServerError": {
+      "id": 1439,
+      "name": "PartyInternalServerError"
+    },
+    "PartyUnavailable": {
+      "id": 1440,
+      "name": "PartyUnavailable"
+    },
+    "PartyTooManyRequests": {
+      "id": 1441,
+      "name": "PartyTooManyRequests"
+    },
+    "PushNotificationTemplateMissingName": {
+      "id": 1442,
+      "name": "PushNotificationTemplateMissingName"
+    },
+    "CannotEnableMultiplayerServersForTitle": {
+      "id": 1443,
+      "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 1444,
+      "name": "WriteAttemptedDuringExport"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6725,10 +6863,6 @@
       "id": 2032,
       "name": "MatchmakingMemberProfileInvalid"
     },
-    "WriteAttemptedDuringExport": {
-      "id": 2033,
-      "name": "WriteAttemptedDuringExport"
-    },
     "NintendoSwitchDeviceIdNotLinked": {
       "id": 2034,
       "name": "NintendoSwitchDeviceIdNotLinked"
@@ -6744,10 +6878,6 @@
     "MatchmakingBucketOwnerNotFound": {
       "id": 2037,
       "name": "MatchmakingBucketOwnerNotFound"
-    },
-    "CannotEnableMultiplayerServersForTitle": {
-      "id": 2038,
-      "name": "CannotEnableMultiplayerServersForTitle"
     },
     "MatchmakingCancelAllTicketsUnauthorized": {
       "id": 2041,
@@ -6801,53 +6931,9 @@
       "id": 2053,
       "name": "MatchmakingPlayerHasNotJoinedTicket"
     },
-    "CannotEnablePartiesForTitle": {
+    "MatchmakingRateLimitExceeded": {
       "id": 2054,
-      "name": "CannotEnablePartiesForTitle"
-    },
-    "PartyError": {
-      "id": 2055,
-      "name": "PartyError"
-    },
-    "PartyRequests": {
-      "id": 2056,
-      "name": "PartyRequests"
-    },
-    "PartyNoContent": {
-      "id": 2057,
-      "name": "PartyNoContent"
-    },
-    "PartyBadRequest": {
-      "id": 2058,
-      "name": "PartyBadRequest"
-    },
-    "PartyUnauthorized": {
-      "id": 2059,
-      "name": "PartyUnauthorized"
-    },
-    "PartyForbidden": {
-      "id": 2060,
-      "name": "PartyForbidden"
-    },
-    "PartyNotFound": {
-      "id": 2061,
-      "name": "PartyNotFound"
-    },
-    "PartyConflict": {
-      "id": 2062,
-      "name": "PartyConflict"
-    },
-    "PartyInternalServerError": {
-      "id": 2063,
-      "name": "PartyInternalServerError"
-    },
-    "PartyUnavailable": {
-      "id": 2064,
-      "name": "PartyUnavailable"
-    },
-    "PartyTooManyRequests": {
-      "id": 2065,
-      "name": "PartyTooManyRequests"
+      "name": "MatchmakingRateLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,
@@ -7339,6 +7425,21 @@
     "EmailRecipientBlacklisted",
     "InvalidGameCenterAuthRequest",
     "GameCenterAuthenticationFailed",
+    "CannotEnablePartiesForTitle",
+    "PartyError",
+    "PartyRequests",
+    "PartyNoContent",
+    "PartyBadRequest",
+    "PartyUnauthorized",
+    "PartyForbidden",
+    "PartyNotFound",
+    "PartyConflict",
+    "PartyInternalServerError",
+    "PartyUnavailable",
+    "PartyTooManyRequests",
+    "PushNotificationTemplateMissingName",
+    "CannotEnableMultiplayerServersForTitle",
+    "WriteAttemptedDuringExport",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingCreateTicketRequestMissing",
@@ -7371,12 +7472,10 @@
     "MatchmakingClientTimeout",
     "MatchmakingQueueConfigInvalid",
     "MatchmakingMemberProfileInvalid",
-    "WriteAttemptedDuringExport",
     "NintendoSwitchDeviceIdNotLinked",
     "MatchmakingNotEnabled",
     "MatchmakingGetStatisticsIdentityInvalid",
     "MatchmakingBucketOwnerNotFound",
-    "CannotEnableMultiplayerServersForTitle",
     "MatchmakingCancelAllTicketsUnauthorized",
     "MatchmakingListTicketsUnauthorized",
     "MatchmakingPlayerAttributesTooLarge",
@@ -7390,18 +7489,7 @@
     "MatchmakingLatencyMeasurementMissing",
     "MatchmakingStatisticsNotFound",
     "MatchmakingPlayerHasNotJoinedTicket",
-    "CannotEnablePartiesForTitle",
-    "PartyError",
-    "PartyRequests",
-    "PartyNoContent",
-    "PartyBadRequest",
-    "PartyUnauthorized",
-    "PartyForbidden",
-    "PartyNotFound",
-    "PartyConflict",
-    "PartyInternalServerError",
-    "PartyUnavailable",
-    "PartyTooManyRequests",
+    "MatchmakingRateLimitExceeded",
     "TitleConfigNotFound",
     "TitleConfigUpdateConflict",
     "TitleConfigSerializationError",

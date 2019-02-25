@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190219",
+    "version": "190225",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -24,6 +24,47 @@
     "application/json"
   ],
   "paths": {
+    "/Match/CancelAllMatchmakingTicketsForPlayer": {
+      "post": {
+        "operationId": "CancelAllMatchmakingTicketsForPlayer",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Cancel all active tickets the player is a member of in a given queue.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/CancelAllMatchmakingTicketsForPlayer"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CancelAllMatchmakingTicketsForPlayerRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CancelAllMatchmakingTicketsForPlayerResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Cancels all tickets of which the player is a member in a given queue that are not cancelled or matched. This API is useful if you lose track of what tickets the player is a member of (if the title crashes for instance) and want to \"reset\". The Entity field is optional if the caller is a player and defaults to that player. Players may not cancel tickets for other people. The Entity field is required if the caller is a server (authenticated as the title).",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingCancelAllTicketsUnauthorized",
+          "MatchmakingEntityInvalid",
+          "MatchmakingPlayerIdMissing",
+          "MatchmakingQueueNameMissing",
+          "MatchmakingTitleIdMissing"
+        ]
+      }
+    },
     "/Match/CancelMatchmakingTicket": {
       "post": {
         "operationId": "CancelMatchmakingTicket",
@@ -1856,7 +1897,7 @@
         ]
       }
     },
-    "/PartyController/EnablePartiesForTitle": {
+    "/Party/EnablePartiesForTitle": {
       "post": {
         "operationId": "EnablePartiesForTitle",
         "tags": [
@@ -1898,7 +1939,7 @@
         ]
       }
     },
-    "/PartyController/RequestParty": {
+    "/Party/RequestParty": {
       "post": {
         "operationId": "RequestParty",
         "tags": [
@@ -2147,6 +2188,44 @@
           "type": "object"
         }
       }
+    },
+    "CancelAllMatchmakingTicketsForPlayerRequest": {
+      "description": "Cancels all tickets of which the player is a member in a given queue that are not\r\n                cancelled or matched. This API is useful if you lose track of what tickets\r\n                the player is a member of (if the title crashes for instance) and want to\r\n                \"reset\".\r\n\r\n                The Entity field is optional if the caller is a player and defaults to that\r\n                player. Players may not cancel tickets for other people.\r\n\r\n                The Entity field is required if the caller is a server (authenticated as\r\n                the title).",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity key of the player whose tickets should be canceled.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "QueueName": {
+          "description": "The Id of the queue from which a player's tickets should be canceled.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "QueueName"
+      ],
+      "example": {
+        "Entity": {
+          "Id": "123123123",
+          "Type": "title_player_acount",
+          "TypeString": "title_player_acount"
+        },
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CancelAllMatchmakingTicketsForPlayerResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "CancellationReason": {
       "type": "object",
@@ -5071,8 +5150,8 @@
       "description": "Requests a party session from a particular build in any of the given preferred regions.",
       "type": "object",
       "properties": {
-        "NetworkId": {
-          "description": "A guid string network ID created track the party session over its life.",
+        "PartyId": {
+          "description": "A guid string party ID created track the party session over its life.",
           "type": "string"
         },
         "PreferredRegions": {
@@ -5082,18 +5161,29 @@
             "$ref": "#/definitions/AzureRegion"
           },
           "x-isenum": true
+        },
+        "SessionCookie": {
+          "description": "Data encoded as a string that is passed to the party when requested. This can be used to to communicate information such as party type through the request flow.",
+          "type": "string"
+        },
+        "Version": {
+          "description": "The client version for the party being requested.",
+          "type": "string"
         }
       },
       "required": [
-        "NetworkId",
-        "PreferredRegions"
+        "PartyId",
+        "PreferredRegions",
+        "Version"
       ],
       "example": {
-        "NetworkId": "23781fa9-e01e-4b29-4f0b-dd9f37a06a1e",
+        "PartyId": "23781fa9-e01e-4b29-4f0b-dd9f37a06a1e",
         "PreferredRegions": [
           "EastUs",
           "WestUs"
-        ]
+        ],
+        "SessionCookie": "FooBarCookie",
+        "Version": "0.1"
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -5611,6 +5701,14 @@
     }
   },
   "parameters": {
+    "CancelAllMatchmakingTicketsForPlayerRequest": {
+      "name": "CancelAllMatchmakingTicketsForPlayerRequest",
+      "in": "body",
+      "description": "Cancels all tickets of which the player is a member in a given queue that are not\r\n                cancelled or matched. This API is useful if you lose track of what tickets\r\n                the player is a member of (if the title crashes for instance) and want to\r\n                \"reset\".\r\n\r\n                The Entity field is optional if the caller is a player and defaults to that\r\n                player. Players may not cancel tickets for other people.\r\n\r\n                The Entity field is required if the caller is a server (authenticated as\r\n                the title).",
+      "schema": {
+        "$ref": "#/definitions/CancelAllMatchmakingTicketsForPlayerRequest"
+      }
+    },
     "CancelMatchmakingTicketRequest": {
       "name": "CancelMatchmakingTicketRequest",
       "in": "body",
@@ -5961,6 +6059,30 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "CancelAllMatchmakingTicketsForPlayerResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CancelAllMatchmakingTicketsForPlayerResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
       }
     },
     "CancelMatchmakingTicketResult": {
@@ -8883,6 +9005,66 @@
       "id": 1429,
       "name": "GameCenterAuthenticationFailed"
     },
+    "CannotEnablePartiesForTitle": {
+      "id": 1430,
+      "name": "CannotEnablePartiesForTitle"
+    },
+    "PartyError": {
+      "id": 1431,
+      "name": "PartyError"
+    },
+    "PartyRequests": {
+      "id": 1432,
+      "name": "PartyRequests"
+    },
+    "PartyNoContent": {
+      "id": 1433,
+      "name": "PartyNoContent"
+    },
+    "PartyBadRequest": {
+      "id": 1434,
+      "name": "PartyBadRequest"
+    },
+    "PartyUnauthorized": {
+      "id": 1435,
+      "name": "PartyUnauthorized"
+    },
+    "PartyForbidden": {
+      "id": 1436,
+      "name": "PartyForbidden"
+    },
+    "PartyNotFound": {
+      "id": 1437,
+      "name": "PartyNotFound"
+    },
+    "PartyConflict": {
+      "id": 1438,
+      "name": "PartyConflict"
+    },
+    "PartyInternalServerError": {
+      "id": 1439,
+      "name": "PartyInternalServerError"
+    },
+    "PartyUnavailable": {
+      "id": 1440,
+      "name": "PartyUnavailable"
+    },
+    "PartyTooManyRequests": {
+      "id": 1441,
+      "name": "PartyTooManyRequests"
+    },
+    "PushNotificationTemplateMissingName": {
+      "id": 1442,
+      "name": "PushNotificationTemplateMissingName"
+    },
+    "CannotEnableMultiplayerServersForTitle": {
+      "id": 1443,
+      "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 1444,
+      "name": "WriteAttemptedDuringExport"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -9011,10 +9193,6 @@
       "id": 2032,
       "name": "MatchmakingMemberProfileInvalid"
     },
-    "WriteAttemptedDuringExport": {
-      "id": 2033,
-      "name": "WriteAttemptedDuringExport"
-    },
     "NintendoSwitchDeviceIdNotLinked": {
       "id": 2034,
       "name": "NintendoSwitchDeviceIdNotLinked"
@@ -9030,10 +9208,6 @@
     "MatchmakingBucketOwnerNotFound": {
       "id": 2037,
       "name": "MatchmakingBucketOwnerNotFound"
-    },
-    "CannotEnableMultiplayerServersForTitle": {
-      "id": 2038,
-      "name": "CannotEnableMultiplayerServersForTitle"
     },
     "MatchmakingCancelAllTicketsUnauthorized": {
       "id": 2041,
@@ -9087,53 +9261,9 @@
       "id": 2053,
       "name": "MatchmakingPlayerHasNotJoinedTicket"
     },
-    "CannotEnablePartiesForTitle": {
+    "MatchmakingRateLimitExceeded": {
       "id": 2054,
-      "name": "CannotEnablePartiesForTitle"
-    },
-    "PartyError": {
-      "id": 2055,
-      "name": "PartyError"
-    },
-    "PartyRequests": {
-      "id": 2056,
-      "name": "PartyRequests"
-    },
-    "PartyNoContent": {
-      "id": 2057,
-      "name": "PartyNoContent"
-    },
-    "PartyBadRequest": {
-      "id": 2058,
-      "name": "PartyBadRequest"
-    },
-    "PartyUnauthorized": {
-      "id": 2059,
-      "name": "PartyUnauthorized"
-    },
-    "PartyForbidden": {
-      "id": 2060,
-      "name": "PartyForbidden"
-    },
-    "PartyNotFound": {
-      "id": 2061,
-      "name": "PartyNotFound"
-    },
-    "PartyConflict": {
-      "id": 2062,
-      "name": "PartyConflict"
-    },
-    "PartyInternalServerError": {
-      "id": 2063,
-      "name": "PartyInternalServerError"
-    },
-    "PartyUnavailable": {
-      "id": 2064,
-      "name": "PartyUnavailable"
-    },
-    "PartyTooManyRequests": {
-      "id": 2065,
-      "name": "PartyTooManyRequests"
+      "name": "MatchmakingRateLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,
