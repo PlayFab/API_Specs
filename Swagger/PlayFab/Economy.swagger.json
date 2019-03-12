@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190301",
+    "version": "190312",
     "title": "PlayFab Economy API",
-    "description": "API methods for managing User Generated Content.",
+    "description": "API methods for managing User Generated Content. API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,15 +24,1885 @@
     "application/json"
   ],
   "paths": {
-    "/UserGeneratedContent/CreateDraftItem": {
+    "/Catalog/CreateBundle": {
+      "post": {
+        "operationId": "CreateBundle",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a bundle",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateBundle"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateBundleRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/CreateDraftItem": {
       "post": {
         "operationId": "CreateDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates a new item in the working catalog using provided metadata.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateDraftItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateDraftItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemMetadataInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/CreateStore": {
+      "post": {
+        "operationId": "CreateStore",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a store",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateStore"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateStoreRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and store details, create a store. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/CreateSubscription": {
+      "post": {
+        "operationId": "CreateSubscription",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a subscription",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateSubscription"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateSubscriptionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and subscription details, create a subscription ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/CreateUploadUrls": {
+      "post": {
+        "operationId": "CreateUploadUrls",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates one or more upload URLs which can be used by the client to upload raw file data.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateUploadUrls"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateUploadUrlsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateUploadUrlsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogOneOrMoreFilesInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/DeleteBundleByFriendlyId": {
+      "post": {
+        "operationId": "DeleteBundleByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a bundle by friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteBundleByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteBundleByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and Friendly Id, delete a bundle. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteBundleById": {
+      "post": {
+        "operationId": "DeleteBundleById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a bundle by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteBundleById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteBundleByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and Id, delete a bundle. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteItem": {
+      "post": {
+        "operationId": "DeleteItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Removes an item from working catalog and all published versions from the public catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/DeleteStoreByFriendlyId": {
+      "post": {
+        "operationId": "DeleteStoreByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a store by friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteStoreByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteStoreByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and friendly Id, delete a store. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteStoreById": {
+      "post": {
+        "operationId": "DeleteStoreById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a store by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteStoreById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteStoreByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and Id, delete a store. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteSubscriptionByFriendlyId": {
+      "post": {
+        "operationId": "DeleteSubscriptionByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a subscription by friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteSubscriptionByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteSubscriptionByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and friendly Id, delete a subscription. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteSubscriptionById": {
+      "post": {
+        "operationId": "DeleteSubscriptionById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Delete a subscription by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteSubscriptionById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteSubscriptionByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and Id, delete a subscription. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetBundleByFriendlyId": {
+      "post": {
+        "operationId": "GetBundleByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a bundle by Friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetBundleByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetBundleByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified bundle by friendly Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetBundleById": {
+      "post": {
+        "operationId": "GetBundleById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a bundle by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetBundleById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetBundleByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified bundle by Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetBundleByMarketplaceOfferId": {
+      "post": {
+        "operationId": "GetBundleByMarketplaceOfferId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a bundle by marketplace offer Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetBundleByMarketplaceOfferId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetBundleByMarketplaceOfferIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified bundle by marketplace offer Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetDraftItem": {
+      "post": {
+        "operationId": "GetDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves an item from the working catalog. This item represents the current working state of the catalog item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetDraftItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetDraftItems": {
+      "post": {
+        "operationId": "GetDraftItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves a paginated list of the items from the draft catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetDraftItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetDraftItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetPublishedItem": {
+      "post": {
+        "operationId": "GetPublishedItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves an item from the public catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetPublishedItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPublishedItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPublishedItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogItemIdInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetPublishStatus": {
+      "post": {
+        "operationId": "GetPublishStatus",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the status of a publish of an item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetPublishStatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PublishStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PublishStatusResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetStoreByFriendlyId": {
+      "post": {
+        "operationId": "GetStoreByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a store by Friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetStoreByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetStoreByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified store by FriendlyId. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetStoreById": {
+      "post": {
+        "operationId": "GetStoreById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a store by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetStoreById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetStoreByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified store by Id. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetSubscriptionByFriendlyId": {
+      "post": {
+        "operationId": "GetSubscriptionByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a subscription by Friendly Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetSubscriptionByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSubscriptionByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified subscription by FriendlyId.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetSubscriptionById": {
+      "post": {
+        "operationId": "GetSubscriptionById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a subscription by Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetSubscriptionById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSubscriptionByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified subscription by Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/GetSubscriptionByMarketplaceOfferId": {
+      "post": {
+        "operationId": "GetSubscriptionByMarketplaceOfferId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a subscription by marketplace offer Id",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetSubscriptionByMarketplaceOfferId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSubscriptionByMarketplaceOfferIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Retrieves the specified subscription by MarketplaceOfferId.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/PublishItem": {
+      "post": {
+        "operationId": "PublishItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Initiates a publish of an item from the working catalog to the public catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/PublishItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PublishItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PublishItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/PurchaseItemByFriendlyId": {
+      "post": {
+        "operationId": "PurchaseItemByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Purchase an item, bundle or subscription by friendly id.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/PurchaseItemByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PurchaseItemByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PurchaseItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Purchase a single item, bundle or subscription by friendly id, paying the associated price.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/PurchaseItemById": {
+      "post": {
+        "operationId": "PurchaseItemById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Purchase an item, bundle or subscription by id.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/PurchaseItemById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PurchaseItemByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PurchaseItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Purchase a single item, bundle or subscription by id, paying the associated price.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/Search": {
+      "post": {
+        "operationId": "Search",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against the public catalog using the provided search parameters and returns a set of paginated results.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/Search"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CatalogSearchRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CatalogSearchResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogSearchParameterInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/SearchBundles": {
+      "post": {
+        "operationId": "SearchBundles",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against the set of all bundles, using the provided search parameters and returns a set of paginated results",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchBundles"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchBundlesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchBundlesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, search text and/or (filter, orderby, skip, top and ExpandReferencedItems), search for bundles. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchStores": {
+      "post": {
+        "operationId": "SearchStores",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against the set of all stores, using the provided search parameters and returns a set of paginated results",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchStores"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchStoresRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchStoresResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, search text and/or (filter, orderby, skip, top and ExpandReferencedItems), search for stores. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchSubscriptions": {
+      "post": {
+        "operationId": "SearchSubscriptions",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against the set of all subscriptions, using the provided search parameters and returns a set of paginated results",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchSubscriptions"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchSubscriptionsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchSubscriptionsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, search text and/or (filter, orderby, skip, top and ExpandReferencedItems), search for subscriptions. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/UpdateBundle": {
+      "post": {
+        "operationId": "UpdateBundle",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Update a bundle",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateBundle"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateBundleRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and bundle details, update a bundle. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/UpdateDraftItem": {
+      "post": {
+        "operationId": "UpdateDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Update the metadata for an item in the working catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateDraftItem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateDraftItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemMetadataInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/UpdateStore": {
+      "post": {
+        "operationId": "UpdateStore",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Update a store",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateStore"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateStoreRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and store details, update a store. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/UpdateSubscription": {
+      "post": {
+        "operationId": "UpdateSubscription",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Update a subscription",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateSubscription"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateSubscriptionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type and subscription details, update a subscription.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/AddVirtualCurrencies": {
+      "post": {
+        "operationId": "AddVirtualCurrencies",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Increase virtual currencies amount.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/AddVirtualCurrencies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/AddVirtualCurrenciesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddVirtualCurrenciesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will increase the entity's currencies by a specific amount. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/CheckTransferAllStatus": {
+      "post": {
+        "operationId": "CheckTransferAllStatus",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Check the status of a transfer all request",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CheckTransferAllStatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CheckTransferStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TransferAllResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Check the status of a transfer all with a transfer ticket Id",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/ConsumeInventoryItems": {
+      "post": {
+        "operationId": "ConsumeInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Consume inventory items.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/ConsumeInventoryItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ConsumeInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ConsumeInventoryItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will consume the specified inventory items. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/GetInventoryItems": {
+      "post": {
+        "operationId": "GetInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Get current inventory items.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetInventoryItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetInventoryItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will get the entity's inventory items. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/GetVirtualCurrencies": {
+      "post": {
+        "operationId": "GetVirtualCurrencies",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Get current virtual currencies.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetVirtualCurrencies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetVirtualCurrenciesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetVirtualCurrenciesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will get the entity's virtual currencies. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/GrantInventoryItems": {
+      "post": {
+        "operationId": "GrantInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Grant inventory items.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GrantInventoryItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GrantInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GrantInventoryItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will grant the specified inventory items. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/SetInventoryItems": {
+      "post": {
+        "operationId": "SetInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Set inventory items",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SetInventoryItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetInventoryItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will set the entity's inventory items",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/SetVirtualCurrencies": {
+      "post": {
+        "operationId": "SetVirtualCurrencies",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Set virtual currencies",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SetVirtualCurrencies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetVirtualCurrenciesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetVirtualCurrenciesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will set the entity's currencies to a specific amount. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/SubtractVirtualCurrencies": {
+      "post": {
+        "operationId": "SubtractVirtualCurrencies",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Decrease virtual currencies amount.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SubtractVirtualCurrencies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubtractVirtualCurrenciesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SubtractVirtualCurrenciesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will decrease the entity's currencies by a specific amount. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/TransferAll": {
+      "post": {
+        "operationId": "TransferAll",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Transfer all assets",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/TransferAll"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/TransferAllRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TransferAllResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Transfer all assets from an entity's container Id to another entity's container Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/TransferInventoryItems": {
+      "post": {
+        "operationId": "TransferInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Transfer inventory items.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/TransferInventoryItems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/TransferInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TransferInventoryItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/TransferVirtualCurrencies": {
+      "post": {
+        "operationId": "TransferVirtualCurrencies",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Transfer virtual currencies.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/TransferVirtualCurrencies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/TransferVirtualCurrenciesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TransferVirtualCurrenciesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Transfer the specified virtual currencies amount of an entity's container Id to another entity's container Id.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Inventory/UpdateInventoryItemsProperties": {
+      "post": {
+        "operationId": "UpdateInventoryItemsProperties",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Update inventory Items.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateInventoryItemsProperties"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateInventoryItemsPropertiesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateInventoryPropertiesItemsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Update the specified inventory items.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/UserGeneratedContent/CreateDraftUgcItem": {
+      "post": {
+        "operationId": "CreateDraftUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Creates a new community catalog item in the working catalog using provided metadata.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/CreateDraftItem"
+          "url": "https://api.playfab.com/documentation/economy/method/CreateDraftUgcItem"
         },
         "parameters": [
           {
@@ -103,15 +1973,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/CreateUploadUrls": {
+    "/UserGeneratedContent/CreateUgcUploadUrls": {
       "post": {
-        "operationId": "CreateUploadUrls",
+        "operationId": "CreateUgcUploadUrls",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Creates one or more upload URLs which can be used by the client to upload raw mod file data.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/CreateUploadUrls"
+          "url": "https://api.playfab.com/documentation/economy/method/CreateUgcUploadUrls"
         },
         "parameters": [
           {
@@ -143,15 +2013,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/DeleteItem": {
+    "/UserGeneratedContent/DeleteUgcItem": {
       "post": {
-        "operationId": "DeleteItem",
+        "operationId": "DeleteUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Removes an item from working catalog and all published versions from the public catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/DeleteItem"
+          "url": "https://api.playfab.com/documentation/economy/method/DeleteUgcItem"
         },
         "parameters": [
           {
@@ -182,48 +2052,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/GetConfig": {
+    "/UserGeneratedContent/GetDraftUgcItem": {
       "post": {
-        "operationId": "GetConfig",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Gets the configuration for the user generated content catalog.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetConfig"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetConfigRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetConfigResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ]
-      }
-    },
-    "/UserGeneratedContent/GetDraftItem": {
-      "post": {
-        "operationId": "GetDraftItem",
+        "operationId": "GetDraftUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Retrieves an item from the working catalog. This item represents the current working state of the community item.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItem"
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftUgcItem"
         },
         "parameters": [
           {
@@ -254,15 +2091,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/GetDraftItems": {
+    "/UserGeneratedContent/GetDraftUgcItems": {
       "post": {
-        "operationId": "GetDraftItems",
+        "operationId": "GetDraftUgcItems",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Retrieves a paginated list of the items created by a user.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetDraftItems"
+          "url": "https://api.playfab.com/documentation/economy/method/GetDraftUgcItems"
         },
         "parameters": [
           {
@@ -405,15 +2242,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/GetPublishedItem": {
+    "/UserGeneratedContent/GetPublishedUgcItem": {
       "post": {
-        "operationId": "GetPublishedItem",
+        "operationId": "GetPublishedUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Retrieves an item from the public catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetPublishedItem"
+          "url": "https://api.playfab.com/documentation/economy/method/GetPublishedUgcItem"
         },
         "parameters": [
           {
@@ -442,15 +2279,48 @@
         ]
       }
     },
-    "/UserGeneratedContent/GetPublishStatus": {
+    "/UserGeneratedContent/GetUgcConfig": {
       "post": {
-        "operationId": "GetPublishStatus",
+        "operationId": "GetUgcConfig",
+        "tags": [
+          "UserGeneratedContent"
+        ],
+        "description": "Gets the configuration for the user generated content catalog.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetUgcConfig"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetConfigRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetConfigResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ]
+      }
+    },
+    "/UserGeneratedContent/GetUgcPublishStatus": {
+      "post": {
+        "operationId": "GetUgcPublishStatus",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Gets the status of a publish of an item.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetPublishStatus"
+          "url": "https://api.playfab.com/documentation/economy/method/GetUgcPublishStatus"
         },
         "parameters": [
           {
@@ -481,15 +2351,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/PublishItem": {
+    "/UserGeneratedContent/PublishUgcItem": {
       "post": {
-        "operationId": "PublishItem",
+        "operationId": "PublishUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Initiates a publish of a item from the working catalog to the public catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/PublishItem"
+          "url": "https://api.playfab.com/documentation/economy/method/PublishUgcItem"
         },
         "parameters": [
           {
@@ -521,53 +2391,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/Search": {
+    "/UserGeneratedContent/SetUgcConfig": {
       "post": {
-        "operationId": "Search",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Execute a search against the public catalog using the provided search parameters and returns a set of paginated results.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/Search"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/CatalogSearchRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/CatalogSearchResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Only community items that have been published with the Publish Item API will be returned by Search even for the creator. The creator should use the List Items API to view all of their own items.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogSearchParameterInvalid",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
-    "/UserGeneratedContent/SetConfig": {
-      "post": {
-        "operationId": "SetConfig",
+        "operationId": "SetUgcConfig",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Gets the configuration for the user generated content catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/SetConfig"
+          "url": "https://api.playfab.com/documentation/economy/method/SetUgcConfig"
         },
         "parameters": [
           {
@@ -639,15 +2471,15 @@
         ]
       }
     },
-    "/UserGeneratedContent/UpdateDraftItem": {
+    "/UserGeneratedContent/UpdateDraftUgcItem": {
       "post": {
-        "operationId": "UpdateDraftItem",
+        "operationId": "UpdateDraftUgcItem",
         "tags": [
           "UserGeneratedContent"
         ],
         "description": "Update the metadata for an item in the working catalog.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/UpdateDraftItem"
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateDraftUgcItem"
         },
         "parameters": [
           {
@@ -722,9 +2554,86 @@
         "Beta"
       ]
     },
+    "AddVirtualCurrenciesRequest": {
+      "description": "Given an entity type, entity identifier and container details, will increase the entity's currencies by a specific amount. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Currencies": {
+          "description": "A list of currencies to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyDetails"
+          },
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Currencies"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "AddVirtualCurrenciesResult": {
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyResponseDto"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogAlternateId": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "description": "Type of the alternate Id",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Value of the alternate Id",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CatalogItemMetadata": {
       "type": "object",
       "properties": {
+        "AlternateIds": {
+          "description": "The alternate IDs associated with this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogAlternateId"
+          },
+          "x-isclass": true
+        },
         "Contents": {
           "description": "The set of contents associated with this item.",
           "type": "array",
@@ -778,6 +2687,14 @@
           "description": "Indicates if the item is hidden",
           "type": "boolean"
         },
+        "ItemReferences": {
+          "description": "The item references associated with this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemReference"
+          },
+          "x-isclass": true
+        },
         "LastModifiedDate": {
           "description": "The date and time this item was last updated.",
           "type": "string"
@@ -809,8 +2726,87 @@
         "Beta"
       ]
     },
+    "CatalogItemReference": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The amount of the catalog item.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Id": {
+          "description": "The unique ID of the catalog item.",
+          "type": "string"
+        },
+        "Price": {
+          "$ref": "#/definitions/CatalogPrice",
+          "description": "The price of the catalog item.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogPrice": {
+      "type": "object",
+      "properties": {
+        "Prices": {
+          "description": "Prices of the catalog item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogPriceInstance"
+          },
+          "x-isclass": true
+        },
+        "Sort": {
+          "description": "Sort setting of the catalog item.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogPriceAmount": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The amount of the catalog price.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CurrencyId": {
+          "description": "The currency ID of the catalog price.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CatalogPriceInstance": {
+      "type": "object",
+      "properties": {
+        "Amounts": {
+          "description": "The amounts of the catalog item price.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogPriceAmount"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CatalogSearchRequest": {
-      "description": "Only community items that have been published with the Publish Item API will be\r\n                returned by Search even for the creator. The creator should use the List Items API to\r\n                view all of their own items.",
       "type": "object",
       "properties": {
         "Entity": {
@@ -890,6 +2886,76 @@
         "Beta"
       ]
     },
+    "CheckTransferStatusRequest": {
+      "description": "Check the status of a transfer all with a transfer ticket Id",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "TransferTicketId": {
+          "description": "The id of the transfer all request ticket that was returned on a TransferAllRequest",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ConsumeInventoryItemsRequest": {
+      "description": "Given an entity type, entity identifier and container details, will consume the specified inventory items. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A list of Items to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Items"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ConsumeInventoryItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemResponseDto"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "Content": {
       "type": "object",
       "properties": {
@@ -917,6 +2983,52 @@
         },
         "Url": {
           "description": "The Azure CDN URL for retrieval of the catalog item binary content.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateBundleRequest": {
+      "description": "Create bundle request",
+      "type": "object",
+      "properties": {
+        "Bundle": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Bundle details",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Bundle"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateBundleResult": {
+      "description": "Create bundle result",
+      "type": "object",
+      "properties": {
+        "Bundle": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
           "type": "string"
         }
       },
@@ -1111,6 +3223,98 @@
         "Beta"
       ]
     },
+    "CreateStoreRequest": {
+      "description": "Create store request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Store details",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Store"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateStoreResult": {
+      "description": "Create store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateSubscriptionRequest": {
+      "description": "Create subscription request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Subscription": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Subscription details",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Subscription"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateSubscriptionResult": {
+      "description": "Create subscription result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Subscription": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CreateUploadUrlsRequest": {
       "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST\r\n                API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs\r\n                returned must be added to the item metadata and commited using the CreateDraftItem or UpdateDraftItem Item APIs.",
       "type": "object",
@@ -1176,6 +3380,108 @@
         "Beta"
       ]
     },
+    "CurrencyDetails": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "InstanceId": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CurrencyResponseDto": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ChangedAmount": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteBundleByFriendlyIdRequest": {
+      "description": "Delete bundle by friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target bundle.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteBundleByIdRequest": {
+      "description": "Delete bundle by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "Id of target bundle",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteBundleResult": {
+      "description": "Delete bundle result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "DeleteItemRequest": {
       "type": "object",
       "properties": {
@@ -1201,6 +3507,124 @@
       "type": "object",
       "properties": {},
       "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStoreByFriendlyIdRequest": {
+      "description": "Delete store by Friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target store.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStoreByIdRequest": {
+      "description": "Delete store by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "Id of target store",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStoreResult": {
+      "description": "Delete store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteSubscriptionByFriendlyIdRequest": {
+      "description": "Delete Subscription by friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target bundle.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteSubscriptionByIdRequest": {
+      "description": "Delete subscription by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "Id of target subscription",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteSubscriptionResult": {
+      "description": "Delete subscription result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -1231,6 +3655,123 @@
       "required": [
         "Id"
       ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetBundleByFriendlyIdRequest": {
+      "description": "Get bundle by friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target bundle.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetBundleByIdRequest": {
+      "description": "Get bundle by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "Id": {
+          "description": "Id of target bundle",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetBundleByMarketplaceOfferIdRequest": {
+      "description": "Get bundle by marketplace offer Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "MarketplaceOfferId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "The Marketplace offer Id of target bundle.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetBundleResult": {
+      "description": "Get bundle result",
+      "type": "object",
+      "properties": {
+        "Bundle": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ReferencedItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -1375,6 +3916,55 @@
           {},
           {}
         ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetInventoryItemsRequest": {
+      "description": "Given an entity type, entity identifier and container details, will get the entity's inventory items. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetInventoryItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemResponseDto"
+          },
+          "x-isclass": true
+        },
+        "Subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscriptionItemResponseDto"
+          },
+          "x-isclass": true
+        }
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -1535,6 +4125,303 @@
         "Beta"
       ]
     },
+    "GetStoreByFriendlyIdRequest": {
+      "description": "Get store by friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target store.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetStoreByIdRequest": {
+      "description": "Get store by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "Id": {
+          "description": "Id of target store",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetStoreResult": {
+      "description": "Get store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ReferencedItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        },
+        "Store": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetSubscriptionByFriendlyIdRequest": {
+      "description": "Get subscription by friendly Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "FriendlyId": {
+          "description": "The friendly Id of target subscription.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetSubscriptionByIdRequest": {
+      "description": "Get subscription by Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "Id": {
+          "description": "Id of target subscription",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetSubscriptionByMarketplaceOfferIdRequest": {
+      "description": "Get subscription by marketplace offer Id request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether to expand the referenced items",
+          "type": "boolean"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "MarketplaceOfferId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "The Marketplace offer Id of target bundle.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetSubscriptionResult": {
+      "description": "Get subscription result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ReferencedItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        },
+        "Subscription": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetVirtualCurrenciesRequest": {
+      "description": "Given an entity type, entity identifier and container details, will get the entity's virtual currencies. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetVirtualCurrenciesResult": {
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyResponseDto"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GrantInventoryItemsRequest": {
+      "description": "Given an entity type, entity identifier and container details, will grant the specified inventory items. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A list of Items to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Items"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GrantInventoryItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemResponseDto"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "HelpfulnessVoteRequest": {
       "type": "object",
       "properties": {
@@ -1597,6 +4484,78 @@
           "type": "string"
         }
       },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "InventoryItemDetails": {
+      "type": "object",
+      "properties": {
+        "Duration": {
+          "type": "string"
+        },
+        "ExpirationDate": {
+          "type": "string"
+        },
+        "InstanceId": {
+          "type": "string"
+        },
+        "isSubscription": {
+          "type": "boolean"
+        },
+        "Marketplace": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Origin": {
+          "type": "string"
+        },
+        "OriginId": {
+          "type": "string"
+        },
+        "Properties": {
+          "type": "object"
+        },
+        "Quantity": {
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Quantity",
+        "ExpirationDate",
+        "isSubscription"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "InventoryItemResponseDto": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ChangedAmount": {
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "InstanceId": {
+          "type": "string"
+        },
+        "Name": {
+          "type": "string"
+        },
+        "Properties": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "Amount"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -1687,6 +4646,236 @@
       "example": {
         "Result": "Pending",
         "StatusMessage": "scanning images"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemByFriendlyIdRequest": {
+      "description": "Purchase item by friendly Id request",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Currencies": {
+          "description": "The currencies used to pay for item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurchaseItemCurrency"
+          },
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ItemFriendlyId": {
+          "description": "Friendly identifier of the item to purchase.",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/PurchaseStoreInfo",
+          "description": "The store to buy the item through.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ItemFriendlyId"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemByIdRequest": {
+      "description": "Purchase item by Id request",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Currencies": {
+          "description": "The currencies used to pay for item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurchaseItemCurrency"
+          },
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ItemId": {
+          "description": "Unique identifier of the item to purchase.",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/PurchaseStoreInfo",
+          "description": "The store to buy the item through.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ItemId"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemCurrency": {
+      "type": "object",
+      "properties": {
+        "CurrencyCode": {
+          "description": "The currency code.",
+          "type": "string"
+        },
+        "ExpectedPrice": {
+          "description": "Price the client expects to pay for the item.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "CurrencyCode",
+        "ExpectedPrice"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemResult": {
+      "description": "Purchase item result",
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "description": "Details of the currencies used to purchase the items.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurchaseItemResultCurrency"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "Details for the items purchased.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PurchaseItemResultItem"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemResultCurrency": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The total amount of the currency on inventory.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ChangedAmount": {
+          "description": "The amount of the currency used in this call.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CurrencyCode": {
+          "description": "The currency code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount",
+        "ChangedAmount"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemResultItem": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The total amount of the item on inventory.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ChangedAmount": {
+          "description": "The amount of the item purchased in this call.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "FriendlyId": {
+          "description": "Friendly id of the item.",
+          "type": "string"
+        },
+        "InstanceId": {
+          "description": "Unique item identifier for this specific instance of the item.",
+          "type": "string"
+        },
+        "ItemId": {
+          "description": "Unique identifier of the item.",
+          "type": "string"
+        },
+        "ItemType": {
+          "$ref": "#/definitions/PurchaseItemType",
+          "description": "The type of item.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "Amount",
+        "ChangedAmount"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseItemType": {
+      "type": "object",
+      "enum": [
+        "Item",
+        "Subscription"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "PurchaseStoreInfo": {
+      "type": "object",
+      "properties": {
+        "FriendlyId": {
+          "description": "The friendly identifier of the store.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "The unique identifier of the store.",
+          "type": "string"
+        }
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -1812,6 +5001,216 @@
         "Beta"
       ]
     },
+    "SearchBundlesRequest": {
+      "description": "Search bundles request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether the referenced items should be expanded.",
+          "type": "boolean"
+        },
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of search results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Top": {
+          "description": "The number of search results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Skip",
+        "Top",
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchBundlesResult": {
+      "description": "Search bundle result",
+      "type": "object",
+      "properties": {
+        "Bundles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetBundleResult"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchStoresRequest": {
+      "description": "Search stores request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether the referenced items should be expanded.",
+          "type": "boolean"
+        },
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of search results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Top": {
+          "description": "The number of search results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Skip",
+        "Top",
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchStoresResult": {
+      "description": "Search store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Stores": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetStoreResult"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchSubscriptionsRequest": {
+      "description": "Search subscriptions request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpandReferencedItems": {
+          "description": "Whether the referenced items should be expanded.",
+          "type": "boolean"
+        },
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of search results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Top": {
+          "description": "The number of search results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Skip",
+        "Top",
+        "ExpandReferencedItems"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchSubscriptionsResult": {
+      "description": "Search subscription result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GetSubscriptionResult"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "SetConfigRequest": {
       "type": "object",
       "properties": {
@@ -1852,43 +5251,453 @@
         "Beta"
       ]
     },
+    "SetInventoryItemsRequest": {
+      "description": "Given an entity type, entity identifier and container details, will set the entity's inventory items",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A list of Items to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Items"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetInventoryItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemResponseDto"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetVirtualCurrenciesRequest": {
+      "description": "Given an entity type, entity identifier and container details, will set the entity's currencies to a specific amount. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Currencies": {
+          "description": "A list of currencies to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyDetails"
+          },
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Currencies"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SetVirtualCurrenciesResult": {
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyResponseDto"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SubscriptionItemResponseDto": {
+      "type": "object",
+      "properties": {
+        "ExpirationDate": {
+          "type": "string"
+        },
+        "ItemIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Marketplace": {
+          "type": "string"
+        },
+        "OfferId": {
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SubtractVirtualCurrenciesRequest": {
+      "description": "Given an entity type, entity identifier and container details, will decrease the entity's currencies by a specific amount. ",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Currencies": {
+          "description": "A list of currencies to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyDetails"
+          },
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Currencies"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SubtractVirtualCurrenciesResult": {
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyResponseDto"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferAllRequest": {
+      "description": "Transfer all assets from an entity's container Id to another entity's container Id.",
+      "type": "object",
+      "properties": {
+        "GivingContainerId": {
+          "description": "The giving Container Id to perform this action from. (Default=\"default\")",
+          "type": "string"
+        },
+        "GivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to transfer from.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ReceivingContainerId": {
+          "description": "The reveiving Container Id to perform this action to. (Default=\"default\")",
+          "type": "string"
+        },
+        "ReceivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The beneficiary entity from this action.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ReceivingEntity"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferAllResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "TransferStatus": {
+          "$ref": "#/definitions/TransferAllStatus",
+          "type": "string",
+          "x-isenum": true
+        },
+        "TransferTicketId": {
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferAllStatus": {
+      "type": "object",
+      "enum": [
+        "Completed",
+        "InProgress",
+        "Aborted",
+        "Unknown"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferInventoryItemsRequest": {
+      "description": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
+      "type": "object",
+      "properties": {
+        "GivingContainerId": {
+          "description": "The giving Container Id to perform this action from. (Default=\"default\")",
+          "type": "string"
+        },
+        "GivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to transfer from.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A list of Items to transfer",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemDetails"
+          },
+          "x-isclass": true
+        },
+        "ReceivingContainerId": {
+          "description": "The reveiving Container Id to perform this action to. (Default=\"default\")",
+          "type": "string"
+        },
+        "ReceivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The beneficiary entity from this action.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ReceivingEntity",
+        "Items"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferInventoryItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferVirtualCurrenciesRequest": {
+      "description": "Transfer the specified virtual currencies amount of an entity's container Id to another entity's container Id.",
+      "type": "object",
+      "properties": {
+        "Currencies": {
+          "description": "A list of currencies to transfer",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CurrencyDetails"
+          },
+          "x-isclass": true
+        },
+        "GivingContainerId": {
+          "description": "The giving Container Id to perform this action from. (Default=\"default\")",
+          "type": "string"
+        },
+        "GivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to transfer from.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "ReceivingContainerId": {
+          "description": "The reveiving Container Id to perform this action to. (Default=\"default\")",
+          "type": "string"
+        },
+        "ReceivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The beneficiary entity from this action.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ReceivingEntity",
+        "Currencies"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TransferVirtualCurrenciesResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "UgcRatings": {
       "type": "object",
       "properties": {
         "Average": {
-          "description": "The average rating for this UGC item",
+          "description": "The average rating for this item",
           "type": "number",
           "x-actualtype": "float"
         },
         "Count1Star": {
-          "description": "The total count of 1 star ratings for this UGC item",
+          "description": "The total count of 1 star ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
         },
         "Count2Star": {
-          "description": "The total count of 2 star ratings for this UGC item",
+          "description": "The total count of 2 star ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
         },
         "Count3Star": {
-          "description": "The total count of 3 star ratings for this UGC item",
+          "description": "The total count of 3 star ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
         },
         "Count4Star": {
-          "description": "The total count of 4 star ratings for this UGC item",
+          "description": "The total count of 4 star ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
         },
         "Count5Star": {
-          "description": "The total count of 5 star ratings for this UGC item",
+          "description": "The total count of 5 star ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
         },
         "TotalCount": {
-          "description": "The total count of ratings for this UGC item",
+          "description": "The total count of ratings for this item",
           "type": "number",
           "x-actualtype": "int32"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateBundleRequest": {
+      "description": "Update bundle request",
+      "type": "object",
+      "properties": {
+        "Bundle": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Bundle details",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Bundle"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateBundleResult": {
+      "description": "Update bundle result",
+      "type": "object",
+      "properties": {
+        "Bundle": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
         }
       },
       "x-AnyInclusiveFlags": [
@@ -1928,6 +5737,158 @@
       },
       "example": {
         "Item": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateInventoryItemsPropertiesRequest": {
+      "description": "Update the specified inventory items.",
+      "type": "object",
+      "properties": {
+        "ContainerId": {
+          "description": "The Container Id to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A list of Items to modify",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Items"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateInventoryPropertiesItemsResult": {
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InventoryItemResponseDto"
+          },
+          "x-isclass": true
+        },
+        "Subscriptions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SubscriptionItemResponseDto"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateStoreRequest": {
+      "description": "Update store request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Bundle details",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Store"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateStoreResult": {
+      "description": "Update store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Store": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateSubscriptionRequest": {
+      "description": "Update subscription request",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Subscription": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "subscription details",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Subscription"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateSubscriptionResult": {
+      "description": "Update subscription result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Subscription": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "type": "object",
+          "x-isclass": true
+        }
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -2003,12 +5964,43 @@
     }
   },
   "parameters": {
+    "AddVirtualCurrenciesRequest": {
+      "name": "AddVirtualCurrenciesRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will increase the entity's currencies by a specific amount. ",
+      "schema": {
+        "$ref": "#/definitions/AddVirtualCurrenciesRequest"
+      }
+    },
     "CatalogSearchRequest": {
       "name": "CatalogSearchRequest",
       "in": "body",
-      "description": "Only community items that have been published with the Publish Item API will be\r\n                returned by Search even for the creator. The creator should use the List Items API to\r\n                view all of their own items.",
       "schema": {
         "$ref": "#/definitions/CatalogSearchRequest"
+      }
+    },
+    "CheckTransferStatusRequest": {
+      "name": "CheckTransferStatusRequest",
+      "in": "body",
+      "description": "Check the status of a transfer all with a transfer ticket Id",
+      "schema": {
+        "$ref": "#/definitions/CheckTransferStatusRequest"
+      }
+    },
+    "ConsumeInventoryItemsRequest": {
+      "name": "ConsumeInventoryItemsRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will consume the specified inventory items. ",
+      "schema": {
+        "$ref": "#/definitions/ConsumeInventoryItemsRequest"
+      }
+    },
+    "CreateBundleRequest": {
+      "name": "CreateBundleRequest",
+      "in": "body",
+      "description": "Create bundle request",
+      "schema": {
+        "$ref": "#/definitions/CreateBundleRequest"
       }
     },
     "CreateDraftItemRequest": {
@@ -2026,6 +6018,22 @@
         "$ref": "#/definitions/CreateOrUpdateReviewRequest"
       }
     },
+    "CreateStoreRequest": {
+      "name": "CreateStoreRequest",
+      "in": "body",
+      "description": "Create store request",
+      "schema": {
+        "$ref": "#/definitions/CreateStoreRequest"
+      }
+    },
+    "CreateSubscriptionRequest": {
+      "name": "CreateSubscriptionRequest",
+      "in": "body",
+      "description": "Create subscription request",
+      "schema": {
+        "$ref": "#/definitions/CreateSubscriptionRequest"
+      }
+    },
     "CreateUploadUrlsRequest": {
       "name": "CreateUploadUrlsRequest",
       "in": "body",
@@ -2034,11 +6042,83 @@
         "$ref": "#/definitions/CreateUploadUrlsRequest"
       }
     },
+    "DeleteBundleByFriendlyIdRequest": {
+      "name": "DeleteBundleByFriendlyIdRequest",
+      "in": "body",
+      "description": "Delete bundle by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteBundleByFriendlyIdRequest"
+      }
+    },
+    "DeleteBundleByIdRequest": {
+      "name": "DeleteBundleByIdRequest",
+      "in": "body",
+      "description": "Delete bundle by Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteBundleByIdRequest"
+      }
+    },
     "DeleteItemRequest": {
       "name": "DeleteItemRequest",
       "in": "body",
       "schema": {
         "$ref": "#/definitions/DeleteItemRequest"
+      }
+    },
+    "DeleteStoreByFriendlyIdRequest": {
+      "name": "DeleteStoreByFriendlyIdRequest",
+      "in": "body",
+      "description": "Delete store by Friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteStoreByFriendlyIdRequest"
+      }
+    },
+    "DeleteStoreByIdRequest": {
+      "name": "DeleteStoreByIdRequest",
+      "in": "body",
+      "description": "Delete store by Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteStoreByIdRequest"
+      }
+    },
+    "DeleteSubscriptionByFriendlyIdRequest": {
+      "name": "DeleteSubscriptionByFriendlyIdRequest",
+      "in": "body",
+      "description": "Delete Subscription by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteSubscriptionByFriendlyIdRequest"
+      }
+    },
+    "DeleteSubscriptionByIdRequest": {
+      "name": "DeleteSubscriptionByIdRequest",
+      "in": "body",
+      "description": "Delete subscription by Id request",
+      "schema": {
+        "$ref": "#/definitions/DeleteSubscriptionByIdRequest"
+      }
+    },
+    "GetBundleByFriendlyIdRequest": {
+      "name": "GetBundleByFriendlyIdRequest",
+      "in": "body",
+      "description": "Get bundle by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/GetBundleByFriendlyIdRequest"
+      }
+    },
+    "GetBundleByIdRequest": {
+      "name": "GetBundleByIdRequest",
+      "in": "body",
+      "description": "Get bundle by Id request",
+      "schema": {
+        "$ref": "#/definitions/GetBundleByIdRequest"
+      }
+    },
+    "GetBundleByMarketplaceOfferIdRequest": {
+      "name": "GetBundleByMarketplaceOfferIdRequest",
+      "in": "body",
+      "description": "Get bundle by marketplace offer Id request",
+      "schema": {
+        "$ref": "#/definitions/GetBundleByMarketplaceOfferIdRequest"
       }
     },
     "GetConfigRequest": {
@@ -2062,6 +6142,14 @@
         "$ref": "#/definitions/GetDraftItemsRequest"
       }
     },
+    "GetInventoryItemsRequest": {
+      "name": "GetInventoryItemsRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will get the entity's inventory items. ",
+      "schema": {
+        "$ref": "#/definitions/GetInventoryItemsRequest"
+      }
+    },
     "GetMyReviewRequest": {
       "name": "GetMyReviewRequest",
       "in": "body",
@@ -2081,6 +6169,62 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetReviewsRequest"
+      }
+    },
+    "GetStoreByFriendlyIdRequest": {
+      "name": "GetStoreByFriendlyIdRequest",
+      "in": "body",
+      "description": "Get store by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/GetStoreByFriendlyIdRequest"
+      }
+    },
+    "GetStoreByIdRequest": {
+      "name": "GetStoreByIdRequest",
+      "in": "body",
+      "description": "Get store by Id request",
+      "schema": {
+        "$ref": "#/definitions/GetStoreByIdRequest"
+      }
+    },
+    "GetSubscriptionByFriendlyIdRequest": {
+      "name": "GetSubscriptionByFriendlyIdRequest",
+      "in": "body",
+      "description": "Get subscription by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/GetSubscriptionByFriendlyIdRequest"
+      }
+    },
+    "GetSubscriptionByIdRequest": {
+      "name": "GetSubscriptionByIdRequest",
+      "in": "body",
+      "description": "Get subscription by Id request",
+      "schema": {
+        "$ref": "#/definitions/GetSubscriptionByIdRequest"
+      }
+    },
+    "GetSubscriptionByMarketplaceOfferIdRequest": {
+      "name": "GetSubscriptionByMarketplaceOfferIdRequest",
+      "in": "body",
+      "description": "Get subscription by marketplace offer Id request",
+      "schema": {
+        "$ref": "#/definitions/GetSubscriptionByMarketplaceOfferIdRequest"
+      }
+    },
+    "GetVirtualCurrenciesRequest": {
+      "name": "GetVirtualCurrenciesRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will get the entity's virtual currencies. ",
+      "schema": {
+        "$ref": "#/definitions/GetVirtualCurrenciesRequest"
+      }
+    },
+    "GrantInventoryItemsRequest": {
+      "name": "GrantInventoryItemsRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will grant the specified inventory items. ",
+      "schema": {
+        "$ref": "#/definitions/GrantInventoryItemsRequest"
       }
     },
     "HelpfulnessVoteRequest": {
@@ -2105,11 +6249,51 @@
         "$ref": "#/definitions/PublishStatusRequest"
       }
     },
+    "PurchaseItemByFriendlyIdRequest": {
+      "name": "PurchaseItemByFriendlyIdRequest",
+      "in": "body",
+      "description": "Purchase item by friendly Id request",
+      "schema": {
+        "$ref": "#/definitions/PurchaseItemByFriendlyIdRequest"
+      }
+    },
+    "PurchaseItemByIdRequest": {
+      "name": "PurchaseItemByIdRequest",
+      "in": "body",
+      "description": "Purchase item by Id request",
+      "schema": {
+        "$ref": "#/definitions/PurchaseItemByIdRequest"
+      }
+    },
     "ReviewSummaryRequest": {
       "name": "ReviewSummaryRequest",
       "in": "body",
       "schema": {
         "$ref": "#/definitions/ReviewSummaryRequest"
+      }
+    },
+    "SearchBundlesRequest": {
+      "name": "SearchBundlesRequest",
+      "in": "body",
+      "description": "Search bundles request",
+      "schema": {
+        "$ref": "#/definitions/SearchBundlesRequest"
+      }
+    },
+    "SearchStoresRequest": {
+      "name": "SearchStoresRequest",
+      "in": "body",
+      "description": "Search stores request",
+      "schema": {
+        "$ref": "#/definitions/SearchStoresRequest"
+      }
+    },
+    "SearchSubscriptionsRequest": {
+      "name": "SearchSubscriptionsRequest",
+      "in": "body",
+      "description": "Search subscriptions request",
+      "schema": {
+        "$ref": "#/definitions/SearchSubscriptionsRequest"
       }
     },
     "SetConfigRequest": {
@@ -2119,11 +6303,91 @@
         "$ref": "#/definitions/SetConfigRequest"
       }
     },
+    "SetInventoryItemsRequest": {
+      "name": "SetInventoryItemsRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will set the entity's inventory items",
+      "schema": {
+        "$ref": "#/definitions/SetInventoryItemsRequest"
+      }
+    },
+    "SetVirtualCurrenciesRequest": {
+      "name": "SetVirtualCurrenciesRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will set the entity's currencies to a specific amount. ",
+      "schema": {
+        "$ref": "#/definitions/SetVirtualCurrenciesRequest"
+      }
+    },
+    "SubtractVirtualCurrenciesRequest": {
+      "name": "SubtractVirtualCurrenciesRequest",
+      "in": "body",
+      "description": "Given an entity type, entity identifier and container details, will decrease the entity's currencies by a specific amount. ",
+      "schema": {
+        "$ref": "#/definitions/SubtractVirtualCurrenciesRequest"
+      }
+    },
+    "TransferAllRequest": {
+      "name": "TransferAllRequest",
+      "in": "body",
+      "description": "Transfer all assets from an entity's container Id to another entity's container Id.",
+      "schema": {
+        "$ref": "#/definitions/TransferAllRequest"
+      }
+    },
+    "TransferInventoryItemsRequest": {
+      "name": "TransferInventoryItemsRequest",
+      "in": "body",
+      "description": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
+      "schema": {
+        "$ref": "#/definitions/TransferInventoryItemsRequest"
+      }
+    },
+    "TransferVirtualCurrenciesRequest": {
+      "name": "TransferVirtualCurrenciesRequest",
+      "in": "body",
+      "description": "Transfer the specified virtual currencies amount of an entity's container Id to another entity's container Id.",
+      "schema": {
+        "$ref": "#/definitions/TransferVirtualCurrenciesRequest"
+      }
+    },
+    "UpdateBundleRequest": {
+      "name": "UpdateBundleRequest",
+      "in": "body",
+      "description": "Update bundle request",
+      "schema": {
+        "$ref": "#/definitions/UpdateBundleRequest"
+      }
+    },
     "UpdateDraftItemRequest": {
       "name": "UpdateDraftItemRequest",
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UpdateDraftItemRequest"
+      }
+    },
+    "UpdateInventoryItemsPropertiesRequest": {
+      "name": "UpdateInventoryItemsPropertiesRequest",
+      "in": "body",
+      "description": "Update the specified inventory items.",
+      "schema": {
+        "$ref": "#/definitions/UpdateInventoryItemsPropertiesRequest"
+      }
+    },
+    "UpdateStoreRequest": {
+      "name": "UpdateStoreRequest",
+      "in": "body",
+      "description": "Update store request",
+      "schema": {
+        "$ref": "#/definitions/UpdateStoreRequest"
+      }
+    },
+    "UpdateSubscriptionRequest": {
+      "name": "UpdateSubscriptionRequest",
+      "in": "body",
+      "description": "Update subscription request",
+      "schema": {
+        "$ref": "#/definitions/UpdateSubscriptionRequest"
       }
     }
   },
@@ -2132,6 +6396,25 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "AddVirtualCurrenciesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/AddVirtualCurrenciesResult"
+          }
+        }
       }
     },
     "CatalogSearchResult": {
@@ -2157,6 +6440,44 @@
           "data": {
             "Count": 261,
             "Items": []
+          }
+        }
+      }
+    },
+    "ConsumeInventoryItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ConsumeInventoryItemsResult"
+          }
+        }
+      }
+    },
+    "CreateBundleResult": {
+      "description": "Create bundle result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateBundleResult"
           }
         }
       }
@@ -2270,6 +6591,44 @@
         }
       }
     },
+    "CreateStoreResult": {
+      "description": "Create store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateStoreResult"
+          }
+        }
+      }
+    },
+    "CreateSubscriptionResult": {
+      "description": "Create subscription result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateSubscriptionResult"
+          }
+        }
+      }
+    },
     "CreateUploadUrlsResult": {
       "description": "",
       "schema": {
@@ -2307,6 +6666,25 @@
         }
       }
     },
+    "DeleteBundleResult": {
+      "description": "Delete bundle result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteBundleResult"
+          }
+        }
+      }
+    },
     "DeleteItemResult": {
       "description": "",
       "schema": {
@@ -2328,6 +6706,63 @@
           "code": 200,
           "status": "OK",
           "data": {}
+        }
+      }
+    },
+    "DeleteStoreResult": {
+      "description": "Delete store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteStoreResult"
+          }
+        }
+      }
+    },
+    "DeleteSubscriptionResult": {
+      "description": "Delete subscription result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteSubscriptionResult"
+          }
+        }
+      }
+    },
+    "GetBundleResult": {
+      "description": "Get bundle result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetBundleResult"
+          }
         }
       }
     },
@@ -2425,6 +6860,25 @@
         }
       }
     },
+    "GetInventoryItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetInventoryItemsResult"
+          }
+        }
+      }
+    },
     "GetMyReviewResult": {
       "description": "",
       "schema": {
@@ -2499,6 +6953,82 @@
             "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0=",
             "Count": 13,
             "Reviews": []
+          }
+        }
+      }
+    },
+    "GetStoreResult": {
+      "description": "Get store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetStoreResult"
+          }
+        }
+      }
+    },
+    "GetSubscriptionResult": {
+      "description": "Get subscription result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetSubscriptionResult"
+          }
+        }
+      }
+    },
+    "GetVirtualCurrenciesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetVirtualCurrenciesResult"
+          }
+        }
+      }
+    },
+    "GrantInventoryItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GrantInventoryItemsResult"
           }
         }
       }
@@ -2578,6 +7108,25 @@
         }
       }
     },
+    "PurchaseItemResult": {
+      "description": "Purchase item result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/PurchaseItemResult"
+          }
+        }
+      }
+    },
     "ReviewSummaryResult": {
       "description": "",
       "schema": {
@@ -2607,6 +7156,63 @@
         }
       }
     },
+    "SearchBundlesResult": {
+      "description": "Search bundle result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchBundlesResult"
+          }
+        }
+      }
+    },
+    "SearchStoresResult": {
+      "description": "Search store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchStoresResult"
+          }
+        }
+      }
+    },
+    "SearchSubscriptionsResult": {
+      "description": "Search subscription result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchSubscriptionsResult"
+          }
+        }
+      }
+    },
     "SetConfigResult": {
       "description": "",
       "schema": {
@@ -2628,6 +7234,139 @@
           "code": 200,
           "status": "OK",
           "data": {}
+        }
+      }
+    },
+    "SetInventoryItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetInventoryItemsResult"
+          }
+        }
+      }
+    },
+    "SetVirtualCurrenciesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetVirtualCurrenciesResult"
+          }
+        }
+      }
+    },
+    "SubtractVirtualCurrenciesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SubtractVirtualCurrenciesResult"
+          }
+        }
+      }
+    },
+    "TransferAllResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/TransferAllResult"
+          }
+        }
+      }
+    },
+    "TransferInventoryItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/TransferInventoryItemsResult"
+          }
+        }
+      }
+    },
+    "TransferVirtualCurrenciesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/TransferVirtualCurrenciesResult"
+          }
+        }
+      }
+    },
+    "UpdateBundleResult": {
+      "description": "Update bundle result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateBundleResult"
+          }
         }
       }
     },
@@ -2656,12 +7395,77 @@
           }
         }
       }
+    },
+    "UpdateInventoryPropertiesItemsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateInventoryPropertiesItemsResult"
+          }
+        }
+      }
+    },
+    "UpdateStoreResult": {
+      "description": "Update store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateStoreResult"
+          }
+        }
+      }
+    },
+    "UpdateSubscriptionResult": {
+      "description": "Update subscription result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateSubscriptionResult"
+          }
+        }
+      }
     }
   },
   "x-AnyInclusiveFlags": [
     "Beta"
   ],
   "tags": [
+    {
+      "name": "Catalog",
+      "description": "https://api.playfab.com/documentation/Economy#Catalog"
+    },
+    {
+      "name": "Inventory",
+      "description": "https://api.playfab.com/documentation/Economy#Inventory"
+    },
     {
       "name": "UserGeneratedContent",
       "description": "https://api.playfab.com/documentation/Economy#UserGeneratedContent"
@@ -4257,13 +9061,9 @@
       "id": 1400,
       "name": "TelemetryIngestionKeyNotFound"
     },
-    "StatisticTagRequired": {
-      "id": 1401,
-      "name": "StatisticTagRequired"
-    },
-    "StatisticTagInvalid": {
+    "StatisticChildNameInvalid": {
       "id": 1402,
-      "name": "StatisticTagInvalid"
+      "name": "StatisticChildNameInvalid"
     },
     "DataIntegrityError": {
       "id": 1403,
@@ -4433,6 +9233,10 @@
       "id": 1444,
       "name": "WriteAttemptedDuringExport"
     },
+    "MultiplayerServerTitleQuotaCoresExceeded": {
+      "id": 1445,
+      "name": "MultiplayerServerTitleQuotaCoresExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -4441,61 +9245,9 @@
       "id": 2002,
       "name": "MatchmakingPlayerAttributesInvalid"
     },
-    "MatchmakingCreateTicketRequestMissing": {
-      "id": 2003,
-      "name": "MatchmakingCreateTicketRequestMissing"
-    },
-    "MatchmakingCreateTicketCreatorMissing": {
-      "id": 2004,
-      "name": "MatchmakingCreateTicketCreatorMissing"
-    },
-    "MatchmakingCreateTicketCreatorIdMissing": {
-      "id": 2005,
-      "name": "MatchmakingCreateTicketCreatorIdMissing"
-    },
-    "MatchmakingCreateTicketMemberListMissing": {
-      "id": 2006,
-      "name": "MatchmakingCreateTicketMemberListMissing"
-    },
-    "MatchmakingCreateTicketGiveUpAfterInvalid": {
-      "id": 2007,
-      "name": "MatchmakingCreateTicketGiveUpAfterInvalid"
-    },
-    "MatchmakingTicketIdMissing": {
-      "id": 2008,
-      "name": "MatchmakingTicketIdMissing"
-    },
-    "MatchmakingMatchIdMissing": {
-      "id": 2009,
-      "name": "MatchmakingMatchIdMissing"
-    },
-    "MatchmakingMatchIdIdMissing": {
-      "id": 2010,
-      "name": "MatchmakingMatchIdIdMissing"
-    },
-    "MatchmakingQueueNameMissing": {
-      "id": 2011,
-      "name": "MatchmakingQueueNameMissing"
-    },
-    "MatchmakingTitleIdMissing": {
-      "id": 2012,
-      "name": "MatchmakingTitleIdMissing"
-    },
-    "MatchmakingTicketIdIdMissing": {
-      "id": 2013,
-      "name": "MatchmakingTicketIdIdMissing"
-    },
-    "MatchmakingPlayerIdMissing": {
-      "id": 2014,
-      "name": "MatchmakingPlayerIdMissing"
-    },
-    "MatchmakingJoinTicketPlayerMissing": {
-      "id": 2015,
-      "name": "MatchmakingJoinTicketPlayerMissing"
-    },
-    "MatchmakingQueueConfigNotFound": {
+    "MatchmakingQueueNotFound": {
       "id": 2016,
-      "name": "MatchmakingQueueConfigNotFound"
+      "name": "MatchmakingQueueNotFound"
     },
     "MatchmakingMatchNotFound": {
       "id": 2017,
@@ -4505,42 +9257,6 @@
       "id": 2018,
       "name": "MatchmakingTicketNotFound"
     },
-    "MatchmakingCreateTicketServerIdentityInvalid": {
-      "id": 2019,
-      "name": "MatchmakingCreateTicketServerIdentityInvalid"
-    },
-    "MatchmakingCreateTicketClientIdentityInvalid": {
-      "id": 2020,
-      "name": "MatchmakingCreateTicketClientIdentityInvalid"
-    },
-    "MatchmakingGetTicketPlayerMismatch": {
-      "id": 2021,
-      "name": "MatchmakingGetTicketPlayerMismatch"
-    },
-    "MatchmakingJoinTicketServerIdentityInvalid": {
-      "id": 2022,
-      "name": "MatchmakingJoinTicketServerIdentityInvalid"
-    },
-    "MatchmakingJoinTicketPlayerIdentityMismatch": {
-      "id": 2023,
-      "name": "MatchmakingJoinTicketPlayerIdentityMismatch"
-    },
-    "MatchmakingCancelTicketServerIdentityInvalid": {
-      "id": 2024,
-      "name": "MatchmakingCancelTicketServerIdentityInvalid"
-    },
-    "MatchmakingCancelTicketPlayerIdentityMismatch": {
-      "id": 2025,
-      "name": "MatchmakingCancelTicketPlayerIdentityMismatch"
-    },
-    "MatchmakingGetMatchIdentityMismatch": {
-      "id": 2026,
-      "name": "MatchmakingGetMatchIdentityMismatch"
-    },
-    "MatchmakingPlayerIdentityMismatch": {
-      "id": 2027,
-      "name": "MatchmakingPlayerIdentityMismatch"
-    },
     "MatchmakingAlreadyJoinedTicket": {
       "id": 2028,
       "name": "MatchmakingAlreadyJoinedTicket"
@@ -4548,10 +9264,6 @@
     "MatchmakingTicketAlreadyCompleted": {
       "id": 2029,
       "name": "MatchmakingTicketAlreadyCompleted"
-    },
-    "MatchmakingClientTimeout": {
-      "id": 2030,
-      "name": "MatchmakingClientTimeout"
     },
     "MatchmakingQueueConfigInvalid": {
       "id": 2031,
@@ -4569,22 +9281,6 @@
       "id": 2035,
       "name": "MatchmakingNotEnabled"
     },
-    "MatchmakingGetStatisticsIdentityInvalid": {
-      "id": 2036,
-      "name": "MatchmakingGetStatisticsIdentityInvalid"
-    },
-    "MatchmakingBucketOwnerNotFound": {
-      "id": 2037,
-      "name": "MatchmakingBucketOwnerNotFound"
-    },
-    "MatchmakingCancelAllTicketsUnauthorized": {
-      "id": 2041,
-      "name": "MatchmakingCancelAllTicketsUnauthorized"
-    },
-    "MatchmakingListTicketsUnauthorized": {
-      "id": 2042,
-      "name": "MatchmakingListTicketsUnauthorized"
-    },
     "MatchmakingPlayerAttributesTooLarge": {
       "id": 2043,
       "name": "MatchmakingPlayerAttributesTooLarge"
@@ -4593,37 +9289,9 @@
       "id": 2044,
       "name": "MatchmakingNumberOfPlayersInTicketTooLarge"
     },
-    "MatchmakingMatchTotalAttributeIsNegative": {
-      "id": 2045,
-      "name": "MatchmakingMatchTotalAttributeIsNegative"
-    },
-    "MatchmakingAttributeTypeInvalid": {
+    "MatchmakingAttributeInvalid": {
       "id": 2046,
-      "name": "MatchmakingAttributeTypeInvalid"
-    },
-    "MatchmakingMatchTotalAttributeTooLarge": {
-      "id": 2047,
-      "name": "MatchmakingMatchTotalAttributeTooLarge"
-    },
-    "MatchmakingMatchTotalAttributeSumTooLarge": {
-      "id": 2048,
-      "name": "MatchmakingMatchTotalAttributeSumTooLarge"
-    },
-    "MatchmakingTicketUnmatchable": {
-      "id": 2049,
-      "name": "MatchmakingTicketUnmatchable"
-    },
-    "MatchmakingCommonRegionMissing": {
-      "id": 2050,
-      "name": "MatchmakingCommonRegionMissing"
-    },
-    "MatchmakingLatencyMeasurementMissing": {
-      "id": 2051,
-      "name": "MatchmakingLatencyMeasurementMissing"
-    },
-    "MatchmakingStatisticsNotFound": {
-      "id": 2052,
-      "name": "MatchmakingStatisticsNotFound"
+      "name": "MatchmakingAttributeInvalid"
     },
     "MatchmakingPlayerHasNotJoinedTicket": {
       "id": 2053,
@@ -4636,6 +9304,10 @@
     "MatchmakingTicketMembershipLimitExceeded": {
       "id": 2055,
       "name": "MatchmakingTicketMembershipLimitExceeded"
+    },
+    "MatchmakingUnauthorized": {
+      "id": 2056,
+      "name": "MatchmakingUnauthorized"
     },
     "TitleConfigNotFound": {
       "id": 3001,
@@ -4704,6 +9376,34 @@
     "CatalogConfigTagTooLong": {
       "id": 4104,
       "name": "CatalogConfigTagTooLong"
+    },
+    "ExportInvalidStatusUpdate": {
+      "id": 5000,
+      "name": "ExportInvalidStatusUpdate"
+    },
+    "ExportInvalidPrefix": {
+      "id": 5001,
+      "name": "ExportInvalidPrefix"
+    },
+    "ExportBlobContainerDoesNotExist": {
+      "id": 5002,
+      "name": "ExportBlobContainerDoesNotExist"
+    },
+    "ExportEventNameNotFound": {
+      "id": 5003,
+      "name": "ExportEventNameNotFound"
+    },
+    "ExportExportTitleIdNotFound": {
+      "id": 5004,
+      "name": "ExportExportTitleIdNotFound"
+    },
+    "ExportCouldNotUpdate": {
+      "id": 5005,
+      "name": "ExportCouldNotUpdate"
+    },
+    "ExportInvalidStorageType": {
+      "id": 5006,
+      "name": "ExportInvalidStorageType"
     }
   }
 }
