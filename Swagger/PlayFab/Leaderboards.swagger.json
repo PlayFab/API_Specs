@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "190410",
-    "title": "PlayFab Events API",
-    "description": "Write custom PlayStream events for any PlayFab entity. PlayStream events can be used for analytics, reporting, debugging, or to trigger custom actions in near real-time.",
+    "title": "PlayFab Leaderboards API",
+    "description": "Manage entity statistics Manage entity statistics",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,19 +24,19 @@
     "application/json"
   ],
   "paths": {
-    "/Event/WriteEvents": {
+    "/Leaderboard/GetLeaderboard": {
       "post": {
-        "operationId": "WriteEvents",
+        "operationId": "GetLeaderboard",
         "tags": [
-          "PlayStream Events"
+          "Statistics and Leaderboards"
         ],
-        "description": "Write batches of entity based events to PlayStream.",
+        "description": "Get the leaderboard for a specific entity type and statistic.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/events/method/WriteEvents"
+          "url": "https://api.playfab.com/documentation/leaderboards/method/GetLeaderboard"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/WriteEventsRequest"
+            "$ref": "#/parameters/GetEntityLeaderboardRequest"
           }
         ],
         "security": [
@@ -46,46 +46,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/WriteEventsResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-ms-docs-errors": [
-          "EventEntityNotAllowed",
-          "EventNamespaceNotAllowed",
-          "InvalidJSONContent",
-          "NotAuthenticated",
-          "NotAuthorized",
-          "OverLimit",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/Event/WriteTelemetryEvents": {
-      "post": {
-        "operationId": "WriteTelemetryEvents",
-        "tags": [
-          "PlayStream Events"
-        ],
-        "description": "Write batches of entity based events to as Telemetry events (bypass PlayStream).",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/events/method/WriteTelemetryEvents"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/WriteEventsRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/WriteEventsResponse"
+            "$ref": "#/responses/GetEntityLeaderboardResponse"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -95,9 +56,340 @@
           "Beta"
         ],
         "x-ms-docs-errors": [
-          "EventEntityNotAllowed",
-          "EventNamespaceNotAllowed",
-          "InvalidJSONContent",
+          "NoLeaderboardForStatistic",
+          "NotAuthenticated",
+          "NotAuthorized",
+          "StatisticChildNameInvalid",
+          "StatisticNotFound"
+        ]
+      }
+    },
+    "/Leaderboard/GetLeaderboardAroundEntity": {
+      "post": {
+        "operationId": "GetLeaderboardAroundEntity",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Get the leaderboard around a specific entity.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/GetLeaderboardAroundEntity"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetLeaderboardAroundEntityRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetEntityLeaderboardResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NoLeaderboardForStatistic",
+          "NotAuthenticated",
+          "NotAuthorized",
+          "StatisticChildNameInvalid",
+          "StatisticNotFound"
+        ]
+      }
+    },
+    "/Leaderboard/GetLeaderboardForEntities": {
+      "post": {
+        "operationId": "GetLeaderboardForEntities",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Get the leaderboard limited to a set of entities.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/GetLeaderboardForEntities"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetLeaderboardForEntitiesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetEntityLeaderboardResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NoLeaderboardForStatistic",
+          "NotAuthenticated",
+          "NotAuthorized",
+          "StatisticChildNameInvalid",
+          "StatisticNotFound"
+        ]
+      }
+    },
+    "/Statistic/CreateStatisticDefinition": {
+      "post": {
+        "operationId": "CreateStatisticDefinition",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Create a new entity statistic definition.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/CreateStatisticDefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateStatisticDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/DeleteStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "OverLimit",
+          "StatisticCountLimitExceeded",
+          "StatisticNameConflict"
+        ]
+      }
+    },
+    "/Statistic/DeleteStatisticDefinition": {
+      "post": {
+        "operationId": "DeleteStatisticDefinition",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Delete an entity statistic definition. Will delete all statistics on entity profiles and leaderboards.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/DeleteStatisticDefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteStatisticDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "StatisticNotFound"
+        ]
+      }
+    },
+    "/Statistic/DeleteStatistics": {
+      "post": {
+        "operationId": "DeleteStatistics",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Delete statistics on an entity profile, will remove all rankings from associated leaderboards.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/DeleteStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteStatisticsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/UpdateStatistics"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "OverLimit",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Statistic/GetStatisticDefinition": {
+      "post": {
+        "operationId": "GetStatisticDefinition",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Get current statistic definition information",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/GetStatisticDefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetStatisticDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetStatisticDefinitionResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition",
+          "Statistic/DeleteStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "OverLimit",
+          "StatisticCountLimitExceeded",
+          "StatisticNameConflict"
+        ]
+      }
+    },
+    "/Statistic/IncrementStatisticVersion": {
+      "post": {
+        "operationId": "IncrementStatisticVersion",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Increment an entity statistic definition version.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/IncrementStatisticVersion"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/IncrementStatisticVersionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/IncrementStatisticVersionResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "StatisticNotFound"
+        ]
+      }
+    },
+    "/Statistic/UpdateStatistics": {
+      "post": {
+        "operationId": "UpdateStatistics",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Update statistics on an entity profile, depending on the statistic definition may cause entity to be ranked on various leaderboards.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/UpdateStatistics"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateStatisticsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateStatisticsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/DeleteStatistics"
+        ],
+        "x-ms-docs-errors": [
           "NotAuthenticated",
           "NotAuthorized",
           "OverLimit",
@@ -139,6 +431,161 @@
         }
       }
     },
+    "CreateStatisticDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "AggregationMethod": {
+          "$ref": "#/definitions/StatisticAggregationMethod",
+          "description": "Aggregation method for this statistic. Default is Last.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LeaderboardDefinition": {
+          "$ref": "#/definitions/LeaderboardDefinition",
+          "description": "Additional configuration options for statistics to be used for leaderboards.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Immutable name of the statistic. Must be less than 50 characters.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "HighestScoresByLevel",
+        "AggregationMethod": "Max",
+        "LeaderboardDefinition": {
+          "ProvisionLeaderboard": true,
+          "DynamicChildLeaderboardMaxSize": 50
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStatisticDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Name of the statistic to delete.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "HighestScoresByLevel"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStatisticsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExpectedProfileVersion": {
+          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the object set will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Statistics": {
+          "description": "Collection of statistics to remove from this entity.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StatisticDelete"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Statistics"
+      ],
+      "example": {
+        "Statistics": [
+          {
+            "Name": "TotalCarTime",
+            "Version": 15
+          },
+          {
+            "Name": "FastestTimesByMap",
+            "ChildName": "map:silver_surf",
+            "Version": 15
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "DeleteStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Statistics": {
+          "$ref": "#/definitions/EntityStatisticValue",
+          "description": "Updated entity profile statistics.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
+      "example": {
+        "ProfileVersion": 56,
+        "Statistics": {
+          "SpeedRuns": {
+            "Name": "SpeedRuns",
+            "Value": 89,
+            "ChildStatistics": {
+              "map1": {
+                "ChildName": "map1",
+                "Value": 56
+              },
+              "map2": {
+                "ChildName": "map2",
+                "Value": 87
+              }
+            }
+          }
+        },
+        "Entity": {
+          "Id": "184131840178",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EmptyResponse": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "type": "object",
@@ -164,110 +611,734 @@
       },
       "required": [
         "Id"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
       ]
     },
-    "EventContents": {
+    "EntityLeaderboardEntry": {
+      "description": "Individual rank of an entity in a leaderboard",
       "type": "object",
       "properties": {
+        "DisplayName": {
+          "description": "Entity's display name.",
+          "type": "string"
+        },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
-          "description": "Entity associated with the event. If null, the event will apply to the calling entity.",
+          "description": "Entity identifier.",
           "type": "object",
           "x-isclass": true
         },
-        "EventNamespace": {
-          "description": "The namespace in which the event is defined. It must be prepended with 'com.playfab.events.'",
+        "EntityLeaderboardMetadata": {
+          "description": "Custom entity metadata as set during the last UpdateStatistic API call.",
+          "type": "string"
+        },
+        "EntityLineage": {
+          "$ref": "#/definitions/EntityLineage",
+          "description": "Lineage for this entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Metadata": {
+          "description": "Statistic or statistic child metadata as set during the UpdateStatistic API call.",
+          "type": "string"
+        },
+        "Rank": {
+          "description": "Position on the leaderboard.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Score": {
+          "description": "Statistic value.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Score",
+        "Rank"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityLineage": {
+      "type": "object",
+      "properties": {
+        "CharacterId": {
+          "description": "The Character Id of the associated entity.",
+          "type": "string"
+        },
+        "GroupId": {
+          "description": "The Group Id of the associated entity.",
+          "type": "string"
+        },
+        "MasterPlayerAccountId": {
+          "description": "The Master Player Account Id of the associated entity.",
+          "type": "string"
+        },
+        "NamespaceId": {
+          "description": "The Namespace Id of the associated entity.",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "The Title Id of the associated entity.",
+          "type": "string"
+        },
+        "TitlePlayerAccountId": {
+          "description": "The Title Player Account Id of the associated entity.",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityStatisticChildValue": {
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Child name value, if child statistic",
+          "type": "string"
+        },
+        "Metadata": {
+          "description": "Child statistic metadata",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Child statistic value",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Value"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "EntityStatisticValue": {
+      "type": "object",
+      "properties": {
+        "ChildStatistics": {
+          "$ref": "#/definitions/EntityStatisticChildValue",
+          "description": "Child statistic values",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Metadata": {
+          "description": "Statistic metadata",
           "type": "string"
         },
         "Name": {
-          "description": "The name of this event.",
+          "description": "Statistic name",
           "type": "string"
         },
-        "OriginalId": {
-          "description": "The original unique identifier associated with this event before it was posted to PlayFab. The value might differ from the EventId value, which is assigned when the event is received by the server.",
+        "Value": {
+          "description": "Statistic value",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Version": {
+          "description": "Statistic version",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Version"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetEntityLeaderboardRequest": {
+      "description": "Request to load a leaderboard.",
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Optional child statistic name to filter the leaderboard to.",
           "type": "string"
         },
-        "OriginalTimestamp": {
-          "description": "The time (in UTC) associated with this event when it occurred. If specified, this value is stored in the OriginalTimestamp property of the PlayStream event.",
+        "EntityType": {
+          "description": "Type of entity to get a leaderboard for.",
           "type": "string"
         },
-        "Payload": {
-          "description": "Arbitrary data associated with the event. Only one of Payload or PayloadJSON is allowed.",
-          "type": "object"
+        "MaxResults": {
+          "description": "maximum number of results to return from the leaderboard. Minimum 1, maximum 1,000.",
+          "type": "number",
+          "x-actualtype": "uint32"
         },
-        "PayloadJSON": {
-          "description": "Arbitrary data associated with the event, represented as a JSON serialized string. Only one of Payload or PayloadJSON is allowed.",
+        "StartingPosition": {
+          "description": "Index position to start from. 0 is beginning of leaderboard. ",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "StatisticName": {
+          "description": "Name of the leaderboard statistic.",
+          "type": "string"
+        },
+        "StatisticVersion": {
+          "description": "Optional version of the leaderboard statistic, defaults to current version.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "EntityType",
+        "StatisticName",
+        "MaxResults"
+      ],
+      "example": {
+        "EntityType": "character",
+        "StatisticName": "Points",
+        "StatisticVersion": 2
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetEntityLeaderboardResponse": {
+      "description": "Leaderboard response",
+      "type": "object",
+      "properties": {
+        "Rankings": {
+          "description": "Individual entity rankings in the leaderboard, in sorted order by rank.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityLeaderboardEntry"
+          },
+          "x-isclass": true
+        },
+        "StatisticVersion": {
+          "description": "Version of the leaderboard being returned.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "StatisticVersion"
+      ],
+      "example": {
+        "StatisticVersion": 5,
+        "Rankings": [
+          {
+            "Entity": {
+              "Id": "1784371290HJA9",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "DisplayName": "FastHand",
+            "Score": 4503,
+            "Rank": 1
+          },
+          {
+            "Entity": {
+              "Id": "1947109JA18412",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "DisplayName": "Mouse",
+            "Score": 4502,
+            "Rank": 2
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetLeaderboardAroundEntityRequest": {
+      "description": "Request to load a section of a leaderboard centered on a specific entity.",
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Optional statistic child to filter the leaderboard by.",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Offset": {
+          "description": "Number of ranks above and below the entity to return. If 5 then at most 11 results will be returned, 5 above, the entity, then 5 below. If the entity is at the top then only 6 will be returned, the entity and 5 below.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "StatisticName": {
+          "description": "Name of the statistic.",
+          "type": "string"
+        },
+        "StatisticVersion": {
+          "description": "Optional version of the statistic, defaults to current.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "StatisticName",
+        "Offset"
+      ],
+      "example": {
+        "StatisticName": "Points",
+        "StatisticVersion": 2,
+        "Entity": {
+          "Id": "819478109412",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetLeaderboardForEntitiesRequest": {
+      "description": "Request a leaderboard limited to a collection of entities.",
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Optional statistic child name to filter the leaderboard by.",
+          "type": "string"
+        },
+        "Entities": {
+          "description": "Collection of Entity IDs to include in the leaderboard.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "EntityType": {
+          "description": "Entity type of all Entity IDs.",
+          "type": "string"
+        },
+        "StatisticName": {
+          "description": "Name of the statistic.",
+          "type": "string"
+        },
+        "StatisticVersion": {
+          "description": "Optional version of the statistic, defaults to current.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "StatisticName"
+      ],
+      "example": {
+        "StatisticName": "Points",
+        "StatisticVersion": 2,
+        "EntityType": "title_player_account",
+        "Entities": [
+          "12802710371",
+          "01849174301"
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetStatisticDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Immutable name of the statistic. Must be less than 50 characters.",
           "type": "string"
         }
       },
       "required": [
-        "EventNamespace",
         "Name"
+      ],
+      "example": {
+        "Name": "Points"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
       ]
     },
-    "WriteEventsRequest": {
+    "GetStatisticDefinitionResponse": {
       "type": "object",
       "properties": {
-        "Events": {
-          "description": "Collection of events to write to PlayStream.",
+        "LastResetTime": {
+          "description": "Last time, in UTC, statistic version was incremented.",
+          "type": "string"
+        },
+        "LeaderboardDefinition": {
+          "$ref": "#/definitions/LeaderboardDefinition",
+          "description": "Statistic leaderboard definition.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Name of the statistic.",
+          "type": "string"
+        },
+        "Version": {
+          "description": "Statistic version.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Version"
+      ],
+      "example": {
+        "Name": "Points",
+        "Version": 89,
+        "LeaderboardDefinition": {
+          "ProvisionLeaderboard": true,
+          "SortDirection": "Descending",
+          "ChildLeaderboardNames": [
+            "gold",
+            "silver"
+          ]
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "IncrementStatisticVersionRequest": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Name of the statistic to increment the version of.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Name": "HighestScoresByLevel"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "IncrementStatisticVersionResponse": {
+      "type": "object",
+      "properties": {
+        "Version": {
+          "description": "New statistic version.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "VersionToBeDeleted": {
+          "description": "Statistic versions and leaderboards to be removed.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Version",
+        "VersionToBeDeleted"
+      ],
+      "example": {
+        "Version": 56,
+        "VersionToBeDeleted": 55
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "LeaderboardDefinition": {
+      "type": "object",
+      "properties": {
+        "ChildLeaderboardNames": {
+          "description": "For non-dynamic child leaderboards the statistic child name must be defined to prevent leaderboard length restrictions.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/EventContents"
+            "type": "string"
+          }
+        },
+        "DynamicChildLeaderboardMaxSize": {
+          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless that beat an existing score on a leaderboard. Default 0, Maximum 100.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ProvisionLeaderboard": {
+          "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
+          "type": "boolean"
+        },
+        "SortDirection": {
+          "$ref": "#/definitions/LeaderboardSortDirection",
+          "description": "Sort direction of the leaderboard, cannot be changed after creation. Default is Descending",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "ProvisionLeaderboard"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "LeaderboardSortDirection": {
+      "type": "object",
+      "enum": [
+        "Descending",
+        "Ascending"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "StatisticAggregationMethod": {
+      "type": "object",
+      "enum": [
+        "Last",
+        "Min",
+        "Max",
+        "Sum"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "StatisticDelete": {
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Optionally delete only the child statistic from this entity.",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Name of the statistic, as originally configured.",
+          "type": "string"
+        },
+        "Version": {
+          "description": "Optional field to indicate the version of the statistic to set. When empty defaults to the statistic's current version.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "StatisticUpdate": {
+      "type": "object",
+      "properties": {
+        "ChildName": {
+          "description": "Arbitrary statistic child name, using child statistics will cause entity to be ranked on only the child leaderboard. See documentation for full details. Must be less than 50 UTF8 encoded characters.",
+          "type": "string"
+        },
+        "Metadata": {
+          "description": "Arbitrary metadata to store along side the statistic or child statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Name of the statistic, as originally configured.",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Statistic value for the entity. This will be used in accordance with the aggregation method configured for the statistics.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Version": {
+          "description": "Optional field to indicate the version of the statistic to set. When empty defaults to the statistic's current version.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Name",
+        "Value"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateStatisticsRequest": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EntityLeaderboardMetadata": {
+          "description": "Arbitrary metadata to store on the entity that will be returned on all leaderboard APIs. Max length 50 characters.",
+          "type": "string"
+        },
+        "ExpectedProfileVersion": {
+          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the statistic updates will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Statistics": {
+          "description": "Collection of statistics to update, maximum 50.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StatisticUpdate"
           },
           "x-isclass": true
         }
       },
       "required": [
-        "Events"
+        "Statistics"
       ],
       "example": {
-        "Events": [
+        "Statistics": [
           {
-            "Entity": {
-              "Id": "A8140AB9109712B",
-              "Type": "title",
-              "TypeString": "title"
-            },
-            "EventNamespace": "com.playfab.events.example",
-            "Name": "something_happened",
-            "Payload": {
-              "Foo": "Bar",
-              "Nums": [
-                1,
-                2,
-                3
-              ]
-            },
-            "Namespace": "com.playfab.events.example"
+            "Name": "RoundsWon",
+            "Value": 1,
+            "Metadata": "BestRun:34.13,Car:13452",
+            "ChildName": "Map:SilverFlow"
+          },
+          {
+            "Name": "FastestTimesByMap",
+            "Value": 3413,
+            "Metadata": "Car:13452",
+            "ChildName": "Map:SilverFlow"
+          },
+          {
+            "Name": "TotalCarTime",
+            "Value": 3413,
+            "ChildName": "Car:13452"
           }
-        ]
-      }
-    },
-    "WriteEventsResponse": {
-      "type": "object",
-      "properties": {
-        "AssignedEventIds": {
-          "description": "The unique identifiers assigned by the server to the events, in the same order as the events in the request. Only returned if FlushToPlayStream option is true.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
+        ],
+        "Entity": {
+          "Id": "A197412JDA",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         }
       },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateStatisticsResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ProfileVersion": {
+          "description": "The current version of the profile, can be used for concurrency control during updates.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Statistics": {
+          "$ref": "#/definitions/EntityStatisticValue",
+          "description": "Updated entity profile statistics.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ProfileVersion"
+      ],
       "example": {
-        "AssignedEventIds": [
-          "496b598a05404142a6b6349c8cb29459"
-        ]
-      }
+        "ProfileVersion": 56,
+        "Statistics": {
+          "SpeedRuns": {
+            "Name": "SpeedRuns",
+            "Value": 89,
+            "ChildStatistics": {
+              "map1": {
+                "ChildName": "map1",
+                "Value": 56
+              },
+              "map2": {
+                "ChildName": "map2",
+                "Value": 87
+              }
+            }
+          }
+        },
+        "Entity": {
+          "Id": "184131840178",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     }
   },
   "parameters": {
-    "WriteEventsRequest": {
-      "name": "WriteEventsRequest",
+    "CreateStatisticDefinitionRequest": {
+      "name": "CreateStatisticDefinitionRequest",
       "in": "body",
       "description": "",
       "schema": {
-        "$ref": "#/definitions/WriteEventsRequest"
+        "$ref": "#/definitions/CreateStatisticDefinitionRequest"
+      }
+    },
+    "DeleteStatisticDefinitionRequest": {
+      "name": "DeleteStatisticDefinitionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/DeleteStatisticDefinitionRequest"
+      }
+    },
+    "DeleteStatisticsRequest": {
+      "name": "DeleteStatisticsRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/DeleteStatisticsRequest"
+      }
+    },
+    "GetEntityLeaderboardRequest": {
+      "name": "GetEntityLeaderboardRequest",
+      "in": "body",
+      "description": "Request to load a leaderboard.",
+      "schema": {
+        "$ref": "#/definitions/GetEntityLeaderboardRequest"
+      }
+    },
+    "GetLeaderboardAroundEntityRequest": {
+      "name": "GetLeaderboardAroundEntityRequest",
+      "in": "body",
+      "description": "Request to load a section of a leaderboard centered on a specific entity.",
+      "schema": {
+        "$ref": "#/definitions/GetLeaderboardAroundEntityRequest"
+      }
+    },
+    "GetLeaderboardForEntitiesRequest": {
+      "name": "GetLeaderboardForEntitiesRequest",
+      "in": "body",
+      "description": "Request a leaderboard limited to a collection of entities.",
+      "schema": {
+        "$ref": "#/definitions/GetLeaderboardForEntitiesRequest"
+      }
+    },
+    "GetStatisticDefinitionRequest": {
+      "name": "GetStatisticDefinitionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/GetStatisticDefinitionRequest"
+      }
+    },
+    "IncrementStatisticVersionRequest": {
+      "name": "IncrementStatisticVersionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/IncrementStatisticVersionRequest"
+      }
+    },
+    "UpdateStatisticsRequest": {
+      "name": "UpdateStatisticsRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UpdateStatisticsRequest"
       }
     }
   },
@@ -278,7 +1349,7 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "WriteEventsResponse": {
+    "DeleteStatisticsResponse": {
       "description": "",
       "schema": {
         "type": "object",
@@ -292,25 +1363,223 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/WriteEventsResponse"
+            "$ref": "#/definitions/DeleteStatisticsResponse"
           }
         },
         "example": {
           "code": 200,
           "status": "OK",
           "data": {
-            "AssignedEventIds": [
-              "496b598a05404142a6b6349c8cb29459"
+            "ProfileVersion": 56,
+            "Statistics": {
+              "SpeedRuns": {
+                "Name": "SpeedRuns",
+                "Value": 89,
+                "ChildStatistics": {
+                  "map1": {
+                    "ChildName": "map1",
+                    "Value": 56
+                  },
+                  "map2": {
+                    "ChildName": "map2",
+                    "Value": 87
+                  }
+                }
+              }
+            },
+            "Entity": {
+              "Id": "184131840178",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            }
+          }
+        }
+      }
+    },
+    "EmptyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/EmptyResponse"
+          }
+        }
+      }
+    },
+    "GetEntityLeaderboardResponse": {
+      "description": "Leaderboard response",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetEntityLeaderboardResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "StatisticVersion": 5,
+            "Rankings": [
+              {
+                "Entity": {
+                  "Id": "1784371290HJA9",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "DisplayName": "FastHand",
+                "Score": 4503,
+                "Rank": 1
+              },
+              {
+                "Entity": {
+                  "Id": "1947109JA18412",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "DisplayName": "Mouse",
+                "Score": 4502,
+                "Rank": 2
+              }
             ]
+          }
+        }
+      }
+    },
+    "GetStatisticDefinitionResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetStatisticDefinitionResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Name": "Points",
+            "Version": 89,
+            "LeaderboardDefinition": {
+              "ProvisionLeaderboard": true,
+              "SortDirection": "Descending",
+              "ChildLeaderboardNames": [
+                "gold",
+                "silver"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "IncrementStatisticVersionResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/IncrementStatisticVersionResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Version": 56,
+            "VersionToBeDeleted": 55
+          }
+        }
+      }
+    },
+    "UpdateStatisticsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateStatisticsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ProfileVersion": 56,
+            "Statistics": {
+              "SpeedRuns": {
+                "Name": "SpeedRuns",
+                "Value": 89,
+                "ChildStatistics": {
+                  "map1": {
+                    "ChildName": "map1",
+                    "Value": 56
+                  },
+                  "map2": {
+                    "ChildName": "map2",
+                    "Value": 87
+                  }
+                }
+              }
+            },
+            "Entity": {
+              "Id": "184131840178",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            }
           }
         }
       }
     }
   },
+  "x-AnyInclusiveFlags": [
+    "Beta"
+  ],
   "tags": [
     {
-      "name": "PlayStream Events",
-      "description": "https://api.playfab.com/documentation/Events#PlayStream-Events"
+      "name": "Statistics and Leaderboards",
+      "description": "https://api.playfab.com/documentation/Leaderboards#Statistics-and-Leaderboards"
     }
   ],
   "securityDefinitions": {
