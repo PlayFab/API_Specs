@@ -3,9 +3,9 @@ var fs = require("fs");
 
 var argsDict = null;
 
-function WriteJsonFile(filename, jsonBody, descriptor) {
+function WriteJsonFile(filename, jsonBody) {
     if (jsonBody === null) {
-        console.log("  ***  Failed to write: " + descriptor);
+        console.log("  ***  Failed to write: " + filename);
         return;
     }
     if (!filename.endsWith(".json"))
@@ -18,16 +18,16 @@ function WriteJsonFile(filename, jsonBody, descriptor) {
     });
 }
 
-function TabifyJson(inputJson, descriptor, tabSpaces) {
-    console.log("  Begin tabifying: " + descriptor);
+function TabifyJson(inputJson, filename, tabSpaces) {
+    // console.log("  Begin tabifying: " + filename);
     var output = null;
     if (!tabSpaces) tabSpaces = 2;
     try {
         var tempObj = JSON.parse(inputJson);
         output = JSON.stringify(tempObj, null, tabSpaces);
-        console.log("  Finish tabifying: " + descriptor);
+        // console.log("  Finish tabifying: " + filename);
     } catch (e) {
-        console.log("  ***  Failed to stringify: " + descriptor);
+        console.log("  ***  Failed to stringify: " + filename);
         output = null;
     }
 
@@ -56,7 +56,7 @@ function UpdateVersionNumbers(verJson) {
         versions[i] = majorVer.toString() + "." + minorVer.toString() + "." + todaysDate;
     }
     
-    WriteJsonFile("SdkManualNotes.json", TabifyJson(JSON.stringify(output), "SdkManualNotes", 4), "SdkManualNotes");
+    WriteJsonFile("SdkManualNotes.json", TabifyJson(JSON.stringify(output), "SdkManualNotes.json", 4));
 }
 
 function GetFileFromUrl(inputUrl, processFileCallback) {
@@ -72,7 +72,7 @@ function GetFileFromUrl(inputUrl, processFileCallback) {
     });
 }
 
-function GetApiFile(inputUrl, outputFilename, descriptor) {
+function GetApiFile(inputUrl, outputFilename) {
     console.log("-> Begin reading: " + inputUrl);
     var rawResponse = "";
     var postReq = https.get(inputUrl, function (res) {
@@ -80,7 +80,7 @@ function GetApiFile(inputUrl, outputFilename, descriptor) {
         res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
             console.log("<- Finished reading: " + inputUrl);
-            WriteJsonFile(outputFilename, TabifyJson(rawResponse, descriptor, 2), descriptor);
+            WriteJsonFile(outputFilename, TabifyJson(rawResponse, outputFilename, 2));
         });
     });
 }
@@ -124,7 +124,7 @@ try {
         var apiSection = jsonObj.documents[i];
         if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger")
         {
-            GetApiFile(playFabUrl + apiSection.pfurl, apiSection.relPath, apiSection.shortName);
+            GetApiFile(playFabUrl + apiSection.pfurl, apiSection.relPath);
         }
     }
 } catch(err) {
