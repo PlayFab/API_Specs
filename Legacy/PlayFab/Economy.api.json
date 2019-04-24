@@ -171,6 +171,13 @@
       ],
       "properties": [
         {
+          "name": "AllowMultipleStacks",
+          "description": "Indicates whether there can be multiple stacks of this item.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
           "name": "AlternateIds",
           "description": "The alternate IDs associated with this item.",
           "collection": "array",
@@ -211,6 +218,15 @@
           "optional": true
         },
         {
+          "name": "DeepLinks",
+          "description": "The set of platform specific deep links for this item.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "DeepLink",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Description",
           "description": "A dictionary of localized descriptions. Key is language code and localized string is the value. The neutral locale is required.",
           "collection": "map",
@@ -229,6 +245,13 @@
           "name": "DisplayVersion",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EndDate",
+          "description": "The date of when the item will cease to be available. If not provided then the product will be available indefinitely.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
           "optional": true
         },
         {
@@ -255,8 +278,22 @@
           "optional": true
         },
         {
+          "name": "IsConsumable",
+          "description": "Indicates whether the item is a consumable or durable.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
           "name": "IsHidden",
-          "description": "Indicates if the item is hidden",
+          "description": "Indicates if the item is hidden.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IsStackable",
+          "description": "Indicates if this item can be stacked or if they should be handled individually.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -275,6 +312,14 @@
           "description": "The date and time this item was last updated.",
           "jsontype": "String",
           "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Moderation",
+          "description": "The moderation state for this item.",
+          "jsontype": "Object",
+          "actualtype": "ModerationState",
+          "isclass": true,
           "optional": true
         },
         {
@@ -298,6 +343,14 @@
           "description": "The base price of this item.",
           "jsontype": "Object",
           "actualtype": "CatalogPrice",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Rating",
+          "description": "Rating summary for this UGC item.",
+          "jsontype": "Object",
+          "actualtype": "Rating",
           "isclass": true,
           "optional": true
         },
@@ -562,33 +615,6 @@
         }
       ]
     },
-    "CheckTransferStatusRequest": {
-      "name": "CheckTransferStatusRequest",
-      "className": "CheckTransferStatusRequest",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "description": "Check the status of a transfer all with a transfer ticket Id",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TransferTicketId",
-          "description": "The id of the transfer all request ticket that was returned on a TransferAllRequest",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
     "ConcernCategory": {
       "name": "ConcernCategory",
       "className": "ConcernCategory",
@@ -768,14 +794,6 @@
           "optional": false
         },
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "IdempotencyId",
           "description": "The Idempotency Id for this request",
           "jsontype": "String",
@@ -889,7 +907,7 @@
           "name": "Review",
           "description": "The review to submit.",
           "jsontype": "Object",
-          "actualtype": "Review",
+          "actualtype": "ReviewSubmission",
           "isclass": true,
           "optional": true
         }
@@ -980,14 +998,6 @@
       "description": "Create subscription request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "IdempotencyId",
           "description": "The Idempotency Id for this request",
@@ -1141,6 +1151,31 @@
         }
       ]
     },
+    "DeepLink": {
+      "name": "DeepLink",
+      "className": "DeepLink",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Platform",
+          "description": "Target platform for this deep link.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Url",
+          "description": "The deep link for this platform.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "DeepLinkFormat": {
       "name": "DeepLinkFormat",
       "className": "DeepLinkFormat",
@@ -1178,14 +1213,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "FriendlyId",
           "description": "The friendly Id of target bundle.",
           "jsontype": "String",
@@ -1212,14 +1239,6 @@
       "description": "Delete bundle by Id request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "Id",
           "description": "Id of target bundle",
@@ -1396,14 +1415,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "FriendlyId",
           "description": "The friendly Id of target bundle.",
           "jsontype": "String",
@@ -1430,14 +1441,6 @@
       "description": "Delete subscription by Id request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "Id",
           "description": "Id of target subscription",
@@ -1575,14 +1578,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
           "jsontype": "Boolean",
@@ -1617,14 +1612,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
           "jsontype": "Boolean",
@@ -1658,14 +1645,6 @@
       "description": "Get bundle by marketplace offer Id request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
@@ -1922,6 +1901,12 @@
           "jsontype": "Object",
           "actualtype": "InventoryItemResponseDto",
           "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Receipt",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         },
         {
@@ -2250,14 +2235,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
           "jsontype": "Boolean",
@@ -2292,14 +2269,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
           "jsontype": "Boolean",
@@ -2333,14 +2302,6 @@
       "description": "Get subscription by marketplace offer Id request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "ExpandReferencedItems",
           "description": "Whether to expand the referenced items",
@@ -2675,7 +2636,7 @@
           "name": "ExpirationDate",
           "jsontype": "String",
           "actualtype": "DateTime",
-          "optional": false
+          "optional": true
         },
         {
           "name": "InstanceId",
@@ -2693,6 +2654,12 @@
           "name": "Marketplace",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MergeProperties",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
           "optional": true
         },
         {
@@ -2764,6 +2731,12 @@
         {
           "name": "Properties",
           "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Receipt",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3051,6 +3024,13 @@
           "optional": false
         },
         {
+          "name": "ReturnInventory",
+          "description": "Indicates if the full inventory should be returned.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
           "name": "Store",
           "description": "The store to buy the item through.",
           "jsontype": "Object",
@@ -3132,6 +3112,13 @@
           "optional": false
         },
         {
+          "name": "ReturnInventory",
+          "description": "Indicates if the full inventory should be returned.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
           "name": "Store",
           "description": "The store to buy the item through.",
           "jsontype": "Object",
@@ -3199,6 +3186,22 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "InventoryItems",
+          "description": "Details of the current inventory items.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "InventoryItemResponseDto",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "InventoryTooLarge",
+          "description": "Indicates whether the number of inventory items is too large to be returned.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         },
         {
           "name": "Items",
@@ -3340,6 +3343,66 @@
         }
       ]
     },
+    "Rating": {
+      "name": "Rating",
+      "className": "Rating",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Average",
+          "description": "The average rating for this item",
+          "jsontype": "Number",
+          "actualtype": "float",
+          "optional": true
+        },
+        {
+          "name": "Count1Star",
+          "description": "The total count of 1 star ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Count2Star",
+          "description": "The total count of 2 star ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Count3Star",
+          "description": "The total count of 3 star ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Count4Star",
+          "description": "The total count of 4 star ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "Count5Star",
+          "description": "The total count of 5 star ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "TotalCount",
+          "description": "The total count of ratings for this item",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
     "ReportUgcItemRequest": {
       "name": "ReportUgcItemRequest",
       "className": "ReportUgcItemRequest",
@@ -3404,18 +3467,21 @@
       "properties": [
         {
           "name": "HelpfulNegative",
+          "description": "The number of negative helpfulness votes for this review.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
         },
         {
           "name": "HelpfulnessVotes",
+          "description": "Total number of helpfulness votes for this review.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
         },
         {
           "name": "HelpfulPositive",
+          "description": "The number of positive helpfulness votes for this review.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -3443,6 +3509,7 @@
         },
         {
           "name": "Locale",
+          "description": "The locale for which this review was submitted in.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3455,13 +3522,22 @@
           "optional": false
         },
         {
+          "name": "ReviewerId",
+          "description": "The ID of the author of the review.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "ReviewId",
+          "description": "The ID of the review.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "ReviewText",
+          "description": "The full text of this review.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3475,6 +3551,53 @@
         },
         {
           "name": "Title",
+          "description": "The title of this review.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ReviewSubmission": {
+      "name": "ReviewSubmission",
+      "className": "ReviewSubmission",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "IsInstalled",
+          "description": "Indicates whether the review author has the item installed.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ItemVersion",
+          "description": "The version of the item being reviewed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Rating",
+          "description": "Star rating associated with this review.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "ReviewText",
+          "description": "The full text of this review.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Title",
+          "description": "The title of this review.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3533,10 +3656,10 @@
           "optional": true
         },
         {
-          "name": "Ratings",
+          "name": "Rating",
           "description": "The summary of ratings associated with this item.",
           "jsontype": "Object",
-          "actualtype": "UgcRatings",
+          "actualtype": "Rating",
           "isclass": true,
           "optional": true
         },
@@ -3560,14 +3683,6 @@
       "description": "Search bundles request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "ExpandReferencedItems",
           "description": "Whether the referenced items should be expanded.",
@@ -3756,14 +3871,6 @@
       "description": "Search subscriptions request",
       "isRequest": true,
       "properties": [
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "ExpandReferencedItems",
           "description": "Whether the referenced items should be expanded.",
@@ -4057,6 +4164,12 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "Receipt",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -4124,286 +4237,6 @@
         }
       ]
     },
-    "TransferAllRequest": {
-      "name": "TransferAllRequest",
-      "className": "TransferAllRequest",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "description": "Transfer all assets from an entity's container Id to another entity's container Id.",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "GivingEntity",
-          "description": "The entity to transfer from.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ReceivingEntity",
-          "description": "The beneficiary entity from this action.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "TransferAllResult": {
-      "name": "TransferAllResult",
-      "className": "TransferAllResult",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isResult": true,
-      "properties": [
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TransferStatus",
-          "jsontype": "String",
-          "actualtype": "TransferAllStatus",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "TransferTicketId",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "TransferAllStatus": {
-      "name": "TransferAllStatus",
-      "className": "TransferAllStatus",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isenum": true,
-      "enumvalues": [
-        {
-          "name": "Completed"
-        },
-        {
-          "name": "InProgress"
-        },
-        {
-          "name": "Aborted"
-        },
-        {
-          "name": "Unknown"
-        }
-      ]
-    },
-    "TransferInventoryItemsRequest": {
-      "name": "TransferInventoryItemsRequest",
-      "className": "TransferInventoryItemsRequest",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "description": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "GivingEntity",
-          "description": "The entity to transfer from.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Items",
-          "description": "A list of Items to transfer",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "InventoryItemDetails",
-          "isclass": true,
-          "optional": false
-        },
-        {
-          "name": "ReceivingEntity",
-          "description": "The beneficiary entity from this action.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "TransferInventoryItemsResult": {
-      "name": "TransferInventoryItemsResult",
-      "className": "TransferInventoryItemsResult",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isResult": true,
-      "properties": [
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "TransferVirtualCurrenciesRequest": {
-      "name": "TransferVirtualCurrenciesRequest",
-      "className": "TransferVirtualCurrenciesRequest",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "description": "Transfer the specified virtual currencies amount of an entity's container Id to another entity's container Id.",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "Currencies",
-          "description": "A list of currencies to transfer",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "CurrencyDetails",
-          "isclass": true,
-          "optional": false
-        },
-        {
-          "name": "GivingEntity",
-          "description": "The entity to transfer from.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ReceivingEntity",
-          "description": "The beneficiary entity from this action.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        }
-      ]
-    },
-    "TransferVirtualCurrenciesResult": {
-      "name": "TransferVirtualCurrenciesResult",
-      "className": "TransferVirtualCurrenciesResult",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isResult": true,
-      "properties": [
-        {
-          "name": "IdempotencyId",
-          "description": "The Idempotency Id for this request",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "UgcRatings": {
-      "name": "UgcRatings",
-      "className": "UgcRatings",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "properties": [
-        {
-          "name": "Average",
-          "description": "The average rating for this item",
-          "jsontype": "Number",
-          "actualtype": "float",
-          "optional": true
-        },
-        {
-          "name": "Count1Star",
-          "description": "The total count of 1 star ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "Count2Star",
-          "description": "The total count of 2 star ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "Count3Star",
-          "description": "The total count of 3 star ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "Count4Star",
-          "description": "The total count of 4 star ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "Count5Star",
-          "description": "The total count of 5 star ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
-          "name": "TotalCount",
-          "description": "The total count of ratings for this item",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        }
-      ]
-    },
     "UpdateBundleRequest": {
       "name": "UpdateBundleRequest",
       "className": "UpdateBundleRequest",
@@ -4422,14 +4255,6 @@
           "actualtype": "CatalogItemMetadata",
           "isclass": true,
           "optional": false
-        },
-        {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
         },
         {
           "name": "IdempotencyId",
@@ -4700,14 +4525,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "Entity",
-          "description": "The entity to perform this action on.",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "IdempotencyId",
           "description": "The Idempotency Id for this request",
           "jsontype": "String",
@@ -4890,7 +4707,6 @@
       "name": "Inventory",
       "methods": [
         "AddVirtualCurrencies",
-        "CheckTransferAllStatus",
         "ConsumeInventoryItems",
         "GetInventoryItems",
         "GetVirtualCurrencies",
@@ -4898,9 +4714,6 @@
         "SetInventoryItems",
         "SetVirtualCurrencies",
         "SubtractVirtualCurrencies",
-        "TransferAll",
-        "TransferInventoryItems",
-        "TransferVirtualCurrencies",
         "UpdateInventoryItemsProperties"
       ]
     },
@@ -4940,28 +4753,6 @@
       "request": "AddVirtualCurrenciesRequest",
       "requestExample": "",
       "result": "AddVirtualCurrenciesResult",
-      "resultExample": "",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "errors": [
-        "NotAuthenticated",
-        "NotAuthorized",
-        "ProfileDoesNotExist"
-      ]
-    },
-    {
-      "name": "CheckTransferAllStatus",
-      "summary": "Check the status of a transfer all request",
-      "requestDetails": "Check the status of a transfer all with a transfer ticket Id",
-      "subgroup": "Inventory",
-      "titleTiers": null,
-      "url": "/Inventory/CheckTransferAllStatus",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "CheckTransferStatusRequest",
-      "requestExample": "",
-      "result": "TransferAllResult",
       "resultExample": "",
       "AnyInclusiveFlags": [
         "Beta"
@@ -5071,7 +4862,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateOrUpdateReviewRequest",
-      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n  \"Review\": {\r\n    \"Rating\": 0,\r\n    \"IsInstalled\": false,\r\n    \"HelpfulnessVotes\": 0,\r\n    \"HelpfulPositive\": 0,\r\n    \"HelpfulNegative\": 0,\r\n    \"Submitted\": \"0001-01-01T00:00:00Z\"\r\n  }\r\n}",
+      "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\",\r\n  \"Review\": {\r\n    \"Title\": \"Best Game Ever\",\r\n    \"ReviewText\": \"I play this game every day. It's my favorite game yet.\",\r\n    \"Rating\": 5,\r\n    \"IsInstalled\": true,\r\n    \"ItemVersion\": \"2.4.1\"\r\n  }\r\n}",
       "result": "CreateOrUpdateReviewResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "AnyInclusiveFlags": [
@@ -5574,7 +5365,7 @@
       "request": "ReviewSummaryRequest",
       "requestExample": "{\r\n  \"ItemId\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\r\n}",
       "result": "ReviewSummaryResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Ratings\": {},\r\n    \"ReviewsCount\": 13,\r\n    \"MostFavorableReview\": {\r\n      \"Rating\": 0,\r\n      \"IsInstalled\": false,\r\n      \"HelpfulnessVotes\": 0,\r\n      \"HelpfulPositive\": 0,\r\n      \"HelpfulNegative\": 0,\r\n      \"Submitted\": \"0001-01-01T00:00:00Z\"\r\n    },\r\n    \"LeastFavorableReview\": {\r\n      \"Rating\": 0,\r\n      \"IsInstalled\": false,\r\n      \"HelpfulnessVotes\": 0,\r\n      \"HelpfulPositive\": 0,\r\n      \"HelpfulNegative\": 0,\r\n      \"Submitted\": \"0001-01-01T00:00:00Z\"\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Rating\": {\r\n      \"Average\": 3.6,\r\n      \"TotalCount\": 8,\r\n      \"Count5Star\": 1,\r\n      \"Count4Star\": 4,\r\n      \"Count3Star\": 2,\r\n      \"Count2Star\": 1,\r\n      \"Count1Star\": 0\r\n    },\r\n    \"ReviewsCount\": 8,\r\n    \"MostFavorableReview\": {\r\n      \"ReviewId\": \"70e1d688-d321-4ac9-9a0f-0838dc6cee4f\",\r\n      \"ItemId\": \"aabf9156-1567-418e-bb01-78b0f0c24359\",\r\n      \"ReviewerId\": \"title_player_account!ABCD1234\",\r\n      \"ItemVersion\": \"2.1.4\",\r\n      \"Title\": \"Best game ever\",\r\n      \"ReviewText\": \"I play this game every day. It's so much fun!\",\r\n      \"Rating\": 5,\r\n      \"IsInstalled\": true,\r\n      \"Locale\": \"en-us\",\r\n      \"HelpfulnessVotes\": 17,\r\n      \"HelpfulPositive\": 16,\r\n      \"HelpfulNegative\": 1,\r\n      \"Submitted\": \"2019-04-23T23:54:42.067Z\"\r\n    },\r\n    \"LeastFavorableReview\": {\r\n      \"ReviewId\": \"dc91d188-db33-4090-862d-fd3ed597c54d\",\r\n      \"ItemId\": \"600e73d8-7c18-4590-92b6-ce63808dcdb7\",\r\n      \"ReviewerId\": \"title_player_account!EFGH5678\",\r\n      \"ItemVersion\": \"2.1.2\",\r\n      \"Title\": \"It's a game\",\r\n      \"ReviewText\": \"\",\r\n      \"Rating\": 2,\r\n      \"IsInstalled\": true,\r\n      \"Locale\": \"en-us\",\r\n      \"HelpfulnessVotes\": 10,\r\n      \"HelpfulPositive\": 0,\r\n      \"HelpfulNegative\": 10,\r\n      \"Submitted\": \"2019-04-23T23:54:42.067Z\"\r\n    }\r\n  }\r\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -6172,72 +5963,6 @@
       ]
     },
     {
-      "name": "TransferAll",
-      "summary": "Transfer all assets",
-      "requestDetails": "Transfer all assets from an entity's container Id to another entity's container Id.",
-      "subgroup": "Inventory",
-      "titleTiers": null,
-      "url": "/Inventory/TransferAll",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "TransferAllRequest",
-      "requestExample": "",
-      "result": "TransferAllResult",
-      "resultExample": "",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "errors": [
-        "NotAuthenticated",
-        "NotAuthorized",
-        "ProfileDoesNotExist"
-      ]
-    },
-    {
-      "name": "TransferInventoryItems",
-      "summary": "Transfer inventory items.",
-      "requestDetails": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
-      "subgroup": "Inventory",
-      "titleTiers": null,
-      "url": "/Inventory/TransferInventoryItems",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "TransferInventoryItemsRequest",
-      "requestExample": "",
-      "result": "TransferInventoryItemsResult",
-      "resultExample": "",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "errors": [
-        "NotAuthenticated",
-        "NotAuthorized",
-        "ProfileDoesNotExist"
-      ]
-    },
-    {
-      "name": "TransferVirtualCurrencies",
-      "summary": "Transfer virtual currencies.",
-      "requestDetails": "Transfer the specified virtual currencies amount of an entity's container Id to another entity's container Id.",
-      "subgroup": "Inventory",
-      "titleTiers": null,
-      "url": "/Inventory/TransferVirtualCurrencies",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "TransferVirtualCurrenciesRequest",
-      "requestExample": "",
-      "result": "TransferVirtualCurrenciesResult",
-      "resultExample": "",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "errors": [
-        "NotAuthenticated",
-        "NotAuthorized",
-        "ProfileDoesNotExist"
-      ]
-    },
-    {
       "name": "UpdateBundle",
       "summary": "Update a bundle",
       "requestDetails": "Given an entity type, and bundle details, update a bundle. ",
@@ -6275,19 +6000,7 @@
         "Beta"
       ],
       "errors": [
-        "CatalogConfigContentTypeTooLong",
-        "CatalogConfigDisplayPropertyMappingLimit",
-        "CatalogConfigInvalidDeepLinkFormat",
-        "CatalogConfigInvalidDeepLinkObject",
-        "CatalogConfigInvalidDeepLinkPlatform",
-        "CatalogConfigInvalidDisplayPropertyName",
-        "CatalogConfigInvalidDisplayPropertyObject",
-        "CatalogConfigInvalidDisplayPropertyType",
-        "CatalogConfigMissing",
-        "CatalogConfigTagTooLong",
-        "CatalogConfigTooManyContentTypes",
-        "CatalogConfigTooManyTags",
-        "NotAuthorized"
+        "CatalogConfigInvalid"
       ]
     },
     {
@@ -8146,6 +7859,18 @@
       "id": 1446,
       "name": "AutomationRuleNotFound"
     },
+    "EntityAPIKeyLimitExceeded": {
+      "id": 1447,
+      "name": "EntityAPIKeyLimitExceeded"
+    },
+    "EntityAPIKeyNotFound": {
+      "id": 1448,
+      "name": "EntityAPIKeyNotFound"
+    },
+    "EntityAPIKeyOrSecretInvalid": {
+      "id": 1449,
+      "name": "EntityAPIKeyOrSecretInvalid"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -8270,53 +7995,9 @@
       "id": 4009,
       "name": "CatalogFeatureDisabled"
     },
-    "CatalogConfigMissing": {
-      "id": 4100,
-      "name": "CatalogConfigMissing"
-    },
-    "CatalogConfigTooManyContentTypes": {
-      "id": 4101,
-      "name": "CatalogConfigTooManyContentTypes"
-    },
-    "CatalogConfigContentTypeTooLong": {
-      "id": 4102,
-      "name": "CatalogConfigContentTypeTooLong"
-    },
-    "CatalogConfigTooManyTags": {
-      "id": 4103,
-      "name": "CatalogConfigTooManyTags"
-    },
-    "CatalogConfigTagTooLong": {
-      "id": 4104,
-      "name": "CatalogConfigTagTooLong"
-    },
-    "CatalogConfigInvalidDeepLinkObject": {
-      "id": 4105,
-      "name": "CatalogConfigInvalidDeepLinkObject"
-    },
-    "CatalogConfigInvalidDeepLinkPlatform": {
-      "id": 4106,
-      "name": "CatalogConfigInvalidDeepLinkPlatform"
-    },
-    "CatalogConfigInvalidDeepLinkFormat": {
-      "id": 4107,
-      "name": "CatalogConfigInvalidDeepLinkFormat"
-    },
-    "CatalogConfigInvalidDisplayPropertyObject": {
-      "id": 4108,
-      "name": "CatalogConfigInvalidDisplayPropertyObject"
-    },
-    "CatalogConfigInvalidDisplayPropertyName": {
-      "id": 4109,
-      "name": "CatalogConfigInvalidDisplayPropertyName"
-    },
-    "CatalogConfigInvalidDisplayPropertyType": {
-      "id": 4110,
-      "name": "CatalogConfigInvalidDisplayPropertyType"
-    },
-    "CatalogConfigDisplayPropertyMappingLimit": {
-      "id": 4111,
-      "name": "CatalogConfigDisplayPropertyMappingLimit"
+    "CatalogConfigInvalid": {
+      "id": 4010,
+      "name": "CatalogConfigInvalid"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
@@ -8373,6 +8054,18 @@
     "ExportUnknownError": {
       "id": 5013,
       "name": "ExportUnknownError"
+    },
+    "ExportCantEditPendingExport": {
+      "id": 5014,
+      "name": "ExportCantEditPendingExport"
+    },
+    "ExportLimitExports": {
+      "id": 5015,
+      "name": "ExportLimitExports"
+    },
+    "ExportLimitEvents": {
+      "id": 5016,
+      "name": "ExportLimitEvents"
     }
   },
   "errorList": [
@@ -8812,6 +8505,9 @@
     "WriteAttemptedDuringExport",
     "MultiplayerServerTitleQuotaCoresExceeded",
     "AutomationRuleNotFound",
+    "EntityAPIKeyLimitExceeded",
+    "EntityAPIKeyNotFound",
+    "EntityAPIKeyOrSecretInvalid",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -8843,18 +8539,7 @@
     "CatalogItemIdInvalid",
     "CatalogSearchParameterInvalid",
     "CatalogFeatureDisabled",
-    "CatalogConfigMissing",
-    "CatalogConfigTooManyContentTypes",
-    "CatalogConfigContentTypeTooLong",
-    "CatalogConfigTooManyTags",
-    "CatalogConfigTagTooLong",
-    "CatalogConfigInvalidDeepLinkObject",
-    "CatalogConfigInvalidDeepLinkPlatform",
-    "CatalogConfigInvalidDeepLinkFormat",
-    "CatalogConfigInvalidDisplayPropertyObject",
-    "CatalogConfigInvalidDisplayPropertyName",
-    "CatalogConfigInvalidDisplayPropertyType",
-    "CatalogConfigDisplayPropertyMappingLimit",
+    "CatalogConfigInvalid",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",
@@ -8868,6 +8553,9 @@
     "ExportKustoExceptionNew_SomeResources",
     "ExportKustoExceptionEdit",
     "ExportKustoConnectionFailed",
-    "ExportUnknownError"
+    "ExportUnknownError",
+    "ExportCantEditPendingExport",
+    "ExportLimitExports",
+    "ExportLimitEvents"
   ]
 }
