@@ -348,7 +348,7 @@
         },
         {
           "name": "QueueName",
-          "description": "The Id of the queue from which a player's tickets should be canceled.",
+          "description": "The name of the queue from which a player's tickets should be canceled.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -360,6 +360,45 @@
       "className": "CancelAllMatchmakingTicketsForPlayerResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "isResult": true,
+      "properties": []
+    },
+    "CancelAllServerBackfillTicketsForPlayerRequest": {
+      "name": "CancelAllServerBackfillTicketsForPlayerRequest",
+      "className": "CancelAllServerBackfillTicketsForPlayerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Cancels all backfill tickets of which the player is a member in a given queue that are not cancelled or matched. This API is useful if you lose track of what tickets the player is a member of (if the server crashes for instance) and want to \"reset\".",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity key of the player whose backfill tickets should be canceled.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "QueueName",
+          "description": "The name of the queue from which a player's backfill tickets should be canceled.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CancelAllServerBackfillTicketsForPlayerResult": {
+      "name": "CancelAllServerBackfillTicketsForPlayerResult",
+      "className": "CancelAllServerBackfillTicketsForPlayerResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": []
     },
@@ -386,12 +425,12 @@
       "className": "CancelMatchmakingTicketRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
-      "description": "Only servers and ticket members can cancel a ticket. The ticket can be in four different states when it is cancelled. 1: the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage, it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. There may be race conditions between the ticket getting matched and the client making a cancellation request. The client must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket instead.",
+      "description": "Only servers and ticket members can cancel a ticket. The ticket can be in five different states when it is cancelled. 1: the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage, it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. 5: the ticket is waiting for a server. If the ticket is cancelled, server allocation will be stopped. A server may still be allocated due to a race condition, but that will not be reflected in the ticket. There may be race conditions between the ticket getting matched and the client making a cancellation request. The client must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket instead.",
       "isRequest": true,
       "properties": [
         {
           "name": "QueueName",
-          "description": "The Id of the queue to join.",
+          "description": "The name of the queue the ticket is in.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -410,6 +449,44 @@
       "className": "CancelMatchmakingTicketResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "isResult": true,
+      "properties": []
+    },
+    "CancelServerBackfillTicketRequest": {
+      "name": "CancelServerBackfillTicketRequest",
+      "className": "CancelServerBackfillTicketRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Only servers can cancel a backfill ticket. The ticket can be in three different states when it is cancelled. 1: the ticket is matching. If the ticket is cancelled, it will stop matching. 2: the ticket is matched. A matched ticket cannot be cancelled. 3: the ticket is already cancelled and nothing happens. There may be race conditions between the ticket getting matched and the server making a cancellation request. The server must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket. Create a new ticket instead.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "QueueName",
+          "description": "The name of the queue the ticket is in.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TicketId",
+          "description": "The Id of the ticket to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "CancelServerBackfillTicketResult": {
+      "name": "CancelServerBackfillTicketResult",
+      "className": "CancelServerBackfillTicketResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": []
     },
@@ -1082,6 +1159,69 @@
         }
       ]
     },
+    "CreateServerBackfillTicketRequest": {
+      "name": "CreateServerBackfillTicketRequest",
+      "className": "CreateServerBackfillTicketRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "The server specifies all the members, their teams and their attributes, and the server details if applicable.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "GiveUpAfterSeconds",
+          "description": "How long to attempt matching this ticket in seconds.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Members",
+          "description": "The users who will be part of this ticket, along with their team assignments.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "MatchmakingPlayerWithTeamAssignment",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "QueueName",
+          "description": "The Id of a match queue.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ServerDetails",
+          "description": "The details of the server the members are connected to.",
+          "jsontype": "Object",
+          "actualtype": "ServerDetails",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "CreateServerBackfillTicketResult": {
+      "name": "CreateServerBackfillTicketResult",
+      "className": "CreateServerBackfillTicketResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "TicketId",
+          "description": "The Id of the ticket to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "CreateServerMatchmakingTicketRequest": {
       "name": "CreateServerMatchmakingTicketRequest",
       "className": "CreateServerMatchmakingTicketRequest",
@@ -1649,6 +1789,9 @@
       "className": "GetMatchmakingQueueRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "description": "Gets the current configuration for a queue.",
       "isRequest": true,
       "properties": [
@@ -1666,6 +1809,9 @@
       "className": "GetMatchmakingQueueResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": [
         {
@@ -1695,7 +1841,7 @@
         },
         {
           "name": "QueueName",
-          "description": "The Id of the queue to find a match for.",
+          "description": "The name of the queue to find a match for.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1818,7 +1964,7 @@
         },
         {
           "name": "QueueName",
-          "description": "The Id of the queue to join.",
+          "description": "The name of the queue to join.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2131,6 +2277,119 @@
         }
       ]
     },
+    "GetServerBackfillTicketRequest": {
+      "name": "GetServerBackfillTicketRequest",
+      "className": "GetServerBackfillTicketRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "The ticket includes the players, their attributes, their teams, the ticket status, the match Id and the server details when applicable, etc. Only servers can get the ticket.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "EscapeObject",
+          "description": "Determines whether the matchmaking attributes will be returned as an escaped JSON string or as an un-escaped JSON object.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "QueueName",
+          "description": "The name of the queue to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TicketId",
+          "description": "The Id of the ticket to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetServerBackfillTicketResult": {
+      "name": "GetServerBackfillTicketResult",
+      "className": "GetServerBackfillTicketResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "CancellationReason",
+          "description": "The reason why the current ticket was canceled. This field is only set if the ticket is in canceled state.",
+          "jsontype": "String",
+          "actualtype": "CancellationReason",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "The server date and time at which ticket was created.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "GiveUpAfterSeconds",
+          "description": "How long to attempt matching this ticket in seconds.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "MatchId",
+          "description": "The Id of a match.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Members",
+          "description": "A list of Users that are part of this ticket, along with their team assignments.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "MatchmakingPlayerWithTeamAssignment",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "QueueName",
+          "description": "The Id of a match queue.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ServerDetails",
+          "description": "The details of the server the members are connected to.",
+          "jsontype": "Object",
+          "actualtype": "ServerDetails",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "Status",
+          "description": "The current ticket status. Possible values are: WaitingForMatch, Canceled and Matched.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TicketId",
+          "description": "The Id of the ticket to find a match for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "GetTitleEnabledForMultiplayerServersStatusRequest": {
       "name": "GetTitleEnabledForMultiplayerServersStatusRequest",
       "className": "GetTitleEnabledForMultiplayerServersStatusRequest",
@@ -2175,7 +2434,7 @@
         },
         {
           "name": "QueueName",
-          "description": "The Id of the queue to join.",
+          "description": "The name of the queue to join.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2459,6 +2718,9 @@
       "className": "ListMatchmakingQueuesRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "description": "Gets a list of all the matchmaking queue configurations for the title.",
       "isRequest": true,
       "properties": []
@@ -2468,6 +2730,9 @@
       "className": "ListMatchmakingQueuesResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": [
         {
@@ -2499,7 +2764,7 @@
         },
         {
           "name": "QueueName",
-          "description": "The Id of the queue to find a match for.",
+          "description": "The name of the queue to find a match for.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -2632,6 +2897,54 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        }
+      ]
+    },
+    "ListServerBackfillTicketsForPlayerRequest": {
+      "name": "ListServerBackfillTicketsForPlayerRequest",
+      "className": "ListServerBackfillTicketsForPlayerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "List all server backfill ticket Ids the user is a member of.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity key for which to find the ticket Ids.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "QueueName",
+          "description": "The name of the queue the tickets are in.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ListServerBackfillTicketsForPlayerResult": {
+      "name": "ListServerBackfillTicketsForPlayerResult",
+      "className": "ListServerBackfillTicketsForPlayerResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "TicketIds",
+          "description": "The list of backfill ticket Ids the user is a member of.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
         }
       ]
     },
@@ -2779,7 +3092,7 @@
         },
         {
           "name": "TeamId",
-          "description": "The Id of the team the User has been assigned to by matchmaking.",
+          "description": "The Id of the team the User is assigned to.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2791,6 +3104,9 @@
       "className": "MatchmakingQueueConfig",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": [
         {
           "name": "BuildId",
@@ -2805,6 +3121,13 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
+        },
+        {
+          "name": "MaxTicketSize",
+          "description": "Maximum number of players in a ticket.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
         },
         {
           "name": "MinMatchSize",
@@ -2860,6 +3183,9 @@
       "className": "MatchmakingQueueRule",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": [
         {
           "name": "Name",
@@ -2890,6 +3216,9 @@
       "className": "MatchmakingQueueTeam",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": [
         {
           "name": "MaxTeamSize",
@@ -3047,6 +3376,9 @@
       "className": "RemoveMatchmakingQueueRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "description": "Deletes the configuration for a queue. This will permanently delete the configuration and players will no longer be able to match in the queue. All outstanding matchmaking tickets will be cancelled.",
       "isRequest": true,
       "properties": [
@@ -3064,6 +3396,9 @@
       "className": "RemoveMatchmakingQueueResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": []
     },
@@ -3373,6 +3708,9 @@
       "className": "RuleType",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isenum": true,
       "enumvalues": [
         {
@@ -3415,7 +3753,7 @@
           "description": "The IPv4 address of the virtual machine that is hosting this multiplayer server.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         },
         {
           "name": "Ports",
@@ -3424,7 +3762,14 @@
           "jsontype": "Object",
           "actualtype": "Port",
           "isclass": true,
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "Region",
+          "description": "The server's region.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -3433,6 +3778,9 @@
       "className": "SetMatchmakingQueueRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "description": "Use this API to create or update matchmaking queue configurations. The queue configuration defines the matchmaking rules. The matchmaking service will match tickets together according to the configured rules. Queue resources are not spun up by calling this API. Queues are created when the first ticket is submitted.",
       "isRequest": true,
       "properties": [
@@ -3451,6 +3799,9 @@
       "className": "SetMatchmakingQueueResult",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "isResult": true,
       "properties": []
     },
@@ -3527,6 +3878,9 @@
       "className": "StatisticsVisibilityToPlayers",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "properties": [
         {
           "name": "ShowNumberOfPlayersMatching",
@@ -3641,14 +3995,19 @@
       "name": "Matchmaking",
       "methods": [
         "CancelAllMatchmakingTicketsForPlayer",
+        "CancelAllServerBackfillTicketsForPlayer",
         "CancelMatchmakingTicket",
+        "CancelServerBackfillTicket",
         "CreateMatchmakingTicket",
+        "CreateServerBackfillTicket",
         "CreateServerMatchmakingTicket",
         "GetMatch",
         "GetMatchmakingTicket",
         "GetQueueStatistics",
+        "GetServerBackfillTicket",
         "JoinMatchmakingTicket",
-        "ListMatchmakingTicketsForPlayer"
+        "ListMatchmakingTicketsForPlayer",
+        "ListServerBackfillTicketsForPlayer"
       ]
     },
     {
@@ -3719,9 +4078,31 @@
       ]
     },
     {
+      "name": "CancelAllServerBackfillTicketsForPlayer",
+      "summary": "Cancel all active backfill tickets the player is a member of in a given queue.",
+      "requestDetails": "Cancels all backfill tickets of which the player is a member in a given queue that are not cancelled or matched. This API is useful if you lose track of what tickets the player is a member of (if the server crashes for instance) and want to \"reset\".",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/CancelAllServerBackfillTicketsForPlayer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CancelAllServerBackfillTicketsForPlayerRequest",
+      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"123123123\",\r\n    \"Type\": \"title_player_acount\",\r\n    \"TypeString\": \"title_player_acount\"\r\n  },\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "CancelAllServerBackfillTicketsForPlayerResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingEntityInvalid",
+        "MatchmakingQueueNotFound",
+        "MatchmakingUnauthorized"
+      ]
+    },
+    {
       "name": "CancelMatchmakingTicket",
       "summary": "Cancel a matchmaking ticket.",
-      "requestDetails": "Only servers and ticket members can cancel a ticket. The ticket can be in four different states when it is cancelled. 1: the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage, it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. There may be race conditions between the ticket getting matched and the client making a cancellation request. The client must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket instead.",
+      "requestDetails": "Only servers and ticket members can cancel a ticket. The ticket can be in five different states when it is cancelled. 1: the ticket is waiting for members to join it, and it has not started matching. If the ticket is cancelled at this stage, it will never match. 2: the ticket is matching. If the ticket is cancelled, it will stop matching. 3: the ticket is matched. A matched ticket cannot be cancelled. 4: the ticket is already cancelled and nothing happens. 5: the ticket is waiting for a server. If the ticket is cancelled, server allocation will be stopped. A server may still be allocated due to a race condition, but that will not be reflected in the ticket. There may be race conditions between the ticket getting matched and the client making a cancellation request. The client must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket because players must consent to enter matchmaking again. Create a new ticket instead.",
       "subgroup": "Matchmaking",
       "titleTiers": null,
       "url": "/Match/CancelMatchmakingTicket",
@@ -3734,6 +4115,30 @@
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerHasNotJoinedTicket",
+        "MatchmakingQueueNotFound",
+        "MatchmakingTicketAlreadyCompleted",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized"
+      ]
+    },
+    {
+      "name": "CancelServerBackfillTicket",
+      "summary": "Cancel a server backfill ticket.",
+      "requestDetails": "Only servers can cancel a backfill ticket. The ticket can be in three different states when it is cancelled. 1: the ticket is matching. If the ticket is cancelled, it will stop matching. 2: the ticket is matched. A matched ticket cannot be cancelled. 3: the ticket is already cancelled and nothing happens. There may be race conditions between the ticket getting matched and the server making a cancellation request. The server must handle the possibility that the cancel request fails if a match is found before the cancellation request is processed. We do not allow resubmitting a cancelled ticket. Create a new ticket instead.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/CancelServerBackfillTicket",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CancelServerBackfillTicketRequest",
+      "requestExample": "{\r\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "CancelServerBackfillTicketResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingEntityInvalid",
         "MatchmakingQueueNotFound",
         "MatchmakingTicketAlreadyCompleted",
         "MatchmakingTicketNotFound",
@@ -3845,6 +4250,36 @@
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized",
         "MultiplayerServerUnavailable"
+      ]
+    },
+    {
+      "name": "CreateServerBackfillTicket",
+      "summary": "Create a backfill matchmaking ticket as a server. A backfill ticket represents an ongoing game. The matchmaking service automatically starts matching the backfill ticket against other matchmaking tickets. Backfill tickets cannot match with other backfill tickets.",
+      "requestDetails": "The server specifies all the members, their teams and their attributes, and the server details if applicable.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/CreateServerBackfillTicket",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "CreateServerBackfillTicketRequest",
+      "requestExample": "{\r\n  \"Members\": [],\r\n  \"GiveUpAfterSeconds\": 100,\r\n  \"ServerDetails\": {\r\n    \"IPV4Address\": \"10.250.24.54\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"Region\": \"WestUS\"\r\n  },\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "CreateServerBackfillTicketResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\"\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingAttributeInvalid",
+        "MatchmakingBadRequest",
+        "MatchmakingEntityInvalid",
+        "MatchmakingMemberProfileInvalid",
+        "MatchmakingNumberOfPlayersInTicketTooLarge",
+        "MatchmakingPlayerAttributesInvalid",
+        "MatchmakingPlayerAttributesTooLarge",
+        "MatchmakingQueueNotFound",
+        "MatchmakingRateLimitExceeded",
+        "MatchmakingTicketMembershipLimitExceeded",
+        "MatchmakingUnauthorized"
       ]
     },
     {
@@ -4162,7 +4597,7 @@
       "request": "GetMatchRequest",
       "requestExample": "{\r\n  \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n  \"QueueName\": \"custom123\",\r\n  \"EscapeObject\": false,\r\n  \"ReturnMemberAttributes\": false\r\n}",
       "result": "GetMatchResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Members\": [],\r\n    \"RegionPreferences\": [\r\n      \"Region1\",\r\n      \"Region2\"\r\n    ],\r\n    \"ServerDetails\": {\r\n      \"IPV4Address\": \"10.250.24.54\",\r\n      \"Ports\": [\r\n        {\r\n          \"Name\": \"PortName\",\r\n          \"Num\": 1243,\r\n          \"Protocol\": \"TCP\"\r\n        }\r\n      ]\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Members\": [],\r\n    \"RegionPreferences\": [\r\n      \"Region1\",\r\n      \"Region2\"\r\n    ],\r\n    \"ServerDetails\": {\r\n      \"IPV4Address\": \"10.250.24.54\",\r\n      \"Ports\": [\r\n        {\r\n          \"Name\": \"PortName\",\r\n          \"Num\": 1243,\r\n          \"Protocol\": \"TCP\"\r\n        }\r\n      ],\r\n      \"Region\": \"WestUS\"\r\n    }\r\n  }\r\n}",
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingMatchNotFound",
@@ -4184,6 +4619,9 @@
       "requestExample": "{\r\n  \"QueueName\": \"custom123\"\r\n}",
       "result": "GetMatchmakingQueueResult",
       "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "errors": [
         "MatchmakingQueueNotFound",
         "NotAuthorized"
@@ -4201,7 +4639,7 @@
       "request": "GetMatchmakingTicketRequest",
       "requestExample": "{\r\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n  \"QueueName\": \"custom123\",\r\n  \"EscapeObject\": false\r\n}",
       "result": "GetMatchmakingTicketResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n    \"QueueName\": \"custom123\",\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Created\": \"2016-08-23T12:33:14Z\",\r\n    \"Status\": \"MATCHED\",\r\n    \"GiveUpAfterSeconds\": 100,\r\n    \"MembersToMatchWith\": [\r\n      {\r\n        \"Id\": \"456456456\",\r\n        \"Type\": \"title_player_acount\",\r\n        \"TypeString\": \"title_player_acount\"\r\n      }\r\n    ],\r\n    \"Members\": [],\r\n    \"Creator\": {\r\n      \"Id\": \"123123123\",\r\n      \"Type\": \"title_player_acount\",\r\n      \"TypeString\": \"title_player_acount\"\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n    \"QueueName\": \"custom123\",\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Created\": \"2016-08-23T12:33:14Z\",\r\n    \"Status\": \"Matched\",\r\n    \"GiveUpAfterSeconds\": 100,\r\n    \"MembersToMatchWith\": [\r\n      {\r\n        \"Id\": \"456456456\",\r\n        \"Type\": \"title_player_acount\",\r\n        \"TypeString\": \"title_player_acount\"\r\n      }\r\n    ],\r\n    \"Members\": [],\r\n    \"Creator\": {\r\n      \"Id\": \"123123123\",\r\n      \"Type\": \"title_player_acount\",\r\n      \"TypeString\": \"title_player_acount\"\r\n    }\r\n  }\r\n}",
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingQueueNotFound",
@@ -4314,6 +4752,31 @@
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized",
         "MultiplayerServerUnavailable"
+      ]
+    },
+    {
+      "name": "GetServerBackfillTicket",
+      "summary": "Get a matchmaking backfill ticket by ticket Id.",
+      "requestDetails": "The ticket includes the players, their attributes, their teams, the ticket status, the match Id and the server details when applicable, etc. Only servers can get the ticket.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/GetServerBackfillTicket",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetServerBackfillTicketRequest",
+      "requestExample": "{\r\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n  \"QueueName\": \"custom123\",\r\n  \"EscapeObject\": false\r\n}",
+      "result": "GetServerBackfillTicketResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n    \"QueueName\": \"custom123\",\r\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\r\n    \"Created\": \"2016-08-23T12:33:14Z\",\r\n    \"Status\": \"Matched\",\r\n    \"GiveUpAfterSeconds\": 100,\r\n    \"Members\": [],\r\n    \"ServerDetails\": {\r\n      \"IPV4Address\": \"10.250.24.54\",\r\n      \"Ports\": [\r\n        {\r\n          \"Name\": \"PortName\",\r\n          \"Num\": 1243,\r\n          \"Protocol\": \"TCP\"\r\n        }\r\n      ],\r\n      \"Region\": \"WestUS\"\r\n    }\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingEntityInvalid",
+        "MatchmakingQueueNotFound",
+        "MatchmakingRateLimitExceeded",
+        "MatchmakingRequestTypeMismatch",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized"
       ]
     },
     {
@@ -4548,6 +5011,9 @@
       "requestExample": "{}",
       "result": "ListMatchmakingQueuesResult",
       "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "errors": [
         "NotAuthorized"
       ]
@@ -4618,6 +5084,29 @@
       ]
     },
     {
+      "name": "ListServerBackfillTicketsForPlayer",
+      "summary": "List all server backfill ticket Ids the user is a member of.",
+      "requestDetails": "List all server backfill ticket Ids the user is a member of.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/ListServerBackfillTicketsForPlayer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ListServerBackfillTicketsForPlayerRequest",
+      "requestExample": "{\r\n  \"Entity\": {\r\n    \"Id\": \"123123123\",\r\n    \"Type\": \"title_player_acount\",\r\n    \"TypeString\": \"title_player_acount\"\r\n  },\r\n  \"QueueName\": \"custom123\"\r\n}",
+      "result": "ListServerBackfillTicketsForPlayerResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TicketIds\": [\r\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\r\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MatchmakingEntityInvalid",
+        "MatchmakingQueueNotFound",
+        "MatchmakingRateLimitExceeded",
+        "MatchmakingUnauthorized"
+      ]
+    },
+    {
       "name": "ListVirtualMachineSummaries",
       "summary": "Lists virtual machines for a title.",
       "requestDetails": "Returns a list of virtual machines for a title.",
@@ -4652,6 +5141,9 @@
       "requestExample": "{\r\n  \"QueueName\": \"custom123\"\r\n}",
       "result": "RemoveMatchmakingQueueResult",
       "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "errors": [
         "MatchmakingQueueNotFound",
         "NotAuthorized"
@@ -4747,9 +5239,12 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "SetMatchmakingQueueRequest",
-      "requestExample": "{\r\n  \"MatchmakingQueue\": {\r\n    \"Name\": \"ExampleQueueName\",\r\n    \"MinMatchSize\": 7,\r\n    \"MaxMatchSize\": 8,\r\n    \"ServerAllocationEnabled\": true,\r\n    \"BuildId\": \"065a3208-39af-4691-8794-5f774c367ac2\",\r\n    \"Rules\": [\r\n      {\r\n        \"Type\": \"DifferenceRule\",\r\n        \"Difference\": 10.0,\r\n        \"MergeFunction\": \"Average\",\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 0.5,\r\n          \"Limit\": 20.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeDifference\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName0\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"StringEqualityRule\",\r\n        \"DefaultAttributeValue\": \"ExampleDefault\",\r\n        \"Expansion\": {\r\n          \"EnabledOverrides\": [\r\n            false,\r\n            true,\r\n            true,\r\n            false\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeStringEquality\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName1\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"MatchTotalRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Min\": 2.0,\r\n        \"Max\": 4.0,\r\n        \"Weight\": 1.0,\r\n        \"Expansion\": {\r\n          \"MinOverrides\": [\r\n            2.0,\r\n            null,\r\n            null\r\n          ],\r\n          \"MaxOverrides\": [\r\n            4.0,\r\n            4.0,\r\n            null\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName2\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"SetIntersectionRule\",\r\n        \"DefaultAttributeValue\": [\r\n          \"a\",\r\n          \"b\",\r\n          \"c\"\r\n        ],\r\n        \"MinIntersectionSize\": 2,\r\n        \"Expansion\": {\r\n          \"Delta\": 2,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeSetIntersection\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName3\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamSizeBalanceRule\",\r\n        \"Difference\": 1,\r\n        \"Expansion\": {\r\n          \"Delta\": 1,\r\n          \"Limit\": 5,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName4\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"RegionSelectionRule\",\r\n        \"MaxLatency\": 250,\r\n        \"Path\": \"Latencies\",\r\n        \"Expansion\": {\r\n          \"Delta\": 10,\r\n          \"Limit\": 300,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName5\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamDifferenceRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Difference\": 2.0,\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 1.0,\r\n          \"Limit\": 5.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName6\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamTicketSizeSimilarityRule\",\r\n        \"Name\": \"TeamTicketSizeSimilarityRuleExample7\",\r\n        \"SecondsUntilOptional\": 180\r\n      }\r\n    ],\r\n    \"Teams\": [\r\n      {\r\n        \"Name\": \"monster\",\r\n        \"MinTeamSize\": 1,\r\n        \"MaxTeamSize\": 1\r\n      },\r\n      {\r\n        \"Name\": \"hunters\",\r\n        \"MinTeamSize\": 4,\r\n        \"MaxTeamSize\": 8\r\n      }\r\n    ],\r\n    \"StatisticsVisibilityToPlayers\": {\r\n      \"ShowNumberOfPlayersMatching\": true,\r\n      \"ShowTimeToMatch\": true\r\n    }\r\n  }\r\n}",
+      "requestExample": "{\r\n  \"MatchmakingQueue\": {\r\n    \"Name\": \"ExampleQueueName\",\r\n    \"MinMatchSize\": 7,\r\n    \"MaxMatchSize\": 8,\r\n    \"MaxTicketSize\": 2,\r\n    \"ServerAllocationEnabled\": true,\r\n    \"BuildId\": \"065a3208-39af-4691-8794-5f774c367ac2\",\r\n    \"Rules\": [\r\n      {\r\n        \"Type\": \"DifferenceRule\",\r\n        \"Difference\": 10.0,\r\n        \"MergeFunction\": \"Average\",\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 0.5,\r\n          \"Limit\": 20.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeDifference\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName0\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"StringEqualityRule\",\r\n        \"DefaultAttributeValue\": \"ExampleDefault\",\r\n        \"Expansion\": {\r\n          \"EnabledOverrides\": [\r\n            false,\r\n            true,\r\n            true,\r\n            false\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeStringEquality\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName1\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"MatchTotalRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Min\": 2.0,\r\n        \"Max\": 4.0,\r\n        \"Weight\": 1.0,\r\n        \"Expansion\": {\r\n          \"MinOverrides\": [\r\n            2.0,\r\n            null,\r\n            null\r\n          ],\r\n          \"MaxOverrides\": [\r\n            4.0,\r\n            4.0,\r\n            null\r\n          ],\r\n          \"Type\": \"Custom\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName2\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"SetIntersectionRule\",\r\n        \"DefaultAttributeValue\": [\r\n          \"a\",\r\n          \"b\",\r\n          \"c\"\r\n        ],\r\n        \"MinIntersectionSize\": 2,\r\n        \"Expansion\": {\r\n          \"Delta\": 2,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttributeSetIntersection\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"AttributeNotSpecifiedBehavior\": \"UseDefault\",\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName3\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamSizeBalanceRule\",\r\n        \"Difference\": 1,\r\n        \"Expansion\": {\r\n          \"Delta\": 1,\r\n          \"Limit\": 5,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName4\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"RegionSelectionRule\",\r\n        \"MaxLatency\": 250,\r\n        \"Path\": \"Latencies\",\r\n        \"Expansion\": {\r\n          \"Delta\": 10,\r\n          \"Limit\": 300,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Weight\": 1.0,\r\n        \"Name\": \"ExampleName5\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamDifferenceRule\",\r\n        \"Attribute\": {\r\n          \"Path\": \"ExampleAttribute\",\r\n          \"Source\": \"User\"\r\n        },\r\n        \"Difference\": 2.0,\r\n        \"DefaultAttributeValue\": 0.0,\r\n        \"Expansion\": {\r\n          \"Delta\": 1.0,\r\n          \"Limit\": 5.0,\r\n          \"Type\": \"Linear\",\r\n          \"SecondsBetweenExpansions\": 5\r\n        },\r\n        \"Name\": \"ExampleName6\",\r\n        \"SecondsUntilOptional\": 50\r\n      },\r\n      {\r\n        \"Type\": \"TeamTicketSizeSimilarityRule\",\r\n        \"Name\": \"TeamTicketSizeSimilarityRuleExample7\",\r\n        \"SecondsUntilOptional\": 180\r\n      }\r\n    ],\r\n    \"Teams\": [\r\n      {\r\n        \"Name\": \"monster\",\r\n        \"MinTeamSize\": 1,\r\n        \"MaxTeamSize\": 1\r\n      },\r\n      {\r\n        \"Name\": \"hunters\",\r\n        \"MinTeamSize\": 4,\r\n        \"MaxTeamSize\": 8\r\n      }\r\n    ],\r\n    \"StatisticsVisibilityToPlayers\": {\r\n      \"ShowNumberOfPlayersMatching\": true,\r\n      \"ShowTimeToMatch\": true\r\n    }\r\n  }\r\n}",
       "result": "SetMatchmakingQueueResult",
       "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
       "errors": [
         "MatchmakingQueueConfigInvalid",
         "MatchmakingQueueLimitExceeded",
@@ -6595,6 +7090,14 @@
       "id": 1449,
       "name": "EntityAPIKeyOrSecretInvalid"
     },
+    "EconomyServiceUnavailable": {
+      "id": 1450,
+      "name": "EconomyServiceUnavailable"
+    },
+    "EconomyServiceInternalError": {
+      "id": 1451,
+      "name": "EconomyServiceInternalError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6671,6 +7174,14 @@
       "id": 2057,
       "name": "MatchmakingQueueLimitExceeded"
     },
+    "MatchmakingRequestTypeMismatch": {
+      "id": 2058,
+      "name": "MatchmakingRequestTypeMismatch"
+    },
+    "MatchmakingBadRequest": {
+      "id": 2059,
+      "name": "MatchmakingBadRequest"
+    },
     "TitleConfigNotFound": {
       "id": 3001,
       "name": "TitleConfigNotFound"
@@ -6722,6 +7233,10 @@
     "CatalogConfigInvalid": {
       "id": 4010,
       "name": "CatalogConfigInvalid"
+    },
+    "CatalogUnauthorized": {
+      "id": 4011,
+      "name": "CatalogUnauthorized"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
@@ -7232,6 +7747,8 @@
     "EntityAPIKeyLimitExceeded",
     "EntityAPIKeyNotFound",
     "EntityAPIKeyOrSecretInvalid",
+    "EconomyServiceUnavailable",
+    "EconomyServiceInternalError",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -7251,6 +7768,8 @@
     "MatchmakingTicketMembershipLimitExceeded",
     "MatchmakingUnauthorized",
     "MatchmakingQueueLimitExceeded",
+    "MatchmakingRequestTypeMismatch",
+    "MatchmakingBadRequest",
     "TitleConfigNotFound",
     "TitleConfigUpdateConflict",
     "TitleConfigSerializationError",
@@ -7264,6 +7783,7 @@
     "CatalogSearchParameterInvalid",
     "CatalogFeatureDisabled",
     "CatalogConfigInvalid",
+    "CatalogUnauthorized",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",
