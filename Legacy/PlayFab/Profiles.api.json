@@ -195,6 +195,13 @@
       "assembly": "PlayFab.Profiles.Models",
       "properties": [
         {
+          "name": "AvatarUrl",
+          "description": "Avatar URL for the entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Created",
           "description": "The creation time of this profile in UTC.",
           "jsontype": "String",
@@ -528,6 +535,76 @@
         }
       ]
     },
+    "SetAvatarUrlRequest": {
+      "name": "SetAvatarUrlRequest",
+      "className": "SetAvatarUrlRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Given an entity profile, will update its avatar url to the provided url if the profile's version is equal to the specified value",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AvatarUrl",
+          "description": "URL of the avatar image. If empty, it removes the existing avatar URL",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ProfileVersion",
+          "description": "The expected version of the profile to perform this update on",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "SetAvatarUrlResponse": {
+      "name": "SetAvatarUrlResponse",
+      "className": "SetAvatarUrlResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "OperationResult",
+          "description": "The type of operation that occurred on the profile's avatar URL",
+          "jsontype": "String",
+          "actualtype": "OperationTypes",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "ProfileVersion",
+          "description": "The updated version of the profile after the avatar URL update",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
     "SetDisplayNameRequest": {
       "name": "SetDisplayNameRequest",
       "className": "SetDisplayNameRequest",
@@ -536,7 +613,7 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to or newer than the specified value",
+      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to the specified value",
       "isRequest": true,
       "properties": [
         {
@@ -667,7 +744,7 @@
       "className": "SetProfileLanguageRequest",
       "classNameSpace": "PlayFab.Profiles.Models",
       "assembly": "PlayFab.Profiles.Models",
-      "description": "Given an entity profile, will update its language to the one passed in if the profile's version is at least the one passed in.",
+      "description": "Given an entity profile, will update its language to the one passed in if the profile's version is equal to the one passed in.",
       "isRequest": true,
       "properties": [
         {
@@ -726,6 +803,7 @@
         "GetGlobalPolicy",
         "GetProfile",
         "GetProfiles",
+        "SetAvatarUrl",
         "SetDisplayName",
         "SetGlobalPolicy",
         "SetProfileLanguage",
@@ -793,9 +871,32 @@
       ]
     },
     {
+      "name": "SetAvatarUrl",
+      "summary": "Update the avatar url of the entity",
+      "requestDetails": "Given an entity profile, will update its avatar url to the provided url if the profile's version is equal to the specified value",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Profile/SetAvatarUrl",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "SetAvatarUrlRequest",
+      "requestExample": "{\r\n  \"AvatarUrl\": \"https://test.com/image.png\",\r\n  \"ProfileVersion\": 123,\r\n  \"Entity\": {\r\n    \"Id\": \"90901000\",\r\n    \"Type\": \"title_player_account\",\r\n    \"TypeString\": \"title_player_account\"\r\n  }\r\n}",
+      "result": "SetAvatarUrlResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ProfileVersion\": 85,\r\n    \"OperationResult\": \"Updated\"\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidParams",
+        "NotAuthenticated",
+        "NotAuthorized",
+        "ProfileDoesNotExist"
+      ]
+    },
+    {
       "name": "SetDisplayName",
       "summary": "Update the display name of the entity",
-      "requestDetails": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to or newer than the specified value",
+      "requestDetails": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to the specified value",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Profile/SetDisplayName",
@@ -841,7 +942,7 @@
     {
       "name": "SetProfileLanguage",
       "summary": "Updates the entity's language. The precedence hierarchy for communication to the player is Title Player Account language, Master Player Account language, and then title default language if the first two aren't set or supported.",
-      "requestDetails": "Given an entity profile, will update its language to the one passed in if the profile's version is at least the one passed in.",
+      "requestDetails": "Given an entity profile, will update its language to the one passed in if the profile's version is equal to the one passed in.",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Profile/SetProfileLanguage",
@@ -2626,6 +2727,102 @@
       "id": 1446,
       "name": "AutomationRuleNotFound"
     },
+    "EntityAPIKeyLimitExceeded": {
+      "id": 1447,
+      "name": "EntityAPIKeyLimitExceeded"
+    },
+    "EntityAPIKeyNotFound": {
+      "id": 1448,
+      "name": "EntityAPIKeyNotFound"
+    },
+    "EntityAPIKeyOrSecretInvalid": {
+      "id": 1449,
+      "name": "EntityAPIKeyOrSecretInvalid"
+    },
+    "EconomyServiceUnavailable": {
+      "id": 1450,
+      "name": "EconomyServiceUnavailable"
+    },
+    "EconomyServiceInternalError": {
+      "id": 1451,
+      "name": "EconomyServiceInternalError"
+    },
+    "KustoProxyQueryRateLimitExceeded": {
+      "id": 1455,
+      "name": "KustoProxyQueryRateLimitExceeded"
+    },
+    "EntityAPIKeyCreationDisabledForEntity": {
+      "id": 1456,
+      "name": "EntityAPIKeyCreationDisabledForEntity"
+    },
+    "StudioCreationRateLimited": {
+      "id": 1457,
+      "name": "StudioCreationRateLimited"
+    },
+    "StudioCreationInProgress": {
+      "id": 1458,
+      "name": "StudioCreationInProgress"
+    },
+    "DuplicateStudioName": {
+      "id": 1459,
+      "name": "DuplicateStudioName"
+    },
+    "StudioNotFound": {
+      "id": 1460,
+      "name": "StudioNotFound"
+    },
+    "StudioDeletionInProgress": {
+      "id": 1461,
+      "name": "StudioDeletionInProgress"
+    },
+    "StudioDeactivated": {
+      "id": 1462,
+      "name": "StudioDeactivated"
+    },
+    "TitleCreationRateLimited": {
+      "id": 1463,
+      "name": "TitleCreationRateLimited"
+    },
+    "TitleCreationInProgress": {
+      "id": 1464,
+      "name": "TitleCreationInProgress"
+    },
+    "DuplicateTitleName": {
+      "id": 1465,
+      "name": "DuplicateTitleName"
+    },
+    "TitleNotFound": {
+      "id": 1466,
+      "name": "TitleNotFound"
+    },
+    "TitleDeletionInProgress": {
+      "id": 1467,
+      "name": "TitleDeletionInProgress"
+    },
+    "TitleDeactivated": {
+      "id": 1468,
+      "name": "TitleDeactivated"
+    },
+    "TitleAlreadyActivated": {
+      "id": 1469,
+      "name": "TitleAlreadyActivated"
+    },
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
+      "id": 1470,
+      "name": "CloudScriptAzureFunctionsExecutionTimeLimitExceeded"
+    },
+    "CloudScriptAzureFunctionsArgumentSizeExceeded": {
+      "id": 1471,
+      "name": "CloudScriptAzureFunctionsArgumentSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsReturnSizeExceeded": {
+      "id": 1472,
+      "name": "CloudScriptAzureFunctionsReturnSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsHTTPRequestError": {
+      "id": 1473,
+      "name": "CloudScriptAzureFunctionsHTTPRequestError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -2702,6 +2899,14 @@
       "id": 2057,
       "name": "MatchmakingQueueLimitExceeded"
     },
+    "MatchmakingRequestTypeMismatch": {
+      "id": 2058,
+      "name": "MatchmakingRequestTypeMismatch"
+    },
+    "MatchmakingBadRequest": {
+      "id": 2059,
+      "name": "MatchmakingBadRequest"
+    },
     "TitleConfigNotFound": {
       "id": 3001,
       "name": "TitleConfigNotFound"
@@ -2750,53 +2955,13 @@
       "id": 4009,
       "name": "CatalogFeatureDisabled"
     },
-    "CatalogConfigMissing": {
-      "id": 4100,
-      "name": "CatalogConfigMissing"
+    "CatalogConfigInvalid": {
+      "id": 4010,
+      "name": "CatalogConfigInvalid"
     },
-    "CatalogConfigTooManyContentTypes": {
-      "id": 4101,
-      "name": "CatalogConfigTooManyContentTypes"
-    },
-    "CatalogConfigContentTypeTooLong": {
-      "id": 4102,
-      "name": "CatalogConfigContentTypeTooLong"
-    },
-    "CatalogConfigTooManyTags": {
-      "id": 4103,
-      "name": "CatalogConfigTooManyTags"
-    },
-    "CatalogConfigTagTooLong": {
-      "id": 4104,
-      "name": "CatalogConfigTagTooLong"
-    },
-    "CatalogConfigInvalidDeepLinkObject": {
-      "id": 4105,
-      "name": "CatalogConfigInvalidDeepLinkObject"
-    },
-    "CatalogConfigInvalidDeepLinkPlatform": {
-      "id": 4106,
-      "name": "CatalogConfigInvalidDeepLinkPlatform"
-    },
-    "CatalogConfigInvalidDeepLinkFormat": {
-      "id": 4107,
-      "name": "CatalogConfigInvalidDeepLinkFormat"
-    },
-    "CatalogConfigInvalidDisplayPropertyObject": {
-      "id": 4108,
-      "name": "CatalogConfigInvalidDisplayPropertyObject"
-    },
-    "CatalogConfigInvalidDisplayPropertyName": {
-      "id": 4109,
-      "name": "CatalogConfigInvalidDisplayPropertyName"
-    },
-    "CatalogConfigInvalidDisplayPropertyType": {
-      "id": 4110,
-      "name": "CatalogConfigInvalidDisplayPropertyType"
-    },
-    "CatalogConfigDisplayPropertyMappingLimit": {
-      "id": 4111,
-      "name": "CatalogConfigDisplayPropertyMappingLimit"
+    "CatalogUnauthorized": {
+      "id": 4011,
+      "name": "CatalogUnauthorized"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
@@ -2838,9 +3003,9 @@
       "id": 5009,
       "name": "ExportKustoException"
     },
-    "ExportKustoExceptionNew_SomeResources": {
+    "ExportKustoExceptionPartialErrorOnNewExport": {
       "id": 5010,
-      "name": "ExportKustoExceptionNew_SomeResources"
+      "name": "ExportKustoExceptionPartialErrorOnNewExport"
     },
     "ExportKustoExceptionEdit": {
       "id": 5011,
@@ -2853,6 +3018,18 @@
     "ExportUnknownError": {
       "id": 5013,
       "name": "ExportUnknownError"
+    },
+    "ExportCantEditPendingExport": {
+      "id": 5014,
+      "name": "ExportCantEditPendingExport"
+    },
+    "ExportLimitExports": {
+      "id": 5015,
+      "name": "ExportLimitExports"
+    },
+    "ExportLimitEvents": {
+      "id": 5016,
+      "name": "ExportLimitEvents"
     }
   },
   "errorList": [
@@ -3292,6 +3469,30 @@
     "WriteAttemptedDuringExport",
     "MultiplayerServerTitleQuotaCoresExceeded",
     "AutomationRuleNotFound",
+    "EntityAPIKeyLimitExceeded",
+    "EntityAPIKeyNotFound",
+    "EntityAPIKeyOrSecretInvalid",
+    "EconomyServiceUnavailable",
+    "EconomyServiceInternalError",
+    "KustoProxyQueryRateLimitExceeded",
+    "EntityAPIKeyCreationDisabledForEntity",
+    "StudioCreationRateLimited",
+    "StudioCreationInProgress",
+    "DuplicateStudioName",
+    "StudioNotFound",
+    "StudioDeletionInProgress",
+    "StudioDeactivated",
+    "TitleCreationRateLimited",
+    "TitleCreationInProgress",
+    "DuplicateTitleName",
+    "TitleNotFound",
+    "TitleDeletionInProgress",
+    "TitleDeactivated",
+    "TitleAlreadyActivated",
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded",
+    "CloudScriptAzureFunctionsArgumentSizeExceeded",
+    "CloudScriptAzureFunctionsReturnSizeExceeded",
+    "CloudScriptAzureFunctionsHTTPRequestError",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -3311,6 +3512,8 @@
     "MatchmakingTicketMembershipLimitExceeded",
     "MatchmakingUnauthorized",
     "MatchmakingQueueLimitExceeded",
+    "MatchmakingRequestTypeMismatch",
+    "MatchmakingBadRequest",
     "TitleConfigNotFound",
     "TitleConfigUpdateConflict",
     "TitleConfigSerializationError",
@@ -3323,18 +3526,8 @@
     "CatalogItemIdInvalid",
     "CatalogSearchParameterInvalid",
     "CatalogFeatureDisabled",
-    "CatalogConfigMissing",
-    "CatalogConfigTooManyContentTypes",
-    "CatalogConfigContentTypeTooLong",
-    "CatalogConfigTooManyTags",
-    "CatalogConfigTagTooLong",
-    "CatalogConfigInvalidDeepLinkObject",
-    "CatalogConfigInvalidDeepLinkPlatform",
-    "CatalogConfigInvalidDeepLinkFormat",
-    "CatalogConfigInvalidDisplayPropertyObject",
-    "CatalogConfigInvalidDisplayPropertyName",
-    "CatalogConfigInvalidDisplayPropertyType",
-    "CatalogConfigDisplayPropertyMappingLimit",
+    "CatalogConfigInvalid",
+    "CatalogUnauthorized",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",
@@ -3345,9 +3538,12 @@
     "ExportAmazonBucketDoesNotExist",
     "ExportInvalidBlobStorage",
     "ExportKustoException",
-    "ExportKustoExceptionNew_SomeResources",
+    "ExportKustoExceptionPartialErrorOnNewExport",
     "ExportKustoExceptionEdit",
     "ExportKustoConnectionFailed",
-    "ExportUnknownError"
+    "ExportUnknownError",
+    "ExportCantEditPendingExport",
+    "ExportLimitExports",
+    "ExportLimitEvents"
   ]
 }

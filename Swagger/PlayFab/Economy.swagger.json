@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190424",
+    "version": "190509",
     "title": "PlayFab Economy API",
     "description": "API methods for managing User Generated Content. API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -47,6 +47,45 @@
         "responses": {
           "200": {
             "$ref": "#/responses/CreateBundleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/CreateCurrency": {
+      "post": {
+        "operationId": "CreateCurrency",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a bundle",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateCurrency"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateCurrencyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateCurrencyResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -644,6 +683,45 @@
         ],
         "x-ms-docs-errors": [
           "NotAuthorized"
+        ]
+      }
+    },
+    "/Catalog/GetCurrencyById": {
+      "post": {
+        "operationId": "GetCurrencyById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a bundle",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetCurrencyById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetCurrencyByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetCurrencyByIdResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
         ]
       }
     },
@@ -1339,6 +1417,45 @@
         ],
         "x-ms-docs-errors": [
           "CatalogConfigInvalid"
+        ]
+      }
+    },
+    "/Catalog/UpdateCurrency": {
+      "post": {
+        "operationId": "UpdateCurrency",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Create a bundle",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/UpdateCurrency"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateCurrencyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateCurrencyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
         ]
       }
     },
@@ -2670,6 +2787,7 @@
           "type": "object"
         },
         "DisplayVersion": {
+          "description": "The user provided version of the item for display purposes.",
           "type": "string"
         },
         "EndDate": {
@@ -2681,7 +2799,7 @@
           "type": "string"
         },
         "Id": {
-          "description": "The unique ID of the catalog item.",
+          "description": "The unique ID of the item.",
           "type": "string"
         },
         "Images": {
@@ -2747,9 +2865,21 @@
           "type": "object",
           "x-isclass": true
         },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace that this item belongs to.",
+          "type": "object",
+          "x-isclass": true
+        },
         "StartDate": {
           "description": "The date of when the item will be available. If not provided then the product will appear immediately.",
           "type": "string"
+        },
+        "Subscription": {
+          "$ref": "#/definitions/SubscriptionDetails",
+          "description": "Additional metadata for subscription items.",
+          "type": "object",
+          "x-isclass": true
         },
         "Tags": {
           "description": "The list of tags that are associated with this item.",
@@ -2761,6 +2891,10 @@
         "Title": {
           "description": "A dictionary of localized titles. Key is language code and localized string is the value. The neutral locale is required.",
           "type": "object"
+        },
+        "Type": {
+          "description": "The high-level type of the item.",
+          "type": "string"
         }
       },
       "x-AnyInclusiveFlags": [
@@ -2881,6 +3015,12 @@
           "description": "The number of results to skip.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
         },
         "TitleId": {
           "description": "The ID of the title that this catalog item is associated with.",
@@ -3059,6 +3199,10 @@
       "description": "Create bundle request",
       "type": "object",
       "properties": {
+        "AllowOverwrite": {
+          "description": "Allow overwrite",
+          "type": "boolean"
+        },
         "Bundle": {
           "$ref": "#/definitions/CatalogItemMetadata",
           "description": "Bundle details",
@@ -3071,7 +3215,8 @@
         }
       },
       "required": [
-        "Bundle"
+        "Bundle",
+        "AllowOverwrite"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -3095,6 +3240,99 @@
         "Beta"
       ]
     },
+    "CreateCurrencyRequest": {
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "type": "object",
+      "properties": {
+        "Currency": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Metadata describing the new currency item to be created.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Currency"
+      ],
+      "example": {
+        "Currency": {
+          "AlternateIds": [
+            {
+              "Type": "FriendlyId",
+              "Value": "AU"
+            }
+          ],
+          "Title": {
+            "neutral": "gold"
+          },
+          "IsHidden": false,
+          "StartDate": "2019-05-09T21:52:57.4992231Z",
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "display",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+            }
+          ],
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "CreateCurrencyResult": {
+      "type": "object",
+      "properties": {
+        "CurrencyMetadata": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the catalog item just created.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "CurrencyMetadata": {
+          "Id": "04f84130-c30b-4cd0-a542-9211741d164e",
+          "AlternateIds": [
+            {
+              "Type": "FriendlyId",
+              "Value": "AU"
+            }
+          ],
+          "Title": {
+            "neutral": "gold"
+          },
+          "IsHidden": false,
+          "StartDate": "2019-05-09T21:52:57.4992231Z",
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "display",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+            }
+          ],
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CreateDraftItemRequest": {
       "description": "The item will not be published to the public catalog until the user makes a call to the PublishItem API.",
       "type": "object",
@@ -3112,6 +3350,9 @@
           "x-isclass": true
         }
       },
+      "required": [
+        "Item"
+      ],
       "example": {
         "Item": {
           "Title": {
@@ -3191,7 +3432,7 @@
             "neutral": "Neutral description",
             "en-US": "US English description"
           },
-          "ContentType": "example catalog item",
+          "ContentType": "example item",
           "CreatorEntityKey": {
             "Id": "someId",
             "Type": "title_player_account",
@@ -3292,6 +3533,10 @@
       "description": "Create store request",
       "type": "object",
       "properties": {
+        "AllowOverwrite": {
+          "description": "Allow overwrite",
+          "type": "boolean"
+        },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
           "description": "The entity to perform this action on.",
@@ -3310,7 +3555,8 @@
         }
       },
       "required": [
-        "Store"
+        "Store",
+        "AllowOverwrite"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -3338,6 +3584,10 @@
       "description": "Create subscription request",
       "type": "object",
       "properties": {
+        "AllowOverwrite": {
+          "description": "Allow overwrite",
+          "type": "boolean"
+        },
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
@@ -3350,7 +3600,8 @@
         }
       },
       "required": [
-        "Subscription"
+        "Subscription",
+        "AllowOverwrite"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -3390,6 +3641,12 @@
           "items": {
             "$ref": "#/definitions/UploadInfo"
           },
+          "x-isclass": true
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace that this content belongs to.",
+          "type": "object",
           "x-isclass": true
         }
       },
@@ -3442,14 +3699,19 @@
     "CurrencyDetails": {
       "type": "object",
       "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "type": "object",
+          "x-isclass": true
+        },
         "Amount": {
           "type": "number",
           "x-actualtype": "int32"
         },
-        "InstanceId": {
+        "CurrencyId": {
           "type": "string"
         },
-        "Name": {
+        "InstanceId": {
           "type": "string"
         }
       },
@@ -3471,7 +3733,7 @@
           "type": "number",
           "x-actualtype": "int32"
         },
-        "Name": {
+        "CurrencyId": {
           "type": "string"
         }
       },
@@ -3525,6 +3787,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the bundle is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3542,6 +3810,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the bundle is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3607,6 +3881,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the store is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3630,6 +3910,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the store is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3654,12 +3940,18 @@
       "type": "object",
       "properties": {
         "FriendlyId": {
-          "description": "The friendly Id of target bundle.",
+          "description": "The friendly Id of target subscription.",
           "type": "string"
         },
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the subscription is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3671,12 +3963,18 @@
       "type": "object",
       "properties": {
         "Id": {
-          "description": "Id of target subscription",
+          "description": "The Id of target subscription",
           "type": "string"
         },
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the subscription is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "x-AnyInclusiveFlags": [
@@ -3771,6 +4069,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the bundle is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -3795,6 +4099,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the bundle is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -3819,6 +4129,12 @@
         "MarketplaceOfferId": {
           "$ref": "#/definitions/CatalogAlternateId",
           "description": "The Marketplace offer Id of target bundle.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the bundle is in.",
           "type": "object",
           "x-isclass": true
         }
@@ -3912,6 +4228,48 @@
             ]
           }
         }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetCurrencyByIdRequest": {
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "type": "object",
+      "properties": {
+        "CurrencyId": {
+          "description": "ID of the currency to retrieve.",
+          "type": "string"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "CurrencyId"
+      ],
+      "example": {
+        "CurrencyId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetCurrencyByIdResult": {
+      "type": "object",
+      "properties": {
+        "Currency": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Full metadata of the currency requested.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Currency": {}
       },
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -4034,8 +4392,19 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "ReceiptData": {
+          "description": "Property bag for receipt generation",
+          "type": "object"
+        },
+        "ShouldGenerateReceipt": {
+          "description": "Whether or not to generate a receipt",
+          "type": "boolean"
         }
       },
+      "required": [
+        "ShouldGenerateReceipt"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -4245,6 +4614,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the store is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -4275,6 +4650,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the store is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -4324,6 +4705,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the subscription is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -4348,6 +4735,12 @@
         "IdempotencyId": {
           "description": "The Idempotency Id for this request",
           "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the subscription is in.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -4372,6 +4765,12 @@
         "MarketplaceOfferId": {
           "$ref": "#/definitions/CatalogAlternateId",
           "description": "The Marketplace offer Id of target bundle.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace the subscription is in.",
           "type": "object",
           "x-isclass": true
         }
@@ -4606,6 +5005,11 @@
     "InventoryItemDetails": {
       "type": "object",
       "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "type": "object",
+          "x-isclass": true
+        },
         "Duration": {
           "type": "string"
         },
@@ -4618,14 +5022,14 @@
         "isSubscription": {
           "type": "boolean"
         },
+        "ItemId": {
+          "type": "string"
+        },
         "Marketplace": {
           "type": "string"
         },
         "MergeProperties": {
           "type": "boolean"
-        },
-        "Name": {
-          "type": "string"
         },
         "Origin": {
           "type": "string"
@@ -4663,7 +5067,7 @@
         "InstanceId": {
           "type": "string"
         },
-        "Name": {
+        "ItemId": {
           "type": "string"
         },
         "Properties": {
@@ -4956,8 +5360,8 @@
     "PurchaseItemCurrency": {
       "type": "object",
       "properties": {
-        "CurrencyCode": {
-          "description": "The currency code.",
+        "CurrencyId": {
+          "description": "The unique identifier of the currency.",
           "type": "string"
         },
         "ExpectedPrice": {
@@ -4967,7 +5371,7 @@
         }
       },
       "required": [
-        "CurrencyCode",
+        "CurrencyId",
         "ExpectedPrice"
       ],
       "x-AnyInclusiveFlags": [
@@ -4994,7 +5398,7 @@
           "description": "Details of the current inventory items.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/InventoryItemResponseDto"
+            "$ref": "#/definitions/PurchaseItemResultItem"
           },
           "x-isclass": true
         },
@@ -5002,7 +5406,7 @@
           "description": "Indicates whether the number of inventory items is too large to be returned.",
           "type": "boolean"
         },
-        "Items": {
+        "PurchasedItems": {
           "description": "Details for the items purchased.",
           "type": "array",
           "items": {
@@ -5031,8 +5435,8 @@
           "type": "number",
           "x-actualtype": "int32"
         },
-        "CurrencyCode": {
-          "description": "The currency code.",
+        "CurrencyId": {
+          "description": "The ID of the currency used in this purchase.",
           "type": "string"
         }
       },
@@ -5070,25 +5474,16 @@
           "type": "string"
         },
         "ItemType": {
-          "$ref": "#/definitions/PurchaseItemType",
           "description": "The type of item.",
-          "type": "string",
-          "x-isenum": true
+          "type": "string"
+        },
+        "Properties": {
+          "description": "The properties associated to the currency.",
+          "type": "object"
         }
       },
       "required": [
-        "Amount",
-        "ChangedAmount"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "PurchaseItemType": {
-      "type": "object",
-      "enum": [
-        "Item",
-        "Subscription"
+        "Amount"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -5360,8 +5755,8 @@
         },
         "ReviewsCount": 8,
         "MostFavorableReview": {
-          "ReviewId": "980f4c81-893b-474d-bb53-330f3bc296ce",
-          "ItemId": "d3b3dc15-3f0e-4742-83a3-6c6f076312bb",
+          "ReviewId": "5fa54eb4-f927-47d8-a46d-ea51862786a1",
+          "ItemId": "3fcd2c2d-313e-42c9-b5a0-a5ffd4ff67d0",
           "ReviewerId": "title_player_account!ABCD1234",
           "ItemVersion": "2.1.4",
           "Title": "Best game ever",
@@ -5372,11 +5767,11 @@
           "HelpfulnessVotes": 17,
           "HelpfulPositive": 16,
           "HelpfulNegative": 1,
-          "Submitted": "2019-04-24T16:30:21.0828217Z"
+          "Submitted": "2019-05-09T21:52:57.4992231Z"
         },
         "LeastFavorableReview": {
-          "ReviewId": "9cc2b225-ce99-44da-8511-18cbf7c6fc3b",
-          "ItemId": "c6652760-225b-4b72-a2b8-fdc0811b447c",
+          "ReviewId": "5bc493c4-66dd-4929-b4fb-d1762cf48e05",
+          "ItemId": "f0620004-c648-4b23-a034-5c37e134cb85",
           "ReviewerId": "title_player_account!EFGH5678",
           "ItemVersion": "2.1.2",
           "Title": "It's a game",
@@ -5386,7 +5781,7 @@
           "Locale": "en-us",
           "HelpfulnessVotes": 10,
           "HelpfulNegative": 10,
-          "Submitted": "2019-04-24T16:30:21.0828217Z"
+          "Submitted": "2019-05-09T21:52:57.4992231Z"
         }
       },
       "x-AnyInclusiveFlags": [
@@ -5421,6 +5816,12 @@
           "description": "The number of search results to skip.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
         },
         "Top": {
           "description": "The number of search results to retrieve.",
@@ -5461,12 +5862,6 @@
       "description": "Search stores request",
       "type": "object",
       "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
         "ExpandReferencedItems": {
           "description": "Whether the referenced items should be expanded.",
           "type": "boolean"
@@ -5491,6 +5886,12 @@
           "description": "The number of search results to skip.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
         },
         "Top": {
           "description": "The number of search results to retrieve.",
@@ -5555,6 +5956,12 @@
           "description": "The number of search results to skip.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
         },
         "Top": {
           "description": "The number of search results to retrieve.",
@@ -5726,6 +6133,22 @@
           "type": "string"
         }
       },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SubscriptionDetails": {
+      "type": "object",
+      "properties": {
+        "DurationInSeconds": {
+          "description": "The length of time that the subscription will last.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "DurationInSeconds"
+      ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -5913,6 +6336,102 @@
         "Beta"
       ]
     },
+    "UpdateCurrencyRequest": {
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "type": "object",
+      "properties": {
+        "Currency": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the currency item to be updated.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Currency"
+      ],
+      "example": {
+        "Currency": {
+          "Id": "a92e4607-76da-4488-85ed-7808108c0d23",
+          "AlternateIds": [
+            {
+              "Type": "FriendlyId",
+              "Value": "AU"
+            }
+          ],
+          "Title": {
+            "neutral": "gold",
+            "es-MX": "el oro"
+          },
+          "IsHidden": false,
+          "StartDate": "2019-05-09T21:52:57.4992231Z",
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "display",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+            }
+          ],
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateCurrencyResult": {
+      "type": "object",
+      "properties": {
+        "Currency": {
+          "$ref": "#/definitions/CatalogItemMetadata",
+          "description": "Updated metadata describing the currency item just updated.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Currency": {
+          "Id": "7c38305f-f2fc-4c4e-9dc8-f31604368b4f",
+          "AlternateIds": [
+            {
+              "Type": "FriendlyId",
+              "Value": "AU"
+            }
+          ],
+          "Title": {
+            "neutral": "gold",
+            "es-MX": "el oro"
+          },
+          "IsHidden": false,
+          "StartDate": "2019-05-09T21:52:57.4992231Z",
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "display",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+            }
+          ],
+          "ETag": "opaqueString"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "UpdateDraftItemRequest": {
       "type": "object",
       "properties": {
@@ -5929,6 +6448,9 @@
           "x-isclass": true
         }
       },
+      "required": [
+        "Item"
+      ],
       "example": {},
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -6195,6 +6717,14 @@
         "$ref": "#/definitions/CreateBundleRequest"
       }
     },
+    "CreateCurrencyRequest": {
+      "name": "CreateCurrencyRequest",
+      "in": "body",
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "schema": {
+        "$ref": "#/definitions/CreateCurrencyRequest"
+      }
+    },
     "CreateDraftItemRequest": {
       "name": "CreateDraftItemRequest",
       "in": "body",
@@ -6318,6 +6848,14 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetCatalogConfigRequest"
+      }
+    },
+    "GetCurrencyByIdRequest": {
+      "name": "GetCurrencyByIdRequest",
+      "in": "body",
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "schema": {
+        "$ref": "#/definitions/GetCurrencyByIdRequest"
       }
     },
     "GetDraftItemRequest": {
@@ -6548,6 +7086,14 @@
         "$ref": "#/definitions/UpdateCatalogConfigRequest"
       }
     },
+    "UpdateCurrencyRequest": {
+      "name": "UpdateCurrencyRequest",
+      "in": "body",
+      "description": "Given an entity type, and bundle details, create a bundle.",
+      "schema": {
+        "$ref": "#/definitions/UpdateCurrencyRequest"
+      }
+    },
     "UpdateDraftItemRequest": {
       "name": "UpdateDraftItemRequest",
       "in": "body",
@@ -6671,6 +7217,54 @@
         }
       }
     },
+    "CreateCurrencyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateCurrencyResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "CurrencyMetadata": {
+              "Id": "04f84130-c30b-4cd0-a542-9211741d164e",
+              "AlternateIds": [
+                {
+                  "Type": "FriendlyId",
+                  "Value": "AU"
+                }
+              ],
+              "Title": {
+                "neutral": "gold"
+              },
+              "IsHidden": false,
+              "StartDate": "2019-05-09T21:52:57.4992231Z",
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "display",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+                }
+              ],
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    },
     "CreateDraftItemResult": {
       "description": "",
       "schema": {
@@ -6702,7 +7296,7 @@
                 "neutral": "Neutral description",
                 "en-US": "US English description"
               },
-              "ContentType": "example catalog item",
+              "ContentType": "example item",
               "CreatorEntityKey": {
                 "Id": "someId",
                 "Type": "title_player_account",
@@ -7015,6 +7609,32 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    "GetCurrencyByIdResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetCurrencyByIdResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Currency": {}
           }
         }
       }
@@ -7430,8 +8050,8 @@
             },
             "ReviewsCount": 8,
             "MostFavorableReview": {
-              "ReviewId": "980f4c81-893b-474d-bb53-330f3bc296ce",
-              "ItemId": "d3b3dc15-3f0e-4742-83a3-6c6f076312bb",
+              "ReviewId": "5fa54eb4-f927-47d8-a46d-ea51862786a1",
+              "ItemId": "3fcd2c2d-313e-42c9-b5a0-a5ffd4ff67d0",
               "ReviewerId": "title_player_account!ABCD1234",
               "ItemVersion": "2.1.4",
               "Title": "Best game ever",
@@ -7442,11 +8062,11 @@
               "HelpfulnessVotes": 17,
               "HelpfulPositive": 16,
               "HelpfulNegative": 1,
-              "Submitted": "2019-04-24T16:30:21.0828217Z"
+              "Submitted": "2019-05-09T21:52:57.4992231Z"
             },
             "LeastFavorableReview": {
-              "ReviewId": "9cc2b225-ce99-44da-8511-18cbf7c6fc3b",
-              "ItemId": "c6652760-225b-4b72-a2b8-fdc0811b447c",
+              "ReviewId": "5bc493c4-66dd-4929-b4fb-d1762cf48e05",
+              "ItemId": "f0620004-c648-4b23-a034-5c37e134cb85",
               "ReviewerId": "title_player_account!EFGH5678",
               "ItemVersion": "2.1.2",
               "Title": "It's a game",
@@ -7456,7 +8076,7 @@
               "Locale": "en-us",
               "HelpfulnessVotes": 10,
               "HelpfulNegative": 10,
-              "Submitted": "2019-04-24T16:30:21.0828217Z"
+              "Submitted": "2019-05-09T21:52:57.4992231Z"
             }
           }
         }
@@ -7643,6 +8263,55 @@
         }
       }
     },
+    "UpdateCurrencyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateCurrencyResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Currency": {
+              "Id": "7c38305f-f2fc-4c4e-9dc8-f31604368b4f",
+              "AlternateIds": [
+                {
+                  "Type": "FriendlyId",
+                  "Value": "AU"
+                }
+              ],
+              "Title": {
+                "neutral": "gold",
+                "es-MX": "el oro"
+              },
+              "IsHidden": false,
+              "StartDate": "2019-05-09T21:52:57.4992231Z",
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "display",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/gold_thumb.jpg"
+                }
+              ],
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    },
     "UpdateDraftItemResult": {
       "description": "",
       "schema": {
@@ -7733,15 +8402,15 @@
   "tags": [
     {
       "name": "Catalog",
-      "description": "https://api.playfab.com/documentation/Economy#Catalog"
+      "description": "Catalog Management APIs"
     },
     {
       "name": "Inventory",
-      "description": "https://api.playfab.com/documentation/Economy#Inventory"
+      "description": "Player Inventory Management APIs"
     },
     {
       "name": "UserGeneratedContent",
-      "description": "https://api.playfab.com/documentation/Economy#UserGeneratedContent"
+      "description": "User Generated Content Management APIs"
     }
   ],
   "securityDefinitions": {
@@ -9526,6 +10195,90 @@
       "id": 1449,
       "name": "EntityAPIKeyOrSecretInvalid"
     },
+    "EconomyServiceUnavailable": {
+      "id": 1450,
+      "name": "EconomyServiceUnavailable"
+    },
+    "EconomyServiceInternalError": {
+      "id": 1451,
+      "name": "EconomyServiceInternalError"
+    },
+    "KustoProxyQueryRateLimitExceeded": {
+      "id": 1455,
+      "name": "KustoProxyQueryRateLimitExceeded"
+    },
+    "EntityAPIKeyCreationDisabledForEntity": {
+      "id": 1456,
+      "name": "EntityAPIKeyCreationDisabledForEntity"
+    },
+    "StudioCreationRateLimited": {
+      "id": 1457,
+      "name": "StudioCreationRateLimited"
+    },
+    "StudioCreationInProgress": {
+      "id": 1458,
+      "name": "StudioCreationInProgress"
+    },
+    "DuplicateStudioName": {
+      "id": 1459,
+      "name": "DuplicateStudioName"
+    },
+    "StudioNotFound": {
+      "id": 1460,
+      "name": "StudioNotFound"
+    },
+    "StudioDeletionInProgress": {
+      "id": 1461,
+      "name": "StudioDeletionInProgress"
+    },
+    "StudioDeactivated": {
+      "id": 1462,
+      "name": "StudioDeactivated"
+    },
+    "TitleCreationRateLimited": {
+      "id": 1463,
+      "name": "TitleCreationRateLimited"
+    },
+    "TitleCreationInProgress": {
+      "id": 1464,
+      "name": "TitleCreationInProgress"
+    },
+    "DuplicateTitleName": {
+      "id": 1465,
+      "name": "DuplicateTitleName"
+    },
+    "TitleNotFound": {
+      "id": 1466,
+      "name": "TitleNotFound"
+    },
+    "TitleDeletionInProgress": {
+      "id": 1467,
+      "name": "TitleDeletionInProgress"
+    },
+    "TitleDeactivated": {
+      "id": 1468,
+      "name": "TitleDeactivated"
+    },
+    "TitleAlreadyActivated": {
+      "id": 1469,
+      "name": "TitleAlreadyActivated"
+    },
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
+      "id": 1470,
+      "name": "CloudScriptAzureFunctionsExecutionTimeLimitExceeded"
+    },
+    "CloudScriptAzureFunctionsArgumentSizeExceeded": {
+      "id": 1471,
+      "name": "CloudScriptAzureFunctionsArgumentSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsReturnSizeExceeded": {
+      "id": 1472,
+      "name": "CloudScriptAzureFunctionsReturnSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsHTTPRequestError": {
+      "id": 1473,
+      "name": "CloudScriptAzureFunctionsHTTPRequestError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -9602,6 +10355,14 @@
       "id": 2057,
       "name": "MatchmakingQueueLimitExceeded"
     },
+    "MatchmakingRequestTypeMismatch": {
+      "id": 2058,
+      "name": "MatchmakingRequestTypeMismatch"
+    },
+    "MatchmakingBadRequest": {
+      "id": 2059,
+      "name": "MatchmakingBadRequest"
+    },
     "TitleConfigNotFound": {
       "id": 3001,
       "name": "TitleConfigNotFound"
@@ -9654,6 +10415,10 @@
       "id": 4010,
       "name": "CatalogConfigInvalid"
     },
+    "CatalogUnauthorized": {
+      "id": 4011,
+      "name": "CatalogUnauthorized"
+    },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
       "name": "ExportInvalidStatusUpdate"
@@ -9694,9 +10459,9 @@
       "id": 5009,
       "name": "ExportKustoException"
     },
-    "ExportKustoExceptionNew_SomeResources": {
+    "ExportKustoExceptionPartialErrorOnNewExport": {
       "id": 5010,
-      "name": "ExportKustoExceptionNew_SomeResources"
+      "name": "ExportKustoExceptionPartialErrorOnNewExport"
     },
     "ExportKustoExceptionEdit": {
       "id": 5011,

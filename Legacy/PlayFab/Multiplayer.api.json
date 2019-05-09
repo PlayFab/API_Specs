@@ -134,6 +134,30 @@
         }
       ]
     },
+    "AzureVmFamily": {
+      "name": "AzureVmFamily",
+      "className": "AzureVmFamily",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "A"
+        },
+        {
+          "name": "Av2"
+        },
+        {
+          "name": "Dv2"
+        },
+        {
+          "name": "F"
+        },
+        {
+          "name": "Fsv2"
+        }
+      ]
+    },
     "AzureVmSize": {
       "name": "AzureVmSize",
       "className": "AzureVmSize",
@@ -614,6 +638,44 @@
         }
       ]
     },
+    "CoreCapacity": {
+      "name": "CoreCapacity",
+      "className": "CoreCapacity",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "Available",
+          "description": "The available core capacity for the (Region, VmFamily)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Region",
+          "description": "The AzureRegion",
+          "jsontype": "String",
+          "actualtype": "AzureRegion",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Total",
+          "description": "The total core capacity for the (Region, VmFamily)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "VmFamily",
+          "description": "The AzureVmFamily",
+          "jsontype": "String",
+          "actualtype": "AzureVmFamily",
+          "isenum": true,
+          "optional": true
+        }
+      ]
+    },
     "CreateBuildWithCustomContainerRequest": {
       "name": "CreateBuildWithCustomContainerRequest",
       "className": "CreateBuildWithCustomContainerRequest",
@@ -638,11 +700,25 @@
           "optional": true
         },
         {
+          "name": "ContainerImageReference",
+          "description": "The container reference, consisting of the image name and tag.",
+          "jsontype": "Object",
+          "actualtype": "ContainerImageReference",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "ContainerRepositoryName",
           "description": "The name of the container repository.",
+          "deprecation": {
+            "ProposedAfter": "5/3/2019",
+            "DeprecatedAfter": "6/1/2019",
+            "ObsoleteAfter": "7/1/2019",
+            "ReplacedBy": "ContainerImageReference"
+          },
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         },
         {
           "name": "ContainerRunCommand",
@@ -654,6 +730,12 @@
         {
           "name": "ContainerTag",
           "description": "The tag for the container.",
+          "deprecation": {
+            "ProposedAfter": "5/3/2019",
+            "DeprecatedAfter": "6/1/2019",
+            "ObsoleteAfter": "7/1/2019",
+            "ReplacedBy": "ContainerImageReference"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -2416,6 +2498,32 @@
         }
       ]
     },
+    "GetTitleMultiplayerServersQuotasRequest": {
+      "name": "GetTitleMultiplayerServersQuotasRequest",
+      "className": "GetTitleMultiplayerServersQuotasRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "description": "Gets the quotas for a title in relation to multiplayer servers.",
+      "isRequest": true,
+      "properties": []
+    },
+    "GetTitleMultiplayerServersQuotasResponse": {
+      "name": "GetTitleMultiplayerServersQuotasResponse",
+      "className": "GetTitleMultiplayerServersQuotasResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Quotas",
+          "description": "The various quotas for multiplayer servers for the title.",
+          "jsontype": "Object",
+          "actualtype": "TitleMultiplayerServersQuotas",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "JoinMatchmakingTicketRequest": {
       "name": "JoinMatchmakingTicketRequest",
       "className": "JoinMatchmakingTicketRequest",
@@ -3916,6 +4024,23 @@
         }
       ]
     },
+    "TitleMultiplayerServersQuotas": {
+      "name": "TitleMultiplayerServersQuotas",
+      "className": "TitleMultiplayerServersQuotas",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "CoreCapacities",
+          "description": "The core capacity for the various regions and VM Family",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CoreCapacity",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "UpdateBuildRegionsRequest": {
       "name": "UpdateBuildRegionsRequest",
       "className": "UpdateBuildRegionsRequest",
@@ -4039,6 +4164,7 @@
         "GetMultiplayerServerLogs",
         "GetRemoteLoginEndpoint",
         "GetTitleEnabledForMultiplayerServersStatus",
+        "GetTitleMultiplayerServersQuotas",
         "ListArchivedMultiplayerServers",
         "ListAssetSummaries",
         "ListBuildSummaries",
@@ -4155,7 +4281,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBuildWithCustomContainerRequest",
-      "requestExample": "{\r\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"/data/Assets\"\r\n    }\r\n  ],\r\n  \"ContainerRepositoryName\": \"ContainerRepositoryName\",\r\n  \"ContainerTag\": \"ContainerTag\",\r\n  \"ContainerFlavor\": \"CustomLinux\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"/data/Assets\"\r\n    }\r\n  ],\r\n  \"ContainerImageReference\": {\r\n    \"ImageName\": \"ContainerImageName\",\r\n    \"Tag\": \"ContainerTag\"\r\n  },\r\n  \"ContainerFlavor\": \"CustomLinux\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
       "result": "CreateBuildWithCustomContainerResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"CustomLinux\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initialized\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Deployed\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"/data/Assets\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
       "seeAlso": [
@@ -4801,6 +4927,27 @@
         "MultiplayerServerInternalServerError",
         "MultiplayerServerNotFound",
         "MultiplayerServerUnauthorized"
+      ]
+    },
+    {
+      "name": "GetTitleMultiplayerServersQuotas",
+      "summary": "Gets the quotas for a title in relation to multiplayer servers.",
+      "requestDetails": "Gets the quotas for a title in relation to multiplayer servers.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/MultiplayerServer/GetTitleMultiplayerServersQuotas",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetTitleMultiplayerServersQuotasRequest",
+      "requestExample": "{}",
+      "result": "GetTitleMultiplayerServersQuotasResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Quotas\": {\r\n      \"CoreCapacities\": [\r\n        {\r\n          \"VmFamily\": \"Dv2\",\r\n          \"Region\": \"EastUs\",\r\n          \"Total\": 8,\r\n          \"Available\": 6\r\n        }\r\n      ]\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "MultiplayerServerBadRequest",
+        "MultiplayerServerForbidden",
+        "MultiplayerServerInternalServerError",
+        "MultiplayerServerUnauthorized",
+        "MultiplayerServerUnavailable"
       ]
     },
     {
@@ -7098,6 +7245,82 @@
       "id": 1451,
       "name": "EconomyServiceInternalError"
     },
+    "KustoProxyQueryRateLimitExceeded": {
+      "id": 1455,
+      "name": "KustoProxyQueryRateLimitExceeded"
+    },
+    "EntityAPIKeyCreationDisabledForEntity": {
+      "id": 1456,
+      "name": "EntityAPIKeyCreationDisabledForEntity"
+    },
+    "StudioCreationRateLimited": {
+      "id": 1457,
+      "name": "StudioCreationRateLimited"
+    },
+    "StudioCreationInProgress": {
+      "id": 1458,
+      "name": "StudioCreationInProgress"
+    },
+    "DuplicateStudioName": {
+      "id": 1459,
+      "name": "DuplicateStudioName"
+    },
+    "StudioNotFound": {
+      "id": 1460,
+      "name": "StudioNotFound"
+    },
+    "StudioDeletionInProgress": {
+      "id": 1461,
+      "name": "StudioDeletionInProgress"
+    },
+    "StudioDeactivated": {
+      "id": 1462,
+      "name": "StudioDeactivated"
+    },
+    "TitleCreationRateLimited": {
+      "id": 1463,
+      "name": "TitleCreationRateLimited"
+    },
+    "TitleCreationInProgress": {
+      "id": 1464,
+      "name": "TitleCreationInProgress"
+    },
+    "DuplicateTitleName": {
+      "id": 1465,
+      "name": "DuplicateTitleName"
+    },
+    "TitleNotFound": {
+      "id": 1466,
+      "name": "TitleNotFound"
+    },
+    "TitleDeletionInProgress": {
+      "id": 1467,
+      "name": "TitleDeletionInProgress"
+    },
+    "TitleDeactivated": {
+      "id": 1468,
+      "name": "TitleDeactivated"
+    },
+    "TitleAlreadyActivated": {
+      "id": 1469,
+      "name": "TitleAlreadyActivated"
+    },
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
+      "id": 1470,
+      "name": "CloudScriptAzureFunctionsExecutionTimeLimitExceeded"
+    },
+    "CloudScriptAzureFunctionsArgumentSizeExceeded": {
+      "id": 1471,
+      "name": "CloudScriptAzureFunctionsArgumentSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsReturnSizeExceeded": {
+      "id": 1472,
+      "name": "CloudScriptAzureFunctionsReturnSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsHTTPRequestError": {
+      "id": 1473,
+      "name": "CloudScriptAzureFunctionsHTTPRequestError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -7278,9 +7501,9 @@
       "id": 5009,
       "name": "ExportKustoException"
     },
-    "ExportKustoExceptionNew_SomeResources": {
+    "ExportKustoExceptionPartialErrorOnNewExport": {
       "id": 5010,
-      "name": "ExportKustoExceptionNew_SomeResources"
+      "name": "ExportKustoExceptionPartialErrorOnNewExport"
     },
     "ExportKustoExceptionEdit": {
       "id": 5011,
@@ -7749,6 +7972,25 @@
     "EntityAPIKeyOrSecretInvalid",
     "EconomyServiceUnavailable",
     "EconomyServiceInternalError",
+    "KustoProxyQueryRateLimitExceeded",
+    "EntityAPIKeyCreationDisabledForEntity",
+    "StudioCreationRateLimited",
+    "StudioCreationInProgress",
+    "DuplicateStudioName",
+    "StudioNotFound",
+    "StudioDeletionInProgress",
+    "StudioDeactivated",
+    "TitleCreationRateLimited",
+    "TitleCreationInProgress",
+    "DuplicateTitleName",
+    "TitleNotFound",
+    "TitleDeletionInProgress",
+    "TitleDeactivated",
+    "TitleAlreadyActivated",
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded",
+    "CloudScriptAzureFunctionsArgumentSizeExceeded",
+    "CloudScriptAzureFunctionsReturnSizeExceeded",
+    "CloudScriptAzureFunctionsHTTPRequestError",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -7794,7 +8036,7 @@
     "ExportAmazonBucketDoesNotExist",
     "ExportInvalidBlobStorage",
     "ExportKustoException",
-    "ExportKustoExceptionNew_SomeResources",
+    "ExportKustoExceptionPartialErrorOnNewExport",
     "ExportKustoExceptionEdit",
     "ExportKustoConnectionFailed",
     "ExportUnknownError",
