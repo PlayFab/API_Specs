@@ -227,7 +227,7 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
       "isRequest": true,
       "properties": [
         {
@@ -254,7 +254,7 @@
         },
         {
           "name": "GeneratePlayStreamEvent",
-          "description": "Generate a 'entity_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "description": "Generate a 'entity_executed_cloudscript_function' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -272,25 +272,29 @@
       "isResult": true,
       "properties": [
         {
-          "name": "ExecutionTimeSeconds",
+          "name": "ExecutionTimeMilliseconds",
+          "description": "The amount of time the function took to execute",
           "jsontype": "Number",
-          "actualtype": "double",
+          "actualtype": "int32",
           "optional": false
         },
         {
           "name": "FunctionName",
+          "description": "The name of the function that executed",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "FunctionResult",
+          "description": "The object returned from the function, if any",
           "jsontype": "Object",
           "actualtype": "object",
           "optional": true
         },
         {
           "name": "FunctionResultTooLarge",
+          "description": "Flag indicating if the FunctionResult was too large and was subsequently dropped from this event.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
           "optional": true
@@ -328,7 +332,7 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "A title can have many functions, ListFunctions will fetch and list all the currently registered functions for a given title and return them.",
+      "description": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
       "isRequest": true,
       "properties": [
         {
@@ -389,15 +393,15 @@
         }
       ]
     },
-    "RegisterFunctionRequest": {
-      "name": "RegisterFunctionRequest",
-      "className": "RegisterFunctionRequest",
+    "RegisterHttpFunctionRequest": {
+      "name": "RegisterHttpFunctionRequest",
+      "className": "RegisterHttpFunctionRequest",
       "classNameSpace": "PlayFab.CloudScript.Models",
       "assembly": "PlayFab.CloudScript.Models",
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
       "isRequest": true,
       "properties": [
         {
@@ -489,7 +493,7 @@
         "ExecuteEntityCloudScript",
         "ExecuteFunction",
         "ListFunctions",
-        "RegisterFunction",
+        "RegisterHttpFunction",
         "UnregisterFunction"
       ]
     }
@@ -520,7 +524,7 @@
     {
       "name": "ExecuteFunction",
       "summary": "Cloud Script is one of PlayFab's most versatile features. It allows client code to request execution of any kind of custom server-side functionality you can implement, and it can be used in conjunction with virtually anything.",
-      "requestDetails": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "requestDetails": "Executes an Azure Function with the profile of the entity that is defined in the request.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/CloudScript/ExecuteFunction",
@@ -529,19 +533,20 @@
       "request": "ExecuteFunctionRequest",
       "requestExample": "{\r\n  \"FunctionName\": \"LevelCompleted\",\r\n  \"FunctionParameter\": {\r\n    \"level\": 3,\r\n    \"points\": 400\r\n  },\r\n  \"GeneratePlayStreamEvent\": true,\r\n  \"Entity\": {\r\n    \"Id\": \"aaa\",\r\n    \"Type\": \"master_player_account\",\r\n    \"TypeString\": \"master_player_account\"\r\n  }\r\n}",
       "result": "ExecuteFunctionResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ExecutionTimeSeconds\": 0.03670790046453476,\r\n    \"FunctionName\": \"LevelCompleted\",\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    }\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ExecutionTimeMilliseconds\": 367,\r\n    \"FunctionName\": \"LevelCompleted\",\r\n    \"FunctionResult\": {\r\n      \"newScore\": 25,\r\n      \"isWinner\": false\r\n    }\r\n  }\r\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "CloudScriptExecutionTimeLimitExceeded",
         "InvalidEntityType",
-        "NoSecretKeyEnabledForCloudScript"
+        "ServiceUnavailable"
       ]
     },
     {
       "name": "ListFunctions",
       "summary": "Lists all currently registered Azure Functions for a given title.",
-      "requestDetails": "A title can have many functions, ListFunctions will fetch and list all the currently registered functions for a given title and return them.",
+      "requestDetails": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/CloudScript/ListFunctions",
@@ -559,15 +564,15 @@
       ]
     },
     {
-      "name": "RegisterFunction",
+      "name": "RegisterHttpFunction",
       "summary": "Registers an Azure function with a title.",
-      "requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+      "requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
-      "url": "/CloudScript/RegisterFunction",
+      "url": "/CloudScript/RegisterHttpFunction",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "RegisterFunctionRequest",
+      "request": "RegisterHttpFunctionRequest",
       "requestExample": "{\r\n  \"FunctionName\": \"functionName\",\r\n  \"FunctionUrl\": \"http://function.url\"\r\n}",
       "result": "EmptyResult",
       "resultExample": "",

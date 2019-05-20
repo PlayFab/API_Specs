@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190509",
+    "version": "190520",
     "title": "PlayFab CloudScript API",
     "description": "API methods for executing CloudScript using an Entity Profile",
     "termsOfService": "https://playfab.com/terms/",
@@ -91,13 +91,14 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Executes an Azure Function with the entity profile that is defined in the request.",
+        "x-requestDetails": "Executes an Azure Function with the profile of the entity that is defined in the request.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
         "x-ms-docs-errors": [
+          "CloudScriptExecutionTimeLimitExceeded",
           "InvalidEntityType",
-          "NoSecretKeyEnabledForCloudScript"
+          "ServiceUnavailable"
         ]
       }
     },
@@ -129,7 +130,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "A title can have many functions, ListFunctions will fetch and list all the currently registered functions for a given title and return them.",
+        "x-requestDetails": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -138,19 +139,19 @@
         ]
       }
     },
-    "/CloudScript/RegisterFunction": {
+    "/CloudScript/RegisterHttpFunction": {
       "post": {
-        "operationId": "RegisterFunction",
+        "operationId": "RegisterHttpFunction",
         "tags": [
           "Server-Side Cloud Script"
         ],
         "description": "Registers an Azure function with a title.",
         "externalDocs": {
-          "url": "https://api.playfab.com/documentation/cloudscript/method/RegisterFunction"
+          "url": "https://api.playfab.com/documentation/cloudscript/method/RegisterHttpFunction"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/RegisterFunctionRequest"
+            "$ref": "#/parameters/RegisterHttpFunctionRequest"
           }
         ],
         "security": [
@@ -166,7 +167,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+        "x-requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -435,7 +436,7 @@
       }
     },
     "ExecuteFunctionRequest": {
-      "description": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
       "type": "object",
       "properties": {
         "Entity": {
@@ -453,7 +454,7 @@
           "type": "object"
         },
         "GeneratePlayStreamEvent": {
-          "description": "Generate a 'entity_executed_cloudscript' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
+          "description": "Generate a 'entity_executed_cloudscript_function' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
           "type": "boolean"
         }
       },
@@ -480,25 +481,29 @@
     "ExecuteFunctionResult": {
       "type": "object",
       "properties": {
-        "ExecutionTimeSeconds": {
+        "ExecutionTimeMilliseconds": {
+          "description": "The amount of time the function took to execute",
           "type": "number",
-          "x-actualtype": "double"
+          "x-actualtype": "int32"
         },
         "FunctionName": {
+          "description": "The name of the function that executed",
           "type": "string"
         },
         "FunctionResult": {
+          "description": "The object returned from the function, if any",
           "type": "object"
         },
         "FunctionResultTooLarge": {
+          "description": "Flag indicating if the FunctionResult was too large and was subsequently dropped from this event.",
           "type": "boolean"
         }
       },
       "required": [
-        "ExecutionTimeSeconds"
+        "ExecutionTimeMilliseconds"
       ],
       "example": {
-        "ExecutionTimeSeconds": 0.03670790046453476,
+        "ExecutionTimeMilliseconds": 367,
         "FunctionName": "LevelCompleted",
         "FunctionResult": {
           "newScore": 25
@@ -523,7 +528,7 @@
       ]
     },
     "ListFunctionsRequest": {
-      "description": "A title can have many functions, ListFunctions will fetch and list all the currently registered functions for a given title and return them.",
+      "description": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
       "type": "object",
       "properties": {
         "Entity": {
@@ -568,8 +573,8 @@
         }
       }
     },
-    "RegisterFunctionRequest": {
-      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+    "RegisterHttpFunctionRequest": {
+      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
       "type": "object",
       "properties": {
         "Entity": {
@@ -654,7 +659,7 @@
     "ExecuteFunctionRequest": {
       "name": "ExecuteFunctionRequest",
       "in": "body",
-      "description": "Executes an Azure Function with the entity profile that is defined in the request.",
+      "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
       "schema": {
         "$ref": "#/definitions/ExecuteFunctionRequest"
       }
@@ -662,17 +667,17 @@
     "ListFunctionsRequest": {
       "name": "ListFunctionsRequest",
       "in": "body",
-      "description": "A title can have many functions, ListFunctions will fetch and list all the currently registered functions for a given title and return them.",
+      "description": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
       "schema": {
         "$ref": "#/definitions/ListFunctionsRequest"
       }
     },
-    "RegisterFunctionRequest": {
-      "name": "RegisterFunctionRequest",
+    "RegisterHttpFunctionRequest": {
+      "name": "RegisterHttpFunctionRequest",
       "in": "body",
-      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction. ",
+      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
       "schema": {
-        "$ref": "#/definitions/RegisterFunctionRequest"
+        "$ref": "#/definitions/RegisterHttpFunctionRequest"
       }
     },
     "UnregisterFunctionRequest": {
@@ -776,7 +781,7 @@
           "code": 200,
           "status": "OK",
           "data": {
-            "ExecutionTimeSeconds": 0.03670790046453476,
+            "ExecutionTimeMilliseconds": 367,
             "FunctionName": "LevelCompleted",
             "FunctionResult": {
               "newScore": 25
