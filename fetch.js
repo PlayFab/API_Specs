@@ -20,6 +20,10 @@ function WriteJsonFile(filename, jsonBody) {
 
 function TabifyJson(inputJson, filename, tabSpaces) {
     // console.log("  Begin tabifying: " + filename);
+
+    if (!inputJson)
+        return null;
+
     var output = null;
     if (!tabSpaces) tabSpaces = 2;
     try {
@@ -55,8 +59,13 @@ function UpdateVersionNumbers(verJson) {
 
         versions[i] = majorVer.toString() + "." + minorVer.toString() + "." + todaysDate;
     }
-    
-    WriteJsonFile("SdkManualNotes.json", TabifyJson(JSON.stringify(output), "SdkManualNotes.json", 4));
+
+    output = TabifyJson(JSON.stringify(output), "SdkManualNotes.json", 4);
+    if (output) {
+        WriteJsonFile("SdkManualNotes.json", output);
+        return true;
+    }
+    return false;
 }
 
 function GetFileFromUrl(inputUrl, processFileCallback) {
@@ -66,21 +75,31 @@ function GetFileFromUrl(inputUrl, processFileCallback) {
         res.setEncoding("utf8");
         res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
-            console.log("<- Finished reading: " + inputUrl);
-            processFileCallback(rawResponse);
+            console.log("<- Finished reading " + rawResponse.length + " bytes: " + inputUrl);
+            if (!processFileCallback(rawResponse))
+                console.log("  ***  Failed to GetFileFromUrl: " + inputUrl);
         });
     });
 }
 
-function GetApiFile(inputUrl, outputFilename) {
+function GetApiFile(inputUrl, outputFilename, retry = 0) {
+    if (retry == 10)
+        throw new Exception("  !!!!!!!!!!  Aborting GetApiFile: " + inputUrl);
+
     console.log("-> Begin reading: " + inputUrl);
     var rawResponse = "";
     var postReq = https.get(inputUrl, function (res) {
         res.setEncoding("utf8");
         res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
-            console.log("<- Finished reading: " + inputUrl);
-            WriteJsonFile(outputFilename, TabifyJson(rawResponse, outputFilename, 2));
+            console.log("<- Finished reading " + rawResponse.length + " bytes: " + inputUrl);
+            var jsonOutput = TabifyJson(rawResponse, outputFilename, 2);
+            if (jsonOutput)
+                WriteJsonFile(outputFilename, jsonOutput);
+            else {
+                console.log("  !!!  Failed to GetApiFile (" + retry + "): " + inputUrl);
+                GetApiFile(inputUrl, outputFilename, retry + 1)
+            }
         });
     });
 }
@@ -116,14 +135,12 @@ if (argsDict["playFabUrl"])
 if (!playFabUrl.endsWith("/"))
     playFabUrl = playFabUrl + "/";
 
-try { 
+try {
     var jsonObj = require("./TOC.json");
 
-    for (var i = 0; i < jsonObj.documents.length; ++i) 
-    {
+    for (var i = 0; i < jsonObj.documents.length; ++i) {
         var apiSection = jsonObj.documents[i];
-        if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger")
-        {
+        if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
             GetApiFile(playFabUrl + apiSection.pfurl, apiSection.relPath);
         }
     }
