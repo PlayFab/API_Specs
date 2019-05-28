@@ -84,7 +84,7 @@ function GetFileFromUrl(inputUrl, processFileCallback) {
 
 function GetApiFile(inputUrl, outputFilename, retry = 0) {
     if (retry == 10)
-        throw new Exception("  !!!!!!!!!!  Aborting GetApiFile: " + inputUrl);
+        throw new Exception("  !!!!!!!!!!  Aborting GetApiFile, failed " + retry + " times: " + inputUrl);
 
     console.log("-> Begin reading: " + inputUrl);
     var rawResponse = "";
@@ -97,7 +97,7 @@ function GetApiFile(inputUrl, outputFilename, retry = 0) {
             if (jsonOutput)
                 WriteJsonFile(outputFilename, jsonOutput);
             else {
-                console.log("  !!!  Failed to GetApiFile (" + retry + "): " + inputUrl);
+                console.log("  !!!  Failed to GetApiFile (retry: " + retry + "): " + inputUrl);
                 GetApiFile(inputUrl, outputFilename, retry + 1)
             }
         });
