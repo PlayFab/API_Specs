@@ -244,6 +244,56 @@
         }
       ]
     },
+    "EntityLineage": {
+      "name": "EntityLineage",
+      "className": "EntityLineage",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "properties": [
+        {
+          "name": "CharacterId",
+          "description": "The Character Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "GroupId",
+          "description": "The Group Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MasterPlayerAccountId",
+          "description": "The Master Player Account Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "NamespaceId",
+          "description": "The Namespace Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "The Title Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitlePlayerAccountId",
+          "description": "The Title Player Account Id of the associated entity.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GetAPIKeyDetails": {
       "name": "GetAPIKeyDetails",
       "className": "GetAPIKeyDetails",
@@ -373,6 +423,48 @@
           "optional": true
         }
       ]
+    },
+    "ValidateEntityTokenRequest": {
+      "name": "ValidateEntityTokenRequest",
+      "className": "ValidateEntityTokenRequest",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "description": "Given an entity token, validates that it hasn't exipired or been revoked and will return details of the owner.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "EntityToken",
+          "description": "Client EntityToken",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ValidateEntityTokenResponse": {
+      "name": "ValidateEntityTokenResponse",
+      "className": "ValidateEntityTokenResponse",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity id and type.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Lineage",
+          "description": "The lineage of this profile.",
+          "jsontype": "Object",
+          "actualtype": "EntityLineage",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
@@ -389,7 +481,8 @@
     {
       "name": "Authentication",
       "methods": [
-        "GetEntityToken"
+        "GetEntityToken",
+        "ValidateEntityToken"
       ]
     }
   ],
@@ -518,6 +611,25 @@
         "NotAuthenticated",
         "NotAuthorized",
         "ProfileDoesNotExist"
+      ]
+    },
+    {
+      "name": "ValidateEntityToken",
+      "summary": "Method for a server to validate a client provided EntityToken. Only callable by the title entity.",
+      "requestDetails": "Given an entity token, validates that it hasn't exipired or been revoked and will return details of the owner.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Authentication/ValidateEntityToken",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ValidateEntityTokenRequest",
+      "requestExample": "{\r\n  \"EntityToken\": \"50c61b9065b27a124a400ee3b95d404313986969\"\r\n}",
+      "result": "ValidateEntityTokenResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Lineage\": {\r\n      \"NamespaceId\": \"1679471093\",\r\n      \"TitleId\": \"26917491733\",\r\n      \"MasterPlayerAccountId\": \"1234567787392\",\r\n      \"TitlePlayerAccountId\": \"42434567785265\"\r\n    },\r\n    \"Entity\": {\r\n      \"Id\": \"42434567785265\",\r\n      \"Type\": \"title_player_account\",\r\n      \"TypeString\": \"title_player_account\"\r\n    }\r\n  }\r\n}",
+      "errors": [
+        "EntityTokenExpired",
+        "EntityTokenInvalid",
+        "EntityTokenRevoked"
       ]
     }
   ],
@@ -2286,37 +2398,41 @@
       "id": 1451,
       "name": "EconomyServiceInternalError"
     },
-    "KustoProxyQueryRateLimitExceeded": {
-      "id": 1455,
-      "name": "KustoProxyQueryRateLimitExceeded"
+    "QueryRateLimitExceeded": {
+      "id": 1452,
+      "name": "QueryRateLimitExceeded"
     },
     "EntityAPIKeyCreationDisabledForEntity": {
-      "id": 1456,
+      "id": 1453,
       "name": "EntityAPIKeyCreationDisabledForEntity"
     },
     "StudioCreationRateLimited": {
-      "id": 1457,
+      "id": 1456,
       "name": "StudioCreationRateLimited"
     },
     "StudioCreationInProgress": {
-      "id": 1458,
+      "id": 1457,
       "name": "StudioCreationInProgress"
     },
     "DuplicateStudioName": {
-      "id": 1459,
+      "id": 1458,
       "name": "DuplicateStudioName"
     },
     "StudioNotFound": {
-      "id": 1460,
+      "id": 1459,
       "name": "StudioNotFound"
     },
-    "StudioDeletionInProgress": {
-      "id": 1461,
-      "name": "StudioDeletionInProgress"
+    "StudioDeleted": {
+      "id": 1460,
+      "name": "StudioDeleted"
     },
     "StudioDeactivated": {
-      "id": 1462,
+      "id": 1461,
       "name": "StudioDeactivated"
+    },
+    "StudioActivated": {
+      "id": 1462,
+      "name": "StudioActivated"
     },
     "TitleCreationRateLimited": {
       "id": 1463,
@@ -2330,21 +2446,21 @@
       "id": 1465,
       "name": "DuplicateTitleName"
     },
-    "TitleNotFound": {
+    "TitleActivationRateLimited": {
       "id": 1466,
-      "name": "TitleNotFound"
+      "name": "TitleActivationRateLimited"
     },
-    "TitleDeletionInProgress": {
+    "TitleActivationInProgress": {
       "id": 1467,
-      "name": "TitleDeletionInProgress"
+      "name": "TitleActivationInProgress"
     },
     "TitleDeactivated": {
       "id": 1468,
       "name": "TitleDeactivated"
     },
-    "TitleAlreadyActivated": {
+    "TitleActivated": {
       "id": 1469,
-      "name": "TitleAlreadyActivated"
+      "name": "TitleActivated"
     },
     "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
       "id": 1470,
@@ -2501,6 +2617,10 @@
     "CatalogUnauthorized": {
       "id": 4011,
       "name": "CatalogUnauthorized"
+    },
+    "CatalogItemTypeInvalid": {
+      "id": 4012,
+      "name": "CatalogItemTypeInvalid"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
@@ -3013,21 +3133,22 @@
     "EntityAPIKeyOrSecretInvalid",
     "EconomyServiceUnavailable",
     "EconomyServiceInternalError",
-    "KustoProxyQueryRateLimitExceeded",
+    "QueryRateLimitExceeded",
     "EntityAPIKeyCreationDisabledForEntity",
     "StudioCreationRateLimited",
     "StudioCreationInProgress",
     "DuplicateStudioName",
     "StudioNotFound",
-    "StudioDeletionInProgress",
+    "StudioDeleted",
     "StudioDeactivated",
+    "StudioActivated",
     "TitleCreationRateLimited",
     "TitleCreationInProgress",
     "DuplicateTitleName",
-    "TitleNotFound",
-    "TitleDeletionInProgress",
+    "TitleActivationRateLimited",
+    "TitleActivationInProgress",
     "TitleDeactivated",
-    "TitleAlreadyActivated",
+    "TitleActivated",
     "CloudScriptAzureFunctionsExecutionTimeLimitExceeded",
     "CloudScriptAzureFunctionsArgumentSizeExceeded",
     "CloudScriptAzureFunctionsReturnSizeExceeded",
@@ -3067,6 +3188,7 @@
     "CatalogFeatureDisabled",
     "CatalogConfigInvalid",
     "CatalogUnauthorized",
+    "CatalogItemTypeInvalid",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",

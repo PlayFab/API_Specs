@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190520",
+    "version": "190610",
     "title": "PlayFab Economy API",
     "description": "API methods for managing User Generated Content. API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -69,7 +69,7 @@
         "tags": [
           "Catalog"
         ],
-        "description": "Create a bundle",
+        "description": "Create a currency",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/economy/method/CreateCurrency"
         },
@@ -91,7 +91,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
+        "x-requestDetails": "Given an entity type, and currency details, create a currency.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -137,6 +137,45 @@
         "x-ms-docs-errors": [
           "CatalogClientIdentityInvalid",
           "CatalogItemMetadataInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/CreateOrUpdateReview": {
+      "post": {
+        "operationId": "CreateOrUpdateReview",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates or updates a review for the specified item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/CreateOrUpdateReview"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateOrUpdateReviewRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateOrUpdateReviewResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
           "CatalogPlayerIdMissing",
           "CatalogTitleIdMissing"
         ]
@@ -692,7 +731,7 @@
         "tags": [
           "Catalog"
         ],
-        "description": "Create a bundle",
+        "description": "Retrieve a currency by id",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/economy/method/GetCurrencyById"
         },
@@ -714,7 +753,6 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -797,6 +835,119 @@
         ],
         "x-ms-docs-errors": [
           "CatalogClientIdentityInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetItemReviews": {
+      "post": {
+        "operationId": "GetItemReviews",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a paginated set of reviews associated with the specified item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetItemReviews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetReviewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetReviewsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogItemIdInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetItemReviewSummary": {
+      "post": {
+        "operationId": "GetItemReviewSummary",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a summary of all reviews associated with the specified item.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetItemReviewSummary"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReviewSummaryRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReviewSummaryResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogItemIdInvalid",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/GetMyReview": {
+      "post": {
+        "operationId": "GetMyReview",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the submitted review for the specifed item by the authenticated user.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/GetMyReview"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMyReviewRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMyReviewResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
           "CatalogPlayerIdMissing",
           "CatalogTitleIdMissing"
         ]
@@ -1191,6 +1342,46 @@
         ]
       }
     },
+    "/Catalog/ReportReview": {
+      "post": {
+        "operationId": "ReportReview",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a report for a review",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/ReportReview"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReportReviewRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReportReviewResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
     "/Catalog/Search": {
       "post": {
         "operationId": "Search",
@@ -1257,6 +1448,162 @@
           }
         },
         "x-requestDetails": "Given an entity type, search text and/or (filter, orderby, skip, top and ExpandReferencedItems), search for bundles. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchForItemsContainingItemByFriendlyId": {
+      "post": {
+        "operationId": "SearchForItemsContainingItemByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Search for a given item (by friendly id) and return a set of bundles/subscriptions/stores containing the item",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchForItemsContainingItemByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchForItemsContainingItemByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchForItemsContainingItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an item friendlyid and a container type (bundles/subscriptions/stores or a combination of those), return a set of bundles/subscriptions/stores containing the item.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchForItemsContainingItemById": {
+      "post": {
+        "operationId": "SearchForItemsContainingItemById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Search for a given item (by id) and return a set of bundles/subscriptions/stores containing the item",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchForItemsContainingItemById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchForItemsContainingItemByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchForItemsContainingItemResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an item id and a container type (bundles/subscriptions/stores or a combination of those), return a set of bundles/subscriptions/stores containing the item.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchInStoreByFriendlyId": {
+      "post": {
+        "operationId": "SearchInStoreByFriendlyId",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against a specified store (by friendly id) using the provided search parameters and return a set of paginated results",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchInStoreByFriendlyId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchInStoreByFriendlyIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchInStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given a store friendlyId, search text and/or (filter, orderby, skip, top), search for items within the store that satisfy the search conditions. ",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "NotAuthenticated",
+          "NotAuthorized",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/SearchInStoreById": {
+      "post": {
+        "operationId": "SearchInStoreById",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Execute a search against a specified store (by id) using the provided search parameters and return a set of paginated results",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SearchInStoreById"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchInStoreByIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchInStoreResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given a store id, search text and/or (filter, orderby, skip, top), search for items within the store that satisfy the search conditions.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -1345,6 +1692,85 @@
         ]
       }
     },
+    "/Catalog/SubmitHelpfulnessVote": {
+      "post": {
+        "operationId": "SubmitHelpfulnessVote",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a vote for a review, indicating whether the review was helpful or unhelpful.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/SubmitHelpfulnessVote"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/HelpfulnessVoteRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/HelpfulnessVoteResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
+    "/Catalog/TakedownReviews": {
+      "post": {
+        "operationId": "TakedownReviews",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a request to takedown one or more reviews.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/economy/method/TakedownReviews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/TakedownReviewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TakedownReviewsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "CatalogClientIdentityInvalid",
+          "CatalogItemIdInvalid",
+          "CatalogPlayerIdMissing",
+          "CatalogTitleIdMissing"
+        ]
+      }
+    },
     "/Catalog/UpdateBundle": {
       "post": {
         "operationId": "UpdateBundle",
@@ -1426,7 +1852,7 @@
         "tags": [
           "Catalog"
         ],
-        "description": "Create a bundle",
+        "description": "Update a currency",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/economy/method/UpdateCurrency"
         },
@@ -1448,7 +1874,6 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Given an entity type, and bundle details, create a bundle.",
         "x-AnyInclusiveFlags": [
           "Beta"
         ],
@@ -1967,45 +2392,6 @@
         ]
       }
     },
-    "/UserGeneratedContent/CreateOrUpdateReview": {
-      "post": {
-        "operationId": "CreateOrUpdateReview",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Creates or updates a review for the specified User Generated Content.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/CreateOrUpdateReview"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/CreateOrUpdateReviewRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/CreateOrUpdateReviewResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogClientIdentityInvalid",
-          "CatalogItemIdInvalid",
-          "CatalogPlayerIdMissing",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
     "/UserGeneratedContent/CreateUgcUploadUrls": {
       "post": {
         "operationId": "CreateUgcUploadUrls",
@@ -2157,119 +2543,6 @@
         ],
         "x-ms-docs-errors": [
           "CatalogClientIdentityInvalid",
-          "CatalogPlayerIdMissing",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
-    "/UserGeneratedContent/GetItemReviews": {
-      "post": {
-        "operationId": "GetItemReviews",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Get a paginated set of reviews associated with the specified User Generated Content.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetItemReviews"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetReviewsRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetReviewsResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogItemIdInvalid",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
-    "/UserGeneratedContent/GetItemReviewSummary": {
-      "post": {
-        "operationId": "GetItemReviewSummary",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Get a summary of all reviews associated with the specified User Generated Content.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetItemReviewSummary"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ReviewSummaryRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ReviewSummaryResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogItemIdInvalid",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
-    "/UserGeneratedContent/GetMyReview": {
-      "post": {
-        "operationId": "GetMyReview",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Gets the submitted review for the specifed item by the authenticated user.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/GetMyReview"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetMyReviewRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetMyReviewResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogClientIdentityInvalid",
-          "CatalogItemIdInvalid",
           "CatalogPlayerIdMissing",
           "CatalogTitleIdMissing"
         ]
@@ -2441,7 +2714,7 @@
         },
         "parameters": [
           {
-            "$ref": "#/parameters/ReportUgcItemRequest"
+            "$ref": "#/parameters/ReportItemRequest"
           }
         ],
         "security": [
@@ -2451,7 +2724,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/ReportUgcItemResult"
+            "$ref": "#/responses/ReportItemResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -2502,45 +2775,6 @@
         "x-ms-docs-errors": [
           "CatalogClientIdentityInvalid",
           "CatalogItemIdInvalid",
-          "CatalogTitleIdMissing"
-        ]
-      }
-    },
-    "/UserGeneratedContent/SubmitHelpfulnessVote": {
-      "post": {
-        "operationId": "SubmitHelpfulnessVote",
-        "tags": [
-          "UserGeneratedContent"
-        ],
-        "description": "Submit a vote for a review, indicating whether the review was helpful or unhelpful.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/economy/method/SubmitHelpfulnessVote"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/HelpfulnessVoteRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/HelpfulnessVoteResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CatalogClientIdentityInvalid",
-          "CatalogItemIdInvalid",
-          "CatalogPlayerIdMissing",
           "CatalogTitleIdMissing"
         ]
       }
@@ -3161,6 +3395,18 @@
         "Beta"
       ]
     },
+    "ContainerType": {
+      "type": "object",
+      "enum": [
+        "None",
+        "Bundles",
+        "Stores",
+        "Subscriptions"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "Content": {
       "type": "object",
       "properties": {
@@ -3241,7 +3487,7 @@
       ]
     },
     "CreateCurrencyRequest": {
-      "description": "Given an entity type, and bundle details, create a bundle.",
+      "description": "Given an entity type, and currency details, create a currency.",
       "type": "object",
       "properties": {
         "Currency": {
@@ -4234,7 +4480,6 @@
       ]
     },
     "GetCurrencyByIdRequest": {
-      "description": "Given an entity type, and bundle details, create a bundle.",
       "type": "object",
       "properties": {
         "CurrencyId": {
@@ -5019,7 +5264,7 @@
         "InstanceId": {
           "type": "string"
         },
-        "isSubscription": {
+        "IsSubscription": {
           "type": "boolean"
         },
         "ItemId": {
@@ -5047,7 +5292,7 @@
       },
       "required": [
         "Quantity",
-        "isSubscription"
+        "IsSubscription"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
@@ -5548,7 +5793,7 @@
         "Beta"
       ]
     },
-    "ReportUgcItemRequest": {
+    "ReportItemRequest": {
       "type": "object",
       "properties": {
         "Concern": {
@@ -5581,7 +5826,44 @@
         "Beta"
       ]
     },
-    "ReportUgcItemResult": {
+    "ReportItemResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ReportReviewRequest": {
+      "description": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+      "type": "object",
+      "properties": {
+        "ConcernCategory": {
+          "$ref": "#/definitions/ConcernCategory",
+          "description": "The reason this review is being reported.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ReviewId": {
+          "description": "The ID of the review to submit a report for.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+        "ConcernCategory": "OffensiveContent"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ReportReviewResult": {
       "type": "object",
       "properties": {},
       "example": {},
@@ -5788,8 +6070,28 @@
         "Beta"
       ]
     },
+    "ReviewTakedown": {
+      "type": "object",
+      "properties": {
+        "ItemId": {
+          "description": "The ID of the item associated with the review to take down.",
+          "type": "string"
+        },
+        "ReviewId": {
+          "description": "The ID of the review to take down.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ItemId": "00000000-0000-0000-0000-000000000003",
+        "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "SearchBundlesRequest": {
-      "description": "Search bundles request",
+      "description": "Search for bundles request",
       "type": "object",
       "properties": {
         "ExpandReferencedItems": {
@@ -5830,16 +6132,16 @@
         }
       },
       "required": [
+        "ExpandReferencedItems",
         "Skip",
-        "Top",
-        "ExpandReferencedItems"
+        "Top"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
     "SearchBundlesResult": {
-      "description": "Search bundle result",
+      "description": "Search for bundles result",
       "type": "object",
       "properties": {
         "Bundles": {
@@ -5858,8 +6160,230 @@
         "Beta"
       ]
     },
+    "SearchForItemsContainingItemByFriendlyIdRequest": {
+      "description": "Search for bundles/subscriptions/stores containing an item. The item is referenced by Friendly Id.",
+      "type": "object",
+      "properties": {
+        "ContainerType": {
+          "$ref": "#/definitions/ContainerType",
+          "description": "Do we want to restrict the Search to Bundles/Subscriptions/Stores?",
+          "type": "string",
+          "x-isenum": true
+        },
+        "FriendlyId": {
+          "description": "FriendlyId of the item",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "FriendlyId"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchForItemsContainingItemByIdRequest": {
+      "description": "Search for bundles/subscriptions/stores containing an item. The item is referenced by Id.",
+      "type": "object",
+      "properties": {
+        "ContainerType": {
+          "$ref": "#/definitions/ContainerType",
+          "description": "Do we want to restrict the Search to Bundles/Subscriptions/Stores?",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Id": {
+          "description": "Id of the item",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Id"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchForItemsContainingItemResult": {
+      "description": "Search for items containing an item result",
+      "type": "object",
+      "properties": {
+        "Bundles": {
+          "description": "List of Bundles containing the item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Stores": {
+          "description": "List of Stores containing the item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        },
+        "Subscriptions": {
+          "description": "List of Subscriptions containing the item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchInStoreByFriendlyIdRequest": {
+      "description": "Search for items within a store request. The store is referenced by Friendly Id.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "FriendlyId": {
+          "description": "FriendlyId of target store",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of search results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Top": {
+          "description": "The number of search results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "FriendlyId",
+        "Skip",
+        "Top"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchInStoreByIdRequest": {
+      "description": "Search for items within a store request. The store is referenced by Id.",
+      "type": "object",
+      "properties": {
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Id of target store",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for",
+          "type": "string"
+        },
+        "Skip": {
+          "description": "The number of search results to skip.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SourceEntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The title or namespace to search under.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Top": {
+          "description": "The number of search results to retrieve.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Id",
+        "Skip",
+        "Top"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "SearchInStoreResult": {
+      "description": "Search within a store result",
+      "type": "object",
+      "properties": {
+        "IdempotencyId": {
+          "description": "The Idempotency Id for this request",
+          "type": "string"
+        },
+        "Items": {
+          "description": "List of Items within the Store that satisfy the search condition.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItemMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "SearchStoresRequest": {
-      "description": "Search stores request",
+      "description": "Search for stores request",
       "type": "object",
       "properties": {
         "ExpandReferencedItems": {
@@ -5900,16 +6424,16 @@
         }
       },
       "required": [
+        "ExpandReferencedItems",
         "Skip",
-        "Top",
-        "ExpandReferencedItems"
+        "Top"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
     "SearchStoresResult": {
-      "description": "Search store result",
+      "description": "Search for stores result",
       "type": "object",
       "properties": {
         "IdempotencyId": {
@@ -5929,7 +6453,7 @@
       ]
     },
     "SearchSubscriptionsRequest": {
-      "description": "Search subscriptions request",
+      "description": "Search for subscriptions request",
       "type": "object",
       "properties": {
         "ExpandReferencedItems": {
@@ -5970,16 +6494,16 @@
         }
       },
       "required": [
+        "ExpandReferencedItems",
         "Skip",
-        "Top",
-        "ExpandReferencedItems"
+        "Top"
       ],
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
     },
     "SearchSubscriptionsResult": {
-      "description": "Search subscription result",
+      "description": "Search for subscriptions result",
       "type": "object",
       "properties": {
         "IdempotencyId": {
@@ -6228,6 +6752,45 @@
         "Beta"
       ]
     },
+    "TakedownReviewsRequest": {
+      "description": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Reviews": {
+          "description": "The set of reviews to take down.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReviewTakedown"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Reviews": [
+          {
+            "ItemId": "00000000-0000-0000-0000-000000000003",
+            "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "TakedownReviewsResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "UpdateBundleRequest": {
       "description": "Update bundle request",
       "type": "object",
@@ -6337,7 +6900,6 @@
       ]
     },
     "UpdateCurrencyRequest": {
-      "description": "Given an entity type, and bundle details, create a bundle.",
       "type": "object",
       "properties": {
         "Currency": {
@@ -6720,7 +7282,7 @@
     "CreateCurrencyRequest": {
       "name": "CreateCurrencyRequest",
       "in": "body",
-      "description": "Given an entity type, and bundle details, create a bundle.",
+      "description": "Given an entity type, and currency details, create a currency.",
       "schema": {
         "$ref": "#/definitions/CreateCurrencyRequest"
       }
@@ -6853,7 +7415,6 @@
     "GetCurrencyByIdRequest": {
       "name": "GetCurrencyByIdRequest",
       "in": "body",
-      "description": "Given an entity type, and bundle details, create a bundle.",
       "schema": {
         "$ref": "#/definitions/GetCurrencyByIdRequest"
       }
@@ -7002,11 +7563,19 @@
         "$ref": "#/definitions/PurchaseItemByIdRequest"
       }
     },
-    "ReportUgcItemRequest": {
-      "name": "ReportUgcItemRequest",
+    "ReportItemRequest": {
+      "name": "ReportItemRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/ReportUgcItemRequest"
+        "$ref": "#/definitions/ReportItemRequest"
+      }
+    },
+    "ReportReviewRequest": {
+      "name": "ReportReviewRequest",
+      "in": "body",
+      "description": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+      "schema": {
+        "$ref": "#/definitions/ReportReviewRequest"
       }
     },
     "ReviewSummaryRequest": {
@@ -7019,15 +7588,47 @@
     "SearchBundlesRequest": {
       "name": "SearchBundlesRequest",
       "in": "body",
-      "description": "Search bundles request",
+      "description": "Search for bundles request",
       "schema": {
         "$ref": "#/definitions/SearchBundlesRequest"
+      }
+    },
+    "SearchForItemsContainingItemByFriendlyIdRequest": {
+      "name": "SearchForItemsContainingItemByFriendlyIdRequest",
+      "in": "body",
+      "description": "Search for bundles/subscriptions/stores containing an item. The item is referenced by Friendly Id.",
+      "schema": {
+        "$ref": "#/definitions/SearchForItemsContainingItemByFriendlyIdRequest"
+      }
+    },
+    "SearchForItemsContainingItemByIdRequest": {
+      "name": "SearchForItemsContainingItemByIdRequest",
+      "in": "body",
+      "description": "Search for bundles/subscriptions/stores containing an item. The item is referenced by Id.",
+      "schema": {
+        "$ref": "#/definitions/SearchForItemsContainingItemByIdRequest"
+      }
+    },
+    "SearchInStoreByFriendlyIdRequest": {
+      "name": "SearchInStoreByFriendlyIdRequest",
+      "in": "body",
+      "description": "Search for items within a store request. The store is referenced by Friendly Id.",
+      "schema": {
+        "$ref": "#/definitions/SearchInStoreByFriendlyIdRequest"
+      }
+    },
+    "SearchInStoreByIdRequest": {
+      "name": "SearchInStoreByIdRequest",
+      "in": "body",
+      "description": "Search for items within a store request. The store is referenced by Id.",
+      "schema": {
+        "$ref": "#/definitions/SearchInStoreByIdRequest"
       }
     },
     "SearchStoresRequest": {
       "name": "SearchStoresRequest",
       "in": "body",
-      "description": "Search stores request",
+      "description": "Search for stores request",
       "schema": {
         "$ref": "#/definitions/SearchStoresRequest"
       }
@@ -7035,7 +7636,7 @@
     "SearchSubscriptionsRequest": {
       "name": "SearchSubscriptionsRequest",
       "in": "body",
-      "description": "Search subscriptions request",
+      "description": "Search for subscriptions request",
       "schema": {
         "$ref": "#/definitions/SearchSubscriptionsRequest"
       }
@@ -7071,6 +7672,14 @@
         "$ref": "#/definitions/SubtractVirtualCurrenciesRequest"
       }
     },
+    "TakedownReviewsRequest": {
+      "name": "TakedownReviewsRequest",
+      "in": "body",
+      "description": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+      "schema": {
+        "$ref": "#/definitions/TakedownReviewsRequest"
+      }
+    },
     "UpdateBundleRequest": {
       "name": "UpdateBundleRequest",
       "in": "body",
@@ -7089,7 +7698,6 @@
     "UpdateCurrencyRequest": {
       "name": "UpdateCurrencyRequest",
       "in": "body",
-      "description": "Given an entity type, and bundle details, create a bundle.",
       "schema": {
         "$ref": "#/definitions/UpdateCurrencyRequest"
       }
@@ -7994,7 +8602,7 @@
         }
       }
     },
-    "ReportUgcItemResult": {
+    "ReportItemResult": {
       "description": "",
       "schema": {
         "type": "object",
@@ -8008,7 +8616,31 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/ReportUgcItemResult"
+            "$ref": "#/definitions/ReportItemResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "ReportReviewResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ReportReviewResult"
           }
         },
         "example": {
@@ -8083,7 +8715,7 @@
       }
     },
     "SearchBundlesResult": {
-      "description": "Search bundle result",
+      "description": "Search for bundles result",
       "schema": {
         "type": "object",
         "properties": {
@@ -8101,8 +8733,46 @@
         }
       }
     },
+    "SearchForItemsContainingItemResult": {
+      "description": "Search for items containing an item result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchForItemsContainingItemResult"
+          }
+        }
+      }
+    },
+    "SearchInStoreResult": {
+      "description": "Search within a store result",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchInStoreResult"
+          }
+        }
+      }
+    },
     "SearchStoresResult": {
-      "description": "Search store result",
+      "description": "Search for stores result",
       "schema": {
         "type": "object",
         "properties": {
@@ -8121,7 +8791,7 @@
       }
     },
     "SearchSubscriptionsResult": {
-      "description": "Search subscription result",
+      "description": "Search for subscriptions result",
       "schema": {
         "type": "object",
         "properties": {
@@ -8217,6 +8887,30 @@
           "data": {
             "$ref": "#/definitions/SubtractVirtualCurrenciesResult"
           }
+        }
+      }
+    },
+    "TakedownReviewsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/TakedownReviewsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
         }
       }
     },
@@ -10203,37 +10897,41 @@
       "id": 1451,
       "name": "EconomyServiceInternalError"
     },
-    "KustoProxyQueryRateLimitExceeded": {
-      "id": 1455,
-      "name": "KustoProxyQueryRateLimitExceeded"
+    "QueryRateLimitExceeded": {
+      "id": 1452,
+      "name": "QueryRateLimitExceeded"
     },
     "EntityAPIKeyCreationDisabledForEntity": {
-      "id": 1456,
+      "id": 1453,
       "name": "EntityAPIKeyCreationDisabledForEntity"
     },
     "StudioCreationRateLimited": {
-      "id": 1457,
+      "id": 1456,
       "name": "StudioCreationRateLimited"
     },
     "StudioCreationInProgress": {
-      "id": 1458,
+      "id": 1457,
       "name": "StudioCreationInProgress"
     },
     "DuplicateStudioName": {
-      "id": 1459,
+      "id": 1458,
       "name": "DuplicateStudioName"
     },
     "StudioNotFound": {
-      "id": 1460,
+      "id": 1459,
       "name": "StudioNotFound"
     },
-    "StudioDeletionInProgress": {
-      "id": 1461,
-      "name": "StudioDeletionInProgress"
+    "StudioDeleted": {
+      "id": 1460,
+      "name": "StudioDeleted"
     },
     "StudioDeactivated": {
-      "id": 1462,
+      "id": 1461,
       "name": "StudioDeactivated"
+    },
+    "StudioActivated": {
+      "id": 1462,
+      "name": "StudioActivated"
     },
     "TitleCreationRateLimited": {
       "id": 1463,
@@ -10247,21 +10945,21 @@
       "id": 1465,
       "name": "DuplicateTitleName"
     },
-    "TitleNotFound": {
+    "TitleActivationRateLimited": {
       "id": 1466,
-      "name": "TitleNotFound"
+      "name": "TitleActivationRateLimited"
     },
-    "TitleDeletionInProgress": {
+    "TitleActivationInProgress": {
       "id": 1467,
-      "name": "TitleDeletionInProgress"
+      "name": "TitleActivationInProgress"
     },
     "TitleDeactivated": {
       "id": 1468,
       "name": "TitleDeactivated"
     },
-    "TitleAlreadyActivated": {
+    "TitleActivated": {
       "id": 1469,
-      "name": "TitleAlreadyActivated"
+      "name": "TitleActivated"
     },
     "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
       "id": 1470,
@@ -10418,6 +11116,10 @@
     "CatalogUnauthorized": {
       "id": 4011,
       "name": "CatalogUnauthorized"
+    },
+    "CatalogItemTypeInvalid": {
+      "id": 4012,
+      "name": "CatalogItemTypeInvalid"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190520",
+    "version": "190610",
     "title": "PlayFab Authentication API",
     "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -251,6 +251,42 @@
           "NotAuthenticated"
         ]
       }
+    },
+    "/Authentication/ValidateEntityToken": {
+      "post": {
+        "operationId": "ValidateEntityToken",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Method for a server to validate a client provided EntityToken. Only callable by the title entity.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/authentication/method/ValidateEntityToken"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ValidateEntityTokenRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ValidateEntityTokenResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given an entity token, validates that it hasn't exipired or been revoked and will return details of the owner.",
+        "x-ms-docs-errors": [
+          "EntityTokenExpired",
+          "EntityTokenInvalid",
+          "EntityTokenRevoked"
+        ]
+      }
     }
   },
   "definitions": {
@@ -497,6 +533,35 @@
         "Id"
       ]
     },
+    "EntityLineage": {
+      "type": "object",
+      "properties": {
+        "CharacterId": {
+          "description": "The Character Id of the associated entity.",
+          "type": "string"
+        },
+        "GroupId": {
+          "description": "The Group Id of the associated entity.",
+          "type": "string"
+        },
+        "MasterPlayerAccountId": {
+          "description": "The Master Player Account Id of the associated entity.",
+          "type": "string"
+        },
+        "NamespaceId": {
+          "description": "The Namespace Id of the associated entity.",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "The Title Id of the associated entity.",
+          "type": "string"
+        },
+        "TitlePlayerAccountId": {
+          "description": "The Title Player Account Id of the associated entity.",
+          "type": "string"
+        }
+      }
+    },
     "GetAPIKeyDetails": {
       "type": "object",
       "properties": {
@@ -621,6 +686,52 @@
           "TypeString": "title_player_account"
         }
       }
+    },
+    "ValidateEntityTokenRequest": {
+      "description": "Given an entity token, validates that it hasn't exipired or been revoked and will return details of the owner.",
+      "type": "object",
+      "properties": {
+        "EntityToken": {
+          "description": "Client EntityToken",
+          "type": "string"
+        }
+      },
+      "required": [
+        "EntityToken"
+      ],
+      "example": {
+        "EntityToken": "50c61b9065b27a124a400ee3b95d404313986969"
+      }
+    },
+    "ValidateEntityTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Lineage": {
+          "$ref": "#/definitions/EntityLineage",
+          "description": "The lineage of this profile.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Lineage": {
+          "NamespaceId": "1679471093",
+          "TitleId": "26917491733",
+          "MasterPlayerAccountId": "1234567787392",
+          "TitlePlayerAccountId": "42434567785265"
+        },
+        "Entity": {
+          "Id": "42434567785265",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
     }
   },
   "parameters": {
@@ -670,6 +781,14 @@
       "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
       "schema": {
         "$ref": "#/definitions/GetEntityTokenRequest"
+      }
+    },
+    "ValidateEntityTokenRequest": {
+      "name": "ValidateEntityTokenRequest",
+      "in": "body",
+      "description": "Given an entity token, validates that it hasn't exipired or been revoked and will return details of the owner.",
+      "schema": {
+        "$ref": "#/definitions/ValidateEntityTokenRequest"
       }
     }
   },
@@ -853,6 +972,42 @@
             "EntityToken": "lS2hbYH1Gls1KbnlyozHSQBrF4zsq6q006ci9ijSNqQUiiO6xyCQtVrLjsXjdBJ",
             "Entity": {
               "Id": "174812abf712",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            }
+          }
+        }
+      }
+    },
+    "ValidateEntityTokenResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ValidateEntityTokenResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Lineage": {
+              "NamespaceId": "1679471093",
+              "TitleId": "26917491733",
+              "MasterPlayerAccountId": "1234567787392",
+              "TitlePlayerAccountId": "42434567785265"
+            },
+            "Entity": {
+              "Id": "42434567785265",
               "Type": "title_player_account",
               "TypeString": "title_player_account"
             }
@@ -2661,37 +2816,41 @@
       "id": 1451,
       "name": "EconomyServiceInternalError"
     },
-    "KustoProxyQueryRateLimitExceeded": {
-      "id": 1455,
-      "name": "KustoProxyQueryRateLimitExceeded"
+    "QueryRateLimitExceeded": {
+      "id": 1452,
+      "name": "QueryRateLimitExceeded"
     },
     "EntityAPIKeyCreationDisabledForEntity": {
-      "id": 1456,
+      "id": 1453,
       "name": "EntityAPIKeyCreationDisabledForEntity"
     },
     "StudioCreationRateLimited": {
-      "id": 1457,
+      "id": 1456,
       "name": "StudioCreationRateLimited"
     },
     "StudioCreationInProgress": {
-      "id": 1458,
+      "id": 1457,
       "name": "StudioCreationInProgress"
     },
     "DuplicateStudioName": {
-      "id": 1459,
+      "id": 1458,
       "name": "DuplicateStudioName"
     },
     "StudioNotFound": {
-      "id": 1460,
+      "id": 1459,
       "name": "StudioNotFound"
     },
-    "StudioDeletionInProgress": {
-      "id": 1461,
-      "name": "StudioDeletionInProgress"
+    "StudioDeleted": {
+      "id": 1460,
+      "name": "StudioDeleted"
     },
     "StudioDeactivated": {
-      "id": 1462,
+      "id": 1461,
       "name": "StudioDeactivated"
+    },
+    "StudioActivated": {
+      "id": 1462,
+      "name": "StudioActivated"
     },
     "TitleCreationRateLimited": {
       "id": 1463,
@@ -2705,21 +2864,21 @@
       "id": 1465,
       "name": "DuplicateTitleName"
     },
-    "TitleNotFound": {
+    "TitleActivationRateLimited": {
       "id": 1466,
-      "name": "TitleNotFound"
+      "name": "TitleActivationRateLimited"
     },
-    "TitleDeletionInProgress": {
+    "TitleActivationInProgress": {
       "id": 1467,
-      "name": "TitleDeletionInProgress"
+      "name": "TitleActivationInProgress"
     },
     "TitleDeactivated": {
       "id": 1468,
       "name": "TitleDeactivated"
     },
-    "TitleAlreadyActivated": {
+    "TitleActivated": {
       "id": 1469,
-      "name": "TitleAlreadyActivated"
+      "name": "TitleActivated"
     },
     "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
       "id": 1470,
@@ -2876,6 +3035,10 @@
     "CatalogUnauthorized": {
       "id": 4011,
       "name": "CatalogUnauthorized"
+    },
+    "CatalogItemTypeInvalid": {
+      "id": 4012,
+      "name": "CatalogItemTypeInvalid"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190520",
+    "version": "190610",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1842,6 +1842,46 @@
         ]
       }
     },
+    "/MultiplayerServer/ListQosServersForTitle": {
+      "post": {
+        "operationId": "ListQosServersForTitle",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Lists quality of service servers.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/ListQosServersForTitle"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListQosServersForTitleRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ListQosServersForTitleResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns a list of quality of service servers for a title.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerUnauthorized"
+        ]
+      }
+    },
     "/MultiplayerServer/ListVirtualMachineSummaries": {
       "post": {
         "operationId": "ListVirtualMachineSummaries",
@@ -2282,7 +2322,8 @@
         "WestEurope",
         "WestUs",
         "ChinaEast2",
-        "ChinaNorth2"
+        "ChinaNorth2",
+        "SouthAfricaNorth"
       ]
     },
     "AzureVmFamily": {
@@ -2433,8 +2474,8 @@
       "example": {
         "Entity": {
           "Id": "123123123",
-          "Type": "title_player_acount",
-          "TypeString": "title_player_acount"
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         },
         "QueueName": "custom123"
       }
@@ -2466,8 +2507,8 @@
       "example": {
         "Entity": {
           "Id": "123123123",
-          "Type": "title_player_acount",
-          "TypeString": "title_player_acount"
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         },
         "QueueName": "custom123"
       },
@@ -2488,7 +2529,8 @@
       "enum": [
         "Requested",
         "Internal",
-        "Timeout"
+        "Timeout",
+        "ServerAllocationFailed"
       ]
     },
     "CancelMatchmakingTicketRequest": {
@@ -3904,7 +3946,7 @@
       "type": "object",
       "properties": {
         "MatchmakingQueue": {
-          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "$ref": "#/definitions/MatchmakingQueueConfigDataModel",
           "description": "The matchmaking queue config.",
           "type": "object",
           "x-isclass": true
@@ -4017,15 +4059,15 @@
         "MembersToMatchWith": [
           {
             "Id": "456456456",
-            "Type": "title_player_acount",
-            "TypeString": "title_player_acount"
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
           }
         ],
         "Members": [],
         "Creator": {
           "Id": "123123123",
-          "Type": "title_player_acount",
-          "TypeString": "title_player_acount"
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         }
       }
     },
@@ -4798,7 +4840,7 @@
           "description": "The list of matchmaking queue configs for this title.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingQueueConfig"
+            "$ref": "#/definitions/MatchmakingQueueConfigDataModel"
           },
           "x-isclass": true
         }
@@ -4828,8 +4870,8 @@
       "example": {
         "Entity": {
           "Id": "123123123",
-          "Type": "title_player_acount",
-          "TypeString": "title_player_acount"
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         },
         "QueueName": "custom123"
       }
@@ -4940,6 +4982,68 @@
         ]
       }
     },
+    "ListQosServersForTitleRequest": {
+      "description": "Returns a list of quality of service servers for a title.",
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "ListQosServersForTitleResponse": {
+      "type": "object",
+      "properties": {
+        "PageSize": {
+          "description": "The page size on the response.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "QosServers": {
+          "description": "The list of QoS servers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/QosServer"
+          },
+          "x-isclass": true
+        },
+        "SkipToken": {
+          "description": "The skip token for the paged response.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PageSize"
+      ],
+      "example": {
+        "QosServers": [
+          {
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "WestUs"
+          },
+          {
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "SouthCentralUs"
+          },
+          {
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "EastUs"
+          },
+          {
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "NorthEurope"
+          },
+          {
+            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+            "Region": "WestEurope"
+          }
+        ],
+        "PageSize": 10
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "ListQosServersRequest": {
       "description": "Returns a list of quality of service servers.",
       "type": "object",
@@ -5018,8 +5122,8 @@
       "example": {
         "Entity": {
           "Id": "123123123",
-          "Type": "title_player_acount",
-          "TypeString": "title_player_acount"
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         },
         "QueueName": "custom123"
       },
@@ -5185,7 +5289,7 @@
         "Entity"
       ]
     },
-    "MatchmakingQueueConfig": {
+    "MatchmakingQueueConfigDataModel": {
       "type": "object",
       "properties": {
         "BuildId": {
@@ -5215,7 +5319,7 @@
           "description": "List of rules used to find an optimal match.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingQueueRule"
+            "$ref": "#/definitions/MatchmakingQueueRuleDataModel"
           },
           "x-isclass": true
         },
@@ -5224,7 +5328,7 @@
           "type": "boolean"
         },
         "StatisticsVisibilityToPlayers": {
-          "$ref": "#/definitions/StatisticsVisibilityToPlayers",
+          "$ref": "#/definitions/StatisticsVisibilityToPlayersDataModel",
           "description": "Controls which statistics are visible to players.",
           "type": "object",
           "x-isclass": true
@@ -5233,7 +5337,7 @@
           "description": "The team configuration for a match. This may be null if there are no teams.",
           "type": "array",
           "items": {
-            "$ref": "#/definitions/MatchmakingQueueTeam"
+            "$ref": "#/definitions/MatchmakingQueueTeamDataModel"
           },
           "x-isclass": true
         }
@@ -5403,7 +5507,7 @@
         "Beta"
       ]
     },
-    "MatchmakingQueueRule": {
+    "MatchmakingQueueRuleDataModel": {
       "type": "object",
       "properties": {
         "Name": {
@@ -5430,7 +5534,7 @@
         "Beta"
       ]
     },
-    "MatchmakingQueueTeam": {
+    "MatchmakingQueueTeamDataModel": {
       "type": "object",
       "properties": {
         "MaxTeamSize": {
@@ -5910,7 +6014,7 @@
       "type": "object",
       "properties": {
         "MatchmakingQueue": {
-          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "$ref": "#/definitions/MatchmakingQueueConfigDataModel",
           "description": "The matchmaking queue config.",
           "type": "object",
           "x-isclass": true
@@ -6145,7 +6249,7 @@
         "Percentile99"
       ]
     },
-    "StatisticsVisibilityToPlayers": {
+    "StatisticsVisibilityToPlayersDataModel": {
       "type": "object",
       "properties": {
         "ShowNumberOfPlayersMatching": {
@@ -6579,6 +6683,14 @@
       "description": "Returns a list of multiplayer servers for a build in a specific region.",
       "schema": {
         "$ref": "#/definitions/ListMultiplayerServersRequest"
+      }
+    },
+    "ListQosServersForTitleRequest": {
+      "name": "ListQosServersForTitleRequest",
+      "in": "body",
+      "description": "Returns a list of quality of service servers for a title.",
+      "schema": {
+        "$ref": "#/definitions/ListQosServersForTitleRequest"
       }
     },
     "ListQosServersRequest": {
@@ -7250,15 +7362,15 @@
             "MembersToMatchWith": [
               {
                 "Id": "456456456",
-                "Type": "title_player_acount",
-                "TypeString": "title_player_acount"
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
               }
             ],
             "Members": [],
             "Creator": {
               "Id": "123123123",
-              "Type": "title_player_acount",
-              "TypeString": "title_player_acount"
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
             }
           }
         }
@@ -7805,6 +7917,54 @@
                 "ConnectedPlayers": []
               }
             ]
+          }
+        }
+      }
+    },
+    "ListQosServersForTitleResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ListQosServersForTitleResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "QosServers": [
+              {
+                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                "Region": "WestUs"
+              },
+              {
+                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                "Region": "SouthCentralUs"
+              },
+              {
+                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                "Region": "EastUs"
+              },
+              {
+                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                "Region": "NorthEurope"
+              },
+              {
+                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
+                "Region": "WestEurope"
+              }
+            ],
+            "PageSize": 10
           }
         }
       }
@@ -9888,37 +10048,41 @@
       "id": 1451,
       "name": "EconomyServiceInternalError"
     },
-    "KustoProxyQueryRateLimitExceeded": {
-      "id": 1455,
-      "name": "KustoProxyQueryRateLimitExceeded"
+    "QueryRateLimitExceeded": {
+      "id": 1452,
+      "name": "QueryRateLimitExceeded"
     },
     "EntityAPIKeyCreationDisabledForEntity": {
-      "id": 1456,
+      "id": 1453,
       "name": "EntityAPIKeyCreationDisabledForEntity"
     },
     "StudioCreationRateLimited": {
-      "id": 1457,
+      "id": 1456,
       "name": "StudioCreationRateLimited"
     },
     "StudioCreationInProgress": {
-      "id": 1458,
+      "id": 1457,
       "name": "StudioCreationInProgress"
     },
     "DuplicateStudioName": {
-      "id": 1459,
+      "id": 1458,
       "name": "DuplicateStudioName"
     },
     "StudioNotFound": {
-      "id": 1460,
+      "id": 1459,
       "name": "StudioNotFound"
     },
-    "StudioDeletionInProgress": {
-      "id": 1461,
-      "name": "StudioDeletionInProgress"
+    "StudioDeleted": {
+      "id": 1460,
+      "name": "StudioDeleted"
     },
     "StudioDeactivated": {
-      "id": 1462,
+      "id": 1461,
       "name": "StudioDeactivated"
+    },
+    "StudioActivated": {
+      "id": 1462,
+      "name": "StudioActivated"
     },
     "TitleCreationRateLimited": {
       "id": 1463,
@@ -9932,21 +10096,21 @@
       "id": 1465,
       "name": "DuplicateTitleName"
     },
-    "TitleNotFound": {
+    "TitleActivationRateLimited": {
       "id": 1466,
-      "name": "TitleNotFound"
+      "name": "TitleActivationRateLimited"
     },
-    "TitleDeletionInProgress": {
+    "TitleActivationInProgress": {
       "id": 1467,
-      "name": "TitleDeletionInProgress"
+      "name": "TitleActivationInProgress"
     },
     "TitleDeactivated": {
       "id": 1468,
       "name": "TitleDeactivated"
     },
-    "TitleAlreadyActivated": {
+    "TitleActivated": {
       "id": 1469,
-      "name": "TitleAlreadyActivated"
+      "name": "TitleActivated"
     },
     "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
       "id": 1470,
@@ -10103,6 +10267,10 @@
     "CatalogUnauthorized": {
       "id": 4011,
       "name": "CatalogUnauthorized"
+    },
+    "CatalogItemTypeInvalid": {
+      "id": 4012,
+      "name": "CatalogItemTypeInvalid"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
