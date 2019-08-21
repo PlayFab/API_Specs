@@ -1206,7 +1206,7 @@
         },
         {
           "name": "XboxToken",
-          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -6391,7 +6391,7 @@
       "className": "ItemInstance",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item instance (such as Tags, Description, or Custom Data that are set on the root catalog item), a call to GetCatalogItems is required. The Item ID of the instance can then be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set here from a call to UpdateUserInventoryItemCustomData.",
+      "description": "A unique instance of an item in a user's inventory. Note, to retrieve additional information for an item such as Tags, Description that are the same across all instances of the item, a call to GetCatalogItems is required. The ItemID of can be matched to a catalog entry, which contains the additional information. Also note that Custom Data is only set when the User's specific instance has updated the CustomData via a call to UpdateUserInventoryItemCustomData. Other fields such as UnitPrice and UnitCurrency are only set when the item was granted via a purchase.",
       "sortKey": "ItemInstanceId",
       "properties": [
         {
@@ -6482,14 +6482,14 @@
         },
         {
           "name": "UnitCurrency",
-          "description": "Currency type for the cost of the catalog item.",
+          "description": "Currency type for the cost of the catalog item. Not available when granting items.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "UnitPrice",
-          "description": "Cost of the catalog item in the given currency.",
+          "description": "Cost of the catalog item in the given currency. Not available when granting items.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -7156,7 +7156,7 @@
         },
         {
           "name": "XboxToken",
-          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -8617,7 +8617,7 @@
         },
         {
           "name": "XboxToken",
-          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -9653,6 +9653,44 @@
         }
       ]
     },
+    "PurchaseReceiptFulfillment": {
+      "name": "PurchaseReceiptFulfillment",
+      "className": "PurchaseReceiptFulfillment",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "FulfilledItems",
+          "description": "Items granted to the player in fulfillment of the validated receipt.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "RecordedPriceSource",
+          "description": "Source of the payment price information for the recorded purchase transaction. A value of 'Request' indicates that the price specified in the request was used, whereas a value of 'Catalog' indicates that the real-money price of the catalog item matching the product ID in the validated receipt transaction and the currency specified in the request (defaulting to USD) was used.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RecordedTransactionCurrency",
+          "description": "Currency used to purchase the items (ISO 4217 currency code).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "RecordedTransactionTotal",
+          "description": "Amount of the stated currency paid for the items, in centesimal units",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
     "PushNotificationPlatform": {
       "name": "PushNotificationPlatform",
       "className": "PushNotificationPlatform",
@@ -10302,6 +10340,13 @@
       "isRequest": true,
       "properties": [
         {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the restored items. If null, defaults to primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "ReceiptData",
           "description": "Base64 encoded receipt data, passed back by the App Store as a result of a successful purchase.",
           "jsontype": "String",
@@ -10317,7 +10362,17 @@
       "assembly": "PlayFab.Client.Models",
       "description": "Once verified, the valid items will be restored into the user's inventory.",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "Fulfillments",
+          "description": "Fulfilled inventory items and recorded purchases in fulfillment of the validated receipt transactions.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PurchaseReceiptFulfillment",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "RewardAdActivityRequest": {
       "name": "RewardAdActivityRequest",
@@ -11850,7 +11905,7 @@
       "properties": [
         {
           "name": "XboxToken",
-          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com\", \"\").",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -13017,21 +13072,21 @@
       "properties": [
         {
           "name": "CatalogVersion",
-          "description": "Catalog version to use when granting receipt item. If null, defaults to primary catalog.",
+          "description": "Catalog version of the fulfilled items. If null, defaults to the primary catalog.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "CurrencyCode",
-          "description": "Currency used for the purchase.",
+          "description": "Currency used to pay for the purchase (ISO 4217 currency code).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "PurchasePrice",
-          "description": "Amount of the stated currency paid for the object.",
+          "description": "Amount of the stated currency paid, in centesimal units.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -13059,7 +13114,17 @@
       "assembly": "PlayFab.Client.Models",
       "description": "Once verified, the catalog item matching the Amazon item name will be added to the user's inventory.",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "Fulfillments",
+          "description": "Fulfilled inventory items and recorded purchases in fulfillment of the validated receipt transactions.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PurchaseReceiptFulfillment",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "ValidateGooglePlayPurchaseRequest": {
       "name": "ValidateGooglePlayPurchaseRequest",
@@ -13070,15 +13135,22 @@
       "isRequest": true,
       "properties": [
         {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the fulfilled items. If null, defaults to the primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "CurrencyCode",
-          "description": "Currency used for the purchase.",
+          "description": "Currency used to pay for the purchase (ISO 4217 currency code).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "PurchasePrice",
-          "description": "Amount of the stated currency paid for the object.",
+          "description": "Amount of the stated currency paid, in centesimal units.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
@@ -13106,7 +13178,17 @@
       "assembly": "PlayFab.Client.Models",
       "description": "Once verified, the catalog item (ItemId) matching the GooglePlay store item (productId) will be added to the user's inventory.",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "Fulfillments",
+          "description": "Fulfilled inventory items and recorded purchases in fulfillment of the validated receipt transactions.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PurchaseReceiptFulfillment",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "ValidateIOSReceiptRequest": {
       "name": "ValidateIOSReceiptRequest",
@@ -13117,15 +13199,22 @@
       "isRequest": true,
       "properties": [
         {
+          "name": "CatalogVersion",
+          "description": "Catalog version of the fulfilled items. If null, defaults to the primary catalog.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "CurrencyCode",
-          "description": "Currency used for the purchase.",
+          "description": "Currency used to pay for the purchase (ISO 4217 currency code).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "PurchasePrice",
-          "description": "Amount of the stated currency paid for the object.",
+          "description": "Amount of the stated currency paid, in centesimal units.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -13146,7 +13235,17 @@
       "assembly": "PlayFab.Client.Models",
       "description": "Once verified, the catalog item matching the iTunes item name will be added to the user's inventory.",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "Fulfillments",
+          "description": "Fulfilled inventory items and recorded purchases in fulfillment of the validated receipt transactions.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PurchaseReceiptFulfillment",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "ValidateWindowsReceiptRequest": {
       "name": "ValidateWindowsReceiptRequest",
@@ -13157,21 +13256,21 @@
       "properties": [
         {
           "name": "CatalogVersion",
-          "description": "Catalog version to use when granting receipt item. If null, defaults to primary catalog.",
+          "description": "Catalog version of the fulfilled items. If null, defaults to the primary catalog.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "CurrencyCode",
-          "description": "Currency used for the purchase.",
+          "description": "Currency used to pay for the purchase (ISO 4217 currency code).",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
         },
         {
           "name": "PurchasePrice",
-          "description": "Amount of the stated currency paid for the object.",
+          "description": "Amount of the stated currency paid, in centesimal units.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -13192,7 +13291,17 @@
       "assembly": "PlayFab.Client.Models",
       "description": "Once verified, the catalog item matching the Product name will be added to the user's inventory.",
       "isResult": true,
-      "properties": []
+      "properties": [
+        {
+          "name": "Fulfillments",
+          "description": "Fulfilled inventory items and recorded purchases in fulfillment of the validated receipt transactions.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PurchaseReceiptFulfillment",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "ValueToDateModel": {
       "name": "ValueToDateModel",
@@ -16306,7 +16415,7 @@
       "request": "RestoreIOSPurchasesRequest",
       "requestExample": "{\r\n  \"ReceiptData\": \"F00000000000000000000\"\r\n}",
       "result": "RestoreIOSPurchasesResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Fulfillments\": [\r\n      {\r\n        \"FulfilledItems\": [\r\n          {\r\n            \"ItemId\": \"shield_level_5\",\r\n            \"ItemInstanceId\": \"A1437F80BE99D3E8\",\r\n            \"ItemClass\": \"shields\",\r\n            \"PurchaseDate\": \"2019-03-07T00:00:00Z\",\r\n            \"Expiration\": \"2020-10-01T00:00:00Z\",\r\n            \"RemainingUses\": 10,\r\n            \"CatalogVersion\": \"5\",\r\n            \"UnitPrice\": 0\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "DownstreamServiceUnavailable",
         "InvalidBundleID",
@@ -17050,7 +17159,7 @@
       "request": "ValidateAmazonReceiptRequest",
       "requestExample": "{\r\n  \"ReceiptId\": \"q1YqVbJSyjH28DGPKChw9c0o8nd3vSstssQtzSkrzM8tCk43K6z0d_HOTcwwN8vxCrVV0lEqBmpJzs_VK8hJrExLTNLLTCzQK8_MSUnJTy8LSpcoWRnoKKUAFRmaGBtZmBqCCFMzpVoA\",\r\n  \"UserId\": \"l3HL7XppEMhrOGDgur9-ulvqomrSg6qyODKmah72lJU=\"\r\n}",
       "result": "ValidateAmazonReceiptResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Fulfillments\": [\r\n      {\r\n        \"RecordedTransactionCurrency\": \"USD\",\r\n        \"RecordedTransactionTotal\": 199,\r\n        \"FulfilledItems\": [\r\n          {\r\n            \"ItemId\": \"shield_level_5\",\r\n            \"ItemInstanceId\": \"A1437F80BE99D3E8\",\r\n            \"ItemClass\": \"shields\",\r\n            \"PurchaseDate\": \"2019-03-07T00:00:00Z\",\r\n            \"Expiration\": \"2020-10-01T00:00:00Z\",\r\n            \"RemainingUses\": 10,\r\n            \"CatalogVersion\": \"5\",\r\n            \"UnitPrice\": 0\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "AmazonValidationError",
         "InvalidReceipt",
@@ -17073,7 +17182,7 @@
       "request": "ValidateGooglePlayPurchaseRequest",
       "requestExample": "{\r\n  \"ReceiptJson\": \"{\\\"orderId\\\":\\\"12999763169054705758.1375794066587622\\\",\\\"packageName\\\":\\\"com.playfab.android.testbed\\\",\\\"productId\\\":\\\"com.playfab.android.permatest.consumable\\\",\\\"purchaseTime\\\":1410891177231,\\\"purchaseState\\\":0,\\\"purchaseToken\\\":\\\"eaflhokdkobkmomjadmoobgb.AO-J1OwoLkW2cqvBcPEgk6SfGceQpOHALMUFmJYeawa-GuDFtl3oKct-5D28t_KvNscFiJOFiWXIS74vJBYg-CGFJgyrdbxalKEMPzXZrg5nLomCME-jIVFAUrzcPah-_66KPImG5ftsMJKI9uzldqEF9OPcakUEmt-kWoXAsl_6-9HH0gBCwh4\\\"}\",\r\n  \"Signature\": \"ks12w0hHHpuit4xW3Fyoa5XX6TkxZ2KpEnBsLfpHHpeakYs2JgVtlLdgyLp/05Zp8oHAuKZyIAJTd2RIFXWMAUwDNUsI0JPBDMpr2oaL66Kuneg4VrGWJkJZTrvTyQoGpnTDdXfEME31iFKX6CrKHvWlAG9nwWxYatd58l83eevQ8CIrJhka/bC5ynw3j18OmFG7AcxymO37a4HkM8QjytvAYDJeOnDU9mooY7afcHIajtffdyAU9kzGWOqDByiU9IsRdkliwQoQYbuX/R5wQnMVZ+FGDDwO1mybx9B20rm7/WCBnWGy2NLsSAFI77iX8tUy/QebfBQhrVnRORi7bw==\",\r\n  \"CurrencyCode\": \"USD\",\r\n  \"PurchasePrice\": 199\r\n}",
       "result": "ValidateGooglePlayPurchaseResult",
-      "resultExample": "",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Fulfillments\": [\r\n      {\r\n        \"RecordedTransactionCurrency\": \"USD\",\r\n        \"RecordedTransactionTotal\": 199,\r\n        \"FulfilledItems\": [\r\n          {\r\n            \"ItemId\": \"shield_level_5\",\r\n            \"ItemInstanceId\": \"A1437F80BE99D3E8\",\r\n            \"ItemClass\": \"shields\",\r\n            \"PurchaseDate\": \"2019-03-07T00:00:00Z\",\r\n            \"Expiration\": \"2020-10-01T00:00:00Z\",\r\n            \"RemainingUses\": 10,\r\n            \"CatalogVersion\": \"5\",\r\n            \"UnitPrice\": 0\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "InvalidBundleID",
         "InvalidProductForSubscription",
@@ -17099,7 +17208,7 @@
       "request": "ValidateIOSReceiptRequest",
       "requestExample": "{\r\n  \"ReceiptData\": \"MTExMTExMTExMTENCjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KMzMzMzMzMzMzMzMzMzMzMzMNCjQ0NDQ0NDQ0NDQ0NDQNCjU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NQ0KNjY2NjY2NjY2NjY2Ng0KNzc3Nzc3Nzc3Nzc3NzcNCjg4DQo5OTk5OTk5OTk5OTkNCjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA0KMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTENCjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCjMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQo1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1DQo2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Ng0KNzc3Nzc3Nzc3NzcNCjg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4DQo5DQpBcHBsZSBJbmMuIFdvcmxkd2lkZSBEZXZlbG9wZXIgUmVsYXRpb25zIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IChub3QgcmVhbGx5IC0gZmFrZSBQbGF5RmFiIGV4YW1wbGUsIGJ1dCBjb25ncmF0cyBvbiB0aGlua2luZyB0byBkZWNvZGUgdGhpcyEpDQowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQoxMTExMTExMTExMQ0KMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQozMzMzMzMzMzMzMzMzMzMzMw0KNDQ0NDQ0NDQ0NDQ0NA0KNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1DQo2NjY2NjY2NjY2NjY2DQo3Nzc3Nzc3Nzc3Nzc3Nw0KODgNCjk5OTk5OTk5OTk5OQ0KMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwDQoxMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMQ0KMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzDQo0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQNCjU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTUNCjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2DQo3Nzc3Nzc3Nzc3Nw0KODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODgNCjkNCkFwcGxlIEluYy4gV29ybGR3aWRlIERldmVsb3BlciBSZWxhdGlvbnMgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgKG5vdCByZWFsbHkgLSBmYWtlIFBsYXlGYWIgZXhhbXBsZSwgYnV0IGNvbmdyYXRzIG9uIHRoaW5raW5nIHRvIGRlY29kZSB0aGlzISkNCjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDANCjExMTExMTExMTExDQoyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCjMzMzMzMzMzMzMzMzMzMzMzDQo0NDQ0NDQ0NDQ0NDQ0DQo1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTUNCjY2NjY2NjY2NjY2NjYNCjc3Nzc3Nzc3Nzc3Nzc3DQo4OA0KOTk5OTk5OTk5OTk5DQowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDANCjExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExDQoyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyDQozMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMNCjQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NA0KNTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NQ0KNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjYNCjc3Nzc3Nzc3Nzc3DQo4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4OA0KOQ0KQXBwbGUgSW5jLiBXb3JsZHdpZGUgRGV2ZWxvcGVyIFJlbGF0aW9ucyBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eSAobm90IHJlYWxseSAtIGZha2UgUGxheUZhYiBleGFtcGxlLCBidXQgY29uZ3JhdHMgb24gdGhpbmtpbmcgdG8gZGVjb2RlIHRoaXMhKQ0KMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA0KMTExMTExMTExMTENCjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMg0KMzMzMzMzMzMzMzMzMzMzMzMNCjQ0NDQ0NDQ0NDQ0NDQNCjU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NQ0KNjY2NjY2NjY2NjY2Ng0KNzc3Nzc3Nzc3Nzc3NzcNCjg4DQo5OTk5OTk5OTk5OTkNCjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMA0KMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTExMTENCjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjINCjMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMw0KNDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0NDQ0DQo1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1NTU1DQo2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Ng0KNzc3Nzc3Nzc3NzcNCjg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4ODg4DQo5DQpBcHBsZSBJbmMuIFdvcmxkd2lkZSBEZXZlbG9wZXIgUmVsYXRpb25zIENlcnRpZmljYXRpb24gQXV0aG9yaXR5IChub3QgcmVhbGx5IC0gZmFrZSBQbGF5RmFiIGV4YW1wbGUsIGJ1dCBjb25ncmF0cyBvbiB0aGlua2luZyB0byBkZWNvZGUgdGhpcyEpDQowMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAw\",\r\n  \"CurrencyCode\": \"GBP\",\r\n  \"PurchasePrice\": 199\r\n}",
       "result": "ValidateIOSReceiptResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Fulfillments\": [\r\n      {\r\n        \"RecordedTransactionCurrency\": \"GBP\",\r\n        \"RecordedTransactionTotal\": 199,\r\n        \"FulfilledItems\": [\r\n          {\r\n            \"ItemId\": \"shield_level_5\",\r\n            \"ItemInstanceId\": \"A1437F80BE99D3E8\",\r\n            \"ItemClass\": \"shields\",\r\n            \"PurchaseDate\": \"2019-03-07T00:00:00Z\",\r\n            \"Expiration\": \"2020-10-01T00:00:00Z\",\r\n            \"RemainingUses\": 10,\r\n            \"CatalogVersion\": \"5\",\r\n            \"UnitPrice\": 0\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "DownstreamServiceUnavailable",
         "InvalidBundleID",
@@ -17127,7 +17236,7 @@
       "request": "ValidateWindowsReceiptRequest",
       "requestExample": "{\r\n  \"Receipt\": \"<Receipt Version=\\\"1.0\\\" ReceiptDate=\\\"2012-08-30T23:10:05Z\\\" CertificateId=\\\"b809e47cd0110a4db043b3f73e83acd917fe1336\\\" ReceiptDeviceId=\\\"4e362949-acc3-fe3a-e71b-89893eb4f528\\\">\\r\\n    <AppReceipt Id=\\\"8ffa256d-eca8-712a-7cf8-cbf5522df24b\\\" AppId=\\\"55428GreenlakeApps.CurrentAppSimulatorEventTest_z7q3q7z11crfr\\\" PurchaseDate=\\\"2012-06-04T23:07:24Z\\\" LicenseType=\\\"Full\\\" />\\r\\n    <ProductReceipt Id=\\\"6bbf4366-6fb2-8be8-7947-92fd5f683530\\\" ProductId=\\\"Product1\\\" PurchaseDate=\\\"2012-08-30T23:08:52Z\\\" ExpirationDate=\\\"2012-09-02T23:08:49Z\\\" ProductType=\\\"Durable\\\" AppId=\\\"55428GreenlakeApps.CurrentAppSimulatorEventTest_z7q3q7z11crfr\\\" />\\r\\n    <Signature xmlns=\\\"http://www.w3.org/2000/09/xmldsig#\\\">\\r\\n        <SignedInfo>\\r\\n            <CanonicalizationMethod Algorithm=\\\"http://www.w3.org/2001/10/xml-exc-c14n#\\\" />\\r\\n            <SignatureMethod Algorithm=\\\"http://www.w3.org/2001/04/xmldsig-more#rsa-sha256\\\" />\\r\\n            <Reference URI=\\\"\\\">\\r\\n                <Transforms>\\r\\n                    <Transform Algorithm=\\\"http://www.w3.org/2000/09/xmldsig#enveloped-signature\\\" />\\r\\n                </Transforms>\\r\\n                <DigestMethod Algorithm=\\\"http://www.w3.org/2001/04/xmlenc#sha256\\\" />\\r\\n                <DigestValue>cdiU06eD8X/w1aGCHeaGCG9w/kWZ8I099rw4mmPpvdU=</DigestValue>\\r\\n            </Reference>\\r\\n        </SignedInfo>\\r\\n        <SignatureValue>SjRIxS/2r2P6ZdgaR9bwUSa6ZItYYFpKLJZrnAa3zkMylbiWjh9oZGGng2p6/gtBHC2dSTZlLbqnysJjl7mQp/A3wKaIkzjyRXv3kxoVaSV0pkqiPt04cIfFTP0JZkE5QD/vYxiWjeyGp1dThEM2RV811sRWvmEs/hHhVxb32e8xCLtpALYx3a9lW51zRJJN0eNdPAvNoiCJlnogAoTToUQLHs72I1dECnSbeNPXiG7klpy5boKKMCZfnVXXkneWvVFtAA1h2sB7ll40LEHO4oYN6VzD+uKd76QOgGmsu9iGVyRvvmMtahvtL1/pxoxsTRedhKq6zrzCfT8qfh3C1w==</SignatureValue>\\r\\n    </Signature>\\r\\n</Receipt>\\r\\n\"\r\n}",
       "result": "ValidateWindowsReceiptResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Fulfillments\": [\r\n      {\r\n        \"FulfilledItems\": [\r\n          {\r\n            \"ItemId\": \"shield_level_5\",\r\n            \"ItemInstanceId\": \"A1437F80BE99D3E8\",\r\n            \"ItemClass\": \"shields\",\r\n            \"PurchaseDate\": \"2019-03-07T00:00:00Z\",\r\n            \"Expiration\": \"2020-10-01T00:00:00Z\",\r\n            \"RemainingUses\": 10,\r\n            \"CatalogVersion\": \"5\",\r\n            \"UnitPrice\": 0\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
         "InvalidReceipt",
         "InvalidTitleId",

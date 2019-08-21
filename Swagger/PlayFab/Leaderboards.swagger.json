@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190717",
+    "version": "190820",
     "title": "PlayFab Leaderboards API",
     "description": "Manage entity statistics Manage entity statistics",
     "termsOfService": "https://playfab.com/terms/",
@@ -398,6 +398,52 @@
         ]
       }
     },
+    "/Statistic/UpdateStatisticDefinition": {
+      "post": {
+        "operationId": "UpdateStatisticDefinition",
+        "tags": [
+          "Statistics and Leaderboards"
+        ],
+        "description": "Update an existing entity statistic definition.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/leaderboards/method/UpdateStatisticDefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateStatisticDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidParams",
+          "NotAuthenticated",
+          "NotAuthorized",
+          "OverLimit",
+          "StatisticCountLimitExceeded",
+          "StatisticNameConflict",
+          "StatisticNotFound",
+          "StatisticUpdateInProgress"
+        ]
+      }
+    },
     "/Statistic/UpdateStatistics": {
       "post": {
         "operationId": "UpdateStatistics",
@@ -490,7 +536,7 @@
           "x-isclass": true
         },
         "Name": {
-          "description": "Immutable name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "description": "Name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
           "type": "string"
         }
       },
@@ -988,7 +1034,7 @@
       "type": "object",
       "properties": {
         "Name": {
-          "description": "Immutable name of the statistic. Must be less than 50 characters.",
+          "description": "Name of the statistic. Must be less than 50 characters.",
           "type": "string"
         }
       },
@@ -1147,7 +1193,7 @@
           }
         },
         "DynamicChildLeaderboardMaxSize": {
-          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless that beat an existing score on a leaderboard. Default 0, Maximum 100.",
+          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless they beat an existing score on a leaderboard. Default 0, Maximum 100.",
           "type": "number",
           "x-actualtype": "uint32"
         },
@@ -1298,6 +1344,74 @@
         "Name",
         "Value"
       ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateLeaderboardDefinition": {
+      "type": "object",
+      "properties": {
+        "ChildLeaderboardNames": {
+          "description": "For non-dynamic child leaderboards the statistic child name must be defined to prevent leaderboard length restrictions. Cannot remove existing child leaderboard names.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "DynamicChildLeaderboardMaxSize": {
+          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless they beat an existing score on a leaderboard. Default 0, Maximum 100.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ProvisionLeaderboard": {
+          "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ProvisionLeaderboard"
+      ],
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "UpdateStatisticDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "AggregationMethod": {
+          "$ref": "#/definitions/StatisticAggregationMethod",
+          "description": "Aggregation method for this statistic. Default is Last.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LeaderboardDefinition": {
+          "$ref": "#/definitions/UpdateLeaderboardDefinition",
+          "description": "Additional configuration options for statistics to be used for leaderboards.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Current name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "type": "string"
+        },
+        "NewName": {
+          "description": "New name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "NewName"
+      ],
+      "example": {
+        "Name": "HighestScoresByLevel",
+        "NewName": "HighestScoresByNewLevel",
+        "AggregationMethod": "Max",
+        "LeaderboardDefinition": {
+          "ProvisionLeaderboard": true,
+          "DynamicChildLeaderboardMaxSize": 50
+        }
+      },
       "x-AnyInclusiveFlags": [
         "Beta"
       ]
@@ -1490,6 +1604,14 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/IncrementStatisticVersionRequest"
+      }
+    },
+    "UpdateStatisticDefinitionRequest": {
+      "name": "UpdateStatisticDefinitionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UpdateStatisticDefinitionRequest"
       }
     },
     "UpdateStatisticsRequest": {

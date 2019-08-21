@@ -38,7 +38,7 @@
         },
         {
           "name": "Name",
-          "description": "Immutable name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "description": "Name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -576,7 +576,7 @@
       "properties": [
         {
           "name": "Name",
-          "description": "Immutable name of the statistic. Must be less than 50 characters.",
+          "description": "Name of the statistic. Must be less than 50 characters.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -735,7 +735,7 @@
         },
         {
           "name": "DynamicChildLeaderboardMaxSize",
-          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless that beat an existing score on a leaderboard. Default 0, Maximum 100.",
+          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless they beat an existing score on a leaderboard. Default 0, Maximum 100.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
@@ -932,6 +932,81 @@
         }
       ]
     },
+    "UpdateLeaderboardDefinition": {
+      "name": "UpdateLeaderboardDefinition",
+      "className": "UpdateLeaderboardDefinition",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "ChildLeaderboardNames",
+          "description": "For non-dynamic child leaderboards the statistic child name must be defined to prevent leaderboard length restrictions. Cannot remove existing child leaderboard names.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DynamicChildLeaderboardMaxSize",
+          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless they beat an existing score on a leaderboard. Default 0, Maximum 100.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "ProvisionLeaderboard",
+          "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "UpdateStatisticDefinitionRequest": {
+      "name": "UpdateStatisticDefinitionRequest",
+      "className": "UpdateStatisticDefinitionRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AggregationMethod",
+          "description": "Aggregation method for this statistic. Default is Last.",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "LeaderboardDefinition",
+          "description": "Additional configuration options for statistics to be used for leaderboards.",
+          "jsontype": "Object",
+          "actualtype": "UpdateLeaderboardDefinition",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "description": "Current name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "NewName",
+          "description": "New name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "UpdateStatisticsRequest": {
       "name": "UpdateStatisticsRequest",
       "className": "UpdateStatisticsRequest",
@@ -1032,6 +1107,7 @@
         "GetStatisticDefinition",
         "GetStatisticDefinitions",
         "IncrementStatisticVersion",
+        "UpdateStatisticDefinition",
         "UpdateStatistics"
       ]
     }
@@ -1256,6 +1332,35 @@
         "NotAuthenticated",
         "NotAuthorized",
         "StatisticNotFound"
+      ]
+    },
+    {
+      "name": "UpdateStatisticDefinition",
+      "summary": "Update an existing entity statistic definition.",
+      "subgroup": "Statistics and Leaderboards",
+      "titleTiers": null,
+      "url": "/Statistic/UpdateStatisticDefinition",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UpdateStatisticDefinitionRequest",
+      "requestExample": "{\r\n  \"Name\": \"HighestScoresByLevel\",\r\n  \"NewName\": \"HighestScoresByNewLevel\",\r\n  \"AggregationMethod\": \"Max\",\r\n  \"LeaderboardDefinition\": {\r\n    \"ProvisionLeaderboard\": true,\r\n    \"DynamicChildLeaderboardMaxSize\": 50\r\n  }\r\n}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Statistic/CreateStatisticDefinition"
+      ],
+      "errors": [
+        "InvalidParams",
+        "NotAuthenticated",
+        "NotAuthorized",
+        "OverLimit",
+        "StatisticCountLimitExceeded",
+        "StatisticNameConflict",
+        "StatisticNotFound",
+        "StatisticUpdateInProgress"
       ]
     },
     {
