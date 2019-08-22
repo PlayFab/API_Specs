@@ -2849,6 +2849,46 @@
         ]
       }
     },
+    "/Server/LoginWithXboxId": {
+      "post": {
+        "operationId": "LoginWithXboxId",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs the user in using an Xbox ID and Sandbox ID, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/server/method/LoginWithXboxId"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithXboxIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "If this is the first time a user has signed in with the Xbox ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "InvalidPublisherId",
+          "InvalidTitleId",
+          "RequestViewConstraintParamsNotAllowed",
+          "XboxInaccessible",
+          "XboxRejectedXSTSExchangeRequest",
+          "XboxXASSExchangeFailure"
+        ]
+      }
+    },
     "/Server/ModifyItemUses": {
       "post": {
         "operationId": "ModifyItemUses",
@@ -10880,6 +10920,48 @@
         "CreateAccount": true
       }
     },
+    "LoginWithXboxIdRequest": {
+      "description": "If this is the first time a user has signed in with the Xbox ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LoginTitlePlayerAccountEntity": {
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "type": "boolean",
+          "x-deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018"
+          }
+        },
+        "Sandbox": {
+          "description": "The id of Xbox Live sandbox.",
+          "type": "string"
+        },
+        "XboxId": {
+          "description": "Unique Xbox identifier for a user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "XboxId",
+        "Sandbox"
+      ],
+      "example": {
+        "XboxId": "12344553",
+        "Sandbox": "RETAIL",
+        "CreateAccount": false
+      }
+    },
     "LoginWithXboxRequest": {
       "description": "If this is the first time a user has signed in with the Xbox Live account and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "type": "object",
@@ -15031,6 +15113,14 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/LoginWithServerCustomIdRequest"
+      }
+    },
+    "LoginWithXboxIdRequest": {
+      "name": "LoginWithXboxIdRequest",
+      "in": "body",
+      "description": "If this is the first time a user has signed in with the Xbox ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithXboxIdRequest"
       }
     },
     "LoginWithXboxRequest": {
