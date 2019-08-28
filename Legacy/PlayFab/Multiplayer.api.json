@@ -640,6 +640,9 @@
         },
         {
           "name": "TextToSpeech"
+        },
+        {
+          "name": "TextToText"
         }
       ]
     },
@@ -1015,6 +1018,14 @@
           "optional": true
         },
         {
+          "name": "InstrumentationConfiguration",
+          "description": "The instrumentation configuration for the build.",
+          "jsontype": "Object",
+          "actualtype": "InstrumentationConfiguration",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Metadata",
           "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "collection": "map",
@@ -1115,6 +1126,14 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "GameCertificateReference",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "InstrumentationConfiguration",
+          "description": "The instrumentation configuration for this build.",
+          "jsontype": "Object",
+          "actualtype": "InstrumentationConfiguration",
           "isclass": true,
           "optional": true
         },
@@ -2004,6 +2023,14 @@
           "optional": true
         },
         {
+          "name": "InstrumentationConfiguration",
+          "description": "The instrumentation configuration of the build.",
+          "jsontype": "Object",
+          "actualtype": "InstrumentationConfiguration",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Metadata",
           "description": "Metadata of the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
           "collection": "map",
@@ -2831,6 +2858,22 @@
         }
       ]
     },
+    "InstrumentationConfiguration": {
+      "name": "InstrumentationConfiguration",
+      "className": "InstrumentationConfiguration",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "ProcessesToMonitor",
+          "description": "The list of processes to be monitored on a VM for this build. Providing processes will turn on performance metrics collection for this build. Process names should not include extensions. If the game server process is: GameServer.exe; then, ProcessesToMonitor = [ GameServer ] ",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "JoinMatchmakingTicketRequest": {
       "name": "JoinMatchmakingTicketRequest",
       "className": "JoinMatchmakingTicketRequest",
@@ -3481,9 +3524,6 @@
       "className": "ListQosServersForTitleRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "description": "Returns a list of quality of service servers for a title.",
       "isRequest": true,
       "properties": []
@@ -3493,9 +3533,6 @@
       "className": "ListQosServersForTitleResponse",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "isResult": true,
       "properties": [
         {
@@ -5249,6 +5286,7 @@
         "ListContainerImages",
         "ListContainerImageTags",
         "ListMultiplayerServers",
+        "ListPartyQosServers",
         "ListQosServers",
         "ListQosServersForTitle",
         "ListVirtualMachineSummaries",
@@ -5386,9 +5424,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBuildWithManagedContainerRequest",
-      "requestExample": "{\r\n  \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"C:\\\\Asset\\\\\"\r\n    }\r\n  ],\r\n  \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"C:\\\\Asset\\\\\"\r\n    }\r\n  ],\r\n  \"InstrumentationConfiguration\": {\r\n    \"ProcessesToMonitor\": [\r\n      \"GameServerProcessName\"\r\n    ]\r\n  },\r\n  \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
       "result": "CreateBuildWithManagedContainerResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n    \"InstrumentationConfiguration\": {\r\n      \"ProcessesToMonitor\": [\r\n        \"GameServerProcessName\"\r\n      ]\r\n    },\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
       "seeAlso": [
         "MultiplayerServer/DeleteBuild",
         "MultiplayerServer/GetBuild",
@@ -5717,7 +5755,7 @@
       "request": "GetBuildRequest",
       "requestExample": "{\r\n  \"BuildId\": \"53781fa8-006d-4e9c-b733-57433d579285\"\r\n}",
       "result": "GetBuildResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"BuildStatus\": \"Deployed\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 0,\r\n          \"StandingBy\": 0,\r\n          \"Propping\": 5,\r\n          \"Total\": 5\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 1,\r\n          \"StandingBy\": 7,\r\n          \"Propping\": 1,\r\n          \"Total\": 9\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 0,\r\n          \"StandingBy\": 0,\r\n          \"Propping\": 3,\r\n          \"Total\": 3\r\n        }\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n    \"MultiplayerServerCountPerVm\": 1\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"BuildStatus\": \"Deployed\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 0,\r\n          \"StandingBy\": 0,\r\n          \"Propping\": 5,\r\n          \"Total\": 5\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 1,\r\n          \"StandingBy\": 7,\r\n          \"Propping\": 1,\r\n          \"Total\": 9\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3,\r\n        \"CurrentServerStats\": {\r\n          \"Active\": 0,\r\n          \"StandingBy\": 0,\r\n          \"Propping\": 3,\r\n          \"Total\": 3\r\n        }\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"StartMultiplayerServerCommand\": \"C:\\\\Assets\\\\gameserver.exe -startserver\",\r\n    \"MultiplayerServerCountPerVm\": 1,\r\n    \"InstrumentationConfiguration\": {\r\n      \"ProcessesToMonitor\": [\r\n        \"GameServerProcessName\"\r\n      ]\r\n    }\r\n  }\r\n}",
       "seeAlso": [
         "MultiplayerServer/CreateBuildWithManagedContainer",
         "MultiplayerServer/DeleteBuild",
@@ -6341,9 +6379,6 @@
       "requestExample": "{}",
       "result": "ListQosServersForTitleResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"QosServers\": [\r\n      {\r\n        \"ServerUrl\": \"xblcxplatqos-wus-9-18-2-0.cloudapp.net\",\r\n        \"Region\": \"WestUs\"\r\n      },\r\n      {\r\n        \"ServerUrl\": \"xblcxplatqos-wus-9-18-2-0.cloudapp.net\",\r\n        \"Region\": \"SouthCentralUs\"\r\n      },\r\n      {\r\n        \"ServerUrl\": \"xblcxplatqos-wus-9-18-2-0.cloudapp.net\",\r\n        \"Region\": \"EastUs\"\r\n      },\r\n      {\r\n        \"ServerUrl\": \"xblcxplatqos-wus-9-18-2-0.cloudapp.net\",\r\n        \"Region\": \"NorthEurope\"\r\n      },\r\n      {\r\n        \"ServerUrl\": \"xblcxplatqos-wus-9-18-2-0.cloudapp.net\",\r\n        \"Region\": \"WestEurope\"\r\n      }\r\n    ],\r\n    \"PageSize\": 10\r\n  }\r\n}",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "errors": [
         "MultiplayerServerBadRequest",
         "MultiplayerServerForbidden",
@@ -8378,6 +8413,10 @@
       "id": 1454,
       "name": "ForbiddenByEntityPolicy"
     },
+    "UpdateInventoryRateLimitExceeded": {
+      "id": 1455,
+      "name": "UpdateInventoryRateLimitExceeded"
+    },
     "StudioCreationRateLimited": {
       "id": 1456,
       "name": "StudioCreationRateLimited"
@@ -9180,6 +9219,7 @@
     "QueryRateLimitExceeded",
     "EntityAPIKeyCreationDisabledForEntity",
     "ForbiddenByEntityPolicy",
+    "UpdateInventoryRateLimitExceeded",
     "StudioCreationRateLimited",
     "StudioCreationInProgress",
     "DuplicateStudioName",
