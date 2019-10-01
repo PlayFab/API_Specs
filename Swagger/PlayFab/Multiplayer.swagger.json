@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "190916",
+    "version": "191001",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1188,6 +1188,51 @@
         ]
       }
     },
+    "/MultiplayerServer/GetCognitiveServicesLocales": {
+      "post": {
+        "operationId": "GetCognitiveServicesLocales",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Gets supported locales for the cognitive services based on the specified service type.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetCognitiveServicesLocales"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetCognitiveServicesLocalesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetCognitiveServicesLocalesResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets supported locales for the cognitive services where translation queries can be sent to.",
+        "x-AnyInclusiveFlags": [
+          "Beta"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/GetCognitiveServicesToken": {
       "post": {
         "operationId": "GetCognitiveServicesToken",
@@ -1589,7 +1634,7 @@
         "tags": [
           "MultiplayerServer"
         ],
-        "description": "Lists summarized details of all multiplayer server builds for a title.",
+        "description": "Lists summarized details of all multiplayer server builds for a title. Accepts tokens for title and if game client access is enabled, allows game client to request list of builds with player entity token.",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/multiplayer/method/ListBuildSummaries"
         },
@@ -1961,7 +2006,7 @@
         "tags": [
           "MultiplayerServer"
         ],
-        "description": "Request a multiplayer server session. Accepts tokens for title and if game client accesss is enabled, allows game client to request a server with player entity token.",
+        "description": "Request a multiplayer server session. Accepts tokens for title and if game client access is enabled, allows game client to request a server with player entity token.",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/multiplayer/method/RequestMultiplayerServer"
         },
@@ -2689,6 +2734,22 @@
         }
       }
     },
+    "CognitiveServicesLocale": {
+      "type": "object",
+      "properties": {
+        "Locale": {
+          "description": "The code for supported locale",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Name of the locale if available",
+          "type": "string"
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
     "CognitiveServicesType": {
       "type": "object",
       "enum": [
@@ -2824,7 +2885,7 @@
           "x-isclass": true
         },
         "Metadata": {
-          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).Constraints: Maximum number of keys: 30, Maximum key length: 50, Maximum value length: 100",
           "type": "object"
         },
         "MultiplayerServerCountPerVm": {
@@ -3081,7 +3142,7 @@
           "x-isclass": true
         },
         "Metadata": {
-          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).Constraints: Maximum number of keys: 30, Maximum key length: 50, Maximum value length: 100",
           "type": "object"
         },
         "MultiplayerServerCountPerVm": {
@@ -4221,6 +4282,57 @@
           ]
         }
       }
+    },
+    "GetCognitiveServicesLocalesRequest": {
+      "description": "Gets supported locales for the cognitive services where translation queries can be sent to.",
+      "type": "object",
+      "properties": {
+        "CognitiveServicesType": {
+          "$ref": "#/definitions/CognitiveServicesType",
+          "description": "The type of the cognitive service for which locales are being requested.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "description": "The region the client is closest to (A service endpoint will be provided for this region or one nearest one available).",
+          "type": "string"
+        }
+      },
+      "required": [
+        "CognitiveServicesType",
+        "Region"
+      ],
+      "example": {
+        "Region": "WestUs"
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
+    },
+    "GetCognitiveServicesLocalesResponse": {
+      "type": "object",
+      "properties": {
+        "Locales": {
+          "description": "The locales for the cognitive service.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CognitiveServicesLocale"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Locales": [
+          {
+            "Locale": "af",
+            "Name": "Afrikaans"
+          }
+        ]
+      },
+      "x-AnyInclusiveFlags": [
+        "Beta"
+      ]
     },
     "GetCognitiveServicesTokenRequest": {
       "description": "Gets a token for the cognitive services where translation queries can be sent to.",
@@ -7662,6 +7774,14 @@
         "$ref": "#/definitions/GetBuildRequest"
       }
     },
+    "GetCognitiveServicesLocalesRequest": {
+      "name": "GetCognitiveServicesLocalesRequest",
+      "in": "body",
+      "description": "Gets supported locales for the cognitive services where translation queries can be sent to.",
+      "schema": {
+        "$ref": "#/definitions/GetCognitiveServicesLocalesRequest"
+      }
+    },
     "GetCognitiveServicesTokenRequest": {
       "name": "GetCognitiveServicesTokenRequest",
       "in": "body",
@@ -8417,6 +8537,37 @@
                 "GameServerProcessName"
               ]
             }
+          }
+        }
+      }
+    },
+    "GetCognitiveServicesLocalesResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetCognitiveServicesLocalesResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Locales": [
+              {
+                "Locale": "af",
+                "Name": "Afrikaans"
+              }
+            ]
           }
         }
       }

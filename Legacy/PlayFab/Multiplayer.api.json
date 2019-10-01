@@ -625,6 +625,31 @@
         }
       ]
     },
+    "CognitiveServicesLocale": {
+      "name": "CognitiveServicesLocale",
+      "className": "CognitiveServicesLocale",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Locale",
+          "description": "The code for supported locale",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "description": "Name of the locale if available",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "CognitiveServicesType": {
       "name": "CognitiveServicesType",
       "className": "CognitiveServicesType",
@@ -823,7 +848,7 @@
         },
         {
           "name": "Metadata",
-          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).Constraints: Maximum number of keys: 30, Maximum key length: 50, Maximum value length: 100",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -1027,7 +1052,7 @@
         },
         {
           "name": "Metadata",
-          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).",
+          "description": "Metadata to tag the build. The keys are case insensitive. The build metadata is made available to the server through Game Server SDK (GSDK).Constraints: Maximum number of keys: 30, Maximum key length: 50, Maximum value length: 100",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
@@ -2076,6 +2101,56 @@
           "jsontype": "String",
           "actualtype": "AzureVmSize",
           "isenum": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetCognitiveServicesLocalesRequest": {
+      "name": "GetCognitiveServicesLocalesRequest",
+      "className": "GetCognitiveServicesLocalesRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Gets supported locales for the cognitive services where translation queries can be sent to.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CognitiveServicesType",
+          "description": "The type of the cognitive service for which locales are being requested.",
+          "jsontype": "String",
+          "actualtype": "CognitiveServicesType",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "Region",
+          "description": "The region the client is closest to (A service endpoint will be provided for this region or one nearest one available).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "isenum": false,
+          "optional": false
+        }
+      ]
+    },
+    "GetCognitiveServicesLocalesResponse": {
+      "name": "GetCognitiveServicesLocalesResponse",
+      "className": "GetCognitiveServicesLocalesResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Locales",
+          "description": "The locales for the cognitive service.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CognitiveServicesLocale",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -5272,6 +5347,7 @@
         "EnablePartiesForTitle",
         "GetAssetUploadUrl",
         "GetBuild",
+        "GetCognitiveServicesLocales",
         "GetCognitiveServicesToken",
         "GetContainerRegistryCredentials",
         "GetMultiplayerServerDetails",
@@ -5771,6 +5847,34 @@
       ]
     },
     {
+      "name": "GetCognitiveServicesLocales",
+      "summary": "Gets supported locales for the cognitive services based on the specified service type.",
+      "requestDetails": "Gets supported locales for the cognitive services where translation queries can be sent to.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/MultiplayerServer/GetCognitiveServicesLocales",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetCognitiveServicesLocalesRequest",
+      "requestExample": "{\r\n  \"CognitiveServicesType\": \"SpeechToText\",\r\n  \"Region\": \"WestUs\"\r\n}",
+      "result": "GetCognitiveServicesLocalesResponse",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Locales\": [\r\n      {\r\n        \"Locale\": \"af\",\r\n        \"Name\": \"Afrikaans\"\r\n      }\r\n    ]\r\n  }\r\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "MultiplayerServerBadRequest",
+        "MultiplayerServerConflict",
+        "MultiplayerServerForbidden",
+        "MultiplayerServerInternalServerError",
+        "MultiplayerServerNoContent",
+        "MultiplayerServerNotFound",
+        "MultiplayerServerTooManyRequests",
+        "MultiplayerServerUnauthorized",
+        "MultiplayerServerUnavailable"
+      ]
+    },
+    {
       "name": "GetCognitiveServicesToken",
       "summary": "Gets a token for the cognitive services based on the specified service type.",
       "requestDetails": "Gets a token for the cognitive services where translation queries can be sent to.",
@@ -6151,7 +6255,7 @@
     },
     {
       "name": "ListBuildSummaries",
-      "summary": "Lists summarized details of all multiplayer server builds for a title.",
+      "summary": "Lists summarized details of all multiplayer server builds for a title. Accepts tokens for title and if game client access is enabled, allows game client to request list of builds with player entity token.",
       "requestDetails": "Returns a list of summarized details of all multiplayer server builds for a title.",
       "subgroup": "MultiplayerServer",
       "titleTiers": null,
@@ -6454,7 +6558,7 @@
     },
     {
       "name": "RequestMultiplayerServer",
-      "summary": "Request a multiplayer server session. Accepts tokens for title and if game client accesss is enabled, allows game client to request a server with player entity token.",
+      "summary": "Request a multiplayer server session. Accepts tokens for title and if game client access is enabled, allows game client to request a server with player entity token.",
       "requestDetails": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
       "subgroup": "MultiplayerServer",
       "titleTiers": null,
