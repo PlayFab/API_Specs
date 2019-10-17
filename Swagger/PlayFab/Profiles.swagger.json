@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "191014",
+    "version": "191017",
     "title": "PlayFab Profiles API",
     "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
     "termsOfService": "https://playfab.com/terms/",
@@ -166,89 +166,6 @@
           "InvalidTitleId",
           "NotAuthenticated",
           "NotAuthorized"
-        ]
-      }
-    },
-    "/Profile/SetAvatarUrl": {
-      "post": {
-        "operationId": "SetAvatarUrl",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Update the avatar url of the entity",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetAvatarUrl"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/SetAvatarUrlRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/SetAvatarUrlResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Given an entity profile, will update its avatar url to the provided url if the profile's version is equal to the specified value",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "InvalidParams",
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/Profile/SetDisplayName": {
-      "post": {
-        "operationId": "SetDisplayName",
-        "tags": [
-          "Account Management"
-        ],
-        "description": "Update the display name of the entity",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/profiles/method/SetDisplayName"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/SetDisplayNameRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/SetDisplayNameResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to the specified value",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-seeAlso": [
-          "Profile/GetProfile"
-        ],
-        "x-ms-docs-errors": [
-          "InvalidParams",
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
         ]
       }
     },
@@ -435,16 +352,6 @@
         "Type": {
           "description": "Entity type. See https://docs.microsoft.com/gaming/playfab/features/data/entities/available-built-in-entity-types",
           "type": "string"
-        },
-        "TypeString": {
-          "description": "Alternate name for Type.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "6/1/2018",
-            "DeprecatedAfter": "7/1/2018",
-            "ObsoleteAfter": "8/1/2018",
-            "ReplacedBy": "Type"
-          }
         }
       },
       "required": [
@@ -854,6 +761,10 @@
     "GetTitlePlayersFromMasterPlayerAccountIdsResponse": {
       "type": "object",
       "properties": {
+        "TitleId": {
+          "description": "Optional id of title to get players from, required if calling using a master_player_account.",
+          "type": "string"
+        },
         "TitlePlayerAccounts": {
           "$ref": "#/definitions/EntityKey",
           "description": "Dictionary of master player ids mapped to title player entity keys and id pairs",
@@ -883,127 +794,6 @@
         "Updated",
         "Deleted",
         "None"
-      ]
-    },
-    "SetAvatarUrlRequest": {
-      "description": "Given an entity profile, will update its avatar url to the provided url if the profile's version is equal to the specified value",
-      "type": "object",
-      "properties": {
-        "AvatarUrl": {
-          "description": "URL of the avatar image. If empty, it removes the existing avatar URL",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "ProfileVersion": {
-          "description": "The expected version of the profile to perform this update on",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "AvatarUrl"
-      ],
-      "example": {
-        "AvatarUrl": "https://test.com/image.png",
-        "ProfileVersion": 123,
-        "Entity": {
-          "Id": "90901000",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "SetAvatarUrlResponse": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "OperationResult": {
-          "$ref": "#/definitions/OperationTypes",
-          "description": "The type of operation that occurred on the profile's avatar URL",
-          "type": "string",
-          "x-isenum": true
-        },
-        "ProfileVersion": {
-          "description": "The updated version of the profile after the avatar URL update",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "ProfileVersion": 85,
-        "OperationResult": "Updated"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "SetDisplayNameRequest": {
-      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to the specified value",
-      "type": "object",
-      "properties": {
-        "DisplayName": {
-          "description": "The new value to be set on Entity Profile's display name",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "ExpectedVersion": {
-          "description": "The expected version of a profile to perform this update on",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "DisplayName": "My new display name",
-        "ExpectedVersion": 123,
-        "Entity": {
-          "Id": "90901000",
-          "Type": "title_player_account",
-          "TypeString": "title_player_account"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "SetDisplayNameResponse": {
-      "type": "object",
-      "properties": {
-        "OperationResult": {
-          "$ref": "#/definitions/OperationTypes",
-          "description": "The type of operation that occured on the profile's display name",
-          "type": "string",
-          "x-isenum": true
-        },
-        "VersionNumber": {
-          "description": "The updated version of the profile after the display name update",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "example": {
-        "VersionNumber": 42,
-        "OperationResult": "Updated"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     "SetEntityProfilePolicyRequest": {
@@ -1190,22 +980,6 @@
         "$ref": "#/definitions/GetTitlePlayersFromMasterPlayerAccountIdsRequest"
       }
     },
-    "SetAvatarUrlRequest": {
-      "name": "SetAvatarUrlRequest",
-      "in": "body",
-      "description": "Given an entity profile, will update its avatar url to the provided url if the profile's version is equal to the specified value",
-      "schema": {
-        "$ref": "#/definitions/SetAvatarUrlRequest"
-      }
-    },
-    "SetDisplayNameRequest": {
-      "name": "SetDisplayNameRequest",
-      "in": "body",
-      "description": "Given an entity profile, will update its display name to the one passed in if the profile's version is equal to the specified value",
-      "schema": {
-        "$ref": "#/definitions/SetDisplayNameRequest"
-      }
-    },
     "SetEntityProfilePolicyRequest": {
       "name": "SetEntityProfilePolicyRequest",
       "in": "body",
@@ -1376,60 +1150,6 @@
                 "TypeString": "title_player_account"
               }
             }
-          }
-        }
-      }
-    },
-    "SetAvatarUrlResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/SetAvatarUrlResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "ProfileVersion": 85,
-            "OperationResult": "Updated"
-          }
-        }
-      }
-    },
-    "SetDisplayNameResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/SetDisplayNameResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "VersionNumber": 42,
-            "OperationResult": "Updated"
           }
         }
       }
@@ -3610,6 +3330,14 @@
     "CatalogItemTypeInvalid": {
       "id": 4012,
       "name": "CatalogItemTypeInvalid"
+    },
+    "CatalogBadRequest": {
+      "id": 4013,
+      "name": "CatalogBadRequest"
+    },
+    "CatalogTooManyRequests": {
+      "id": 4014,
+      "name": "CatalogTooManyRequests"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,

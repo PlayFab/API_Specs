@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "191014",
+    "version": "191017",
     "title": "PlayFab CloudScript API",
     "description": "API methods for executing CloudScript using an Entity Profile",
     "termsOfService": "https://playfab.com/terms/",
@@ -62,157 +62,6 @@
           "JavascriptException"
         ]
       }
-    },
-    "/CloudScript/ExecuteFunction": {
-      "post": {
-        "operationId": "ExecuteFunction",
-        "tags": [
-          "Server-Side Cloud Script"
-        ],
-        "description": "Cloud Script is one of PlayFab's most versatile features. It allows client code to request execution of any kind of custom server-side functionality you can implement, and it can be used in conjunction with virtually anything.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/cloudscript/method/ExecuteFunction"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ExecuteFunctionRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ExecuteFunctionResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Executes an Azure Function with the profile of the entity that is defined in the request.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CloudScriptExecutionTimeLimitExceeded",
-          "InvalidEntityType",
-          "ServiceUnavailable"
-        ]
-      }
-    },
-    "/CloudScript/ListFunctions": {
-      "post": {
-        "operationId": "ListFunctions",
-        "tags": [
-          "Server-Side Cloud Script"
-        ],
-        "description": "Lists all currently registered Azure Functions for a given title.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/cloudscript/method/ListFunctions"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ListFunctionsRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ListFunctionsResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "InternalServerError"
-        ]
-      }
-    },
-    "/CloudScript/RegisterHttpFunction": {
-      "post": {
-        "operationId": "RegisterHttpFunction",
-        "tags": [
-          "Server-Side Cloud Script"
-        ],
-        "description": "Registers an Azure function with a title.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/cloudscript/method/RegisterHttpFunction"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/RegisterHttpFunctionRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/EmptyResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "InternalServerError"
-        ]
-      }
-    },
-    "/CloudScript/UnregisterFunction": {
-      "post": {
-        "operationId": "UnregisterFunction",
-        "tags": [
-          "Server-Side Cloud Script"
-        ],
-        "description": "Unregisters an Azure function with a title.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/cloudscript/method/UnregisterFunction"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/UnregisterFunctionRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/EmptyResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "A title can have many functions, UnregisterFunction disassociates a previously registered function from the title.",
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "CloudScriptNotFound",
-          "InternalServerError"
-        ]
-      }
     }
   },
   "definitions": {
@@ -256,13 +105,6 @@
         "Specific"
       ]
     },
-    "EmptyResult": {
-      "type": "object",
-      "properties": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "type": "object",
@@ -274,16 +116,6 @@
         "Type": {
           "description": "Entity type. See https://docs.microsoft.com/gaming/playfab/features/data/entities/available-built-in-entity-types",
           "type": "string"
-        },
-        "TypeString": {
-          "description": "Alternate name for Type.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "6/1/2018",
-            "DeprecatedAfter": "7/1/2018",
-            "ObsoleteAfter": "8/1/2018",
-            "ReplacedBy": "Type"
-          }
         }
       },
       "required": [
@@ -435,154 +267,6 @@
         }
       }
     },
-    "ExecuteFunctionRequest": {
-      "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "FunctionName": {
-          "description": "The name of the CloudScript function to execute",
-          "type": "string"
-        },
-        "FunctionParameter": {
-          "description": "Object that is passed in to the function as the FunctionArgument field of the FunctionExecutionContext data structure",
-          "type": "object"
-        },
-        "GeneratePlayStreamEvent": {
-          "description": "Generate a 'entity_executed_cloudscript_function' PlayStream event containing the results of the function execution and other contextual information. This event will show up in the PlayStream debugger console for the player in Game Manager.",
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "FunctionName"
-      ],
-      "example": {
-        "FunctionName": "LevelCompleted",
-        "FunctionParameter": {
-          "level": 3,
-          "points": 400
-        },
-        "GeneratePlayStreamEvent": true,
-        "Entity": {
-          "Id": "aaa",
-          "Type": "master_player_account",
-          "TypeString": "master_player_account"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ExecuteFunctionResult": {
-      "type": "object",
-      "properties": {
-        "Error": {
-          "$ref": "#/definitions/FunctionExecutionError",
-          "description": "Error from the CloudScript Azure Function.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "ExecutionTimeMilliseconds": {
-          "description": "The amount of time the function took to execute",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "FunctionName": {
-          "description": "The name of the function that executed",
-          "type": "string"
-        },
-        "FunctionResult": {
-          "description": "The object returned from the function, if any",
-          "type": "object"
-        },
-        "FunctionResultTooLarge": {
-          "description": "Flag indicating if the FunctionResult was too large and was subsequently dropped from this event.",
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "ExecutionTimeMilliseconds"
-      ],
-      "example": {
-        "ExecutionTimeMilliseconds": 367,
-        "FunctionName": "LevelCompleted",
-        "FunctionResult": {
-          "newScore": 25
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "FunctionExecutionError": {
-      "type": "object",
-      "properties": {
-        "Error": {
-          "description": "Error code, such as CloudScriptAzureFunctionsExecutionTimeLimitExceeded, CloudScriptAzureFunctionsArgumentSizeExceeded, CloudScriptAzureFunctionsReturnSizeExceeded or CloudScriptAzureFunctionsHTTPRequestError",
-          "type": "string"
-        },
-        "Message": {
-          "description": "Details about the error",
-          "type": "string"
-        },
-        "StackTrace": {
-          "description": "Point during the execution of the function at which the error occurred, if any",
-          "type": "string"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "FunctionModel": {
-      "type": "object",
-      "properties": {
-        "FunctionName": {
-          "type": "string"
-        },
-        "FunctionUrl": {
-          "type": "string"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ListFunctionsRequest": {
-      "description": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ListFunctionsResult": {
-      "type": "object",
-      "properties": {
-        "Functions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/FunctionModel"
-          },
-          "x-isclass": true
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
     "LogStatement": {
       "type": "object",
       "properties": {
@@ -598,37 +282,6 @@
           "type": "string"
         }
       }
-    },
-    "RegisterHttpFunctionRequest": {
-      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "FunctionName": {
-          "description": "The name of the function to register",
-          "type": "string"
-        },
-        "FunctionUrl": {
-          "description": "Full URL for Azure Function that implements the function.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "FunctionName",
-        "FunctionUrl"
-      ],
-      "example": {
-        "FunctionName": "functionName",
-        "FunctionUrl": "http://function.url"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
     },
     "ScriptExecutionError": {
       "type": "object",
@@ -646,31 +299,6 @@
           "type": "string"
         }
       }
-    },
-    "UnregisterFunctionRequest": {
-      "description": "A title can have many functions, UnregisterFunction disassociates a previously registered function from the title.",
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "FunctionName": {
-          "description": "The name of the function to unregister",
-          "type": "string"
-        }
-      },
-      "required": [
-        "FunctionName"
-      ],
-      "example": {
-        "FunctionName": "functionName"
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
     }
   },
   "parameters": {
@@ -681,38 +309,6 @@
       "schema": {
         "$ref": "#/definitions/ExecuteEntityCloudScriptRequest"
       }
-    },
-    "ExecuteFunctionRequest": {
-      "name": "ExecuteFunctionRequest",
-      "in": "body",
-      "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
-      "schema": {
-        "$ref": "#/definitions/ExecuteFunctionRequest"
-      }
-    },
-    "ListFunctionsRequest": {
-      "name": "ListFunctionsRequest",
-      "in": "body",
-      "description": "A title can have many functions, ListFunctions will return a list of all the currently registered functions for a given title.",
-      "schema": {
-        "$ref": "#/definitions/ListFunctionsRequest"
-      }
-    },
-    "RegisterHttpFunctionRequest": {
-      "name": "RegisterHttpFunctionRequest",
-      "in": "body",
-      "description": "A title can have many functions, RegisterFunction associates a function name to a URL that can be invoked by CloudScript.ExecuteFunction or in response to a PlayStream event or as part of a Task.",
-      "schema": {
-        "$ref": "#/definitions/RegisterHttpFunctionRequest"
-      }
-    },
-    "UnregisterFunctionRequest": {
-      "name": "UnregisterFunctionRequest",
-      "in": "body",
-      "description": "A title can have many functions, UnregisterFunction disassociates a previously registered function from the title.",
-      "schema": {
-        "$ref": "#/definitions/UnregisterFunctionRequest"
-      }
     }
   },
   "responses": {
@@ -720,25 +316,6 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
-      }
-    },
-    "EmptyResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/EmptyResult"
-          }
-        }
       }
     },
     "ExecuteCloudScriptResult": {
@@ -782,55 +359,6 @@
             "ExecutionTimeSeconds": 0.03670790046453476,
             "MemoryConsumedBytes": 38904,
             "APIRequestsIssued": 2
-          }
-        }
-      }
-    },
-    "ExecuteFunctionResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ExecuteFunctionResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "ExecutionTimeMilliseconds": 367,
-            "FunctionName": "LevelCompleted",
-            "FunctionResult": {
-              "newScore": 25
-            }
-          }
-        }
-      }
-    },
-    "ListFunctionsResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ListFunctionsResult"
           }
         }
       }
@@ -2923,6 +2451,14 @@
     "CatalogItemTypeInvalid": {
       "id": 4012,
       "name": "CatalogItemTypeInvalid"
+    },
+    "CatalogBadRequest": {
+      "id": 4013,
+      "name": "CatalogBadRequest"
+    },
+    "CatalogTooManyRequests": {
+      "id": 4014,
+      "name": "CatalogTooManyRequests"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,

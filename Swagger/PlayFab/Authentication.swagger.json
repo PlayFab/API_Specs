@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "191015",
+    "version": "191017",
     "title": "PlayFab Authentication API",
     "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -24,197 +24,6 @@
     "application/json"
   ],
   "paths": {
-    "/APIKey/ActivateKey": {
-      "post": {
-        "operationId": "ActivateKey",
-        "tags": [
-          "API Keys"
-        ],
-        "description": "Activates the given API key. Active keys may be used for authentication.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/authentication/method/ActivateKey"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ActivateAPIKeyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ActivateAPIKeyResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "EntityAPIKeyNotFound",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/APIKey/CreateKey": {
-      "post": {
-        "operationId": "CreateKey",
-        "tags": [
-          "API Keys"
-        ],
-        "description": "Creates an API key for the given entity.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/authentication/method/CreateKey"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/CreateAPIKeyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/CreateAPIKeyResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "EntityAPIKeyLimitExceeded",
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/APIKey/DeactivateKey": {
-      "post": {
-        "operationId": "DeactivateKey",
-        "tags": [
-          "API Keys"
-        ],
-        "description": "Deactivates the given API key, causing subsequent authentication attempts with it to fail.Deactivating a key is a way to verify that the key is not in use before deleting it.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/authentication/method/DeactivateKey"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/DeactivateAPIKeyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/DeactivateAPIKeyResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "EntityAPIKeyNotFound",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/APIKey/DeleteKey": {
-      "post": {
-        "operationId": "DeleteKey",
-        "tags": [
-          "API Keys"
-        ],
-        "description": "Deletes the given API key.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/authentication/method/DeleteKey"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/DeleteAPIKeyRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/DeleteAPIKeyResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "EntityAPIKeyNotFound",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
-    "/APIKey/GetKeys": {
-      "post": {
-        "operationId": "GetKeys",
-        "tags": [
-          "API Keys"
-        ],
-        "description": "Gets the API keys associated with the given entity.",
-        "externalDocs": {
-          "url": "https://api.playfab.com/documentation/authentication/method/GetKeys"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetAPIKeysRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetAPIKeysResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-AnyInclusiveFlags": [
-          "Beta"
-        ],
-        "x-ms-docs-errors": [
-          "NotAuthenticated",
-          "NotAuthorized",
-          "ProfileDoesNotExist"
-        ]
-      }
-    },
     "/Authentication/GetEntityToken": {
       "post": {
         "operationId": "GetEntityToken",
@@ -248,7 +57,9 @@
           "EntityTokenExpired",
           "EntityTokenInvalid",
           "EntityTokenRevoked",
-          "NotAuthenticated"
+          "InvalidTicket",
+          "NotAuthenticated",
+          "SecretKeyNotFound"
         ]
       }
     },
@@ -284,7 +95,8 @@
         "x-ms-docs-errors": [
           "EntityTokenExpired",
           "EntityTokenInvalid",
-          "EntityTokenRevoked"
+          "EntityTokenRevoked",
+          "InvalidTicket"
         ]
       }
     }
@@ -322,190 +134,6 @@
         }
       }
     },
-    "ActivateAPIKeyRequest": {
-      "type": "object",
-      "properties": {
-        "APIKeyId": {
-          "description": "Unique identifier for the entity API key to activate.",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "APIKeyId": "57286F44382556F3",
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "ActivateAPIKeyResponse": {
-      "type": "object",
-      "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "CreateAPIKeyDetails": {
-      "type": "object",
-      "properties": {
-        "Active": {
-          "description": "Whether the key is active for authentication. Inactive keys cannot be used to authenticate.Keys can be activated or deactivate using the ActivateKey and DeactivateKey APIs.Deactivating a key is a way to verify that the key is not in use before deleting it.",
-          "type": "boolean"
-        },
-        "APIKeyId": {
-          "description": "Unique identifier for the entity API key. Set in the \"X - EntityAPIKeyId\" in authentication requests.",
-          "type": "string"
-        },
-        "APIKeySecret": {
-          "description": "Secret used to authenticate requests with the key. Set in the \"X - EntityAPIKeyId\" in authentication requests.The secret value is returned only once in this response and cannot be retrieved afterward, either via API or in Game Manager.API key secrets should be stored securely only on trusted servers and never distributed in code or configuration to untrusted clients.",
-          "type": "string"
-        },
-        "Created": {
-          "description": "The time the API key was generated, in UTC.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Active",
-        "Created"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "CreateAPIKeyRequest": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "CreateAPIKeyResponse": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity id and type.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Key": {
-          "$ref": "#/definitions/CreateAPIKeyDetails",
-          "description": "The created API key",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Key": {
-          "APIKeyId": "57286F44382556F3",
-          "APIKeySecret": "XQ7HIRQF49PQSY9UTR5686QI3MF57BD7TQA6XOKB64AFYM8Q3T",
-          "Active": true,
-          "Created": "2019-02-09T08:04:23.384Z"
-        },
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "DeactivateAPIKeyRequest": {
-      "type": "object",
-      "properties": {
-        "APIKeyId": {
-          "description": "Unique identifier for the entity API key to activate.",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "APIKeyId": "57286F44382556F3",
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "DeactivateAPIKeyResponse": {
-      "type": "object",
-      "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "DeleteAPIKeyRequest": {
-      "type": "object",
-      "properties": {
-        "APIKeyId": {
-          "description": "Unique identifier for the entity API key to delete.",
-          "type": "string"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "APIKeyId": "57286F44382556F3",
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "DeleteAPIKeyResponse": {
-      "type": "object",
-      "properties": {},
-      "example": {},
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
       "type": "object",
@@ -517,16 +145,6 @@
         "Type": {
           "description": "Entity type. See https://docs.microsoft.com/gaming/playfab/features/data/entities/available-built-in-entity-types",
           "type": "string"
-        },
-        "TypeString": {
-          "description": "Alternate name for Type.",
-          "type": "string",
-          "x-deprecation": {
-            "ProposedAfter": "6/1/2018",
-            "DeprecatedAfter": "7/1/2018",
-            "ObsoleteAfter": "8/1/2018",
-            "ReplacedBy": "Type"
-          }
         }
       },
       "required": [
@@ -561,91 +179,6 @@
           "type": "string"
         }
       }
-    },
-    "GetAPIKeyDetails": {
-      "type": "object",
-      "properties": {
-        "Active": {
-          "description": "Whether the key is active for authentication. Inactive keys cannot be used to authenticate.Keys can be activated or deactivate using the SetAPIActivation API.Deactivating a key is a way to verify that the key is not in use be before deleting it.",
-          "type": "boolean"
-        },
-        "APIKeyId": {
-          "description": "Unique identifier for the entity API key. Set in the \"X - EntityAPIKeyId\" in authentication requests.",
-          "type": "string"
-        },
-        "Created": {
-          "description": "The time the API key was generated, in UTC.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "Active",
-        "Created"
-      ],
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "GetAPIKeysRequest": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity to perform this action on.",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
-    },
-    "GetAPIKeysResponse": {
-      "type": "object",
-      "properties": {
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The entity id and type.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Keys": {
-          "description": "The API keys associated with the given entity.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GetAPIKeyDetails"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Keys": [
-          {
-            "APIKeyId": "57286F44382556F3",
-            "Active": true,
-            "Created": "2019-02-09T08:04:23.384Z"
-          },
-          {
-            "APIKeyId": "875C9EDA956E4C89",
-            "Created": "2018-12-08T22:27:05.127Z"
-          }
-        ],
-        "Entity": {
-          "Id": "D74A0EB74116C210",
-          "Type": "group",
-          "TypeString": "group"
-        }
-      },
-      "x-AnyInclusiveFlags": [
-        "Beta"
-      ]
     },
     "GetEntityTokenRequest": {
       "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
@@ -766,46 +299,6 @@
     }
   },
   "parameters": {
-    "ActivateAPIKeyRequest": {
-      "name": "ActivateAPIKeyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/ActivateAPIKeyRequest"
-      }
-    },
-    "CreateAPIKeyRequest": {
-      "name": "CreateAPIKeyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/CreateAPIKeyRequest"
-      }
-    },
-    "DeactivateAPIKeyRequest": {
-      "name": "DeactivateAPIKeyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/DeactivateAPIKeyRequest"
-      }
-    },
-    "DeleteAPIKeyRequest": {
-      "name": "DeleteAPIKeyRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/DeleteAPIKeyRequest"
-      }
-    },
-    "GetAPIKeysRequest": {
-      "name": "GetAPIKeysRequest",
-      "in": "body",
-      "description": "",
-      "schema": {
-        "$ref": "#/definitions/GetAPIKeysRequest"
-      }
-    },
     "GetEntityTokenRequest": {
       "name": "GetEntityTokenRequest",
       "in": "body",
@@ -828,155 +321,6 @@
       "description": "This is the outer-wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
-      }
-    },
-    "ActivateAPIKeyResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ActivateAPIKeyResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {}
-        }
-      }
-    },
-    "CreateAPIKeyResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/CreateAPIKeyResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "Key": {
-              "APIKeyId": "57286F44382556F3",
-              "APIKeySecret": "XQ7HIRQF49PQSY9UTR5686QI3MF57BD7TQA6XOKB64AFYM8Q3T",
-              "Active": true,
-              "Created": "2019-02-09T08:04:23.384Z"
-            },
-            "Entity": {
-              "Id": "D74A0EB74116C210",
-              "Type": "group",
-              "TypeString": "group"
-            }
-          }
-        }
-      }
-    },
-    "DeactivateAPIKeyResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/DeactivateAPIKeyResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {}
-        }
-      }
-    },
-    "DeleteAPIKeyResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/DeleteAPIKeyResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {}
-        }
-      }
-    },
-    "GetAPIKeysResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetAPIKeysResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "Keys": [
-              {
-                "APIKeyId": "57286F44382556F3",
-                "Active": true,
-                "Created": "2019-02-09T08:04:23.384Z"
-              },
-              {
-                "APIKeyId": "875C9EDA956E4C89",
-                "Created": "2018-12-08T22:27:05.127Z"
-              }
-            ],
-            "Entity": {
-              "Id": "D74A0EB74116C210",
-              "Type": "group",
-              "TypeString": "group"
-            }
-          }
-        }
       }
     },
     "GetEntityTokenResponse": {
@@ -3139,6 +2483,14 @@
     "CatalogItemTypeInvalid": {
       "id": 4012,
       "name": "CatalogItemTypeInvalid"
+    },
+    "CatalogBadRequest": {
+      "id": 4013,
+      "name": "CatalogBadRequest"
+    },
+    "CatalogTooManyRequests": {
+      "id": 4014,
+      "name": "CatalogTooManyRequests"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
