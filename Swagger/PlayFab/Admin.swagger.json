@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "191029",
+    "version": "191121",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -93,7 +93,6 @@
           }
         },
         "x-ms-docs-errors": [
-          "InvalidParams",
           "TitleNewsDuplicateLanguage",
           "TitleNewsInvalidLanguage",
           "TitleNewsNotFound"
@@ -167,7 +166,6 @@
           "Admin/RemovePlayerTag"
         ],
         "x-ms-docs-errors": [
-          "AccountNotFound",
           "PlayerTagCountLimitExceeded"
         ]
       }
@@ -482,6 +480,9 @@
           "Admin/DeleteOpenIdConnection",
           "Admin/ListOpenIdConnection",
           "Admin/UpdateOpenIdConnection"
+        ],
+        "x-ms-docs-errors": [
+          "ValueAlreadyExists"
         ]
       }
     },
@@ -631,11 +632,6 @@
         "x-requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
         "x-seeAlso": [
           "Admin/GetPlayedTitleList"
-        ],
-        "x-ms-docs-errors": [
-          "AccountDeleted",
-          "AccountNotFound",
-          "DataUpdateRateExceeded"
         ]
       }
     },
@@ -702,11 +698,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances, characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player. Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list. Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error.",
-        "x-ms-docs-errors": [
-          "AccountDeleted",
-          "AccountNotFound"
-        ]
+        "x-requestDetails": "Deletes all data associated with the player, including statistics, custom data, inventory, purchases, virtual currency balances, characters and shared group memberships. Removes the player from all leaderboards and player search indexes. Does not delete PlayStream event history associated with the player. Does not delete the publisher user account that created the player in the title nor associated data such as username, password, email address, account linkages, or friends list. Note, this API queues the player for deletion and returns immediately. It may take several minutes or more before all player data is fully deleted. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error."
       }
     },
     "/Admin/DeletePlayerSharedSecret": {
@@ -860,10 +852,7 @@
           "Admin/DeletePlayer"
         ],
         "x-ms-docs-errors": [
-          "InvalidParams",
-          "InvalidTitleId",
-          "TitleContainsUserAccounts",
-          "TitleDeleted"
+          "TitleContainsUserAccounts"
         ]
       }
     },
@@ -895,11 +884,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
-        "x-ms-docs-errors": [
-          "AccountDeleted",
-          "AccountNotFound"
-        ]
+        "x-requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title."
       }
     },
     "/Admin/GetActionsOnPlayersInSegmentTaskInstance": {
@@ -1333,10 +1318,6 @@
         "x-requestDetails": "Useful for identifying titles of which the player's data will be deleted by DeleteMasterPlayer.",
         "x-seeAlso": [
           "Admin/DeleteMasterPlayerAccount"
-        ],
-        "x-ms-docs-errors": [
-          "AccountDeleted",
-          "AccountNotFound"
         ]
       }
     },
@@ -1404,8 +1385,7 @@
         },
         "x-requestDetails": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
         "x-ms-docs-errors": [
-          "PlayerNotInGame",
-          "ProfileDoesNotExist"
+          "PlayerNotInGame"
         ]
       }
     },
@@ -1486,7 +1466,7 @@
         "tags": [
           "PlayStream"
         ],
-        "description": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation.",
+        "description": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation. NOTE: This API is limited to being called 30 times in one minute. You will be returned an error if you exceed this threshold.",
         "externalDocs": {
           "url": "https://api.playfab.com/documentation/admin/method/GetPlayersInSegment"
         },
@@ -1514,8 +1494,8 @@
         ],
         "x-ms-docs-errors": [
           "ExpiredContinuationToken",
+          "GetPlayersInSegmentRateLimitExceeded",
           "InvalidContinuationToken",
-          "InvalidSearchTerm",
           "SegmentNotFound"
         ]
       }
@@ -1634,9 +1614,6 @@
         "x-seeAlso": [
           "Admin/AddPlayerTag",
           "Admin/RemovePlayerTag"
-        ],
-        "x-ms-docs-errors": [
-          "AccountNotFound"
         ]
       }
     },
@@ -2038,7 +2015,6 @@
           "Admin/GetUserInventory"
         ],
         "x-ms-docs-errors": [
-          "AccountNotFound",
           "TitleNotActivated"
         ]
       }
@@ -2708,9 +2684,6 @@
         "x-seeAlso": [
           "Admin/AddPlayerTag",
           "Admin/GetPlayerTags"
-        ],
-        "x-ms-docs-errors": [
-          "AccountNotFound"
         ]
       }
     },
@@ -2819,10 +2792,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Note that this action cannot be un-done. All statistics for this character will be deleted, removing the user from all leaderboards for the game.",
-        "x-ms-docs-errors": [
-          "AccountNotFound"
-        ]
+        "x-requestDetails": "Note that this action cannot be un-done. All statistics for this character will be deleted, removing the user from all leaderboards for the game."
       }
     },
     "/Admin/ResetPassword": {
@@ -2859,7 +2829,6 @@
           "AuthTokenDoesNotExist",
           "AuthTokenExpired",
           "InvalidAuthToken",
-          "InvalidTitleId",
           "NoContactEmailAddressFound"
         ]
       }
@@ -3148,7 +3117,6 @@
         },
         "x-requestDetails": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
         "x-ms-docs-errors": [
-          "AccountNotFound",
           "InvalidEmailAddress"
         ]
       }
@@ -3443,7 +3411,6 @@
         },
         "x-requestDetails": "When using the Apple Push Notification service (APNS) or the development version (APNS_SANDBOX), the APNS Private Key should be used as the Credential in this call. With Google Cloud Messaging (GCM), the Android API Key should be used. The current ARN (if one exists) can be overwritten by setting the OverwriteOldARN boolean to true.",
         "x-ms-docs-errors": [
-          "InvalidTitleId",
           "PushServiceError",
           "ValueAlreadyExists"
         ]
@@ -6693,6 +6660,10 @@
         "InsightsManagementGetOperationStatusInvalidParameter",
         "DuplicatePurchaseTransactionId",
         "EvaluationModePlayerCountExceeded",
+        "GetPlayersInSegmentRateLimitExceeded",
+        "CloudScriptFunctionNameSizeExceeded",
+        "InsightsManagementTitleInEvaluationMode",
+        "CloudScriptAzureFunctionsQueueRequestError",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -6745,6 +6716,7 @@
         "ExportCantEditPendingExport",
         "ExportLimitExports",
         "ExportLimitEvents",
+        "ExportInvalidPartitionStatusModification",
         "TitleNotEnabledForParty",
         "PartyVersionNotFound",
         "MultiplayerServerBuildReferencedByMatchmakingQueue",
@@ -6758,6 +6730,8 @@
         "ExperimentationExceededMaxVariantLength",
         "ExperimentInvalidId",
         "ExperimentationNoScorecard",
+        "ExperimentationTreatmentAssignmentFailed",
+        "ExperimentationTreatmentAssignmentDisabled",
         "MaxActionDepthExceeded",
         "SnapshotNotFound"
       ]
@@ -18257,6 +18231,22 @@
       "id": 1490,
       "name": "EvaluationModePlayerCountExceeded"
     },
+    "GetPlayersInSegmentRateLimitExceeded": {
+      "id": 1491,
+      "name": "GetPlayersInSegmentRateLimitExceeded"
+    },
+    "CloudScriptFunctionNameSizeExceeded": {
+      "id": 1492,
+      "name": "CloudScriptFunctionNameSizeExceeded"
+    },
+    "InsightsManagementTitleInEvaluationMode": {
+      "id": 1493,
+      "name": "InsightsManagementTitleInEvaluationMode"
+    },
+    "CloudScriptAzureFunctionsQueueRequestError": {
+      "id": 1494,
+      "name": "CloudScriptAzureFunctionsQueueRequestError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -18465,6 +18455,10 @@
       "id": 5016,
       "name": "ExportLimitEvents"
     },
+    "ExportInvalidPartitionStatusModification": {
+      "id": 5017,
+      "name": "ExportInvalidPartitionStatusModification"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -18516,6 +18510,14 @@
     "ExperimentationNoScorecard": {
       "id": 7009,
       "name": "ExperimentationNoScorecard"
+    },
+    "ExperimentationTreatmentAssignmentFailed": {
+      "id": 7010,
+      "name": "ExperimentationTreatmentAssignmentFailed"
+    },
+    "ExperimentationTreatmentAssignmentDisabled": {
+      "id": 7011,
+      "name": "ExperimentationTreatmentAssignmentDisabled"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,

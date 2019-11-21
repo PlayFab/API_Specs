@@ -4406,6 +4406,18 @@
           "name": "EvaluationModePlayerCountExceeded"
         },
         {
+          "name": "GetPlayersInSegmentRateLimitExceeded"
+        },
+        {
+          "name": "CloudScriptFunctionNameSizeExceeded"
+        },
+        {
+          "name": "InsightsManagementTitleInEvaluationMode"
+        },
+        {
+          "name": "CloudScriptAzureFunctionsQueueRequestError"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -4562,6 +4574,9 @@
           "name": "ExportLimitEvents"
         },
         {
+          "name": "ExportInvalidPartitionStatusModification"
+        },
+        {
           "name": "TitleNotEnabledForParty"
         },
         {
@@ -4599,6 +4614,12 @@
         },
         {
           "name": "ExperimentationNoScorecard"
+        },
+        {
+          "name": "ExperimentationTreatmentAssignmentFailed"
+        },
+        {
+          "name": "ExperimentationTreatmentAssignmentDisabled"
         },
         {
           "name": "MaxActionDepthExceeded"
@@ -12983,8 +13004,6 @@
         "Server/SetFriendTags"
       ],
       "errors": [
-        "AccountNotFound",
-        "InvalidPublisherId",
         "UsersAlreadyFriends"
       ]
     },
@@ -13027,7 +13046,6 @@
         "Server/RemovePlayerTag"
       ],
       "errors": [
-        "AccountNotFound",
         "PlayerTagCountLimitExceeded"
       ]
     },
@@ -13044,7 +13062,6 @@
       "result": "AddSharedGroupMembersResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
         "InvalidSharedGroupId",
         "UserAlreadyAdded"
       ]
@@ -13131,7 +13148,6 @@
       "result": "ConsumeItemResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound",
         "InvalidItemProperties",
         "ItemNotFound",
@@ -13169,7 +13185,6 @@
       "result": "DeleteCharacterFromUserResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {}\r\n}",
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound"
       ]
     },
@@ -13187,8 +13202,6 @@
       "result": "DeletePlayerResult",
       "resultExample": "",
       "errors": [
-        "AccountDeleted",
-        "AccountNotFound",
         "APINotEnabledForGameServerAccess"
       ]
     },
@@ -13244,9 +13257,7 @@
       "result": "DeleteUsersResult",
       "resultExample": "",
       "errors": [
-        "APINotEnabledForGameServerAccess",
-        "InvalidPublisherId",
-        "InvalidTitleId"
+        "APINotEnabledForGameServerAccess"
       ]
     },
     {
@@ -13301,7 +13312,6 @@
         "CloudScriptFunctionArgumentSizeExceeded",
         "CloudScriptHTTPRequestError",
         "CloudScriptNotFound",
-        "InternalServerError",
         "JavascriptException"
       ]
     },
@@ -13501,7 +13511,6 @@
         "Server/UpdateCharacterStatistics"
       ],
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound"
       ]
     },
@@ -13609,9 +13618,6 @@
         "Server/GetCharacterLeaderboard",
         "Server/GetLeaderboard",
         "Server/UpdateCharacterStatistics"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -13633,7 +13639,6 @@
         "Server/UpdateUserStatistics"
       ],
       "errors": [
-        "AccountNotFound",
         "LeaderboardVersionNotAvailable"
       ]
     },
@@ -13654,9 +13659,6 @@
         "Server/GetLeaderboard",
         "Server/GetLeaderboardAroundCharacter",
         "Server/UpdateCharacterStatistics"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -13686,8 +13688,7 @@
       "result": "GetPlayerProfileResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PlayerProfile\": {\r\n      \"TitleId\": \"TitleName\",\r\n      \"PlayerId\": \"621EF20237534A44\",\r\n      \"Created\": \"0001-01-01T00:00:00Z\",\r\n      \"LastLogin\": \"0001-01-01T00:00:00Z\",\r\n      \"BannedUntil\": \"9999-12-31T23:59:59.999Z\",\r\n      \"DisplayName\": \"PlayerDisplayName\",\r\n      \"TotalValueToDateInUSD\": 0\r\n    }\r\n  }\r\n}",
       "errors": [
-        "PlayerNotInGame",
-        "ProfileDoesNotExist"
+        "PlayerNotInGame"
       ]
     },
     {
@@ -13708,7 +13709,7 @@
     },
     {
       "name": "GetPlayersInSegment",
-      "summary": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation.",
+      "summary": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation. NOTE: This API is limited to being called 30 times in one minute. You will be returned an error if you exceed this threshold.",
       "requestDetails": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. This API is resource intensive and should not be used in scenarios which might generate high request volumes. Only one request to this API at a time should be made per title. Concurrent requests to the API may be rejected with the APIConcurrentRequestLimitExceeded error.",
       "subgroup": "PlayStream",
       "titleTiers": null,
@@ -13724,6 +13725,7 @@
       ],
       "errors": [
         "ExpiredContinuationToken",
+        "GetPlayersInSegmentRateLimitExceeded",
         "InvalidContinuationToken",
         "SegmentNotFound"
       ]
@@ -13746,9 +13748,6 @@
         "Server/GetPlayerStatisticVersions",
         "Admin/UpdatePlayerStatisticDefinition",
         "Server/UpdatePlayerStatistics"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -13789,9 +13788,6 @@
       "seeAlso": [
         "Server/AddPlayerTag",
         "Server/RemovePlayerTag"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -13838,9 +13834,6 @@
       "seeAlso": [
         "Server/AddGenericID",
         "Server/RemoveGenericID"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -13869,10 +13862,7 @@
       "request": "GetPlayFabIDsFromPSNAccountIDsRequest",
       "requestExample": "{\r\n  \"PSNAccountIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromPSNAccountIDsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"PSNAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"PSNAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "AccountNotFound"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"PSNAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"PSNAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetPlayFabIDsFromSteamIDs",
@@ -13886,10 +13876,7 @@
       "request": "GetPlayFabIDsFromSteamIDsRequest",
       "requestExample": "{\r\n  \"SteamStringIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ]\r\n}",
       "result": "GetPlayFabIDsFromSteamIDsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"SteamStringId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"SteamStringId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "AccountNotFound"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"SteamStringId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"SteamStringId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetPlayFabIDsFromXboxLiveIDs",
@@ -13903,10 +13890,7 @@
       "request": "GetPlayFabIDsFromXboxLiveIDsRequest",
       "requestExample": "{\r\n  \"XboxLiveAccountIDs\": [\r\n    \"857498576495\",\r\n    \"759374651209\"\r\n  ],\r\n  \"Sandbox\": \"RETAIL\"\r\n}",
       "result": "GetPlayFabIDsFromXboxLiveIDsResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"XboxLiveAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"XboxLiveAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}",
-      "errors": [
-        "AccountNotFound"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Data\": [\r\n      {\r\n        \"XboxLiveAccountId\": \"857498576495\",\r\n        \"PlayFabId\": \"5a446c83645201\"\r\n      },\r\n      {\r\n        \"XboxLiveAccountId\": \"759374651209\",\r\n        \"PlayFabId\": \"6345cd25a6c7cc\"\r\n      }\r\n    ]\r\n  }\r\n}"
     },
     {
       "name": "GetPublisherData",
@@ -14280,7 +14264,6 @@
         "Server/UpdateUserStatistics"
       ],
       "errors": [
-        "AccountNotFound",
         "InvalidStatisticName"
       ]
     },
@@ -14296,10 +14279,7 @@
       "request": "GrantCharacterToUserRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"20394883567\",\r\n  \"CharacterName\": \"FighterDude\",\r\n  \"CharacterType\": \"Blue Warrior\"\r\n}",
       "result": "GrantCharacterToUserResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"CharacterId\": \"98765432\"\r\n  }\r\n}",
-      "errors": [
-        "AccountNotFound"
-      ]
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"CharacterId\": \"98765432\"\r\n  }\r\n}"
     },
     {
       "name": "GrantItemsToCharacter",
@@ -14315,7 +14295,6 @@
       "result": "GrantItemsToCharacterResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ItemGrantResults\": [\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_5\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      },\r\n      {\r\n        \"PlayFabId\": \"20394883\",\r\n        \"Result\": true,\r\n        \"ItemId\": \"shield_level_6\",\r\n        \"ItemInstanceId\": \"133713371337\",\r\n        \"ItemClass\": \"shields\",\r\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\r\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\r\n        \"RemainingUses\": 10,\r\n        \"Annotation\": \"Entered Level 2\",\r\n        \"CatalogVersion\": \"5\",\r\n        \"BundleParent\": \"crate block 1\",\r\n        \"UnitPrice\": 0\r\n      }\r\n    ]\r\n  }\r\n}",
       "errors": [
-        "AccountNotFound",
         "CatalogNotConfigured",
         "CharacterNotFound"
       ]
@@ -14391,7 +14370,6 @@
       ],
       "errors": [
         "AccountAlreadyLinked",
-        "InvalidPublisherId",
         "InvalidXboxLiveToken",
         "LinkedAccountAlreadyClaimed"
       ]
@@ -14418,7 +14396,6 @@
       "errors": [
         "BodyTooLarge",
         "CustomAnalyticsEventsNotEnabledForTitle",
-        "InvalidRequest",
         "InvalidTypeInBody",
         "ReservedEventName",
         "ReservedWordInBody"
@@ -14435,11 +14412,7 @@
       "request": "LoginWithServerCustomIdRequest",
       "requestExample": "{\r\n  \"ServerCustomId\": \"asdalsdkjar09u23ijf\",\r\n  \"CreateAccount\": true\r\n}",
       "result": "ServerLoginResult",
-      "resultExample": "",
-      "errors": [
-        "AccountBanned",
-        "AccountNotFound"
-      ]
+      "resultExample": ""
     },
     {
       "name": "LoginWithXbox",
@@ -14459,9 +14432,7 @@
         "Server/UnlinkXboxAccount"
       ],
       "errors": [
-        "AccountNotFound",
         "ExpiredXboxLiveToken",
-        "InvalidTitleId",
         "InvalidXboxLiveToken",
         "RequestViewConstraintParamsNotAllowed",
         "XboxInaccessible",
@@ -14483,8 +14454,6 @@
       "result": "ServerLoginResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
-        "InvalidTitleId",
         "RequestViewConstraintParamsNotAllowed",
         "XboxInaccessible",
         "XboxRejectedXSTSExchangeRequest",
@@ -14528,7 +14497,6 @@
         "Server/MoveItemToUserFromCharacter"
       ],
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -14551,7 +14519,6 @@
         "Server/MoveItemToUserFromCharacter"
       ],
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -14574,7 +14541,6 @@
         "Server/MoveItemToCharacterFromUser"
       ],
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound",
         "ItemNotOwned"
       ]
@@ -14665,9 +14631,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LobbyId\": \"8285313\"\r\n  }\r\n}",
       "seeAlso": [
         "Server/DeregisterGame"
-      ],
-      "errors": [
-        "InvalidRequest"
       ]
     },
     {
@@ -14727,9 +14690,6 @@
       "seeAlso": [
         "Server/AddPlayerTag",
         "Server/GetPlayerTags"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -14859,10 +14819,7 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"PushNotificationTemplateId\": \"6bc7dbf0-075a-46e9-8e84-35737a22c6a4\"\r\n  }\r\n}",
       "errors": [
         "InvalidLocalizedPushNotificationLanguage",
-        "InvalidParams",
-        "InvalidTitleId",
         "MissingLocalizedPushNotificationMessage",
-        "OverLimit",
         "PushNotificationTemplateAndroidPayloadMissingNotificationBody",
         "PushNotificationTemplateContainsInvalidAndroidPayload",
         "PushNotificationTemplateContainsInvalidIosPayload",
@@ -14891,7 +14848,6 @@
       "result": "SendCustomAccountRecoveryEmailResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
         "EmailClientCanceledTask",
         "EmailClientTimeout",
         "EmailMessageToAddressIsMissing",
@@ -14973,9 +14929,6 @@
         "Server/AddFriend",
         "Server/GetFriendsList",
         "Server/RemoveFriend"
-      ],
-      "errors": [
-        "AccountNotFound"
       ]
     },
     {
@@ -15161,7 +15114,6 @@
         "Server/LoginWithServerCustomId"
       ],
       "errors": [
-        "AccountNotFound",
         "AccountNotLinked",
         "IdentifierNotLinked"
       ]
@@ -15242,10 +15194,7 @@
       "request": "UpdateAvatarUrlRequest",
       "requestExample": "{\r\n  \"PlayFabId\": \"22ca65837b158fab\",\r\n  \"ImageUrl\": \"https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50\"\r\n}",
       "result": "EmptyResponse",
-      "resultExample": "",
-      "errors": [
-        "AccountNotFound"
-      ]
+      "resultExample": ""
     },
     {
       "name": "UpdateBans",
@@ -15353,7 +15302,6 @@
       "result": "UpdateCharacterStatisticsResult",
       "resultExample": "",
       "errors": [
-        "AccountNotFound",
         "CharacterNotFound",
         "InvalidCharacterStatistics"
       ]
@@ -15377,7 +15325,6 @@
         "Admin/UpdatePlayerStatisticDefinition"
       ],
       "errors": [
-        "AccountNotFound",
         "DuplicateStatisticName",
         "StatisticCountLimitExceeded",
         "StatisticNameConflict",
@@ -15401,8 +15348,7 @@
       "result": "UpdateSharedGroupDataResult",
       "resultExample": "",
       "errors": [
-        "InvalidSharedGroupId",
-        "NotAuthorized"
+        "InvalidSharedGroupId"
       ]
     },
     {
@@ -15586,7 +15532,6 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
-        "AccountNotFound",
         "InvalidStatisticName",
         "InvalidUserStatistics",
         "StatisticCountLimitExceeded"
@@ -15607,7 +15552,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
         "CharacterNotFound",
-        "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
     },
@@ -15626,7 +15570,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
         "InvalidEventField",
-        "InvalidRequest",
         "NoWritePermissionsForEvent",
         "UserisNotValid"
       ]
@@ -15646,7 +15589,6 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"EventId\": \"0f8fad5bd9cb469fa16570867728950e\"\r\n  }\r\n}",
       "errors": [
         "InvalidEventField",
-        "InvalidRequest",
         "NoWritePermissionsForEvent"
       ]
     }
@@ -17572,6 +17514,22 @@
       "id": 1490,
       "name": "EvaluationModePlayerCountExceeded"
     },
+    "GetPlayersInSegmentRateLimitExceeded": {
+      "id": 1491,
+      "name": "GetPlayersInSegmentRateLimitExceeded"
+    },
+    "CloudScriptFunctionNameSizeExceeded": {
+      "id": 1492,
+      "name": "CloudScriptFunctionNameSizeExceeded"
+    },
+    "InsightsManagementTitleInEvaluationMode": {
+      "id": 1493,
+      "name": "InsightsManagementTitleInEvaluationMode"
+    },
+    "CloudScriptAzureFunctionsQueueRequestError": {
+      "id": 1494,
+      "name": "CloudScriptAzureFunctionsQueueRequestError"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -17780,6 +17738,10 @@
       "id": 5016,
       "name": "ExportLimitEvents"
     },
+    "ExportInvalidPartitionStatusModification": {
+      "id": 5017,
+      "name": "ExportInvalidPartitionStatusModification"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -17831,6 +17793,14 @@
     "ExperimentationNoScorecard": {
       "id": 7009,
       "name": "ExperimentationNoScorecard"
+    },
+    "ExperimentationTreatmentAssignmentFailed": {
+      "id": 7010,
+      "name": "ExperimentationTreatmentAssignmentFailed"
+    },
+    "ExperimentationTreatmentAssignmentDisabled": {
+      "id": 7011,
+      "name": "ExperimentationTreatmentAssignmentDisabled"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
@@ -18322,6 +18292,10 @@
     "InsightsManagementGetOperationStatusInvalidParameter",
     "DuplicatePurchaseTransactionId",
     "EvaluationModePlayerCountExceeded",
+    "GetPlayersInSegmentRateLimitExceeded",
+    "CloudScriptFunctionNameSizeExceeded",
+    "InsightsManagementTitleInEvaluationMode",
+    "CloudScriptAzureFunctionsQueueRequestError",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -18374,6 +18348,7 @@
     "ExportCantEditPendingExport",
     "ExportLimitExports",
     "ExportLimitEvents",
+    "ExportInvalidPartitionStatusModification",
     "TitleNotEnabledForParty",
     "PartyVersionNotFound",
     "MultiplayerServerBuildReferencedByMatchmakingQueue",
@@ -18387,6 +18362,8 @@
     "ExperimentationExceededMaxVariantLength",
     "ExperimentInvalidId",
     "ExperimentationNoScorecard",
+    "ExperimentationTreatmentAssignmentFailed",
+    "ExperimentationTreatmentAssignmentDisabled",
     "MaxActionDepthExceeded",
     "SnapshotNotFound"
   ]
