@@ -369,6 +369,14 @@
           "optional": true
         },
         {
+          "name": "DynamicStandbySettings",
+          "description": "Optional settings to control dynamic adjustment of standby target",
+          "jsontype": "Object",
+          "actualtype": "DynamicStandbySettings",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "MaxServers",
           "description": "The maximum number of multiplayer servers for the region.",
           "jsontype": "Number",
@@ -385,7 +393,7 @@
         },
         {
           "name": "StandbyServers",
-          "description": "The number of standby multiplayer servers for the region.",
+          "description": "The target number of standby multiplayer servers for the region.",
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
@@ -405,6 +413,14 @@
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
       "properties": [
+        {
+          "name": "DynamicStandbySettings",
+          "description": "Optional settings to control dynamic adjustment of standby target. If not specified, dynamic standby is disabled",
+          "jsontype": "Object",
+          "actualtype": "DynamicStandbySettings",
+          "isclass": true,
+          "optional": true
+        },
         {
           "name": "MaxServers",
           "description": "The maximum number of multiplayer servers for the region.",
@@ -1925,6 +1941,59 @@
         }
       ]
     },
+    "DynamicStandbySettings": {
+      "name": "DynamicStandbySettings",
+      "className": "DynamicStandbySettings",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "DynamicFloorMultiplierThresholds",
+          "description": "List of auto standing by trigger values and corresponding standing by multiplier. Defaults to 1.5X at 50%, 3X at 25%, and 4X at 5%",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "DynamicStandbyThreshold",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "IsEnabled",
+          "description": "When true, dynamic standby will be enabled",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "RampDownSeconds",
+          "description": "The time it takes to reduce target standing by to configured floor value after an increase. Defaults to 30 minutes",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "DynamicStandbyThreshold": {
+      "name": "DynamicStandbyThreshold",
+      "className": "DynamicStandbyThreshold",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "Multiplier",
+          "description": "When the trigger threshold is reached, multiply by this value",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
+        },
+        {
+          "name": "TriggerThresholdPercentage",
+          "description": "The multiplier will be applied when the actual standby divided by target standby floor is less than this value",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
+        }
+      ]
+    },
     "EmptyResponse": {
       "name": "EmptyResponse",
       "className": "EmptyResponse",
@@ -2779,9 +2848,6 @@
       "className": "GetMultiplayerServerLogsRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
       "isRequest": true,
       "properties": [
@@ -2807,13 +2873,11 @@
       "className": "GetMultiplayerServerLogsResponse",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "isResult": true,
       "properties": [
         {
           "name": "LogDownloadUrl",
+          "description": "URL for logs download.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -5459,6 +5523,30 @@
         }
       ]
     },
+    "UntagContainerImageRequest": {
+      "name": "UntagContainerImageRequest",
+      "className": "UntagContainerImageRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "description": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ImageName",
+          "description": "The container image which tag we want to remove.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Tag",
+          "description": "The tag we want to remove.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UpdateBuildAliasRequest": {
       "name": "UpdateBuildAliasRequest",
       "className": "UpdateBuildAliasRequest",
@@ -5636,6 +5724,7 @@
         "RequestParty",
         "RolloverContainerRegistryCredentials",
         "ShutdownMultiplayerServer",
+        "UntagContainerImage",
         "UpdateBuildAlias",
         "UpdateBuildRegions",
         "UploadCertificate"
@@ -6385,9 +6474,6 @@
       "requestExample": "{\r\n  \"Region\": \"SouthCentralUs\",\r\n  \"ServerId\": \"SomeServerId\"\r\n}",
       "result": "GetMultiplayerServerLogsResponse",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"LogDownloadUrl\": \"TheLogDownloadUrl\"\r\n  }\r\n}",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
       "seeAlso": [
         "MultiplayerServer/GetMultiplayerServerDetails",
         "MultiplayerServer/RequestMultiplayerServer"
@@ -7057,6 +7143,34 @@
         "MultiplayerServerNotFound",
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized"
+      ]
+    },
+    {
+      "name": "UntagContainerImage",
+      "summary": "Untags a container image.",
+      "requestDetails": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/MultiplayerServer/UntagContainerImage",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UntagContainerImageRequest",
+      "requestExample": "{\r\n  \"ImageName\": \"imageName1\",\r\n  \"Tag\": \"tag1\"\r\n}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "seeAlso": [
+        "MultiplayerServer/ListContainerImageTags"
+      ],
+      "errors": [
+        "MultiplayerServerBadRequest",
+        "MultiplayerServerConflict",
+        "MultiplayerServerForbidden",
+        "MultiplayerServerInternalServerError",
+        "MultiplayerServerNoContent",
+        "MultiplayerServerNotFound",
+        "MultiplayerServerTooManyRequests",
+        "MultiplayerServerUnauthorized",
+        "MultiplayerServerUnavailable"
       ]
     },
     {
@@ -9079,6 +9193,10 @@
       "id": 1494,
       "name": "CloudScriptAzureFunctionsQueueRequestError"
     },
+    "EvaluationModeTitleCountExceeded": {
+      "id": 1495,
+      "name": "EvaluationModeTitleCountExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -9291,6 +9409,18 @@
       "id": 5017,
       "name": "ExportInvalidPartitionStatusModification"
     },
+    "ExportCouldNotCreate": {
+      "id": 5018,
+      "name": "ExportCouldNotCreate"
+    },
+    "ExportNoBackingDatabaseFound": {
+      "id": 5019,
+      "name": "ExportNoBackingDatabaseFound"
+    },
+    "ExportCouldNotDelete": {
+      "id": 5020,
+      "name": "ExportCouldNotDelete"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -9327,13 +9457,13 @@
       "id": 7005,
       "name": "ExperimentationClientTimeout"
     },
-    "ExperimentationExceededVariantNameLength": {
+    "ExperimentationInvalidVariantConfiguration": {
       "id": 7006,
-      "name": "ExperimentationExceededVariantNameLength"
+      "name": "ExperimentationInvalidVariantConfiguration"
     },
-    "ExperimentationExceededMaxVariantLength": {
+    "ExperimentationInvalidVariableConfiguration": {
       "id": 7007,
-      "name": "ExperimentationExceededMaxVariantLength"
+      "name": "ExperimentationInvalidVariableConfiguration"
     },
     "ExperimentInvalidId": {
       "id": 7008,
@@ -9845,6 +9975,7 @@
     "CloudScriptFunctionNameSizeExceeded",
     "InsightsManagementTitleInEvaluationMode",
     "CloudScriptAzureFunctionsQueueRequestError",
+    "EvaluationModeTitleCountExceeded",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -9898,6 +10029,9 @@
     "ExportLimitExports",
     "ExportLimitEvents",
     "ExportInvalidPartitionStatusModification",
+    "ExportCouldNotCreate",
+    "ExportNoBackingDatabaseFound",
+    "ExportCouldNotDelete",
     "TitleNotEnabledForParty",
     "PartyVersionNotFound",
     "MultiplayerServerBuildReferencedByMatchmakingQueue",
@@ -9907,8 +10041,8 @@
     "ExperimentationExperimentNeverStarted",
     "ExperimentationExperimentDeleted",
     "ExperimentationClientTimeout",
-    "ExperimentationExceededVariantNameLength",
-    "ExperimentationExceededMaxVariantLength",
+    "ExperimentationInvalidVariantConfiguration",
+    "ExperimentationInvalidVariableConfiguration",
     "ExperimentInvalidId",
     "ExperimentationNoScorecard",
     "ExperimentationTreatmentAssignmentFailed",

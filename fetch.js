@@ -83,8 +83,10 @@ function GetFileFromUrl(inputUrl, processFileCallback) {
 }
 
 function GetApiFile(inputUrl, outputFilename, retry = 0) {
-    if (retry == 10)
-        throw new Exception("  !!!!!!!!!!  Aborting GetApiFile, failed " + retry + " times: " + inputUrl);
+    if (retry == 10) {
+        var msg = "  !!!!!!!!!!  Aborting GetApiFile, failed " + retry + " times: " + inputUrl;
+        console.log(msg); return; // throw Error(msg);
+    }
 
     console.log("-> Begin reading: " + inputUrl);
     var rawResponse = "";

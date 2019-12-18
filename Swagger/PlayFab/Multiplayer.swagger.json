@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "191121",
+    "version": "191218",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1053,6 +1053,52 @@
         ]
       }
     },
+    "/MultiplayerServer/GetMultiplayerServerLogs": {
+      "post": {
+        "operationId": "GetMultiplayerServerLogs",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Gets multiplayer server logs after a server has terminated.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/GetMultiplayerServerLogs"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMultiplayerServerLogsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMultiplayerServerLogsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+        "x-seeAlso": [
+          "MultiplayerServer/GetMultiplayerServerDetails",
+          "MultiplayerServer/RequestMultiplayerServer"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/GetRemoteLoginEndpoint": {
       "post": {
         "operationId": "GetRemoteLoginEndpoint",
@@ -1813,6 +1859,51 @@
         ]
       }
     },
+    "/MultiplayerServer/UntagContainerImage": {
+      "post": {
+        "operationId": "UntagContainerImage",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Untags a container image.",
+        "externalDocs": {
+          "url": "https://api.playfab.com/documentation/multiplayer/method/UntagContainerImage"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UntagContainerImageRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
+        "x-seeAlso": [
+          "MultiplayerServer/ListContainerImageTags"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNoContent",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/UpdateBuildAlias": {
       "post": {
         "operationId": "UpdateBuildAlias",
@@ -1954,8 +2045,7 @@
       "properties": {
         "code": {
           "description": "Numerical HTTP code",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "status": {
           "description": "String HTTP code",
@@ -1967,8 +2057,7 @@
         },
         "errorCode": {
           "description": "Numerical Playfab error code",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "errorMessage": {
           "description": "Description for the Playfab errorCode",
@@ -1978,7 +2067,11 @@
           "description": "Detailed description of individual issues with the request object",
           "type": "object"
         }
-      }
+      },
+      "required": [
+        "code",
+        "errorCode"
+      ]
     },
     "AssetReference": {
       "type": "object",
@@ -2148,6 +2241,12 @@
           "type": "object",
           "x-isclass": true
         },
+        "DynamicStandbySettings": {
+          "$ref": "#/definitions/DynamicStandbySettings",
+          "description": "Optional settings to control dynamic adjustment of standby target",
+          "type": "object",
+          "x-isclass": true
+        },
         "MaxServers": {
           "description": "The maximum number of multiplayer servers for the region.",
           "type": "number",
@@ -2159,7 +2258,7 @@
           "type": "string"
         },
         "StandbyServers": {
-          "description": "The number of standby multiplayer servers for the region.",
+          "description": "The target number of standby multiplayer servers for the region.",
           "type": "number",
           "x-actualtype": "int32"
         },
@@ -2176,6 +2275,12 @@
     "BuildRegionParams": {
       "type": "object",
       "properties": {
+        "DynamicStandbySettings": {
+          "$ref": "#/definitions/DynamicStandbySettings",
+          "description": "Optional settings to control dynamic adjustment of standby target. If not specified, dynamic standby is disabled",
+          "type": "object",
+          "x-isclass": true
+        },
         "MaxServers": {
           "description": "The maximum number of multiplayer servers for the region.",
           "type": "number",
@@ -3242,6 +3347,50 @@
         "Username": "AUsername"
       }
     },
+    "DynamicStandbySettings": {
+      "type": "object",
+      "properties": {
+        "DynamicFloorMultiplierThresholds": {
+          "description": "List of auto standing by trigger values and corresponding standing by multiplier. Defaults to 1.5X at 50%, 3X at 25%, and 4X at 5%",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DynamicStandbyThreshold"
+          },
+          "x-isclass": true
+        },
+        "IsEnabled": {
+          "description": "When true, dynamic standby will be enabled",
+          "type": "boolean"
+        },
+        "RampDownSeconds": {
+          "description": "The time it takes to reduce target standing by to configured floor value after an increase. Defaults to 30 minutes",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "IsEnabled"
+      ]
+    },
+    "DynamicStandbyThreshold": {
+      "type": "object",
+      "properties": {
+        "Multiplier": {
+          "description": "When the trigger threshold is reached, multiply by this value",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "TriggerThresholdPercentage": {
+          "description": "The multiplier will be applied when the actual standby divided by target standby floor is less than this value",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "TriggerThresholdPercentage",
+        "Multiplier"
+      ]
+    },
     "EmptyResponse": {
       "type": "object",
       "properties": {}
@@ -3871,6 +4020,41 @@
             "PlayerId": "10271352123739051532"
           }
         ]
+      }
+    },
+    "GetMultiplayerServerLogsRequest": {
+      "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+      "type": "object",
+      "properties": {
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "description": "The region of the multiplayer server to get logs for.",
+          "type": "string"
+        },
+        "ServerId": {
+          "description": "The server ID of multiplayer server to get logs for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Region",
+        "ServerId"
+      ],
+      "example": {
+        "Region": "SouthCentralUs",
+        "ServerId": "SomeServerId"
+      }
+    },
+    "GetMultiplayerServerLogsResponse": {
+      "type": "object",
+      "properties": {
+        "LogDownloadUrl": {
+          "description": "URL for logs download.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "LogDownloadUrl": "TheLogDownloadUrl"
       }
     },
     "GetQueueStatisticsRequest": {
@@ -5111,6 +5295,24 @@
         }
       }
     },
+    "UntagContainerImageRequest": {
+      "description": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
+      "type": "object",
+      "properties": {
+        "ImageName": {
+          "description": "The container image which tag we want to remove.",
+          "type": "string"
+        },
+        "Tag": {
+          "description": "The tag we want to remove.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ImageName": "imageName1",
+        "Tag": "tag1"
+      }
+    },
     "UpdateBuildAliasRequest": {
       "description": "Creates a multiplayer server build alias and returns the created alias.",
       "type": "object",
@@ -5398,6 +5600,14 @@
         "$ref": "#/definitions/GetMultiplayerServerDetailsRequest"
       }
     },
+    "GetMultiplayerServerLogsRequest": {
+      "name": "GetMultiplayerServerLogsRequest",
+      "in": "body",
+      "description": "Gets multiplayer server logs for a specific server id in a region. The logs are available only after a server has terminated.",
+      "schema": {
+        "$ref": "#/definitions/GetMultiplayerServerLogsRequest"
+      }
+    },
     "GetQueueStatisticsRequest": {
       "name": "GetQueueStatisticsRequest",
       "in": "body",
@@ -5558,6 +5768,14 @@
         "$ref": "#/definitions/ShutdownMultiplayerServerRequest"
       }
     },
+    "UntagContainerImageRequest": {
+      "name": "UntagContainerImageRequest",
+      "in": "body",
+      "description": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
+      "schema": {
+        "$ref": "#/definitions/UntagContainerImageRequest"
+      }
+    },
     "UpdateBuildAliasRequest": {
       "name": "UpdateBuildAliasRequest",
       "in": "body",
@@ -5585,7 +5803,7 @@
   },
   "responses": {
     "ApiErrorWrapper": {
-      "description": "This is the outer-wrapper for all responses with errors",
+      "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
       }
@@ -6184,6 +6402,32 @@
                 "PlayerId": "10271352123739051532"
               }
             ]
+          }
+        }
+      }
+    },
+    "GetMultiplayerServerLogsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMultiplayerServerLogsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "LogDownloadUrl": "TheLogDownloadUrl"
           }
         }
       }
@@ -8811,6 +9055,10 @@
       "id": 1494,
       "name": "CloudScriptAzureFunctionsQueueRequestError"
     },
+    "EvaluationModeTitleCountExceeded": {
+      "id": 1495,
+      "name": "EvaluationModeTitleCountExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -9023,6 +9271,18 @@
       "id": 5017,
       "name": "ExportInvalidPartitionStatusModification"
     },
+    "ExportCouldNotCreate": {
+      "id": 5018,
+      "name": "ExportCouldNotCreate"
+    },
+    "ExportNoBackingDatabaseFound": {
+      "id": 5019,
+      "name": "ExportNoBackingDatabaseFound"
+    },
+    "ExportCouldNotDelete": {
+      "id": 5020,
+      "name": "ExportCouldNotDelete"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -9059,13 +9319,13 @@
       "id": 7005,
       "name": "ExperimentationClientTimeout"
     },
-    "ExperimentationExceededVariantNameLength": {
+    "ExperimentationInvalidVariantConfiguration": {
       "id": 7006,
-      "name": "ExperimentationExceededVariantNameLength"
+      "name": "ExperimentationInvalidVariantConfiguration"
     },
-    "ExperimentationExceededMaxVariantLength": {
+    "ExperimentationInvalidVariableConfiguration": {
       "id": 7007,
-      "name": "ExperimentationExceededMaxVariantLength"
+      "name": "ExperimentationInvalidVariableConfiguration"
     },
     "ExperimentInvalidId": {
       "id": 7008,
