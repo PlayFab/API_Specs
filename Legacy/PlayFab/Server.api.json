@@ -4421,6 +4421,9 @@
           "name": "EvaluationModeTitleCountExceeded"
         },
         {
+          "name": "InsightsManagementTitleNotInFlight"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -7590,6 +7593,58 @@
           "optional": true
         }
       ]
+    },
+    "LinkPSNAccountRequest": {
+      "name": "LinkPSNAccountRequest",
+      "className": "LinkPSNAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AuthCode",
+          "description": "Authentication code provided by the PlayStation Network.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ForceLink",
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PSN issuer environment. If null, defaults to 256 (production)",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PSN when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "LinkPSNAccountResult": {
+      "name": "LinkPSNAccountResult",
+      "className": "LinkPSNAccountResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isResult": true,
+      "properties": []
     },
     "LinkServerCustomIdRequest": {
       "name": "LinkServerCustomIdRequest",
@@ -11119,6 +11174,30 @@
         }
       ]
     },
+    "UnlinkPSNAccountRequest": {
+      "name": "UnlinkPSNAccountRequest",
+      "className": "UnlinkPSNAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UnlinkPSNAccountResult": {
+      "name": "UnlinkPSNAccountResult",
+      "className": "UnlinkPSNAccountResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isResult": true,
+      "properties": []
+    },
     "UnlinkServerCustomIdRequest": {
       "name": "UnlinkServerCustomIdRequest",
       "className": "UnlinkServerCustomIdRequest",
@@ -12784,6 +12863,7 @@
         "GetServerCustomIDsFromPlayFabIDs",
         "GetUserAccountInfo",
         "GetUserBans",
+        "LinkPSNAccount",
         "LinkServerCustomId",
         "LinkXboxAccount",
         "RemoveGenericID",
@@ -12794,6 +12874,7 @@
         "SendEmailFromTemplate",
         "SendPushNotification",
         "SendPushNotificationFromTemplate",
+        "UnlinkPSNAccount",
         "UnlinkServerCustomId",
         "UnlinkXboxAccount",
         "UpdateAvatarUrl",
@@ -13063,7 +13144,7 @@
     },
     {
       "name": "AddSharedGroupMembers",
-      "summary": "Adds users to the set of those able to update both the shared data, as well as the set of users in the group. Only users in the group (and the server) can add new members. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Adds users to the set of those able to update both the shared data, as well as the set of users in the group. Only users in the group (and the server) can add new members. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
       "url": "/Server/AddSharedGroupMembers",
@@ -13168,7 +13249,7 @@
     },
     {
       "name": "CreateSharedGroup",
-      "summary": "Requests the creation of a shared group object, containing key/value pairs which may be updated by all members of the group. When created by a server, the group will initially have no members. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Requests the creation of a shared group object, containing key/value pairs which may be updated by all members of the group. When created by a server, the group will initially have no members. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "requestDetails": "If SharedGroupId is specified, the service will attempt to create a group with that identifier, and will return an error if it is already in use. If no SharedGroupId is specified, a random identifier will be assigned.",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
@@ -13235,7 +13316,7 @@
     },
     {
       "name": "DeleteSharedGroup",
-      "summary": "Deletes a shared group, freeing up the shared group ID to be reused for a new group. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Deletes a shared group, freeing up the shared group ID to be reused for a new group. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
       "url": "/Server/DeleteSharedGroup",
@@ -13528,7 +13609,7 @@
     },
     {
       "name": "GetContentDownloadUrl",
-      "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content - if it has not been uploaded, the query to retrieve the data will fail. See this post for more information: https://community.playfab.com/hc/en-us/community/posts/205469488-How-to-upload-files-to-PlayFab-s-Content-Service. Also, please be aware that the Content service is specifically PlayFab's CDN offering, for which standard CDN rates apply.",
+      "summary": "This API retrieves a pre-signed URL for accessing a content file for the title. A subsequent HTTP GET to the returned URL will attempt to download the content. A HEAD query to the returned URL will attempt to retrieve the metadata of the content. Note that a successful result does not guarantee the existence of this content - if it has not been uploaded, the query to retrieve the data will fail. See this post for more information: https://community.playfab.com/hc/community/posts/205469488-How-to-upload-files-to-PlayFab-s-Content-Service. Also, please be aware that the Content service is specifically PlayFab's CDN offering, for which standard CDN rates apply.",
       "subgroup": "Content",
       "titleTiers": null,
       "url": "/Server/GetContentDownloadUrl",
@@ -13961,7 +14042,7 @@
     },
     {
       "name": "GetSharedGroupData",
-      "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. The server can access all public and private group data. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Retrieves data stored in a shared group object, as well as the list of members in the group. The server can access all public and private group data. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
       "url": "/Server/GetSharedGroupData",
@@ -14348,6 +14429,28 @@
       ]
     },
     {
+      "name": "LinkPSNAccount",
+      "summary": "Links the PlayStation Network account associated with the provided access code to the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/LinkPSNAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LinkPSNAccountRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"1234FA342\",\r\n  \"AuthCode\": \"LKJDG7DDE\",\r\n  \"RedirectUri\": \"orbis://games\"\r\n}",
+      "result": "LinkPSNAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/UnlinkPSNAccount"
+      ],
+      "errors": [
+        "InvalidPSNAuthCode",
+        "InvalidPSNIssuerId",
+        "PSNInaccessible",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
       "name": "LinkServerCustomId",
       "summary": "Links the custom server identifier, generated by the title, to the user's PlayFab account.",
       "subgroup": "Account Management",
@@ -14706,7 +14809,7 @@
     },
     {
       "name": "RemoveSharedGroupMembers",
-      "summary": "Removes users from the set of those able to update the shared data and the set of users in the group. Only users in the group can remove members. If as a result of the call, zero users remain with access, the group and its associated data will be deleted. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Removes users from the set of those able to update the shared data and the set of users in the group. Only users in the group can remove members. If as a result of the call, zero users remain with access, the group and its associated data will be deleted. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
       "url": "/Server/RemoveSharedGroupMembers",
@@ -15110,6 +15213,25 @@
       ]
     },
     {
+      "name": "UnlinkPSNAccount",
+      "summary": "Unlinks the related PSN account from the user's PlayFab account",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/UnlinkPSNAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UnlinkPSNAccountRequest",
+      "requestExample": "{\r\n  \"PlayFabId\": \"1234FA342\"\r\n}",
+      "result": "UnlinkPSNAccountResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/LinkPSNAccount"
+      ],
+      "errors": [
+        "AccountNotLinked"
+      ]
+    },
+    {
       "name": "UnlinkServerCustomId",
       "summary": "Unlinks the custom server identifier from the user's PlayFab account.",
       "subgroup": "Account Management",
@@ -15348,7 +15470,7 @@
     },
     {
       "name": "UpdateSharedGroupData",
-      "summary": "Adds, updates, and removes data keys for a shared group object. If the permission is set to Public, all fields updated or added in this call will be readable by users not in the group. By default, data permissions are set to Private. Regardless of the permission setting, only members of the group (and the server) can update the data. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://api.playfab.com/docs/tutorials/landing-players/shared-groups",
+      "summary": "Adds, updates, and removes data keys for a shared group object. If the permission is set to Public, all fields updated or added in this call will be readable by users not in the group. By default, data permissions are set to Private. Regardless of the permission setting, only members of the group (and the server) can update the data. Shared Groups are designed for sharing data between a very small number of players, please see our guide: https://docs.microsoft.com/gaming/playfab/features/social/groups/using-shared-group-data",
       "requestDetails": "Note that in the case of multiple calls to write to the same shared group data keys, the last write received by the PlayFab service will determine the value available to subsequent read operations. For scenarios requiring coordination of data updates, it is recommended that titles make use of user data with read permission set to public, or a combination of user data and shared group data.",
       "subgroup": "Shared Group Data",
       "titleTiers": null,
@@ -17546,6 +17668,10 @@
       "id": 1495,
       "name": "EvaluationModeTitleCountExceeded"
     },
+    "InsightsManagementTitleNotInFlight": {
+      "id": 1496,
+      "name": "InsightsManagementTitleNotInFlight"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -18325,6 +18451,7 @@
     "InsightsManagementTitleInEvaluationMode",
     "CloudScriptAzureFunctionsQueueRequestError",
     "EvaluationModeTitleCountExceeded",
+    "InsightsManagementTitleNotInFlight",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
