@@ -2264,6 +2264,52 @@
         }
       ]
     },
+    "CreateInsightsScheduledScalingTaskRequest": {
+      "name": "CreateInsightsScheduledScalingTaskRequest",
+      "className": "CreateInsightsScheduledScalingTaskRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Description",
+          "description": "Description the task",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IsActive",
+          "description": "Whether the schedule is active. Inactive schedule will not trigger task execution.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "Name",
+          "description": "Name of the task. This is a unique identifier for tasks in the title.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Parameter",
+          "description": "Task details related to Insights Scaling",
+          "jsontype": "Object",
+          "actualtype": "InsightsScalingTaskParameter",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "Schedule",
+          "description": "Cron expression for the run schedule of the task. The expression should be in UTC.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "CreateOpenIdConnectionRequest": {
       "name": "CreateOpenIdConnectionRequest",
       "className": "CreateOpenIdConnectionRequest",
@@ -5166,6 +5212,12 @@
           "name": "ExperimentationTreatmentAssignmentDisabled"
         },
         {
+          "name": "ExperimentationInvalidDuration"
+        },
+        {
+          "name": "ExperimentationMaxExperimentsReached"
+        },
+        {
           "name": "MaxActionDepthExceeded"
         },
         {
@@ -7030,6 +7082,21 @@
           "actualtype": "PlayerStatisticVersion",
           "isclass": true,
           "optional": true
+        }
+      ]
+    },
+    "InsightsScalingTaskParameter": {
+      "name": "InsightsScalingTaskParameter",
+      "className": "InsightsScalingTaskParameter",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "Level",
+          "description": "Insights Performance Level to scale to.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
         }
       ]
     },
@@ -9481,6 +9548,9 @@
         },
         {
           "name": "CloudScriptAzureFunctions"
+        },
+        {
+          "name": "InsightsScheduledScaling"
         }
       ]
     },
@@ -11890,6 +11960,7 @@
         "CreateActionsOnPlayersInSegmentTask",
         "CreateCloudScriptAzureFunctionsTask",
         "CreateCloudScriptTask",
+        "CreateInsightsScheduledScalingTask",
         "DeleteTask",
         "GetActionsOnPlayersInSegmentTaskInstance",
         "GetCloudScriptAzureFunctionsTaskInstance",
@@ -12210,6 +12281,33 @@
       ]
     },
     {
+      "name": "CreateInsightsScheduledScalingTask",
+      "summary": "Create a Insights Scheduled Scaling task, which can scale Insights Performance Units on a schedule",
+      "requestDetails": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "subgroup": "ScheduledTask",
+      "titleTiers": null,
+      "url": "/Admin/CreateInsightsScheduledScalingTask",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "CreateInsightsScheduledScalingTaskRequest",
+      "requestExample": "{\r\n  \"Name\": \"EnableWeekdayPerformance\",\r\n  \"Description\": \"Scale up Insights Performance Units during weekdays.\",\r\n  \"Schedule\": \"0 0 * * 1-5\",\r\n  \"IsActive\": false,\r\n  \"Parameter\": {\r\n    \"Level\": 3\r\n  }\r\n}",
+      "result": "CreateTaskResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"TaskId\": \"644FA3A39C9714BC\"\r\n  }\r\n}",
+      "seeAlso": [
+        "Admin/CreateActionsOnPlayersInSegmentTask",
+        "Admin/DeleteTask",
+        "Admin/GetTasks",
+        "Admin/RunTask",
+        "Admin/UpdateTask"
+      ],
+      "errors": [
+        "InvalidScheduledTaskName",
+        "InvalidTaskSchedule",
+        "ScheduledTaskCreateConflict",
+        "ScheduledTaskNameConflict"
+      ]
+    },
+    {
       "name": "CreateOpenIdConnection",
       "summary": "Registers a relationship between a title and an Open ID Connect provider.",
       "subgroup": "Authentication",
@@ -12360,9 +12458,6 @@
         "Admin/CreatePlayerSharedSecret",
         "Admin/GetPlayerSharedSecrets",
         "Admin/UpdatePlayerSharedSecret"
-      ],
-      "errors": [
-        "SecretKeyNotFound"
       ]
     },
     {
@@ -12834,6 +12929,7 @@
         "ExpiredContinuationToken",
         "GetPlayersInSegmentRateLimitExceeded",
         "InvalidContinuationToken",
+        "InvalidSegment",
         "SegmentNotFound"
       ]
     },
@@ -13966,8 +14062,7 @@
       "result": "UpdateCloudScriptResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Version\": 1,\r\n    \"Revision\": 5\r\n  }\r\n}",
       "errors": [
-        "JavascriptException",
-        "ServiceUnavailable"
+        "JavascriptException"
       ]
     },
     {
@@ -14004,9 +14099,6 @@
       "seeAlso": [
         "Admin/CreatePlayerSharedSecret",
         "Admin/GetPlayerSharedSecrets"
-      ],
-      "errors": [
-        "SecretKeyNotFound"
       ]
     },
     {
@@ -16511,6 +16603,14 @@
       "id": 7011,
       "name": "ExperimentationTreatmentAssignmentDisabled"
     },
+    "ExperimentationInvalidDuration": {
+      "id": 7012,
+      "name": "ExperimentationInvalidDuration"
+    },
+    "ExperimentationMaxExperimentsReached": {
+      "id": 7013,
+      "name": "ExperimentationMaxExperimentsReached"
+    },
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
@@ -17078,6 +17178,8 @@
     "ExperimentationNoScorecard",
     "ExperimentationTreatmentAssignmentFailed",
     "ExperimentationTreatmentAssignmentDisabled",
+    "ExperimentationInvalidDuration",
+    "ExperimentationMaxExperimentsReached",
     "MaxActionDepthExceeded",
     "SnapshotNotFound"
   ]

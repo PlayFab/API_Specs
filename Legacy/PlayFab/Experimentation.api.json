@@ -9,6 +9,39 @@
     "Beta"
   ],
   "datatypes": {
+    "AnalysisTaskState": {
+      "name": "AnalysisTaskState",
+      "className": "AnalysisTaskState",
+      "classNameSpace": "PlayFab.Experimentation.Models",
+      "assembly": "PlayFab.Experimentation.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Waiting"
+        },
+        {
+          "name": "ReadyForSubmission"
+        },
+        {
+          "name": "SubmittingToPipeline"
+        },
+        {
+          "name": "Running"
+        },
+        {
+          "name": "Completed"
+        },
+        {
+          "name": "Failed"
+        },
+        {
+          "name": "Canceled"
+        }
+      ]
+    },
     "CreateExperimentRequest": {
       "name": "CreateExperimentRequest",
       "className": "CreateExperimentRequest",
@@ -343,9 +376,9 @@
         }
       ]
     },
-    "GetLatestScorecardForExperimentRequest": {
-      "name": "GetLatestScorecardForExperimentRequest",
-      "className": "GetLatestScorecardForExperimentRequest",
+    "GetLatestScorecardRequest": {
+      "name": "GetLatestScorecardRequest",
+      "className": "GetLatestScorecardRequest",
       "classNameSpace": "PlayFab.Experimentation.Models",
       "assembly": "PlayFab.Experimentation.Models",
       "AnyInclusiveFlags": [
@@ -355,16 +388,16 @@
       "properties": [
         {
           "name": "ExperimentId",
-          "description": "The ID of the new experiment.",
+          "description": "The ID of the experiment.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         }
       ]
     },
-    "GetLatestScorecardForExperimentResult": {
-      "name": "GetLatestScorecardForExperimentResult",
-      "className": "GetLatestScorecardForExperimentResult",
+    "GetLatestScorecardResult": {
+      "name": "GetLatestScorecardResult",
+      "className": "GetLatestScorecardResult",
       "classNameSpace": "PlayFab.Experimentation.Models",
       "assembly": "PlayFab.Experimentation.Models",
       "AnyInclusiveFlags": [
@@ -375,38 +408,6 @@
         {
           "name": "Scorecard",
           "description": "Scorecard for the experiment of the title.",
-          "jsontype": "Object",
-          "actualtype": "Scorecard",
-          "isclass": true,
-          "optional": true
-        }
-      ]
-    },
-    "GetLatestScorecardsForTitleRequest": {
-      "name": "GetLatestScorecardsForTitleRequest",
-      "className": "GetLatestScorecardsForTitleRequest",
-      "classNameSpace": "PlayFab.Experimentation.Models",
-      "assembly": "PlayFab.Experimentation.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isRequest": true,
-      "properties": []
-    },
-    "GetLatestScorecardsForTitleResult": {
-      "name": "GetLatestScorecardsForTitleResult",
-      "className": "GetLatestScorecardsForTitleResult",
-      "classNameSpace": "PlayFab.Experimentation.Models",
-      "assembly": "PlayFab.Experimentation.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "isResult": true,
-      "properties": [
-        {
-          "name": "Scorecards",
-          "description": "Scorecards for the title.",
-          "collection": "array",
           "jsontype": "Object",
           "actualtype": "Scorecard",
           "isclass": true,
@@ -599,6 +600,21 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "LatestJobStatus",
+          "description": "Represents the latest compute job status.",
+          "jsontype": "String",
+          "actualtype": "AnalysisTaskState",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "SampleRatioMismatch",
+          "description": "Represents the presence of a sample ratio mismatch in the scorecard data.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         },
         {
           "name": "ScorecardDataRows",
@@ -892,8 +908,7 @@
         "CreateExperiment",
         "DeleteExperiment",
         "GetExperiments",
-        "GetLatestScorecardForExperiment",
-        "GetLatestScorecardsForTitle",
+        "GetLatestScorecard",
         "GetTreatmentAssignment",
         "StartExperiment",
         "StopExperiment",
@@ -918,6 +933,7 @@
         "Beta"
       ],
       "errors": [
+        "FeatureNotConfiguredForTitle",
         "SegmentNotFound"
       ]
     },
@@ -938,7 +954,8 @@
       ],
       "errors": [
         "ExperimentationExperimentNotFound",
-        "ExperimentationExperimentRunning"
+        "ExperimentationExperimentRunning",
+        "FeatureNotConfiguredForTitle"
       ]
     },
     {
@@ -955,42 +972,29 @@
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Experiments\": []\r\n  }\r\n}",
       "AnyInclusiveFlags": [
         "Beta"
+      ],
+      "errors": [
+        "FeatureNotConfiguredForTitle"
       ]
     },
     {
-      "name": "GetLatestScorecardForExperiment",
-      "summary": "Gets the scorecard of the experiment for the title.",
+      "name": "GetLatestScorecard",
+      "summary": "Gets the latest scorecard of the experiment for the title.",
       "subgroup": "Experimentation",
       "titleTiers": null,
-      "url": "/Experimentation/GetLatestScorecardForExperiment",
+      "url": "/Experimentation/GetLatestScorecard",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "GetLatestScorecardForExperimentRequest",
+      "request": "GetLatestScorecardRequest",
       "requestExample": "{\r\n  \"ExperimentId\": \"00000000-0000-0000-0000-000000000000\"\r\n}",
-      "result": "GetLatestScorecardForExperimentResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Scorecard\": {\r\n      \"EventsProcessed\": 0.0\r\n    }\r\n  }\r\n}",
+      "result": "GetLatestScorecardResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Scorecard\": {\r\n      \"EventsProcessed\": 0.0,\r\n      \"SampleRatioMismatch\": false,\r\n      \"LatestJobStatus\": \"Waiting\"\r\n    }\r\n  }\r\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
         "ExperimentationExperimentNotFound",
         "ExperimentationNoScorecard"
-      ]
-    },
-    {
-      "name": "GetLatestScorecardsForTitle",
-      "summary": "Gets the scorecards of all experiments for a title.",
-      "subgroup": "Experimentation",
-      "titleTiers": null,
-      "url": "/Experimentation/GetLatestScorecardsForTitle",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "GetLatestScorecardsForTitleRequest",
-      "requestExample": "{}",
-      "result": "GetLatestScorecardsForTitleResult",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Scorecards\": []\r\n  }\r\n}",
-      "AnyInclusiveFlags": [
-        "Beta"
       ]
     },
     {
@@ -1010,7 +1014,8 @@
       ],
       "errors": [
         "ExperimentationClientTimeout",
-        "ExperimentationTreatmentAssignmentFailed"
+        "ExperimentationTreatmentAssignmentFailed",
+        "FeatureNotConfiguredForTitle"
       ]
     },
     {
@@ -1031,7 +1036,8 @@
       "errors": [
         "ExperimentationExperimentNotFound",
         "ExperimentationExperimentRunning",
-        "ExperimentationExperimentStopped"
+        "ExperimentationExperimentStopped",
+        "FeatureNotConfiguredForTitle"
       ]
     },
     {
@@ -1052,7 +1058,8 @@
       "errors": [
         "ExperimentationExperimentNeverStarted",
         "ExperimentationExperimentNotFound",
-        "ExperimentationExperimentStopped"
+        "ExperimentationExperimentStopped",
+        "FeatureNotConfiguredForTitle"
       ]
     },
     {
@@ -1074,6 +1081,7 @@
         "ExperimentationExperimentNotFound",
         "ExperimentationExperimentRunning",
         "ExperimentationExperimentStopped",
+        "FeatureNotConfiguredForTitle",
         "SegmentNotFound"
       ]
     }
@@ -3307,6 +3315,14 @@
       "id": 7011,
       "name": "ExperimentationTreatmentAssignmentDisabled"
     },
+    "ExperimentationInvalidDuration": {
+      "id": 7012,
+      "name": "ExperimentationInvalidDuration"
+    },
+    "ExperimentationMaxExperimentsReached": {
+      "id": 7013,
+      "name": "ExperimentationMaxExperimentsReached"
+    },
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
@@ -3874,6 +3890,8 @@
     "ExperimentationNoScorecard",
     "ExperimentationTreatmentAssignmentFailed",
     "ExperimentationTreatmentAssignmentDisabled",
+    "ExperimentationInvalidDuration",
+    "ExperimentationMaxExperimentsReached",
     "MaxActionDepthExceeded",
     "SnapshotNotFound"
   ]

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200203",
+    "version": "200218",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -417,6 +417,50 @@
         "parameters": [
           {
             "$ref": "#/parameters/CreateCloudScriptTaskRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateTaskResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+        "x-seeAlso": [
+          "Admin/CreateActionsOnPlayersInSegmentTask",
+          "Admin/DeleteTask",
+          "Admin/GetTasks",
+          "Admin/RunTask",
+          "Admin/UpdateTask"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidScheduledTaskName",
+          "InvalidTaskSchedule",
+          "ScheduledTaskCreateConflict",
+          "ScheduledTaskNameConflict"
+        ]
+      }
+    },
+    "/Admin/CreateInsightsScheduledScalingTask": {
+      "post": {
+        "operationId": "CreateInsightsScheduledScalingTask",
+        "tags": [
+          "ScheduledTask"
+        ],
+        "description": "Create a Insights Scheduled Scaling task, which can scale Insights Performance Units on a schedule",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/scheduledtask/createinsightsscheduledscalingtask"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateInsightsScheduledScalingTaskRequest"
           }
         ],
         "security": [
@@ -3555,8 +3599,7 @@
           }
         },
         "x-ms-docs-errors": [
-          "JavascriptException",
-          "ServiceUnavailable"
+          "JavascriptException"
         ]
       }
     },
@@ -5513,6 +5556,47 @@
         }
       }
     },
+    "CreateInsightsScheduledScalingTaskRequest": {
+      "description": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "type": "object",
+      "properties": {
+        "Description": {
+          "description": "Description the task",
+          "type": "string"
+        },
+        "IsActive": {
+          "description": "Whether the schedule is active. Inactive schedule will not trigger task execution.",
+          "type": "boolean"
+        },
+        "Name": {
+          "description": "Name of the task. This is a unique identifier for tasks in the title.",
+          "type": "string"
+        },
+        "Parameter": {
+          "$ref": "#/definitions/InsightsScalingTaskParameter",
+          "description": "Task details related to Insights Scaling",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Schedule": {
+          "description": "Cron expression for the run schedule of the task. The expression should be in UTC.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "IsActive",
+        "Parameter"
+      ],
+      "example": {
+        "Name": "EnableWeekdayPerformance",
+        "Description": "Scale up Insights Performance Units during weekdays.",
+        "Schedule": "0 0 * * 1-5",
+        "Parameter": {
+          "Level": 3
+        }
+      }
+    },
     "CreateOpenIdConnectionRequest": {
       "type": "object",
       "properties": {
@@ -6734,6 +6818,8 @@
         "ExperimentationNoScorecard",
         "ExperimentationTreatmentAssignmentFailed",
         "ExperimentationTreatmentAssignmentDisabled",
+        "ExperimentationInvalidDuration",
+        "ExperimentationMaxExperimentsReached",
         "MaxActionDepthExceeded",
         "SnapshotNotFound"
       ]
@@ -8762,6 +8848,19 @@
         }
       }
     },
+    "InsightsScalingTaskParameter": {
+      "type": "object",
+      "properties": {
+        "Level": {
+          "description": "Insights Performance Level to scale to.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Level"
+      ]
+    },
     "ItemGrant": {
       "type": "object",
       "properties": {
@@ -9435,6 +9534,10 @@
           "description": "Name Identifier, if present",
           "type": "string"
         }
+      },
+      "example": {
+        "Name": "MyTask",
+        "Id": "d739e188-22f6-4d13-a4d5-df2e93d4d2f7"
       }
     },
     "OpenIdConnection": {
@@ -9839,6 +9942,13 @@
           },
           "x-isclass": true
         }
+      },
+      "example": {
+        "TitleId": "FFFF",
+        "PlayerId": "1234ABCD",
+        "Created": "2019-02-11T20:23:05",
+        "LastLogin": "2020-02-11T20:23:05",
+        "DisplayName": "Gudge"
       }
     },
     "PlayerProfileViewConstraints": {
@@ -10721,7 +10831,8 @@
       "enum": [
         "CloudScript",
         "ActionsOnPlayerSegment",
-        "CloudScriptAzureFunctions"
+        "CloudScriptAzureFunctions",
+        "InsightsScheduledScaling"
       ]
     },
     "ScriptExecutionError": {
@@ -12733,6 +12844,14 @@
       "description": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
       "schema": {
         "$ref": "#/definitions/CreateCloudScriptTaskRequest"
+      }
+    },
+    "CreateInsightsScheduledScalingTaskRequest": {
+      "name": "CreateInsightsScheduledScalingTaskRequest",
+      "in": "body",
+      "description": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "schema": {
+        "$ref": "#/definitions/CreateInsightsScheduledScalingTaskRequest"
       }
     },
     "CreateOpenIdConnectionRequest": {
@@ -18540,6 +18659,14 @@
     "ExperimentationTreatmentAssignmentDisabled": {
       "id": 7011,
       "name": "ExperimentationTreatmentAssignmentDisabled"
+    },
+    "ExperimentationInvalidDuration": {
+      "id": 7012,
+      "name": "ExperimentationInvalidDuration"
+    },
+    "ExperimentationMaxExperimentsReached": {
+      "id": 7013,
+      "name": "ExperimentationMaxExperimentsReached"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
