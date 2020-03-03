@@ -6607,6 +6607,29 @@
       "isResult": true,
       "properties": []
     },
+    "LinkAppleRequest": {
+      "name": "LinkAppleRequest",
+      "className": "LinkAppleRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ForceLink",
+          "description": "If another user is already linked to a specific Apple account, unlink the other user and re-link.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IdentityToken",
+          "description": "The JSON Web token (JWT) returned by Apple after login. Represented as the identityToken field in the authorization credential payload. Used to validate the request and find the user ID (Apple subject) to link with.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "LinkCustomIDRequest": {
       "name": "LinkCustomIDRequest",
       "className": "LinkCustomIDRequest",
@@ -7373,6 +7396,9 @@
         },
         {
           "name": "OpenIdConnect"
+        },
+        {
+          "name": "Apple"
         }
       ]
     },
@@ -7507,6 +7533,71 @@
           "description": "Specific Operating System version for the user's device.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayerSecret",
+          "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "LoginWithAppleRequest": {
+      "name": "LoginWithAppleRequest",
+      "className": "LoginWithAppleRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "EncryptedRequest",
+          "description": "Base64 encoded body that is encrypted with the Title's public RSA key (Enterprise Only).",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IdentityToken",
+          "description": "The JSON Web token (JWT) returned by Apple after login. Represented as the identityToken field in the authorization credential payload.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
           "optional": true
         },
         {
@@ -11711,6 +11802,14 @@
       "isResult": true,
       "properties": []
     },
+    "UnlinkAppleRequest": {
+      "name": "UnlinkAppleRequest",
+      "className": "UnlinkAppleRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isRequest": true,
+      "properties": []
+    },
     "UnlinkCustomIDRequest": {
       "name": "UnlinkCustomIDRequest",
       "className": "UnlinkCustomIDRequest",
@@ -11954,9 +12053,15 @@
         {
           "name": "XboxToken",
           "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\").",
+          "deprecation": {
+            "ProposedAfter": "2/26/2020",
+            "DeprecatedAfter": "4/26/2020",
+            "ObsoleteAfter": "6/26/2020",
+            "ReplacedBy": null
+          },
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -13596,6 +13701,7 @@
         "GetPlayFabIDsFromXboxLiveIDs",
         "GetUserCombinedInfo",
         "LinkAndroidDeviceID",
+        "LinkApple",
         "LinkCustomID",
         "LinkFacebookAccount",
         "LinkFacebookInstantGamesId",
@@ -13615,6 +13721,7 @@
         "ReportPlayer",
         "SendAccountRecoveryEmail",
         "UnlinkAndroidDeviceID",
+        "UnlinkApple",
         "UnlinkCustomID",
         "UnlinkFacebookAccount",
         "UnlinkFacebookInstantGamesId",
@@ -13659,6 +13766,7 @@
         "GetTitlePublicKey",
         "GetWindowsHelloChallenge",
         "LoginWithAndroidDeviceID",
+        "LoginWithApple",
         "LoginWithCustomID",
         "LoginWithEmailAddress",
         "LoginWithFacebook",
@@ -15301,6 +15409,28 @@
       ]
     },
     {
+      "name": "LinkApple",
+      "summary": "Links the Apple account associated with the token to the user's PlayFab account.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/LinkApple",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "LinkAppleRequest",
+      "requestExample": "{\r\n  \"IdentityToken\": \"eyJraWQi...\"\r\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Client/LoginWithApple",
+        "Client/UnlinkApple"
+      ],
+      "errors": [
+        "AppleNotEnabledForTitle",
+        "InvalidIdentityProviderId",
+        "LinkedIdentifierAlreadyClaimed"
+      ]
+    },
+    {
       "name": "LinkCustomID",
       "summary": "Links the custom identifier, generated by the title, to the user's PlayFab account",
       "subgroup": "Account Management",
@@ -15659,6 +15789,33 @@
         "Client/UnlinkAndroidDeviceID"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
+        "InvalidSignature",
+        "InvalidSignatureTime",
+        "PlayerSecretAlreadyConfigured",
+        "PlayerSecretNotConfigured",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
+      "name": "LoginWithApple",
+      "summary": "Signs in the user with a Sign in with Apple identity token.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Client/LoginWithApple",
+      "auth": "None",
+      "method": "POST",
+      "request": "LoginWithAppleRequest",
+      "requestExample": "{\r\n  \"IdentityToken\": \"eyJraWQi...\"\r\n}",
+      "result": "LoginResult",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\r\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
+      "seeAlso": [
+        "Client/LinkApple",
+        "Client/UnlinkApple"
+      ],
+      "errors": [
+        "AppleNotEnabledForTitle",
+        "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
         "InvalidSignatureTime",
         "PlayerSecretAlreadyConfigured",
@@ -15684,6 +15841,7 @@
         "Client/UnlinkCustomID"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
         "InvalidSignatureTime",
         "PlayerSecretAlreadyConfigured",
@@ -15732,6 +15890,7 @@
         "Client/UnlinkFacebookAccount"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "FacebookAPIError",
         "InvalidFacebookToken",
         "PlayerSecretAlreadyConfigured",
@@ -15755,6 +15914,7 @@
         "Client/UnlinkFacebookInstantGamesId"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "FacebookInstantGamesAuthNotConfiguredForTitle",
         "InvalidFacebookInstantGamesSignature",
         "InvalidSignature",
@@ -15781,6 +15941,7 @@
         "Client/LoginWithIOSDeviceID"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "GameCenterAuthenticationFailed",
         "RequestViewConstraintParamsNotAllowed"
       ]
@@ -15825,6 +15986,7 @@
         "Client/UnlinkIOSDeviceID"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
         "InvalidSignatureTime",
         "PlayerSecretAlreadyConfigured",
@@ -15851,6 +16013,7 @@
         "Client/UnlinkKongregate"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "FeatureNotConfiguredForTitle",
         "InvalidKongregateToken",
         "RequestViewConstraintParamsNotAllowed"
@@ -15873,6 +16036,7 @@
         "Client/UnlinkNintendoSwitchDeviceId"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
         "InvalidSignatureTime",
         "PlayerSecretAlreadyConfigured",
@@ -15897,6 +16061,7 @@
         "Client/UnlinkOpenIdConnect"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "InvalidIdentityProviderId",
         "InvalidSignature",
         "InvalidSignatureTime",
@@ -15946,6 +16111,7 @@
         "Client/UnlinkPSNAccount"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "InvalidPSNAuthCode",
         "InvalidPSNIssuerId",
         "PSNInaccessible",
@@ -15993,6 +16159,7 @@
         "Client/UnlinkTwitch"
       ],
       "errors": [
+        "EvaluationModePlayerCountExceeded",
         "FeatureNotConfiguredForTitle",
         "InvalidTwitchToken",
         "RequestViewConstraintParamsNotAllowed",
@@ -16259,6 +16426,7 @@
       ],
       "errors": [
         "AccountAlreadyLinked",
+        "EvaluationModePlayerCountExceeded",
         "InvalidPublicKey"
       ]
     },
@@ -16593,6 +16761,27 @@
       ]
     },
     {
+      "name": "UnlinkApple",
+      "summary": "Unlinks the related Apple account from the user's PlayFab account.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Client/UnlinkApple",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "UnlinkAppleRequest",
+      "requestExample": "{}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "seeAlso": [
+        "Client/LinkApple",
+        "Client/LoginWithApple"
+      ],
+      "errors": [
+        "AccountNotLinked",
+        "AppleNotEnabledForTitle"
+      ]
+    },
+    {
       "name": "UnlinkCustomID",
       "summary": "Unlinks the related custom identifier from the user's PlayFab account",
       "subgroup": "Account Management",
@@ -16863,7 +17052,7 @@
       "auth": "SessionTicket",
       "method": "POST",
       "request": "UnlinkXboxAccountRequest",
-      "requestExample": "{\r\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\"\r\n}",
+      "requestExample": "{}",
       "result": "UnlinkXboxAccountResult",
       "resultExample": "",
       "seeAlso": [
@@ -19209,6 +19398,30 @@
       "id": 1496,
       "name": "InsightsManagementTitleNotInFlight"
     },
+    "LimitNotFound": {
+      "id": 1497,
+      "name": "LimitNotFound"
+    },
+    "LimitNotAvailableViaAPI": {
+      "id": 1498,
+      "name": "LimitNotAvailableViaAPI"
+    },
+    "InsightsManagementSetStorageRetentionBelowMinimum": {
+      "id": 1499,
+      "name": "InsightsManagementSetStorageRetentionBelowMinimum"
+    },
+    "InsightsManagementSetStorageRetentionAboveMaximum": {
+      "id": 1500,
+      "name": "InsightsManagementSetStorageRetentionAboveMaximum"
+    },
+    "AppleNotEnabledForTitle": {
+      "id": 1501,
+      "name": "AppleNotEnabledForTitle"
+    },
+    "InsightsManagementNewActiveEventArchiveLimitInvalid": {
+      "id": 1502,
+      "name": "InsightsManagementNewActiveEventArchiveLimitInvalid"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -19997,6 +20210,12 @@
     "CloudScriptAzureFunctionsQueueRequestError",
     "EvaluationModeTitleCountExceeded",
     "InsightsManagementTitleNotInFlight",
+    "LimitNotFound",
+    "LimitNotAvailableViaAPI",
+    "InsightsManagementSetStorageRetentionBelowMinimum",
+    "InsightsManagementSetStorageRetentionAboveMaximum",
+    "AppleNotEnabledForTitle",
+    "InsightsManagementNewActiveEventArchiveLimitInvalid",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
