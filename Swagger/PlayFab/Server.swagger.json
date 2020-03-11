@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200303",
+    "version": "200311",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -337,13 +337,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
-        "x-seeAlso": [
-          "Server/GetUserBans",
-          "Server/RevokeAllBansForUser",
-          "Server/RevokeBans",
-          "Server/UpdateBans"
-        ]
+        "x-requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans."
       }
     },
     "/Server/ConsumeItem": {
@@ -1050,13 +1044,14 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-responseDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired.",
+        "x-responseDetails": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired. If Xbox Live friends are included, make sure the access token from the previous LoginWithXbox call is still valid and not expired. ",
         "x-seeAlso": [
           "Client/GetLeaderboardAroundCurrentUser",
           "Server/GetLeaderboardAroundUser",
           "Server/GetUserStatistics"
         ],
         "x-ms-docs-errors": [
+          "ExpiredXboxLiveToken",
           "FacebookAPIError"
         ]
       }
@@ -1089,7 +1084,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-responseDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included.",
+        "x-responseDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
         "x-seeAlso": [
           "Server/AddFriend",
           "Server/GetPlayerProfile",
@@ -1098,6 +1093,7 @@
         ],
         "x-ms-docs-errors": [
           "AccountNotFound",
+          "ExpiredXboxLiveToken",
           "FacebookAPIError"
         ]
       }
@@ -2091,12 +2087,6 @@
           }
         },
         "x-requestDetails": "Get all bans for a user, including inactive and expired bans. ",
-        "x-seeAlso": [
-          "Server/BanUsers",
-          "Server/RevokeAllBansForUser",
-          "Server/RevokeBans",
-          "Server/UpdateBans"
-        ],
         "x-ms-docs-errors": [
           "UserisNotValid"
         ]
@@ -3263,12 +3253,6 @@
           }
         },
         "x-requestDetails": "Setting the active state of all non-expired bans for a user to Inactive. Expired bans with an Active state will be ignored, however. Returns information about applied updates only.",
-        "x-seeAlso": [
-          "Server/BanUsers",
-          "Server/GetUserBans",
-          "Server/RevokeBans",
-          "Server/UpdateBans"
-        ],
         "x-ms-docs-errors": [
           "UserisNotValid"
         ]
@@ -3605,12 +3589,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
-        "x-seeAlso": [
-          "Server/AddFriend",
-          "Server/GetFriendsList",
-          "Server/RemoveFriend"
-        ]
+        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error."
       }
     },
     "/Server/SetGameServerInstanceData": {
@@ -7136,6 +7115,11 @@
         "ExportCouldNotCreate",
         "ExportNoBackingDatabaseFound",
         "ExportCouldNotDelete",
+        "ExportCannotDetermineEventQuery",
+        "ExportInvalidQuerySchemaModification",
+        "ExportQuerySchemaMissingRequiredColumns",
+        "ExportCannotParseQuery",
+        "ExportControlCommandsNotAllowed",
         "TitleNotEnabledForParty",
         "PartyVersionNotFound",
         "MultiplayerServerBuildReferencedByMatchmakingQueue",
@@ -7154,6 +7138,7 @@
         "ExperimentationInvalidDuration",
         "ExperimentationMaxExperimentsReached",
         "MaxActionDepthExceeded",
+        "TitleNotOnUpdatedPricingPlan",
         "SnapshotNotFound"
       ]
     },
@@ -7882,7 +7867,7 @@
       }
     },
     "GetFriendsListResult": {
-      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included.",
+      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
       "type": "object",
       "properties": {
         "Friends": {
@@ -16142,7 +16127,7 @@
       }
     },
     "GetFriendsListResult": {
-      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included.",
+      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
       "schema": {
         "type": "object",
         "properties": {
@@ -20883,6 +20868,26 @@
       "id": 5020,
       "name": "ExportCouldNotDelete"
     },
+    "ExportCannotDetermineEventQuery": {
+      "id": 5021,
+      "name": "ExportCannotDetermineEventQuery"
+    },
+    "ExportInvalidQuerySchemaModification": {
+      "id": 5022,
+      "name": "ExportInvalidQuerySchemaModification"
+    },
+    "ExportQuerySchemaMissingRequiredColumns": {
+      "id": 5023,
+      "name": "ExportQuerySchemaMissingRequiredColumns"
+    },
+    "ExportCannotParseQuery": {
+      "id": 5024,
+      "name": "ExportCannotParseQuery"
+    },
+    "ExportControlCommandsNotAllowed": {
+      "id": 5025,
+      "name": "ExportControlCommandsNotAllowed"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -20954,6 +20959,10 @@
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
+    },
+    "TitleNotOnUpdatedPricingPlan": {
+      "id": 9000,
+      "name": "TitleNotOnUpdatedPricingPlan"
     },
     "SnapshotNotFound": {
       "id": 11000,

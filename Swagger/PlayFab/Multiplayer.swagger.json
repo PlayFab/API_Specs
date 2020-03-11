@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200303",
+    "version": "200311",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -884,6 +884,52 @@
           "MultiplayerServerInternalServerError",
           "MultiplayerServerNotFound",
           "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
+    "/MultiplayerServer/DeleteBuildRegion": {
+      "post": {
+        "operationId": "DeleteBuildRegion",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Removes a multiplayer server build's region.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/deletebuildregion"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteBuildRegionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Removes a multiplayer server build's region.",
+        "x-seeAlso": [
+          "MultiplayerServer/DeleteBuild",
+          "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummaries",
+          "MultiplayerServer/UpdateBuildRegion",
+          "MultiplayerServer/UpdateBuildRegions"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
           "MultiplayerServerUnauthorized",
           "MultiplayerServerUnavailable"
         ]
@@ -1910,6 +1956,7 @@
           "MultiplayerServerBadRequest",
           "MultiplayerServerForbidden",
           "MultiplayerServerInternalServerError",
+          "MultiplayerServerNotFound",
           "MultiplayerServerUnauthorized",
           "MultiplayerServerUnavailable"
         ]
@@ -2172,6 +2219,53 @@
         ]
       }
     },
+    "/MultiplayerServer/UpdateBuildRegion": {
+      "post": {
+        "operationId": "UpdateBuildRegion",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Updates a multiplayer server build's region. If the region is not yet created, it will be created",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/updatebuildregion"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateBuildRegionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Updates a multiplayer server build's region.",
+        "x-seeAlso": [
+          "MultiplayerServer/DeleteBuild",
+          "MultiplayerServer/DeleteBuildRegion",
+          "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummaries",
+          "MultiplayerServer/UpdateBuildRegions"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerConflict",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerTitleQuotaCoresExceeded",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/UpdateBuildRegions": {
       "post": {
         "operationId": "UpdateBuildRegions",
@@ -2203,8 +2297,10 @@
         "x-requestDetails": "Updates a multiplayer server build's regions.",
         "x-seeAlso": [
           "MultiplayerServer/DeleteBuild",
+          "MultiplayerServer/DeleteBuildRegion",
           "MultiplayerServer/GetBuild",
-          "MultiplayerServer/ListBuildSummaries"
+          "MultiplayerServer/ListBuildSummaries",
+          "MultiplayerServer/UpdateBuildRegion"
         ],
         "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
@@ -2325,8 +2421,7 @@
         }
       },
       "required": [
-        "FileName",
-        "MountPath"
+        "FileName"
       ]
     },
     "AssetSummary": {
@@ -2489,7 +2584,7 @@
           "x-actualtype": "int32"
         },
         "Status": {
-          "description": "The status of multiplayer servers in the build region. Valid values are - Unknown, Initialized, Deploying, Deployed, Unhealthy.",
+          "description": "The status of multiplayer servers in the build region. Valid values are - Unknown, Initialized, Deploying, Deployed, Unhealthy, Deleting, Deleted.",
           "type": "string"
         }
       },
@@ -2748,7 +2843,8 @@
       "enum": [
         "ManagedWindowsServerCore",
         "CustomLinux",
-        "ManagedWindowsServerCorePreview"
+        "ManagedWindowsServerCorePreview",
+        "Invalid"
       ]
     },
     "ContainerImageReference": {
@@ -3012,6 +3108,11 @@
           "type": "number",
           "x-actualtype": "int32"
         },
+        "OsPlatform": {
+          "$ref": "#/definitions/OsPlatform",
+          "description": "The OS platform used for running the game process.",
+          "type": "string"
+        },
         "Ports": {
           "description": "The ports the build is mapped on.",
           "type": "array",
@@ -3027,6 +3128,11 @@
             "$ref": "#/definitions/BuildRegion"
           },
           "x-isclass": true
+        },
+        "ServerType": {
+          "$ref": "#/definitions/ServerType",
+          "description": "The type of game server being hosted.",
+          "type": "string"
         },
         "VmSize": {
           "$ref": "#/definitions/AzureVmSize",
@@ -3047,6 +3153,7 @@
           "MetadataKey": "MetadataValue"
         },
         "VmSize": "Standard_D2_v2",
+        "OsPlatform": "Linux",
         "ContainerFlavor": "CustomLinux",
         "Ports": [
           {
@@ -3271,6 +3378,11 @@
           "type": "number",
           "x-actualtype": "int32"
         },
+        "OsPlatform": {
+          "$ref": "#/definitions/OsPlatform",
+          "description": "The OS platform used for running the game process.",
+          "type": "string"
+        },
         "Ports": {
           "description": "The ports the build is mapped on.",
           "type": "array",
@@ -3286,6 +3398,11 @@
             "$ref": "#/definitions/BuildRegion"
           },
           "x-isclass": true
+        },
+        "ServerType": {
+          "$ref": "#/definitions/ServerType",
+          "description": "The type of game server being hosted.",
+          "type": "string"
         },
         "StartMultiplayerServerCommand": {
           "description": "The command to run when the multiplayer server has been allocated, including any arguments.",
@@ -3630,6 +3747,29 @@
         "AliasId": "21781fa8-096d-4d9c-b699-75433d579285"
       }
     },
+    "DeleteBuildRegionRequest": {
+      "description": "Removes a multiplayer server build's region.",
+      "type": "object",
+      "properties": {
+        "BuildId": {
+          "description": "The guid string ID of the build we want to update regions for.",
+          "type": "string"
+        },
+        "Region": {
+          "$ref": "#/definitions/AzureRegion",
+          "description": "The build region to delete.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "BuildId",
+        "Region"
+      ],
+      "example": {
+        "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
+        "Region": "JapanEast"
+      }
+    },
     "DeleteBuildRequest": {
       "description": "Deletes a multiplayer server build.",
       "type": "object",
@@ -3941,6 +4081,11 @@
           "type": "number",
           "x-actualtype": "int32"
         },
+        "OsPlatform": {
+          "$ref": "#/definitions/OsPlatform",
+          "description": "The OS platform used for running the game process.",
+          "type": "string"
+        },
         "Ports": {
           "description": "The ports the build is mapped on.",
           "type": "array",
@@ -3956,6 +4101,11 @@
             "$ref": "#/definitions/BuildRegion"
           },
           "x-isclass": true
+        },
+        "ServerType": {
+          "$ref": "#/definitions/ServerType",
+          "description": "The type of game server being hosted.",
+          "type": "string"
         },
         "StartMultiplayerServerCommand": {
           "description": "The command to run when the multiplayer server has been allocated, including any arguments. This only applies to managed builds. If the build is a custom build, this field will be null.",
@@ -5488,6 +5638,13 @@
         }
       }
     },
+    "OsPlatform": {
+      "type": "object",
+      "enum": [
+        "Windows",
+        "Linux"
+      ]
+    },
     "Port": {
       "type": "object",
       "properties": {
@@ -5725,6 +5882,13 @@
         "Region": "WestUS"
       }
     },
+    "ServerType": {
+      "type": "object",
+      "enum": [
+        "Container",
+        "Process"
+      ]
+    },
     "ShutdownMultiplayerServerRequest": {
       "description": "Executes the shutdown callback from the GSDK and terminates the multiplayer server session. The callback in the GSDK will allow for graceful shutdown with a 15 minute timeoutIf graceful shutdown has not been completed before 15 minutes have elapsed, the multiplayer server session will be forcefully terminated on it's own.",
       "type": "object",
@@ -5858,6 +6022,34 @@
           }
         ],
         "AliasId": "21781fa8-096d-4d9c-b699-75433d579285"
+      }
+    },
+    "UpdateBuildRegionRequest": {
+      "description": "Updates a multiplayer server build's region.",
+      "type": "object",
+      "properties": {
+        "BuildId": {
+          "description": "The guid string ID of the build we want to update regions for.",
+          "type": "string"
+        },
+        "BuildRegion": {
+          "$ref": "#/definitions/BuildRegionParams",
+          "description": "The updated region configuration that should be applied to the specified build.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "BuildId",
+        "BuildRegion"
+      ],
+      "example": {
+        "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
+        "BuildRegion": {
+          "Region": "NorthEurope",
+          "MaxServers": 7,
+          "StandbyServers": 3
+        }
       }
     },
     "UpdateBuildRegionsRequest": {
@@ -6045,6 +6237,14 @@
       "description": "Deletes a multiplayer server build alias.",
       "schema": {
         "$ref": "#/definitions/DeleteBuildAliasRequest"
+      }
+    },
+    "DeleteBuildRegionRequest": {
+      "name": "DeleteBuildRegionRequest",
+      "in": "body",
+      "description": "Removes a multiplayer server build's region.",
+      "schema": {
+        "$ref": "#/definitions/DeleteBuildRegionRequest"
       }
     },
     "DeleteBuildRequest": {
@@ -6343,6 +6543,14 @@
         "$ref": "#/definitions/UpdateBuildAliasRequest"
       }
     },
+    "UpdateBuildRegionRequest": {
+      "name": "UpdateBuildRegionRequest",
+      "in": "body",
+      "description": "Updates a multiplayer server build's region.",
+      "schema": {
+        "$ref": "#/definitions/UpdateBuildRegionRequest"
+      }
+    },
     "UpdateBuildRegionsRequest": {
       "name": "UpdateBuildRegionsRequest",
       "in": "body",
@@ -6526,6 +6734,7 @@
               "MetadataKey": "MetadataValue"
             },
             "VmSize": "Standard_D2_v2",
+            "OsPlatform": "Linux",
             "ContainerFlavor": "CustomLinux",
             "Ports": [
               {
@@ -10015,6 +10224,26 @@
       "id": 5020,
       "name": "ExportCouldNotDelete"
     },
+    "ExportCannotDetermineEventQuery": {
+      "id": 5021,
+      "name": "ExportCannotDetermineEventQuery"
+    },
+    "ExportInvalidQuerySchemaModification": {
+      "id": 5022,
+      "name": "ExportInvalidQuerySchemaModification"
+    },
+    "ExportQuerySchemaMissingRequiredColumns": {
+      "id": 5023,
+      "name": "ExportQuerySchemaMissingRequiredColumns"
+    },
+    "ExportCannotParseQuery": {
+      "id": 5024,
+      "name": "ExportCannotParseQuery"
+    },
+    "ExportControlCommandsNotAllowed": {
+      "id": 5025,
+      "name": "ExportControlCommandsNotAllowed"
+    },
     "TitleNotEnabledForParty": {
       "id": 6000,
       "name": "TitleNotEnabledForParty"
@@ -10086,6 +10315,10 @@
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
+    },
+    "TitleNotOnUpdatedPricingPlan": {
+      "id": 9000,
+      "name": "TitleNotOnUpdatedPricingPlan"
     },
     "SnapshotNotFound": {
       "id": 11000,
