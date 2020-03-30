@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200311",
+    "version": "200330",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -337,7 +337,13 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans."
+        "x-requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+        "x-seeAlso": [
+          "Server/GetUserBans",
+          "Server/RevokeAllBansForUser",
+          "Server/RevokeBans",
+          "Server/UpdateBans"
+        ]
       }
     },
     "/Server/ConsumeItem": {
@@ -1052,7 +1058,8 @@
         ],
         "x-ms-docs-errors": [
           "ExpiredXboxLiveToken",
-          "FacebookAPIError"
+          "FacebookAPIError",
+          "XboxServiceTooManyRequests"
         ]
       }
     },
@@ -1094,7 +1101,8 @@
         "x-ms-docs-errors": [
           "AccountNotFound",
           "ExpiredXboxLiveToken",
-          "FacebookAPIError"
+          "FacebookAPIError",
+          "XboxServiceTooManyRequests"
         ]
       }
     },
@@ -2087,6 +2095,12 @@
           }
         },
         "x-requestDetails": "Get all bans for a user, including inactive and expired bans. ",
+        "x-seeAlso": [
+          "Server/BanUsers",
+          "Server/RevokeAllBansForUser",
+          "Server/RevokeBans",
+          "Server/UpdateBans"
+        ],
         "x-ms-docs-errors": [
           "UserisNotValid"
         ]
@@ -3253,6 +3267,12 @@
           }
         },
         "x-requestDetails": "Setting the active state of all non-expired bans for a user to Inactive. Expired bans with an Active state will be ignored, however. Returns information about applied updates only.",
+        "x-seeAlso": [
+          "Server/BanUsers",
+          "Server/GetUserBans",
+          "Server/RevokeBans",
+          "Server/UpdateBans"
+        ],
         "x-ms-docs-errors": [
           "UserisNotValid"
         ]
@@ -3589,7 +3609,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error."
+        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
+        "x-seeAlso": [
+          "Server/AddFriend",
+          "Server/GetFriendsList",
+          "Server/RemoveFriend"
+        ]
       }
     },
     "/Server/SetGameServerInstanceData": {
@@ -4097,6 +4122,7 @@
           "ContainerNotOwned",
           "InvalidContainerItem",
           "InvalidItemIdInTable",
+          "InvalidItemProperties",
           "KeyNotOwned"
         ]
       }
@@ -7058,7 +7084,11 @@
         "InsightsManagementSetStorageRetentionBelowMinimum",
         "InsightsManagementSetStorageRetentionAboveMaximum",
         "AppleNotEnabledForTitle",
-        "InsightsManagementNewActiveEventArchiveLimitInvalid",
+        "InsightsManagementNewActiveEventExportLimitInvalid",
+        "InsightsManagementSetPerformanceRateLimited",
+        "PartyRequestsThrottledFromRateLimiter",
+        "XboxServiceTooManyRequests",
+        "NintendoSwitchNotEnabledForTitle",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -10628,7 +10658,8 @@
         "NintendoSwitch",
         "FacebookInstantGames",
         "OpenIdConnect",
-        "Apple"
+        "Apple",
+        "NintendoSwitchAccount"
       ]
     },
     "LoginWithServerCustomIdRequest": {
@@ -13717,6 +13748,12 @@
           "type": "object",
           "x-isclass": true
         },
+        "AppleAccountInfo": {
+          "$ref": "#/definitions/UserAppleIdInfo",
+          "description": "Sign in with Apple account information, if an Apple account has been linked",
+          "type": "object",
+          "x-isclass": true
+        },
         "Created": {
           "description": "Timestamp indicating when the user account was created",
           "type": "string"
@@ -13763,9 +13800,15 @@
           "type": "object",
           "x-isclass": true
         },
+        "NintendoSwitchAccountInfo": {
+          "$ref": "#/definitions/UserNintendoSwitchAccountIdInfo",
+          "description": "Nintendo Switch account information, if a Nintendo Switch account has been linked",
+          "type": "object",
+          "x-isclass": true
+        },
         "NintendoSwitchDeviceIdInfo": {
           "$ref": "#/definitions/UserNintendoSwitchDeviceIdInfo",
-          "description": "Nintendo Switch account information, if a Nintendo Switch account has been linked",
+          "description": "Nintendo Switch device information, if a Nintendo Switch device has been linked",
           "type": "object",
           "x-isclass": true
         },
@@ -13864,6 +13907,15 @@
       "properties": {
         "AndroidDeviceId": {
           "description": "Android device ID",
+          "type": "string"
+        }
+      }
+    },
+    "UserAppleIdInfo": {
+      "type": "object",
+      "properties": {
+        "AppleSubjectId": {
+          "description": "Apple subject ID",
           "type": "string"
         }
       }
@@ -13990,6 +14042,15 @@
         }
       }
     },
+    "UserNintendoSwitchAccountIdInfo": {
+      "type": "object",
+      "properties": {
+        "NintendoSwitchAccountSubjectId": {
+          "description": "Nintendo Switch account subject ID",
+          "type": "string"
+        }
+      }
+    },
     "UserNintendoSwitchDeviceIdInfo": {
       "type": "object",
       "properties": {
@@ -14040,7 +14101,9 @@
         "ServerCustomId",
         "NintendoSwitchDeviceId",
         "FacebookInstantGamesId",
-        "OpenIdConnect"
+        "OpenIdConnect",
+        "Apple",
+        "NintendoSwitchAccount"
       ]
     },
     "UserPrivateAccountInfo": {
@@ -20640,9 +20703,25 @@
       "id": 1501,
       "name": "AppleNotEnabledForTitle"
     },
-    "InsightsManagementNewActiveEventArchiveLimitInvalid": {
+    "InsightsManagementNewActiveEventExportLimitInvalid": {
       "id": 1502,
-      "name": "InsightsManagementNewActiveEventArchiveLimitInvalid"
+      "name": "InsightsManagementNewActiveEventExportLimitInvalid"
+    },
+    "InsightsManagementSetPerformanceRateLimited": {
+      "id": 1503,
+      "name": "InsightsManagementSetPerformanceRateLimited"
+    },
+    "PartyRequestsThrottledFromRateLimiter": {
+      "id": 1504,
+      "name": "PartyRequestsThrottledFromRateLimiter"
+    },
+    "XboxServiceTooManyRequests": {
+      "id": 1505,
+      "name": "XboxServiceTooManyRequests"
+    },
+    "NintendoSwitchNotEnabledForTitle": {
+      "id": 1506,
+      "name": "NintendoSwitchNotEnabledForTitle"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
