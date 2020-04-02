@@ -2,8 +2,8 @@
   "swagger": "2.0",
   "info": {
     "version": "200402",
-    "title": "PlayFab Localization API",
-    "description": "The Localization APIs give you the tools needed to manage language setup in your title.",
+    "title": "PlayFab Insights API",
+    "description": "Manage the Insights performance level and data storage retention settings.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,19 +24,19 @@
     "application/json"
   ],
   "paths": {
-    "/Locale/GetLanguageList": {
+    "/Insights/GetDetails": {
       "post": {
-        "operationId": "GetLanguageList",
+        "operationId": "GetDetails",
         "tags": [
-          "Localization"
+          "Analytics"
         ],
-        "description": "Retrieves the list of allowed languages, only accessible by title entities",
+        "description": "Gets the current values for the Insights performance and data storage retention, list of pending operations, and the performance and data storage retention limits.",
         "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/localization/localization/getlanguagelist"
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/getdetails"
         },
         "parameters": [
           {
-            "$ref": "#/parameters/GetLanguageListRequest"
+            "$ref": "#/parameters/InsightsEmptyRequest"
           }
         ],
         "security": [
@@ -46,12 +46,181 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/GetLanguageListResponse"
+            "$ref": "#/responses/InsightsGetDetailsResponse"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
         }
+      }
+    },
+    "/Insights/GetLimits": {
+      "post": {
+        "operationId": "GetLimits",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Retrieves the range of allowed values for performance and data storage retention values as well as the submeter details for each performance level.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/getlimits"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InsightsEmptyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/InsightsGetLimitsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        }
+      }
+    },
+    "/Insights/GetOperationStatus": {
+      "post": {
+        "operationId": "GetOperationStatus",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Gets the status of a SetPerformance or SetStorageRetention operation.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/getoperationstatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InsightsGetOperationStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/InsightsGetOperationStatusResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InsightsManagementGetOperationStatusInvalidParameter",
+          "InsightsManagementOperationNotFound"
+        ]
+      }
+    },
+    "/Insights/GetPendingOperations": {
+      "post": {
+        "operationId": "GetPendingOperations",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Gets a list of pending SetPerformance and/or SetStorageRetention operations for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/getpendingoperations"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InsightsGetPendingOperationsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/InsightsGetPendingOperationsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        }
+      }
+    },
+    "/Insights/SetPerformance": {
+      "post": {
+        "operationId": "SetPerformance",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Sets the Insights performance level value for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/setperformance"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InsightsSetPerformanceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/InsightsOperationResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InsightsManagementDatabaseNotFound",
+          "InsightsManagementErrorPendingOperationExists",
+          "InsightsManagementNewActiveEventExportLimitInvalid",
+          "InsightsManagementSetPerformanceLevelInvalidParameter",
+          "InsightsManagementTitleInEvaluationMode",
+          "TitleNotOnUpdatedPricingPlan"
+        ]
+      }
+    },
+    "/Insights/SetStorageRetention": {
+      "post": {
+        "operationId": "SetStorageRetention",
+        "tags": [
+          "Analytics"
+        ],
+        "description": "Sets the Insights data storage retention days value for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/insights/analytics/setstorageretention"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InsightsSetStorageRetentionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/InsightsOperationResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InsightsManagementDatabaseNotFound",
+          "InsightsManagementErrorPendingOperationExists",
+          "InsightsManagementSetStorageRetentionInvalidParameter",
+          "InsightsManagementTitleInEvaluationMode",
+          "TitleNotOnUpdatedPricingPlan"
+        ]
       }
     }
   },
@@ -90,35 +259,321 @@
         "errorCode"
       ]
     },
-    "GetLanguageListRequest": {
+    "InsightsEmptyRequest": {
       "type": "object",
       "properties": {},
       "example": {}
     },
-    "GetLanguageListResponse": {
+    "InsightsGetDetailsResponse": {
       "type": "object",
       "properties": {
-        "LanguageList": {
-          "description": "The list of allowed languages, in BCP47 two-letter format",
+        "DataUsageMb": {
+          "description": "Amount of data (in MB) currently used by Insights.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ErrorMessage": {
+          "description": "Details of any error that occurred while retrieving Insights details.",
+          "type": "string"
+        },
+        "Limits": {
+          "$ref": "#/definitions/InsightsGetLimitsResponse",
+          "description": "Allowed range of values for performance level and data storage retention.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PendingOperations": {
+          "description": "List of pending Insights operations for the title.",
           "type": "array",
           "items": {
-            "type": "string"
-          }
+            "$ref": "#/definitions/InsightsGetOperationStatusResponse"
+          },
+          "x-isclass": true
+        },
+        "PerformanceLevel": {
+          "description": "Current Insights performance level setting.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "RetentionDays": {
+          "description": "Current Insights data storage retention value in days.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "PerformanceLevel",
+        "RetentionDays",
+        "DataUsageMb"
+      ]
+    },
+    "InsightsGetLimitsResponse": {
+      "type": "object",
+      "properties": {
+        "DefaultPerformanceLevel": {
+          "description": "Default Insights performance level.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "DefaultStorageRetentionDays": {
+          "description": "Default Insights data storage retention days.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StorageMaxRetentionDays": {
+          "description": "Maximum allowed data storage retention days.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StorageMinRetentionDays": {
+          "description": "Minimum allowed data storage retention days.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SubMeters": {
+          "description": "List of Insights submeter limits for the allowed performance levels.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InsightsPerformanceLevel"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "StorageMinRetentionDays",
+        "StorageMaxRetentionDays",
+        "DefaultPerformanceLevel",
+        "DefaultStorageRetentionDays"
+      ]
+    },
+    "InsightsGetOperationStatusRequest": {
+      "description": "Returns the current status for the requested operation id.",
+      "type": "object",
+      "properties": {
+        "OperationId": {
+          "description": "Id of the Insights operation.",
+          "type": "string"
         }
       },
       "example": {
-        "LanguageList": [
-          "en"
-        ]
+        "OperationId": "3ee468c4-ad09-4bb1-bccf-209ef5abfb96"
+      }
+    },
+    "InsightsGetOperationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "Message": {
+          "description": "Optional message related to the operation details.",
+          "type": "string"
+        },
+        "OperationCompletedTime": {
+          "description": "Time the operation was completed.",
+          "type": "string"
+        },
+        "OperationId": {
+          "description": "Id of the Insights operation.",
+          "type": "string"
+        },
+        "OperationLastUpdated": {
+          "description": "Time the operation status was last updated.",
+          "type": "string"
+        },
+        "OperationStartedTime": {
+          "description": "Time the operation started.",
+          "type": "string"
+        },
+        "OperationType": {
+          "description": "The type of operation, SetPerformance or SetStorageRetention.",
+          "type": "string"
+        },
+        "OperationValue": {
+          "description": "The value requested for the operation.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Status": {
+          "description": "Current status of the operation.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "OperationValue",
+        "OperationStartedTime",
+        "OperationLastUpdated",
+        "OperationCompletedTime"
+      ]
+    },
+    "InsightsGetPendingOperationsRequest": {
+      "description": "Returns a list of operations that are in the pending state for the requested operation type.",
+      "type": "object",
+      "properties": {
+        "OperationType": {
+          "description": "The type of pending operations requested, or blank for all operation types.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "OperationType": "SetPerformance"
+      }
+    },
+    "InsightsGetPendingOperationsResponse": {
+      "type": "object",
+      "properties": {
+        "PendingOperations": {
+          "description": "List of pending Insights operations.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/InsightsGetOperationStatusResponse"
+          },
+          "x-isclass": true
+        }
+      }
+    },
+    "InsightsOperationResponse": {
+      "type": "object",
+      "properties": {
+        "Message": {
+          "description": "Optional message related to the operation details.",
+          "type": "string"
+        },
+        "OperationId": {
+          "description": "Id of the Insights operation.",
+          "type": "string"
+        },
+        "OperationType": {
+          "description": "The type of operation, SetPerformance or SetStorageRetention.",
+          "type": "string"
+        }
+      }
+    },
+    "InsightsPerformanceLevel": {
+      "type": "object",
+      "properties": {
+        "ActiveEventExports": {
+          "description": "Number of allowed active event exports.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CacheSizeMB": {
+          "description": "Maximum cache size.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Concurrency": {
+          "description": "Maximum number of concurrent queries.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CreditsPerMinute": {
+          "description": "Number of Insights credits consumed per minute.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "EventsPerSecond": {
+          "description": "Maximum events per second.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Level": {
+          "description": "Performance level.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "MaxMemoryPerQueryMB": {
+          "description": "Maximum amount of memory allowed per query.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "VirtualCpuCores": {
+          "description": "Amount of compute power allocated for queries and operations.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "Level",
+        "EventsPerSecond",
+        "Concurrency",
+        "MaxMemoryPerQueryMB",
+        "CacheSizeMB",
+        "VirtualCpuCores",
+        "CreditsPerMinute",
+        "ActiveEventExports"
+      ]
+    },
+    "InsightsSetPerformanceRequest": {
+      "description": "Sets the performance level to the requested value. Use the GetLimits method to get the allowed values.",
+      "type": "object",
+      "properties": {
+        "PerformanceLevel": {
+          "description": "The Insights performance level to apply to the title.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "PerformanceLevel"
+      ],
+      "example": {
+        "PerformanceLevel": 3
+      }
+    },
+    "InsightsSetStorageRetentionRequest": {
+      "description": "Sets the data storage retention to the requested value. Use the GetLimits method to get the range of allowed values.",
+      "type": "object",
+      "properties": {
+        "RetentionDays": {
+          "description": "The Insights data storage retention value (in days) to apply to the title.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "RetentionDays"
+      ],
+      "example": {
+        "RetentionDays": 30
       }
     }
   },
   "parameters": {
-    "GetLanguageListRequest": {
-      "name": "GetLanguageListRequest",
+    "InsightsEmptyRequest": {
+      "name": "InsightsEmptyRequest",
       "in": "body",
       "schema": {
-        "$ref": "#/definitions/GetLanguageListRequest"
+        "$ref": "#/definitions/InsightsEmptyRequest"
+      }
+    },
+    "InsightsGetOperationStatusRequest": {
+      "name": "InsightsGetOperationStatusRequest",
+      "in": "body",
+      "description": "Returns the current status for the requested operation id.",
+      "schema": {
+        "$ref": "#/definitions/InsightsGetOperationStatusRequest"
+      }
+    },
+    "InsightsGetPendingOperationsRequest": {
+      "name": "InsightsGetPendingOperationsRequest",
+      "in": "body",
+      "description": "Returns a list of operations that are in the pending state for the requested operation type.",
+      "schema": {
+        "$ref": "#/definitions/InsightsGetPendingOperationsRequest"
+      }
+    },
+    "InsightsSetPerformanceRequest": {
+      "name": "InsightsSetPerformanceRequest",
+      "in": "body",
+      "description": "Sets the performance level to the requested value. Use the GetLimits method to get the allowed values.",
+      "schema": {
+        "$ref": "#/definitions/InsightsSetPerformanceRequest"
+      }
+    },
+    "InsightsSetStorageRetentionRequest": {
+      "name": "InsightsSetStorageRetentionRequest",
+      "in": "body",
+      "description": "Sets the data storage retention to the requested value. Use the GetLimits method to get the range of allowed values.",
+      "schema": {
+        "$ref": "#/definitions/InsightsSetStorageRetentionRequest"
       }
     }
   },
@@ -129,7 +584,7 @@
         "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
-    "GetLanguageListResponse": {
+    "InsightsGetDetailsResponse": {
       "description": "",
       "schema": {
         "type": "object",
@@ -143,16 +598,83 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/GetLanguageListResponse"
+            "$ref": "#/definitions/InsightsGetDetailsResponse"
           }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
+        }
+      }
+    },
+    "InsightsGetLimitsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
           "data": {
-            "LanguageList": [
-              "en"
-            ]
+            "$ref": "#/definitions/InsightsGetLimitsResponse"
+          }
+        }
+      }
+    },
+    "InsightsGetOperationStatusResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/InsightsGetOperationStatusResponse"
+          }
+        }
+      }
+    },
+    "InsightsGetPendingOperationsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/InsightsGetPendingOperationsResponse"
+          }
+        }
+      }
+    },
+    "InsightsOperationResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/InsightsOperationResponse"
           }
         }
       }
@@ -160,8 +682,8 @@
   },
   "tags": [
     {
-      "name": "Localization",
-      "description": "Localization APIs"
+      "name": "Analytics",
+      "description": "Analytics APIs"
     }
   ],
   "securityDefinitions": {
