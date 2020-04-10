@@ -1,8 +1,6 @@
 var https = require("https");
 var fs = require("fs");
 
-var argsDict = null;
-
 function WriteJsonFile(jsonBody, options) {
     if (!jsonBody) {
         console.log("  ***  Failed to write: " + options.description);
@@ -88,7 +86,9 @@ function GetFileFromUrl(inputUrl, options, retry = 0) {
             if (options.expectJson) {
                 processedResponse = TabifyJson(rawResponse, options);
             }
-            var callbackSuccess = options.onFileDownload(processedResponse, options);
+            var callbackSuccess = true;
+            if (options.onFileDownload)
+                callbackSuccess = options.onFileDownload(processedResponse, options);
             if (!callbackSuccess) {
                 console.log("  !!!  Failed to GetFileFromUrl (retry: " + retry + "): " + inputUrl);
                 GetFileFromUrl(inputUrl, options, retry + 1)
@@ -131,13 +131,10 @@ function GetPlayFabUrl() {
     return playFabUrl;
 }
 
-function UpdateApiFilesFromToc() {
-    var playFabUrl = GetPlayFabUrl();
+function UpdateApiFilesFromToc(playFabUrl, tocObj) {
     try {
-        var jsonObj = require("./TOC.json");
-
-        for (var i = 0; i < jsonObj.documents.length; ++i) {
-            var apiSection = jsonObj.documents[i];
+        for (var i = 0; i < tocObj.documents.length; ++i) {
+            var apiSection = tocObj.documents[i];
             if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
                 var eachApiOpt = {
                     description: apiSection.relPath,
@@ -166,8 +163,39 @@ function UpdateSdkManualNotes() {
     GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", versionOpt);
 }
 
+// Find Api Groups from the TOC or legacy Api list, which don't exist in the other
+function CheckLegacyApiGroupList(playFabUrl, tocObj) {
+    var legacyApiListUrl = playFabUrl + "apispec/";
+    var options = {
+        description: "legacyApiList",
+        expectJson: true,
+        jsonTabSpaces: 0
+        // TODO: Add a function to compare tocObj with the json result
+    };
+    GetFileFromUrl(legacyApiListUrl, options);
+}
+
+// Find Api Groups from the TOC or swagger Api list, which don't exist in the other
+function CheckSwaggerApiGroupList(playFabUrl, tocObj) {
+    var swaggerApiListUrl = playFabUrl + "swagger/";
+    var options = {
+        description: "legacyApiList",
+        expectJson: true,
+        jsonTabSpaces: 0
+        // TODO: Add a function to compare tocObj with the json result
+    };
+    GetFileFromUrl(swaggerApiListUrl, options);
+}
+
 function DoWork() {
-    UpdateApiFilesFromToc();
+    var playFabUrl = GetPlayFabUrl();
+    var tocObj = require("./TOC.json");
+
+    UpdateApiFilesFromToc(playFabUrl, tocObj);
     UpdateSdkManualNotes();
+    CheckLegacyApiGroupList(playFabUrl, tocObj);
+    CheckSwaggerApiGroupList(playFabUrl, tocObj);
+    
+    // TODO: Some kind of final global report, with an errors list from all threads
 }
 DoWork();
