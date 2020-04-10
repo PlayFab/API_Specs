@@ -3,48 +3,52 @@ var fs = require("fs");
 
 var argsDict = null;
 
-function WriteJsonFile(filename, jsonBody) {
-    if (jsonBody === null) {
-        console.log("  ***  Failed to write: " + filename);
-        return;
+function WriteJsonFile(jsonBody, options) {
+    if (!jsonBody) {
+        console.log("  ***  Failed to write: " + options.description);
+        return false;
     }
-    if (!filename.endsWith(".json"))
-        filename = filename + ".json";
-    console.log("  -> Begin writing: " + filename);
-    fs.writeFile(filename, jsonBody, function (err) {
+
+    if (!options.outputFilename.endsWith(".json"))
+        options.outputFilename = options.outputFilename + ".json";
+    console.log("  -> Begin writing " + jsonBody.length + " bytes: " + options.description);
+    fs.writeFile(options.outputFilename, jsonBody, function (err) {
         if (err)
             return console.log(err);
-        console.log("  <- Finished writing: " + filename);
+        console.log("  <- Finished writing: " + options.outputFilename);
     });
+
+    return true;
 }
 
-function TabifyJson(inputJson, filename, tabSpaces) {
-    // console.log("  Begin tabifying: " + filename);
+function TabifyJson(inputJson, options) {
+    // console.log("  Begin tabifying: " + options.description);
 
     if (!inputJson)
         return null;
 
     var output = null;
+    var tabSpaces = options.jsonTabSpaces;
     if (!tabSpaces) tabSpaces = 2;
     try {
         var tempObj = JSON.parse(inputJson);
         output = JSON.stringify(tempObj, null, tabSpaces);
-        // console.log("  Finish tabifying: " + filename);
+        // console.log("  Finish tabifying: " + options.description);
     } catch (e) {
-        console.log("  ***  Failed to stringify: " + filename);
+        console.log("  ***  Failed to stringify: " + options.description);
         output = null;
     }
 
     return output;
 }
 
-function UpdateVersionNumbers(verJson) {
+function UpdateVersionNumbers(rawResponse, options) {
     console.log("  Begin version numbers");
 
     var versionRe = new RegExp("([0-9]+)\.([0-9]+)\.[0-9][0-9][0-9][0-9][0-9][0-9]");
     var now = new Date();
     var todaysDate = (now.getUTCFullYear()%100).toString().padStart(2, "0") + (now.getMonth()+1).toString().padStart(2, "0") + (now.getUTCDate()).toString().padStart(2, "0");
-    var output = JSON.parse(verJson);
+    var output = JSON.parse(rawResponse);
     var versions = output.sdkVersion;
     for (var i in versions) {
         var eachTempVer = versions[i];
@@ -60,31 +64,16 @@ function UpdateVersionNumbers(verJson) {
         versions[i] = majorVer.toString() + "." + minorVer.toString() + "." + todaysDate;
     }
 
-    output = TabifyJson(JSON.stringify(output), "SdkManualNotes.json", 4);
-    if (output) {
-        WriteJsonFile("SdkManualNotes.json", output);
-        return true;
+    var processedResponse = TabifyJson(JSON.stringify(output), options);
+    if (processedResponse) {
+        return WriteJsonFile(processedResponse, options);
     }
     return false;
 }
 
-function GetFileFromUrl(inputUrl, processFileCallback) {
-    console.log("-> Begin reading: " + inputUrl);
-    var rawResponse = "";
-    var postReq = https.get(inputUrl, function (res) {
-        res.setEncoding("utf8");
-        res.on("data", function (chunk) { rawResponse += chunk; });
-        res.on("end", function () {
-            console.log("<- Finished reading " + rawResponse.length + " bytes: " + inputUrl);
-            if (!processFileCallback(rawResponse))
-                console.log("  ***  Failed to GetFileFromUrl: " + inputUrl);
-        });
-    });
-}
-
-function GetApiFile(inputUrl, outputFilename, retry = 0) {
+function GetFileFromUrl(inputUrl, options, retry = 0) {
     if (retry == 10) {
-        var msg = "  !!!!!!!!!!  Aborting GetApiFile, failed " + retry + " times: " + inputUrl;
+        var msg = "  !!!!!!!!!!  Aborting GetFileFromUrl, failed " + retry + " times: " + inputUrl;
         console.log(msg); return; // throw Error(msg);
     }
 
@@ -95,12 +84,14 @@ function GetApiFile(inputUrl, outputFilename, retry = 0) {
         res.on("data", function (chunk) { rawResponse += chunk; });
         res.on("end", function () {
             console.log("<- Finished reading " + rawResponse.length + " bytes: " + inputUrl);
-            var jsonOutput = TabifyJson(rawResponse, outputFilename, 2);
-            if (jsonOutput)
-                WriteJsonFile(outputFilename, jsonOutput);
-            else {
-                console.log("  !!!  Failed to GetApiFile (retry: " + retry + "): " + inputUrl);
-                GetApiFile(inputUrl, outputFilename, retry + 1)
+            var processedResponse = rawResponse;
+            if (options.expectJson) {
+                processedResponse = TabifyJson(rawResponse, options);
+            }
+            var callbackSuccess = options.onFileDownload(processedResponse, options);
+            if (!callbackSuccess) {
+                console.log("  !!!  Failed to GetFileFromUrl (retry: " + retry + "): " + inputUrl);
+                GetFileFromUrl(inputUrl, options, retry + 1)
             }
         });
     });
@@ -143,7 +134,14 @@ try {
     for (var i = 0; i < jsonObj.documents.length; ++i) {
         var apiSection = jsonObj.documents[i];
         if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
-            GetApiFile(playFabUrl + apiSection.pfurl, apiSection.relPath);
+            var eachApiOpt = {
+                description: apiSection.relPath,
+                expectJson: true,
+                jsonTabSpaces: 2,
+                outputFilename: apiSection.relPath,
+                onFileDownload: WriteJsonFile
+            }
+            GetFileFromUrl(playFabUrl + apiSection.pfurl, eachApiOpt);
         }
     }
 } catch(err) {
@@ -151,4 +149,11 @@ try {
     console.log(err);
 }
 
-GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", UpdateVersionNumbers);
+var versionOpt = {
+    description: "SdkManualNotes",
+    expectJson: true,
+    jsonTabSpaces: 4,
+    outputFilename: "SdkManualNotes.json",
+    onFileDownload: UpdateVersionNumbers
+}
+GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", versionOpt);
