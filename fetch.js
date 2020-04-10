@@ -121,39 +121,53 @@ function ExtractArgs(args) {
     return argsByName;
 }
 
-var argsDict = ExtractArgs(process.argv);
-var playFabUrl = "https://www.playfabapi.com/";
-if (argsDict["playFabUrl"])
-    playFabUrl = argsDict["playFabUrl"];
-if (!playFabUrl.endsWith("/"))
-    playFabUrl = playFabUrl + "/";
+function GetPlayFabUrl() {
+    var argsDict = ExtractArgs(process.argv);
+    var playFabUrl = "https://www.playfabapi.com/";
+    if (argsDict["playFabUrl"])
+        playFabUrl = argsDict["playFabUrl"];
+    if (!playFabUrl.endsWith("/"))
+        playFabUrl = playFabUrl + "/";
+    return playFabUrl;
+}
 
-try {
-    var jsonObj = require("./TOC.json");
+function UpdateApiFilesFromToc() {
+    var playFabUrl = GetPlayFabUrl();
+    try {
+        var jsonObj = require("./TOC.json");
 
-    for (var i = 0; i < jsonObj.documents.length; ++i) {
-        var apiSection = jsonObj.documents[i];
-        if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
-            var eachApiOpt = {
-                description: apiSection.relPath,
-                expectJson: true,
-                jsonTabSpaces: 2,
-                outputFilename: apiSection.relPath,
-                onFileDownload: WriteJsonFile
+        for (var i = 0; i < jsonObj.documents.length; ++i) {
+            var apiSection = jsonObj.documents[i];
+            if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
+                var eachApiOpt = {
+                    description: apiSection.relPath,
+                    expectJson: true,
+                    jsonTabSpaces: 2,
+                    outputFilename: apiSection.relPath,
+                    onFileDownload: WriteJsonFile
+                }
+                GetFileFromUrl(playFabUrl + apiSection.pfurl, eachApiOpt);
             }
-            GetFileFromUrl(playFabUrl + apiSection.pfurl, eachApiOpt);
         }
+    } catch(err) {
+        console.log("=== fetch.js failed to parse TOC.json as JSON :( ===");
+        console.log(err);
     }
-} catch(err) {
-    console.log("=== fetch.js failed to parse TOC.json as JSON :( ===");
-    console.log(err);
 }
 
-var versionOpt = {
-    description: "SdkManualNotes",
-    expectJson: true,
-    jsonTabSpaces: 4,
-    outputFilename: "SdkManualNotes.json",
-    onFileDownload: UpdateVersionNumbers
+function UpdateSdkManualNotes() {
+    var versionOpt = {
+        description: "SdkManualNotes",
+        expectJson: true,
+        jsonTabSpaces: 4,
+        outputFilename: "SdkManualNotes.json",
+        onFileDownload: UpdateVersionNumbers
+    }
+    GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", versionOpt);
 }
-GetFileFromUrl("https://raw.githubusercontent.com/PlayFab/API_Specs/master/SdkManualNotes.json", versionOpt);
+
+function DoWork() {
+    UpdateApiFilesFromToc();
+    UpdateSdkManualNotes();
+}
+DoWork();
