@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200402",
+    "version": "200421",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -404,6 +404,7 @@
         "x-ms-docs-errors": [
           "TradeAlreadyFilled",
           "TradeCancelled",
+          "TradeDoesNotExist",
           "TradeStatusNotValidForCancelling",
           "TradeWaitForStatusTimeout"
         ]
@@ -661,6 +662,37 @@
           }
         },
         "x-responseDetails": "This API retrieves details regarding the player in the PlayFab service. Note that when this call is used to retrieve data about another player (not the one signed into the local client), some data, such as Personally Identifying Information (PII), will be omitted for privacy reasons or to comply with the requirements of the platform belongs to. The user account returned will be based on the identifier provided in priority order: PlayFabId, Username, Email, then TitleDisplayName. If no identifier is specified, the currently signed in user's information will be returned."
+      }
+    },
+    "/Client/GetAdPlacements": {
+      "post": {
+        "operationId": "GetAdPlacements",
+        "tags": [
+          "Advertising"
+        ],
+        "description": "Returns a list of ad placements and a reward for each",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/advertising/getadplacements"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetAdPlacementsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAdPlacementsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Returns a list of ad placements for the calling player. Each ad placement may include a reward if there was at least one valid reward for the player as well as the number of plays remaining and when the play count resets."
       }
     },
     "/Client/GetAllUsersCharacters": {
@@ -1088,7 +1120,8 @@
           "InvalidXboxLiveToken",
           "LeaderboardVersionNotAvailable",
           "XboxInaccessible",
-          "XboxServiceTooManyRequests"
+          "XboxServiceTooManyRequests",
+          "XboxXASSExchangeFailure"
         ]
       }
     },
@@ -1129,7 +1162,9 @@
         "x-ms-docs-errors": [
           "ExpiredXboxLiveToken",
           "FacebookAPIError",
-          "XboxServiceTooManyRequests"
+          "XboxInaccessible",
+          "XboxServiceTooManyRequests",
+          "XboxXASSExchangeFailure"
         ]
       }
     },
@@ -2884,6 +2919,45 @@
         ]
       }
     },
+    "/Client/LinkNintendoSwitchAccount": {
+      "post": {
+        "operationId": "LinkNintendoSwitchAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Nintendo Switch account associated with the token to the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/linknintendoswitchaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkNintendoSwitchAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LoginWithNintendoSwitchAccount",
+          "Client/UnlinkNintendoSwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidIdentityProviderId",
+          "LinkedIdentifierAlreadyClaimed",
+          "NintendoSwitchNotEnabledForTitle"
+        ]
+      }
+    },
     "/Client/LinkNintendoSwitchDeviceId": {
       "post": {
         "operationId": "LinkNintendoSwitchDeviceId",
@@ -3592,6 +3666,50 @@
           "EvaluationModePlayerCountExceeded",
           "FeatureNotConfiguredForTitle",
           "InvalidKongregateToken",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured",
+          "RequestViewConstraintParamsNotAllowed"
+        ]
+      }
+    },
+    "/Client/LoginWithNintendoSwitchAccount": {
+      "post": {
+        "operationId": "LoginWithNintendoSwitchAccount",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs in the user with a Nintendo Switch Account identity token.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/authentication/loginwithnintendoswitchaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithNintendoSwitchAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "None": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchAccount",
+          "Client/UnlinkNintendoSwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "EncryptionKeyMissing",
+          "EvaluationModePlayerCountExceeded",
+          "InvalidSignature",
+          "InvalidSignatureTime",
+          "NintendoSwitchNotEnabledForTitle",
           "PlayerSecretAlreadyConfigured",
           "PlayerSecretNotConfigured",
           "RequestViewConstraintParamsNotAllowed"
@@ -4446,6 +4564,40 @@
         }
       }
     },
+    "/Client/ReportAdActivity": {
+      "post": {
+        "operationId": "ReportAdActivity",
+        "tags": [
+          "Advertising"
+        ],
+        "description": "Report player's ad activity",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/advertising/reportadactivity"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReportAdActivityRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReportAdActivityResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given a Placement ID and a Reward ID from the GetAdPlacements API call records a player's ad activity.",
+        "x-ms-docs-errors": [
+          "InvalidAdPlacementAndReward"
+        ]
+      }
+    },
     "/Client/ReportDeviceInfo": {
       "post": {
         "operationId": "ReportDeviceInfo",
@@ -4550,6 +4702,41 @@
           "ReceiptAlreadyUsed",
           "ReceiptContainsMultipleInAppItems",
           "ReceiptDoesNotContainInAppItems"
+        ]
+      }
+    },
+    "/Client/RewardAdActivity": {
+      "post": {
+        "operationId": "RewardAdActivity",
+        "tags": [
+          "Advertising"
+        ],
+        "description": "Reward player's ad activity",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/advertising/rewardadactivity"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RewardAdActivityRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RewardAdActivityResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given a Placement ID and a Reward ID from the GetAdPlacements API call will grant the reward to the player. This API call does not require that ReportAdActivity is called. The grant is performed in real-time, at the end of the call all items will have been granted.",
+        "x-ms-docs-errors": [
+          "AllAdPlacementViewsAlreadyConsumed",
+          "InvalidAdPlacementAndReward"
         ]
       }
     },
@@ -5112,6 +5299,44 @@
         ]
       }
     },
+    "/Client/UnlinkNintendoSwitchAccount": {
+      "post": {
+        "operationId": "UnlinkNintendoSwitchAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Nintendo Switch account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/unlinknintendoswitchaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkNintendoSwitchAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchAccount",
+          "Client/LoginWithNintendoSwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "NintendoSwitchNotEnabledForTitle"
+        ]
+      }
+    },
     "/Client/UnlinkNintendoSwitchDeviceId": {
       "post": {
         "operationId": "UnlinkNintendoSwitchDeviceId",
@@ -5162,7 +5387,7 @@
         },
         "parameters": [
           {
-            "$ref": "#/parameters/UninkOpenIdConnectRequest"
+            "$ref": "#/parameters/UnlinkOpenIdConnectRequest"
           }
         ],
         "security": [
@@ -5404,6 +5629,7 @@
         "x-responseDetails": "The items and vc found within the container. These will be added and stacked in the appropriate inventory.",
         "x-ms-docs-errors": [
           "CharacterNotFound",
+          "ContainerKeyInvalid",
           "ContainerNotOwned",
           "InvalidContainerItem",
           "InvalidItemIdInTable",
@@ -6123,6 +6349,15 @@
         }
       }
     },
+    "AdActivity": {
+      "type": "object",
+      "enum": [
+        "Opened",
+        "Closed",
+        "Start",
+        "End"
+      ]
+    },
     "AdCampaignAttributionModel": {
       "type": "object",
       "properties": {
@@ -6319,6 +6554,92 @@
       "example": {
         "VirtualCurrency": "GC",
         "Amount": 100
+      }
+    },
+    "AdPlacementDetails": {
+      "description": "A single ad placement details including placement and reward information",
+      "type": "object",
+      "properties": {
+        "PlacementId": {
+          "description": "Placement unique ID",
+          "type": "string"
+        },
+        "PlacementName": {
+          "description": "Placement name",
+          "type": "string"
+        },
+        "PlacementViewsRemaining": {
+          "description": "If placement has viewing limits indicates how many views are left",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PlacementViewsResetMinutes": {
+          "description": "If placement has viewing limits indicates when they will next reset",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "RewardAssetUrl": {
+          "description": "Optional URL to a reward asset",
+          "type": "string"
+        },
+        "RewardDescription": {
+          "description": "Reward description",
+          "type": "string"
+        },
+        "RewardId": {
+          "description": "Reward unique ID",
+          "type": "string"
+        },
+        "RewardName": {
+          "description": "Reward name",
+          "type": "string"
+        }
+      }
+    },
+    "AdRewardItemGranted": {
+      "description": "Details for each item granted",
+      "type": "object",
+      "properties": {
+        "CatalogId": {
+          "description": "Catalog ID",
+          "type": "string"
+        },
+        "DisplayName": {
+          "description": "Catalog item display name",
+          "type": "string"
+        },
+        "InstanceId": {
+          "description": "Inventory instance ID",
+          "type": "string"
+        },
+        "ItemId": {
+          "description": "Item ID",
+          "type": "string"
+        }
+      }
+    },
+    "AdRewardResults": {
+      "description": "Details on what was granted to the player",
+      "type": "object",
+      "properties": {
+        "GrantedItems": {
+          "description": "Array of the items granted to the player",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdRewardItemGranted"
+          },
+          "x-isclass": true
+        },
+        "GrantedVirtualCurrencies": {
+          "description": "Dictionary of virtual currencies that were granted to the player",
+          "type": "object",
+          "x-actualtype": "int32"
+        },
+        "IncrementedStatistics": {
+          "description": "Dictionary of statistics that were modified for the player",
+          "type": "object",
+          "x-actualtype": "int32"
+        }
       }
     },
     "AndroidDevicePushNotificationRegistrationRequest": {
@@ -8103,6 +8424,58 @@
             "GameCenterId": "someone"
           }
         }
+      }
+    },
+    "GetAdPlacementsRequest": {
+      "description": "Using an AppId to return a list of valid ad placements for a player.",
+      "type": "object",
+      "properties": {
+        "AppId": {
+          "description": "The current AppId to use",
+          "type": "string"
+        },
+        "Identifier": {
+          "$ref": "#/definitions/NameIdentifier",
+          "description": "Using the name or unique identifier, filter the result for get a specific placement.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "AppId"
+      ],
+      "example": {
+        "AppId": "A12784B",
+        "Identifier": {
+          "Name": "PowerBonusInterstitial"
+        }
+      }
+    },
+    "GetAdPlacementsResult": {
+      "description": "Array of AdPlacementDetails",
+      "type": "object",
+      "properties": {
+        "AdPlacements": {
+          "description": "Array of results",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AdPlacementDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "AdPlacements": [
+          {
+            "PlacementId": "A124572382B",
+            "PlacementName": "PowerBonusInterstitial",
+            "RewardId": "B2674981A",
+            "RewardName": "PowerBonusReward",
+            "RewardAssetUrl": "https://cdn.test.com/PowerBonusReward.png",
+            "PlacementViewsRemaining": 1,
+            "PlacementViewsResetMinutes": 37
+          }
+        ]
       }
     },
     "GetCatalogItemsRequest": {
@@ -11430,6 +11803,29 @@
       "type": "object",
       "properties": {}
     },
+    "LinkNintendoSwitchAccountRequest": {
+      "type": "object",
+      "properties": {
+        "EnvironmentId": {
+          "description": "ID of the Nintendo Switch environment. If null, defaults to the production environment.",
+          "type": "string"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to a specific Nintendo Switch account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web token (JWT) returned by Nintendo after login. Used to validate the request and find the user ID (Nintendo Switch subject) to link with.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IdentityToken"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi..."
+      }
+    },
     "LinkNintendoSwitchDeviceIdRequest": {
       "type": "object",
       "properties": {
@@ -12195,6 +12591,48 @@
         "TitleId": "123"
       }
     },
+    "LoginWithNintendoSwitchAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "EncryptedRequest": {
+          "description": "Base64 encoded body that is encrypted with the Title's public RSA key (Enterprise Only).",
+          "type": "string"
+        },
+        "EnvironmentId": {
+          "description": "ID of the Nintendo Switch environment. If null, defaults to the production environment.",
+          "type": "string"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web token (JWT) returned by Nintendo after login.",
+          "type": "string"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayerSecret": {
+          "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IdentityToken",
+        "TitleId"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi..."
+      }
+    },
     "LoginWithNintendoSwitchDeviceIdRequest": {
       "type": "object",
       "properties": {
@@ -12726,6 +13164,24 @@
         "VirtualCurrency": "GC",
         "BalanceChange": 10,
         "Balance": 1500
+      }
+    },
+    "NameIdentifier": {
+      "description": "Identifier by either name or ID. Note that a name may change due to renaming, or reused after being deleted. ID is immutable and unique.",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Id Identifier, if present",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Name Identifier, if present",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Name": "MyTask",
+        "Id": "d739e188-22f6-4d13-a4d5-df2e93d4d2f7"
       }
     },
     "NintendoSwitchPlayFabIdPair": {
@@ -13718,6 +14174,42 @@
       "type": "object",
       "properties": {}
     },
+    "ReportAdActivityRequest": {
+      "description": "Report ad activity",
+      "type": "object",
+      "properties": {
+        "Activity": {
+          "$ref": "#/definitions/AdActivity",
+          "description": "Type of activity, may be Opened, Closed, Start or End",
+          "type": "string",
+          "x-isenum": true
+        },
+        "PlacementId": {
+          "description": "Unique ID of the placement to report for",
+          "type": "string"
+        },
+        "RewardId": {
+          "description": "Unique ID of the reward the player was offered",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlacementId",
+        "RewardId",
+        "Activity"
+      ],
+      "example": {
+        "PlacementId": "A124572382B",
+        "RewardId": "B2674981A",
+        "Activity": "End"
+      }
+    },
+    "ReportAdActivityResult": {
+      "description": "Report ad activity response has no body",
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
     "ReportPlayerClientRequest": {
       "type": "object",
       "properties": {
@@ -13804,6 +14296,91 @@
             ]
           }
         ]
+      }
+    },
+    "RewardAdActivityRequest": {
+      "description": "Details on which placement and reward to perform a grant on",
+      "type": "object",
+      "properties": {
+        "PlacementId": {
+          "description": "Placement unique ID",
+          "type": "string"
+        },
+        "RewardId": {
+          "description": "Reward unique ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlacementId",
+        "RewardId"
+      ],
+      "example": {
+        "PlacementId": "A124572382B",
+        "RewardId": "B2674981A"
+      }
+    },
+    "RewardAdActivityResult": {
+      "description": "Result for rewarding an ad activity",
+      "type": "object",
+      "properties": {
+        "AdActivityEventId": {
+          "description": "PlayStream Event ID that was generated by this reward (all subsequent events are associated with this event identifier)",
+          "type": "string"
+        },
+        "DebugResults": {
+          "description": "Debug results from the grants",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "PlacementId": {
+          "description": "Id of the placement the reward was for",
+          "type": "string"
+        },
+        "PlacementName": {
+          "description": "Name of the placement the reward was for",
+          "type": "string"
+        },
+        "PlacementViewsRemaining": {
+          "description": "If placement has viewing limits indicates how many views are left",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PlacementViewsResetMinutes": {
+          "description": "If placement has viewing limits indicates when they will next reset",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "RewardResults": {
+          "$ref": "#/definitions/AdRewardResults",
+          "description": "Reward results",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "AdActivityEventId": "1639167AGDJG",
+        "PlacementViewsRemaining": 0,
+        "PlacementViewsResetMinutes": 36,
+        "RewardResults": {
+          "GrantedItems": [
+            {
+              "ItemId": "PowerUpBonus5",
+              "CatalogId": "AdRewards",
+              "DisplayName": "Five Minute Power Up",
+              "InstanceId": "17937194371"
+            }
+          ],
+          "GrantedVirtualCurrencies": {
+            "Gold": 5
+          },
+          "IncrementedStatistics": {
+            "AdViews": 1
+          }
+        },
+        "PlacementId": "A124572382B"
       }
     },
     "ScriptExecutionError": {
@@ -14565,21 +15142,6 @@
         }
       }
     },
-    "UninkOpenIdConnectRequest": {
-      "type": "object",
-      "properties": {
-        "ConnectionId": {
-          "description": "A name that identifies which configured OpenID Connect provider relationship to use. Maximum 100 characters.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "ConnectionId"
-      ],
-      "example": {
-        "ConnectionId": "exampleprovider"
-      }
-    },
     "UnlinkAndroidDeviceIDRequest": {
       "type": "object",
       "properties": {
@@ -14685,6 +15247,11 @@
       "type": "object",
       "properties": {}
     },
+    "UnlinkNintendoSwitchAccountRequest": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
     "UnlinkNintendoSwitchDeviceIdRequest": {
       "type": "object",
       "properties": {
@@ -14700,6 +15267,21 @@
     "UnlinkNintendoSwitchDeviceIdResult": {
       "type": "object",
       "properties": {}
+    },
+    "UnlinkOpenIdConnectRequest": {
+      "type": "object",
+      "properties": {
+        "ConnectionId": {
+          "description": "A name that identifies which configured OpenID Connect provider relationship to use. Maximum 100 characters.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ConnectionId"
+      ],
+      "example": {
+        "ConnectionId": "exampleprovider"
+      }
     },
     "UnlinkPSNAccountRequest": {
       "type": "object",
@@ -16237,6 +16819,14 @@
         "$ref": "#/definitions/GetAccountInfoRequest"
       }
     },
+    "GetAdPlacementsRequest": {
+      "name": "GetAdPlacementsRequest",
+      "in": "body",
+      "description": "Using an AppId to return a list of valid ad placements for a player.",
+      "schema": {
+        "$ref": "#/definitions/GetAdPlacementsRequest"
+      }
+    },
     "GetCatalogItemsRequest": {
       "name": "GetCatalogItemsRequest",
       "in": "body",
@@ -16637,6 +17227,13 @@
         "$ref": "#/definitions/LinkKongregateAccountRequest"
       }
     },
+    "LinkNintendoSwitchAccountRequest": {
+      "name": "LinkNintendoSwitchAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkNintendoSwitchAccountRequest"
+      }
+    },
     "LinkNintendoSwitchDeviceIdRequest": {
       "name": "LinkNintendoSwitchDeviceIdRequest",
       "in": "body",
@@ -16772,6 +17369,13 @@
       "description": "More details regarding Kongregate and their game authentication system can be found at http://developers.kongregate.com/docs/virtual-goods/authentication. Developers must provide the Kongregate user ID and auth token that are generated using the Kongregate client library. PlayFab will combine these identifiers with the title's unique Kongregate app ID to log the player into the Kongregate system. If CreateAccount is set to true and there is not already a user matched to this Kongregate ID, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
       "schema": {
         "$ref": "#/definitions/LoginWithKongregateRequest"
+      }
+    },
+    "LoginWithNintendoSwitchAccountRequest": {
+      "name": "LoginWithNintendoSwitchAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LoginWithNintendoSwitchAccountRequest"
       }
     },
     "LoginWithNintendoSwitchDeviceIdRequest": {
@@ -16933,6 +17537,14 @@
         "$ref": "#/definitions/RemoveSharedGroupMembersRequest"
       }
     },
+    "ReportAdActivityRequest": {
+      "name": "ReportAdActivityRequest",
+      "in": "body",
+      "description": "Report ad activity",
+      "schema": {
+        "$ref": "#/definitions/ReportAdActivityRequest"
+      }
+    },
     "ReportPlayerClientRequest": {
       "name": "ReportPlayerClientRequest",
       "in": "body",
@@ -16946,6 +17558,14 @@
       "description": "The title should obtain a refresh receipt via restoreCompletedTransactions in the SKPaymentQueue of the Apple StoreKit and pass that in to this call. The resultant receipt contains new receipt instances for all non-consumable goods previously purchased by the user. This API call iterates through every purchase in the receipt and restores the items if they still exist in the catalog and can be validated.",
       "schema": {
         "$ref": "#/definitions/RestoreIOSPurchasesRequest"
+      }
+    },
+    "RewardAdActivityRequest": {
+      "name": "RewardAdActivityRequest",
+      "in": "body",
+      "description": "Details on which placement and reward to perform a grant on",
+      "schema": {
+        "$ref": "#/definitions/RewardAdActivityRequest"
       }
     },
     "SendAccountRecoveryEmailRequest": {
@@ -16994,13 +17614,6 @@
       "description": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
       "schema": {
         "$ref": "#/definitions/SubtractUserVirtualCurrencyRequest"
-      }
-    },
-    "UninkOpenIdConnectRequest": {
-      "name": "UninkOpenIdConnectRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/UninkOpenIdConnectRequest"
       }
     },
     "UnlinkAndroidDeviceIDRequest": {
@@ -17066,11 +17679,25 @@
         "$ref": "#/definitions/UnlinkKongregateAccountRequest"
       }
     },
+    "UnlinkNintendoSwitchAccountRequest": {
+      "name": "UnlinkNintendoSwitchAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkNintendoSwitchAccountRequest"
+      }
+    },
     "UnlinkNintendoSwitchDeviceIdRequest": {
       "name": "UnlinkNintendoSwitchDeviceIdRequest",
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkNintendoSwitchDeviceIdRequest"
+      }
+    },
+    "UnlinkOpenIdConnectRequest": {
+      "name": "UnlinkOpenIdConnectRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkOpenIdConnectRequest"
       }
     },
     "UnlinkPSNAccountRequest": {
@@ -17833,6 +18460,42 @@
                 "GameCenterId": "someone"
               }
             }
+          }
+        }
+      }
+    },
+    "GetAdPlacementsResult": {
+      "description": "Array of AdPlacementDetails",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetAdPlacementsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "AdPlacements": [
+              {
+                "PlacementId": "A124572382B",
+                "PlacementName": "PowerBonusInterstitial",
+                "RewardId": "B2674981A",
+                "RewardName": "PowerBonusReward",
+                "RewardAssetUrl": "https://cdn.test.com/PowerBonusReward.png",
+                "PlacementViewsRemaining": 1,
+                "PlacementViewsResetMinutes": 37
+              }
+            ]
           }
         }
       }
@@ -20374,6 +21037,30 @@
         }
       }
     },
+    "ReportAdActivityResult": {
+      "description": "Report ad activity response has no body",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ReportAdActivityResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
     "ReportPlayerClientResult": {
       "description": "Players are currently limited to five reports per day. Attempts by a single user account to submit reports beyond five will result in Updated being returned as false.",
       "schema": {
@@ -20436,6 +21123,51 @@
                 ]
               }
             ]
+          }
+        }
+      }
+    },
+    "RewardAdActivityResult": {
+      "description": "Result for rewarding an ad activity",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RewardAdActivityResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "AdActivityEventId": "1639167AGDJG",
+            "PlacementViewsRemaining": 0,
+            "PlacementViewsResetMinutes": 36,
+            "RewardResults": {
+              "GrantedItems": [
+                {
+                  "ItemId": "PowerUpBonus5",
+                  "CatalogId": "AdRewards",
+                  "DisplayName": "Five Minute Power Up",
+                  "InstanceId": "17937194371"
+                }
+              ],
+              "GrantedVirtualCurrencies": {
+                "Gold": 5
+              },
+              "IncrementedStatistics": {
+                "AdViews": 1
+              }
+            },
+            "PlacementId": "A124572382B"
           }
         }
       }
@@ -23311,6 +24043,10 @@
     "NintendoSwitchNotEnabledForTitle": {
       "id": 1506,
       "name": "NintendoSwitchNotEnabledForTitle"
+    },
+    "RequestMultiplayerServersThrottledFromRateLimiter": {
+      "id": 1507,
+      "name": "RequestMultiplayerServersThrottledFromRateLimiter"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

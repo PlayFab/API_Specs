@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200402",
+    "version": "200421",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -980,6 +980,49 @@
         ]
       }
     },
+    "/MultiplayerServer/DeleteContainerImageRepository": {
+      "post": {
+        "operationId": "DeleteContainerImageRepository",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Deletes a container image repository.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/deletecontainerimagerepository"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteContainerImageRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Removes the specified container image repository. After this operation, a 'docker pull' will fail for all the tags of the specified image. Morever, ListContainerImages will not return the specified image.",
+        "x-seeAlso": [
+          "MultiplayerServer/ListContainerImageTags"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/DeleteRemoteUser": {
       "post": {
         "operationId": "DeleteRemoteUser",
@@ -1876,44 +1919,6 @@
           }
         },
         "x-requestDetails": "Returns a list of quality of service servers for party.",
-        "x-ms-docs-errors": [
-          "MultiplayerServerBadRequest",
-          "MultiplayerServerForbidden",
-          "MultiplayerServerInternalServerError",
-          "MultiplayerServerUnauthorized",
-          "MultiplayerServerUnavailable"
-        ]
-      }
-    },
-    "/MultiplayerServer/ListQosServers": {
-      "post": {
-        "operationId": "ListQosServers",
-        "tags": [
-          "MultiplayerServer"
-        ],
-        "description": "Lists quality of service servers.",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/listqosservers"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ListQosServersRequest"
-          }
-        ],
-        "security": [
-          {
-            "None": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ListQosServersResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Returns a list of quality of service servers.",
         "x-ms-docs-errors": [
           "MultiplayerServerBadRequest",
           "MultiplayerServerForbidden",
@@ -3812,6 +3817,19 @@
         "Name": "GameCertificate1"
       }
     },
+    "DeleteContainerImageRequest": {
+      "description": "Removes the specified container image repository. After this operation, a 'docker pull' will fail for all the tags of the specified image. Morever, ListContainerImages will not return the specified image.",
+      "type": "object",
+      "properties": {
+        "ImageName": {
+          "description": "The container image repository we want to delete.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ImageName": "imageName1"
+      }
+    },
     "DeleteRemoteUserRequest": {
       "description": "Deletes a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
       "type": "object",
@@ -5366,62 +5384,6 @@
         "PageSize": 10
       }
     },
-    "ListQosServersRequest": {
-      "description": "Returns a list of quality of service servers.",
-      "type": "object",
-      "properties": {},
-      "example": {}
-    },
-    "ListQosServersResponse": {
-      "type": "object",
-      "properties": {
-        "PageSize": {
-          "description": "The page size on the response.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "QosServers": {
-          "description": "The list of QoS servers.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/QosServer"
-          },
-          "x-isclass": true
-        },
-        "SkipToken": {
-          "description": "The skip token for the paged response.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "PageSize"
-      ],
-      "example": {
-        "QosServers": [
-          {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-            "Region": "WestUs"
-          },
-          {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-            "Region": "SouthCentralUs"
-          },
-          {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-            "Region": "EastUs"
-          },
-          {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-            "Region": "NorthEurope"
-          },
-          {
-            "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-            "Region": "WestEurope"
-          }
-        ],
-        "PageSize": 10
-      }
-    },
     "ListServerBackfillTicketsForPlayerRequest": {
       "description": "List all server backfill ticket Ids the user is a member of.",
       "type": "object",
@@ -6273,6 +6235,14 @@
         "$ref": "#/definitions/DeleteCertificateRequest"
       }
     },
+    "DeleteContainerImageRequest": {
+      "name": "DeleteContainerImageRequest",
+      "in": "body",
+      "description": "Removes the specified container image repository. After this operation, a 'docker pull' will fail for all the tags of the specified image. Morever, ListContainerImages will not return the specified image.",
+      "schema": {
+        "$ref": "#/definitions/DeleteContainerImageRequest"
+      }
+    },
     "DeleteRemoteUserRequest": {
       "name": "DeleteRemoteUserRequest",
       "in": "body",
@@ -6479,14 +6449,6 @@
       "description": "Returns a list of quality of service servers for a title.",
       "schema": {
         "$ref": "#/definitions/ListQosServersForTitleRequest"
-      }
-    },
-    "ListQosServersRequest": {
-      "name": "ListQosServersRequest",
-      "in": "body",
-      "description": "Returns a list of quality of service servers.",
-      "schema": {
-        "$ref": "#/definitions/ListQosServersRequest"
       }
     },
     "ListServerBackfillTicketsForPlayerRequest": {
@@ -7780,54 +7742,6 @@
           },
           "data": {
             "$ref": "#/definitions/ListQosServersForTitleResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "QosServers": [
-              {
-                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-                "Region": "WestUs"
-              },
-              {
-                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-                "Region": "SouthCentralUs"
-              },
-              {
-                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-                "Region": "EastUs"
-              },
-              {
-                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-                "Region": "NorthEurope"
-              },
-              {
-                "ServerUrl": "xblcxplatqos-wus-9-18-2-0.cloudapp.net",
-                "Region": "WestEurope"
-              }
-            ],
-            "PageSize": 10
-          }
-        }
-      }
-    },
-    "ListQosServersResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ListQosServersResponse"
           }
         },
         "example": {
@@ -10026,6 +9940,10 @@
     "NintendoSwitchNotEnabledForTitle": {
       "id": 1506,
       "name": "NintendoSwitchNotEnabledForTitle"
+    },
+    "RequestMultiplayerServersThrottledFromRateLimiter": {
+      "id": 1507,
+      "name": "RequestMultiplayerServersThrottledFromRateLimiter"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
