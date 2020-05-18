@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200505",
+    "version": "200518",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -341,6 +341,43 @@
         ]
       }
     },
+    "/Match/GetMatchmakingQueue": {
+      "post": {
+        "operationId": "GetMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "SDK support is limited to C# and Java for this API. Get a matchmaking queue configuration.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking-admin/getmatchmakingqueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets the current configuration for a queue.",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingQueueNotFound"
+        ]
+      }
+    },
     "/Match/GetMatchmakingTicket": {
       "post": {
         "operationId": "GetMatchmakingTicket",
@@ -374,6 +411,7 @@
           "MatchmakingEntityInvalid",
           "MatchmakingQueueNotFound",
           "MatchmakingRateLimitExceeded",
+          "MatchmakingRequestTypeMismatch",
           "MatchmakingTicketNotFound",
           "MatchmakingUnauthorized"
         ]
@@ -500,6 +538,40 @@
         ]
       }
     },
+    "/Match/ListMatchmakingQueues": {
+      "post": {
+        "operationId": "ListMatchmakingQueues",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "SDK support is limited to C# and Java for this API. List all matchmaking queue configs.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking-admin/listmatchmakingqueues"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListMatchmakingQueuesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ListMatchmakingQueuesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets a list of all the matchmaking queue configurations for the title.",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ]
+      }
+    },
     "/Match/ListMatchmakingTicketsForPlayer": {
       "post": {
         "operationId": "ListMatchmakingTicketsForPlayer",
@@ -571,6 +643,81 @@
           "MatchmakingQueueNotFound",
           "MatchmakingRateLimitExceeded",
           "MatchmakingUnauthorized"
+        ]
+      }
+    },
+    "/Match/RemoveMatchmakingQueue": {
+      "post": {
+        "operationId": "RemoveMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "SDK support is limited to C# and Java for this API. Remove a matchmaking queue config.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking-admin/removematchmakingqueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RemoveMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RemoveMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Deletes the configuration for a queue. This will permanently delete the configuration and players will no longer be able to match in the queue. All outstanding matchmaking tickets will be cancelled.",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingQueueNotFound"
+        ]
+      }
+    },
+    "/Match/SetMatchmakingQueue": {
+      "post": {
+        "operationId": "SetMatchmakingQueue",
+        "tags": [
+          "Matchmaking Admin"
+        ],
+        "description": "SDK support is limited to C# and Java for this API. Create or update a matchmaking queue configuration.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking-admin/setmatchmakingqueue"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetMatchmakingQueueRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetMatchmakingQueueResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Use this API to create or update matchmaking queue configurations. The queue configuration defines the matchmaking rules. The matchmaking service will match tickets together according to the configured rules. Queue resources are not spun up by calling this API. Queues are created when the first ticket is submitted.",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingQueueConfigInvalid",
+          "MatchmakingQueueLimitExceeded"
         ]
       }
     },
@@ -2442,6 +2589,37 @@
         }
       }
     },
+    "AttributeMergeFunction": {
+      "type": "object",
+      "enum": [
+        "Min",
+        "Max",
+        "Average"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "AttributeNotSpecifiedBehavior": {
+      "type": "object",
+      "enum": [
+        "UseDefault",
+        "MatchAny"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "AttributeSource": {
+      "type": "object",
+      "enum": [
+        "User",
+        "PlayerEntity"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "AzureRegion": {
       "type": "object",
       "enum": [
@@ -3734,6 +3912,197 @@
         "Total"
       ]
     },
+    "CustomDifferenceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "DifferenceOverrides": {
+          "description": "Manually specify the values to use for each expansion interval (this overrides Difference, Delta, and MaxDifference).",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideDouble"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "DifferenceOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "DifferenceOverrides": [
+          {
+            "Value": 2
+          },
+          {
+            "Value": 4
+          },
+          null,
+          {
+            "Value": 6
+          }
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "CustomRegionSelectionRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "MaxLatencyOverrides": {
+          "description": "Manually specify the maximum latency to use for each expansion interval.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideUnsignedInt"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "MaxLatencyOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "MaxLatencyOverrides": [
+          {
+            "Value": 250
+          },
+          {
+            "Value": 500
+          },
+          null
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "CustomSetIntersectionRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "MinIntersectionSizeOverrides": {
+          "description": "Manually specify the values to use for each expansion interval.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideUnsignedInt"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "MinIntersectionSizeOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "MinIntersectionSizeOverrides": [
+          {
+            "Value": 6
+          },
+          {
+            "Value": 4
+          },
+          null,
+          {
+            "Value": 3
+          }
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "CustomTeamDifferenceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "DifferenceOverrides": {
+          "description": "Manually specify the team difference value to use for each expansion interval.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideDouble"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "DifferenceOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "DifferenceOverrides": [
+          {
+            "Value": 1
+          },
+          {
+            "Value": 3
+          },
+          null
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "CustomTeamSizeBalanceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "DifferenceOverrides": {
+          "description": "Manually specify the team size difference to use for each expansion interval.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideUnsignedInt"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "DifferenceOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "DifferenceOverrides": [
+          {
+            "Value": 1
+          },
+          {
+            "Value": 3
+          },
+          null
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "DeleteAssetRequest": {
       "description": "Deletes a multiplayer server game asset for a title.",
       "type": "object",
@@ -3868,6 +4237,92 @@
         "VmId": "VmID1",
         "Username": "AUsername"
       }
+    },
+    "DifferenceRule": {
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/definitions/QueueRuleAttribute",
+          "description": "Description of the attribute used by this rule to match tickets.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "AttributeNotSpecifiedBehavior": {
+          "$ref": "#/definitions/AttributeNotSpecifiedBehavior",
+          "description": "Describes the behavior when an attribute is not specified in the ticket creation request or in the user's entity profile.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomExpansion": {
+          "$ref": "#/definitions/CustomDifferenceRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule. When this is set, Difference is ignored.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DefaultAttributeValue": {
+          "description": "The default value assigned to tickets that are missing the attribute specified by AttributePath (assuming that AttributeNotSpecifiedBehavior is false). Optional.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Difference": {
+          "description": "The allowed difference between any two tickets at the start of matchmaking.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "LinearExpansion": {
+          "$ref": "#/definitions/LinearDifferenceRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "MergeFunction": {
+          "$ref": "#/definitions/AttributeMergeFunction",
+          "description": "How values are treated when there are multiple players in a single ticket.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Weight": {
+          "description": "The relative weight of this rule compared to others.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "Difference",
+        "MergeFunction",
+        "Attribute",
+        "AttributeNotSpecifiedBehavior",
+        "Weight",
+        "Name"
+      ],
+      "example": {
+        "Difference": 10,
+        "MergeFunction": "Average",
+        "DefaultAttributeValue": 0,
+        "LinearExpansion": {
+          "Delta": 0.5,
+          "Limit": 20,
+          "SecondsBetweenExpansions": 5
+        },
+        "Attribute": {
+          "Path": "ExampleAttributeDifference"
+        },
+        "Weight": 1,
+        "Name": "ExampleNameDifference",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
     },
     "DynamicStandbySettings": {
       "type": "object",
@@ -4250,6 +4705,36 @@
         "Username": "RegistryUser",
         "Password": "RegistryPassword"
       }
+    },
+    "GetMatchmakingQueueRequest": {
+      "description": "Gets the current configuration for a queue.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The Id of the matchmaking queue to retrieve.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "GetMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {
+        "MatchmakingQueue": {
+          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "description": "The matchmaking queue config.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
     },
     "GetMatchmakingTicketRequest": {
       "description": "The ticket includes the invited players, their attributes if they have joined, the ticket status, the match Id when applicable, etc. Only servers, the ticket creator and the invited players can get the ticket.",
@@ -4888,6 +5373,161 @@
       "properties": {},
       "example": {}
     },
+    "LinearDifferenceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "Delta": {
+          "description": "This value gets added to Difference at every expansion interval.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Limit": {
+          "description": "Once the total difference reaches this value, expansion stops. Optional.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Delta",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "Delta": 0.5,
+        "Limit": 20,
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "LinearRegionSelectionRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "Delta": {
+          "description": "This value gets added to MaxLatency at every expansion interval.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Limit": {
+          "description": "Once the max Latency reaches this value, expansion stops.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Delta",
+        "Limit",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "Delta": 10,
+        "Limit": 300,
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "LinearSetIntersectionRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "Delta": {
+          "description": "This value gets added to MinIntersectionSize at every expansion interval.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Delta",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "Delta": 2,
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "LinearTeamDifferenceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "Delta": {
+          "description": "This value gets added to Difference at every expansion interval.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Limit": {
+          "description": "Once the total difference reaches this value, expansion stops. Optional.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Delta",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "Delta": 1,
+        "Limit": 5,
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "LinearTeamSizeBalanceRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "Delta": {
+          "description": "This value gets added to Difference at every expansion interval.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Limit": {
+          "description": "Once the total difference reaches this value, expansion stops. Optional.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Delta",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "Delta": 1,
+        "Limit": 5,
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "ListAssetSummariesRequest": {
       "description": "Returns a list of multiplayer server game asset summaries for a title.",
       "type": "object",
@@ -5133,6 +5773,31 @@
           "ImageTag2"
         ]
       }
+    },
+    "ListMatchmakingQueuesRequest": {
+      "description": "Gets a list of all the matchmaking queue configurations for the title.",
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "ListMatchmakingQueuesResult": {
+      "type": "object",
+      "properties": {
+        "MatchMakingQueues": {
+          "description": "The list of matchmaking queue configs for this title.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueConfig"
+          },
+          "x-isclass": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
     },
     "ListMatchmakingTicketsForPlayerRequest": {
       "description": "If the caller is a title, the EntityKey in the request is required. If the caller is a player, then it is optional. If it is provided it must match the caller's entity.",
@@ -5570,6 +6235,413 @@
         "Entity"
       ]
     },
+    "MatchmakingQueueConfig": {
+      "type": "object",
+      "properties": {
+        "BuildId": {
+          "description": "This is the buildId that will be used to allocate the multiplayer server for the match.",
+          "type": "string"
+        },
+        "DifferenceRules": {
+          "description": "List of difference rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DifferenceRule"
+          },
+          "x-isclass": true
+        },
+        "MatchTotalRules": {
+          "description": "List of match total rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchTotalRule"
+          },
+          "x-isclass": true
+        },
+        "MaxMatchSize": {
+          "description": "Maximum number of players in a match.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MaxTicketSize": {
+          "description": "Maximum number of players in a ticket. Optional.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MinMatchSize": {
+          "description": "Minimum number of players in a match.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "Unique identifier for a Queue. Chosen by the developer.",
+          "type": "string"
+        },
+        "RegionSelectionRule": {
+          "$ref": "#/definitions/RegionSelectionRule",
+          "description": "Region selection rule used to find an optimal match.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ServerAllocationEnabled": {
+          "description": "Boolean flag to enable server allocation for the queue.",
+          "type": "boolean"
+        },
+        "SetIntersectionRules": {
+          "description": "List of set intersection rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SetIntersectionRule"
+          },
+          "x-isclass": true
+        },
+        "StatisticsVisibilityToPlayers": {
+          "$ref": "#/definitions/StatisticsVisibilityToPlayers",
+          "description": "Controls which statistics are visible to players.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "StringEqualityRules": {
+          "description": "List of string equality rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StringEqualityRule"
+          },
+          "x-isclass": true
+        },
+        "TeamDifferenceRules": {
+          "description": "List of team difference rules used to find an optimal match.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TeamDifferenceRule"
+          },
+          "x-isclass": true
+        },
+        "Teams": {
+          "description": "The team configuration for a match. This may be null if there are no teams.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MatchmakingQueueTeam"
+          },
+          "x-isclass": true
+        },
+        "TeamSizeBalanceRule": {
+          "$ref": "#/definitions/TeamSizeBalanceRule",
+          "description": "Team size balance rule used to find an optimal match.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TeamTicketSizeSimilarityRule": {
+          "$ref": "#/definitions/TeamTicketSizeSimilarityRule",
+          "description": "Team ticket size similarity rule used to find an optimal match.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Name",
+        "MinMatchSize",
+        "MaxMatchSize",
+        "ServerAllocationEnabled"
+      ],
+      "example": {
+        "Name": "ExampleQueueName",
+        "MinMatchSize": 7,
+        "MaxMatchSize": 8,
+        "MaxTicketSize": 2,
+        "ServerAllocationEnabled": true,
+        "BuildId": "065a3208-39af-4691-8794-5f774c367ac2",
+        "DifferenceRules": [
+          {
+            "Difference": 10,
+            "MergeFunction": "Average",
+            "DefaultAttributeValue": 0,
+            "LinearExpansion": {
+              "Delta": 0.5,
+              "Limit": 20,
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeDifference"
+            },
+            "Weight": 1,
+            "Name": "ExampleNameDifference",
+            "SecondsUntilOptional": 50
+          }
+        ],
+        "StringEqualityRules": [
+          {
+            "DefaultAttributeValue": "ExampleDefault",
+            "Expansion": {
+              "EnabledOverrides": [
+                false,
+                true,
+                true,
+                false
+              ],
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeStringEquality"
+            },
+            "Weight": 1,
+            "Name": "ExampleNameStringEquality",
+            "SecondsUntilOptional": 50
+          }
+        ],
+        "MatchTotalRules": [
+          {
+            "Attribute": {
+              "Path": "ExampleAttribute"
+            },
+            "Min": 2,
+            "Weight": 1,
+            "Expansion": {
+              "MaxOverrides": [
+                {
+                  "Value": 4
+                },
+                {
+                  "Value": 4
+                },
+                null
+              ],
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "MatchTotalRule",
+            "SecondsUntilOptional": 50
+          }
+        ],
+        "SetIntersectionRules": [
+          {
+            "DefaultAttributeValue": [
+              "a",
+              "b",
+              "c"
+            ],
+            "MinIntersectionSize": 2,
+            "LinearExpansion": {
+              "Delta": 2,
+              "SecondsBetweenExpansions": 5
+            },
+            "Attribute": {
+              "Path": "ExampleAttributeSetIntersectionRule"
+            },
+            "Weight": 1,
+            "Name": "ExampleNameSetIntersectionRule",
+            "SecondsUntilOptional": 50
+          }
+        ],
+        "RegionSelectionRule": {
+          "MaxLatency": 250,
+          "Path": "Latencies",
+          "LinearExpansion": {
+            "Delta": 10,
+            "Limit": 300,
+            "SecondsBetweenExpansions": 5
+          },
+          "Weight": 1,
+          "Name": "RegionSelectionRule",
+          "SecondsUntilOptional": 50
+        },
+        "TeamSizeBalanceRule": {
+          "Difference": 1,
+          "LinearExpansion": {
+            "Delta": 1,
+            "Limit": 5,
+            "SecondsBetweenExpansions": 5
+          },
+          "Name": "TeamSizeBalanceRule",
+          "SecondsUntilOptional": 50
+        },
+        "TeamDifferenceRules": [
+          {
+            "Attribute": {
+              "Path": "ExampleAttribute"
+            },
+            "Difference": 2,
+            "LinearExpansion": {
+              "Delta": 1,
+              "Limit": 5,
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "TeamDifferenceRule",
+            "SecondsUntilOptional": 50
+          }
+        ],
+        "TeamTicketSizeSimilarityRule": {
+          "Name": "TeamTicketSizeSimilarityRule",
+          "SecondsUntilOptional": 180
+        },
+        "Teams": [
+          {
+            "Name": "monster",
+            "MinTeamSize": 1,
+            "MaxTeamSize": 1
+          },
+          {
+            "Name": "hunters",
+            "MinTeamSize": 4,
+            "MaxTeamSize": 8
+          }
+        ],
+        "StatisticsVisibilityToPlayers": {
+          "ShowNumberOfPlayersMatching": true,
+          "ShowTimeToMatch": true
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "MatchmakingQueueTeam": {
+      "type": "object",
+      "properties": {
+        "MaxTeamSize": {
+          "description": "The maximum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MinTeamSize": {
+          "description": "The minimum number of players required for the team.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "A name to identify the team. This is case insensitive.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "MinTeamSize",
+        "MaxTeamSize"
+      ],
+      "example": {
+        "Name": "red",
+        "MinTeamSize": 4,
+        "MaxTeamSize": 8
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "MatchTotalRule": {
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/definitions/QueueRuleAttribute",
+          "description": "Description of the attribute used by this rule to match tickets.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Expansion": {
+          "$ref": "#/definitions/MatchTotalRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Max": {
+          "description": "The maximum total value for a group. Must be >= Min.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Min": {
+          "description": "The minimum total value for a group. Must be >=2.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Weight": {
+          "description": "The relative weight of this rule compared to others.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "Attribute",
+        "Min",
+        "Max",
+        "Weight",
+        "Name"
+      ],
+      "example": {
+        "Attribute": {
+          "Path": "ExampleAttribute"
+        },
+        "Min": 2,
+        "Weight": 1,
+        "Expansion": {
+          "MaxOverrides": [
+            {
+              "Value": 4
+            },
+            {
+              "Value": 4
+            },
+            null
+          ],
+          "SecondsBetweenExpansions": 5
+        },
+        "Name": "MatchTotalRule",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "MatchTotalRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "MaxOverrides": {
+          "description": "Manually specify the values to use for each expansion interval. When this is set, Max is ignored.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideDouble"
+          },
+          "x-isclass": true
+        },
+        "MinOverrides": {
+          "description": "Manually specify the values to use for each expansion interval. When this is set, Min is ignored.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OverrideDouble"
+          },
+          "x-isclass": true
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "MaxOverrides": [
+          {
+            "Value": 4
+          },
+          {
+            "Value": 4
+          },
+          null
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "MultiplayerEmptyRequest": {
       "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
       "type": "object",
@@ -5621,6 +6693,38 @@
         "Linux"
       ]
     },
+    "OverrideDouble": {
+      "type": "object",
+      "properties": {
+        "Value": {
+          "description": "The custom expansion value.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "Value"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "OverrideUnsignedInt": {
+      "type": "object",
+      "properties": {
+        "Value": {
+          "description": "The custom expansion value.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Value"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "Port": {
       "type": "object",
       "properties": {
@@ -5666,6 +6770,115 @@
           "type": "string"
         }
       }
+    },
+    "QueueRuleAttribute": {
+      "type": "object",
+      "properties": {
+        "Path": {
+          "description": "Specifies which attribute in a ticket to use.",
+          "type": "string"
+        },
+        "Source": {
+          "$ref": "#/definitions/AttributeSource",
+          "description": "Specifies which source the attribute comes from.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "Path",
+        "Source"
+      ],
+      "example": {
+        "Path": "ExampleAttribute"
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "RegionSelectionRule": {
+      "type": "object",
+      "properties": {
+        "CustomExpansion": {
+          "$ref": "#/definitions/CustomRegionSelectionRuleExpansion",
+          "description": "Controls how the Max Latency parameter expands over time. Only one expansion can be set per rule. When this is set, MaxLatency is ignored.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LinearExpansion": {
+          "$ref": "#/definitions/LinearRegionSelectionRuleExpansion",
+          "description": "Controls how the Max Latency parameter expands over time. Only one expansion can be set per rule.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "MaxLatency": {
+          "description": "Specifies the maximum latency that is allowed between the client and the selected server. The value is in milliseconds.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "Path": {
+          "description": "Specifies which attribute in a ticket to use.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Weight": {
+          "description": "The relative weight of this rule compared to others.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "MaxLatency",
+        "Path",
+        "Weight",
+        "Name"
+      ],
+      "example": {
+        "MaxLatency": 250,
+        "Path": "Latencies",
+        "LinearExpansion": {
+          "Delta": 10,
+          "Limit": 300,
+          "SecondsBetweenExpansions": 5
+        },
+        "Weight": 1,
+        "Name": "RegionSelectionRule",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "RemoveMatchmakingQueueRequest": {
+      "description": "Deletes the configuration for a queue. This will permanently delete the configuration and players will no longer be able to match in the queue. All outstanding matchmaking tickets will be cancelled.",
+      "type": "object",
+      "properties": {
+        "QueueName": {
+          "description": "The Id of the matchmaking queue to remove.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "QueueName": "custom123"
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "RemoveMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
     },
     "RequestMultiplayerServerRequest": {
       "description": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
@@ -5865,6 +7078,259 @@
         "Process"
       ]
     },
+    "SetIntersectionRule": {
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/definitions/QueueRuleAttribute",
+          "description": "Description of the attribute used by this rule to match tickets.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "AttributeNotSpecifiedBehavior": {
+          "$ref": "#/definitions/AttributeNotSpecifiedBehavior",
+          "description": "Describes the behavior when an attribute is not specified in the ticket creation request or in the user's entity profile.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomExpansion": {
+          "$ref": "#/definitions/CustomSetIntersectionRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule. When this is set, MinIntersectionSize is ignored.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DefaultAttributeValue": {
+          "description": "The default value assigned to tickets that are missing the attribute specified by AttributePath (assuming that AttributeNotSpecifiedBehavior is UseDefault). Values must be unique.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "LinearExpansion": {
+          "$ref": "#/definitions/LinearSetIntersectionRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "MinIntersectionSize": {
+          "description": "The minimum number of values that must match between sets.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Weight": {
+          "description": "The relative weight of this rule compared to others.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "MinIntersectionSize",
+        "Attribute",
+        "AttributeNotSpecifiedBehavior",
+        "Weight",
+        "Name"
+      ],
+      "example": {
+        "DefaultAttributeValue": [
+          "a",
+          "b",
+          "c"
+        ],
+        "MinIntersectionSize": 2,
+        "LinearExpansion": {
+          "Delta": 2,
+          "SecondsBetweenExpansions": 5
+        },
+        "Attribute": {
+          "Path": "ExampleAttributeSetIntersectionRule"
+        },
+        "Weight": 1,
+        "Name": "ExampleNameSetIntersectionRule",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "SetMatchmakingQueueRequest": {
+      "description": "Use this API to create or update matchmaking queue configurations. The queue configuration defines the matchmaking rules. The matchmaking service will match tickets together according to the configured rules. Queue resources are not spun up by calling this API. Queues are created when the first ticket is submitted.",
+      "type": "object",
+      "properties": {
+        "MatchmakingQueue": {
+          "$ref": "#/definitions/MatchmakingQueueConfig",
+          "description": "The matchmaking queue config.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "MatchmakingQueue": {
+          "Name": "ExampleQueueName",
+          "MinMatchSize": 7,
+          "MaxMatchSize": 8,
+          "MaxTicketSize": 2,
+          "ServerAllocationEnabled": true,
+          "BuildId": "065a3208-39af-4691-8794-5f774c367ac2",
+          "DifferenceRules": [
+            {
+              "Difference": 10,
+              "MergeFunction": "Average",
+              "DefaultAttributeValue": 0,
+              "LinearExpansion": {
+                "Delta": 0.5,
+                "Limit": 20,
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeDifference"
+              },
+              "Weight": 1,
+              "Name": "ExampleNameDifference",
+              "SecondsUntilOptional": 50
+            }
+          ],
+          "StringEqualityRules": [
+            {
+              "DefaultAttributeValue": "ExampleDefault",
+              "Expansion": {
+                "EnabledOverrides": [
+                  false,
+                  true,
+                  true,
+                  false
+                ],
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeStringEquality"
+              },
+              "Weight": 1,
+              "Name": "ExampleNameStringEquality",
+              "SecondsUntilOptional": 50
+            }
+          ],
+          "MatchTotalRules": [
+            {
+              "Attribute": {
+                "Path": "ExampleAttribute"
+              },
+              "Min": 2,
+              "Weight": 1,
+              "Expansion": {
+                "MaxOverrides": [
+                  {
+                    "Value": 4
+                  },
+                  {
+                    "Value": 4
+                  },
+                  null
+                ],
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "MatchTotalRule",
+              "SecondsUntilOptional": 50
+            }
+          ],
+          "SetIntersectionRules": [
+            {
+              "DefaultAttributeValue": [
+                "a",
+                "b",
+                "c"
+              ],
+              "MinIntersectionSize": 2,
+              "LinearExpansion": {
+                "Delta": 2,
+                "SecondsBetweenExpansions": 5
+              },
+              "Attribute": {
+                "Path": "ExampleAttributeSetIntersectionRule"
+              },
+              "Weight": 1,
+              "Name": "ExampleNameSetIntersectionRule",
+              "SecondsUntilOptional": 50
+            }
+          ],
+          "RegionSelectionRule": {
+            "MaxLatency": 250,
+            "Path": "Latencies",
+            "LinearExpansion": {
+              "Delta": 10,
+              "Limit": 300,
+              "SecondsBetweenExpansions": 5
+            },
+            "Weight": 1,
+            "Name": "RegionSelectionRule",
+            "SecondsUntilOptional": 50
+          },
+          "TeamSizeBalanceRule": {
+            "Difference": 1,
+            "LinearExpansion": {
+              "Delta": 1,
+              "Limit": 5,
+              "SecondsBetweenExpansions": 5
+            },
+            "Name": "TeamSizeBalanceRule",
+            "SecondsUntilOptional": 50
+          },
+          "TeamDifferenceRules": [
+            {
+              "Attribute": {
+                "Path": "ExampleAttribute"
+              },
+              "Difference": 2,
+              "LinearExpansion": {
+                "Delta": 1,
+                "Limit": 5,
+                "SecondsBetweenExpansions": 5
+              },
+              "Name": "TeamDifferenceRule",
+              "SecondsUntilOptional": 50
+            }
+          ],
+          "TeamTicketSizeSimilarityRule": {
+            "Name": "TeamTicketSizeSimilarityRule",
+            "SecondsUntilOptional": 180
+          },
+          "Teams": [
+            {
+              "Name": "monster",
+              "MinTeamSize": 1,
+              "MaxTeamSize": 1
+            },
+            {
+              "Name": "hunters",
+              "MinTeamSize": 4,
+              "MaxTeamSize": 8
+            }
+          ],
+          "StatisticsVisibilityToPlayers": {
+            "ShowNumberOfPlayersMatching": true,
+            "ShowTimeToMatch": true
+          }
+        }
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "SetMatchmakingQueueResult": {
+      "type": "object",
+      "properties": {},
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
     "ShutdownMultiplayerServerRequest": {
       "description": "Executes the shutdown callback from the GSDK and terminates the multiplayer server session. The callback in the GSDK will allow for graceful shutdown with a 15 minute timeoutIf graceful shutdown has not been completed before 15 minutes have elapsed, the multiplayer server session will be forcefully terminated on it's own.",
       "type": "object",
@@ -5923,6 +7389,263 @@
         "Percentile50",
         "Percentile90",
         "Percentile99"
+      ]
+    },
+    "StatisticsVisibilityToPlayers": {
+      "type": "object",
+      "properties": {
+        "ShowNumberOfPlayersMatching": {
+          "description": "Whether to allow players to view the current number of players in the matchmaking queue.",
+          "type": "boolean"
+        },
+        "ShowTimeToMatch": {
+          "description": "Whether to allow players to view statistics representing the time it takes for tickets to find a match.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "ShowNumberOfPlayersMatching",
+        "ShowTimeToMatch"
+      ],
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "StringEqualityRule": {
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/definitions/QueueRuleAttribute",
+          "description": "Description of the attribute used by this rule to match tickets.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "AttributeNotSpecifiedBehavior": {
+          "$ref": "#/definitions/AttributeNotSpecifiedBehavior",
+          "description": "Describes the behavior when an attribute is not specified in the ticket creation request or in the user's entity profile.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "DefaultAttributeValue": {
+          "description": "The default value assigned to tickets that are missing the attribute specified by AttributePath (assuming that AttributeNotSpecifiedBehavior is false).",
+          "type": "string"
+        },
+        "Expansion": {
+          "$ref": "#/definitions/StringEqualityRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. For StringEqualityRules, this is limited to turning the rule off or on during different intervals.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Weight": {
+          "description": "The relative weight of this rule compared to others.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "Attribute",
+        "AttributeNotSpecifiedBehavior",
+        "Weight",
+        "Name"
+      ],
+      "example": {
+        "DefaultAttributeValue": "ExampleDefault",
+        "Expansion": {
+          "EnabledOverrides": [
+            false,
+            true,
+            true,
+            false
+          ],
+          "SecondsBetweenExpansions": 5
+        },
+        "Attribute": {
+          "Path": "ExampleAttributeStringEquality"
+        },
+        "Weight": 1,
+        "Name": "ExampleNameStringEquality",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "StringEqualityRuleExpansion": {
+      "type": "object",
+      "properties": {
+        "EnabledOverrides": {
+          "description": "List of bools specifying whether the rule is applied during this expansion.",
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          }
+        },
+        "SecondsBetweenExpansions": {
+          "description": "How many seconds before this rule is expanded.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "EnabledOverrides",
+        "SecondsBetweenExpansions"
+      ],
+      "example": {
+        "EnabledOverrides": [
+          false,
+          true,
+          true,
+          false
+        ],
+        "SecondsBetweenExpansions": 5
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "TeamDifferenceRule": {
+      "type": "object",
+      "properties": {
+        "Attribute": {
+          "$ref": "#/definitions/QueueRuleAttribute",
+          "description": "Description of the attribute used by this rule to match teams.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomExpansion": {
+          "$ref": "#/definitions/CustomTeamDifferenceRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule. When this is set, Difference is ignored.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DefaultAttributeValue": {
+          "description": "The default value assigned to tickets that are missing the attribute specified by AttributePath (assuming that AttributeNotSpecifiedBehavior is false).",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "Difference": {
+          "description": "The allowed difference between any two teams at the start of matchmaking.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "LinearExpansion": {
+          "$ref": "#/definitions/LinearTeamDifferenceRuleExpansion",
+          "description": "Collection of fields relating to expanding this rule at set intervals. Only one expansion can be set per rule.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Attribute",
+        "Difference",
+        "DefaultAttributeValue",
+        "Name"
+      ],
+      "example": {
+        "Attribute": {
+          "Path": "ExampleAttribute"
+        },
+        "Difference": 2,
+        "LinearExpansion": {
+          "Delta": 1,
+          "Limit": 5,
+          "SecondsBetweenExpansions": 5
+        },
+        "Name": "TeamDifferenceRule",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "TeamSizeBalanceRule": {
+      "type": "object",
+      "properties": {
+        "CustomExpansion": {
+          "$ref": "#/definitions/CustomTeamSizeBalanceRuleExpansion",
+          "description": "Controls how the Difference parameter expands over time. Only one expansion can be set per rule. When this is set, Difference is ignored.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Difference": {
+          "description": "The allowed difference in team size between any two teams.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "LinearExpansion": {
+          "$ref": "#/definitions/LinearTeamSizeBalanceRuleExpansion",
+          "description": "Controls how the Difference parameter expands over time. Only one expansion can be set per rule.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Difference",
+        "Name"
+      ],
+      "example": {
+        "Difference": 1,
+        "LinearExpansion": {
+          "Delta": 1,
+          "Limit": 5,
+          "SecondsBetweenExpansions": 5
+        },
+        "Name": "TeamSizeBalanceRule",
+        "SecondsUntilOptional": 50
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "TeamTicketSizeSimilarityRule": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "Friendly name chosen by developer.",
+          "type": "string"
+        },
+        "SecondsUntilOptional": {
+          "description": "How many seconds before this rule is no longer enforced (but tickets that comply with this rule will still be prioritized over those that don't). Leave blank if this rule is always enforced.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "TeamTicketSizeSimilarityRule",
+        "SecondsUntilOptional": 180
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
       ]
     },
     "TitleMultiplayerServerEnabledStatus": {
@@ -6295,6 +8018,14 @@
         "$ref": "#/definitions/GetContainerRegistryCredentialsRequest"
       }
     },
+    "GetMatchmakingQueueRequest": {
+      "name": "GetMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Gets the current configuration for a queue.",
+      "schema": {
+        "$ref": "#/definitions/GetMatchmakingQueueRequest"
+      }
+    },
     "GetMatchmakingTicketRequest": {
       "name": "GetMatchmakingTicketRequest",
       "in": "body",
@@ -6423,6 +8154,14 @@
         "$ref": "#/definitions/ListContainerImageTagsRequest"
       }
     },
+    "ListMatchmakingQueuesRequest": {
+      "name": "ListMatchmakingQueuesRequest",
+      "in": "body",
+      "description": "Gets a list of all the matchmaking queue configurations for the title.",
+      "schema": {
+        "$ref": "#/definitions/ListMatchmakingQueuesRequest"
+      }
+    },
     "ListMatchmakingTicketsForPlayerRequest": {
       "name": "ListMatchmakingTicketsForPlayerRequest",
       "in": "body",
@@ -6479,6 +8218,14 @@
         "$ref": "#/definitions/MultiplayerEmptyRequest"
       }
     },
+    "RemoveMatchmakingQueueRequest": {
+      "name": "RemoveMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Deletes the configuration for a queue. This will permanently delete the configuration and players will no longer be able to match in the queue. All outstanding matchmaking tickets will be cancelled.",
+      "schema": {
+        "$ref": "#/definitions/RemoveMatchmakingQueueRequest"
+      }
+    },
     "RequestMultiplayerServerRequest": {
       "name": "RequestMultiplayerServerRequest",
       "in": "body",
@@ -6493,6 +8240,14 @@
       "description": "Gets new credentials to the container registry where game developers can upload custom container images to before creating a new build.",
       "schema": {
         "$ref": "#/definitions/RolloverContainerRegistryCredentialsRequest"
+      }
+    },
+    "SetMatchmakingQueueRequest": {
+      "name": "SetMatchmakingQueueRequest",
+      "in": "body",
+      "description": "Use this API to create or update matchmaking queue configurations. The queue configuration defines the matchmaking rules. The matchmaking service will match tickets together according to the configured rules. Queue resources are not spun up by calling this API. Queues are created when the first ticket is submitted.",
+      "schema": {
+        "$ref": "#/definitions/SetMatchmakingQueueRequest"
       }
     },
     "ShutdownMultiplayerServerRequest": {
@@ -7094,6 +8849,25 @@
         }
       }
     },
+    "GetMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetMatchmakingQueueResult"
+          }
+        }
+      }
+    },
     "GetMatchmakingTicketResult": {
       "description": "",
       "schema": {
@@ -7604,6 +9378,25 @@
         }
       }
     },
+    "ListMatchmakingQueuesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ListMatchmakingQueuesResult"
+          }
+        }
+      }
+    },
     "ListMatchmakingTicketsForPlayerResult": {
       "description": "",
       "schema": {
@@ -7846,6 +9639,25 @@
         }
       }
     },
+    "RemoveMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RemoveMatchmakingQueueResult"
+          }
+        }
+      }
+    },
     "RequestMultiplayerServerResponse": {
       "description": "",
       "schema": {
@@ -7916,6 +9728,25 @@
             "DnsName": "registry.azurecr.io",
             "Username": "RegistryUser",
             "Password": "NewRegistryPassword"
+          }
+        }
+      }
+    },
+    "SetMatchmakingQueueResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetMatchmakingQueueResult"
           }
         }
       }
