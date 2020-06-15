@@ -3129,6 +3129,37 @@
         }
       ]
     },
+    "DeleteTitleDataOverrideRequest": {
+      "name": "DeleteTitleDataOverrideRequest",
+      "className": "DeleteTitleDataOverrideRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Will delete all the title data associated with the given override label.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "OverrideLabel",
+          "description": "Name of the override.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeleteTitleDataOverrideResult": {
+      "name": "DeleteTitleDataOverrideResult",
+      "className": "DeleteTitleDataOverrideResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
     "DeleteTitleRequest": {
       "name": "DeleteTitleRequest",
       "className": "DeleteTitleRequest",
@@ -5032,10 +5063,10 @@
           "name": "RequestMultiplayerServersThrottledFromRateLimiter"
         },
         {
-          "name": "TitleDataInstanceNotFound"
+          "name": "TitleDataOverrideNotFound"
         },
         {
-          "name": "DuplicateTitleDataOverrideInstanceName"
+          "name": "DuplicateKeys"
         },
         {
           "name": "MatchmakingEntityInvalid"
@@ -6712,6 +6743,13 @@
           "name": "Keys",
           "description": "Specific keys to search for in the title data (leave null to get all keys)",
           "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "OverrideLabel",
+          "description": "Name of the override.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -9782,6 +9820,46 @@
       "isResult": true,
       "properties": []
     },
+    "SetTitleDataAndOverridesRequest": {
+      "name": "SetTitleDataAndOverridesRequest",
+      "className": "SetTitleDataAndOverridesRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Will set the given key values in the specified override or the primary title data based on whether the label is provided or not.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "KeyValues",
+          "description": "List of titleData key-value pairs to set.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TitleDataKeyValue",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "OverrideLabel",
+          "description": "Name of the override.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "SetTitleDataAndOverridesResult": {
+      "name": "SetTitleDataAndOverridesResult",
+      "className": "SetTitleDataAndOverridesResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "className": "SetTitleDataRequest",
@@ -10399,6 +10477,31 @@
         },
         {
           "name": "RevokedSteam"
+        }
+      ]
+    },
+    "TitleDataKeyValue": {
+      "name": "TitleDataKeyValue",
+      "className": "TitleDataKeyValue",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Key",
+          "description": "Key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name.) Keys are trimmed of whitespace. Keys may not begin with the '!' character.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "New value to set. Set to null to remove a value",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -12124,6 +12227,7 @@
         "AddNews",
         "AddVirtualCurrencyTypes",
         "DeleteStore",
+        "DeleteTitleDataOverride",
         "GetCatalogItems",
         "GetPublisherData",
         "GetRandomResultTables",
@@ -12135,6 +12239,7 @@
         "SetCatalogItems",
         "SetStoreItems",
         "SetTitleData",
+        "SetTitleDataAndOverrides",
         "SetTitleInternalData",
         "SetupPushNotification",
         "UpdateCatalogItems",
@@ -12658,6 +12763,26 @@
       ]
     },
     {
+      "name": "DeleteTitleDataOverride",
+      "summary": "Deletes a specified set of title data overrides.",
+      "requestDetails": "This API method is designed to delete specified title data overrides associated with the given label.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/DeleteTitleDataOverride",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeleteTitleDataOverrideRequest",
+      "requestExample": "{\r\n  \"OverrideLabel\": \"LaunchData\"\r\n}",
+      "result": "DeleteTitleDataOverrideResult",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "TitleDataOverrideNotFound"
+      ]
+    },
+    {
       "name": "DeleteUsers",
       "summary": "Deletes the users for the provided game. Deletes custom data, all account linkages, and statistics. This method does not remove the player's event history, login history, inventory items, nor virtual currencies.",
       "requestDetails": "Note that this action cannot be undone. It will unlink all accounts and remove all PII information, as well as reset any statistics and leaderboards and clear out any stored custom data for the user.",
@@ -13064,6 +13189,7 @@
         "ExpiredContinuationToken",
         "GetPlayersInSegmentRateLimitExceeded",
         "InvalidContinuationToken",
+        "InvalidSearchTerm",
         "InvalidSegment",
         "SegmentNotFound"
       ]
@@ -14081,6 +14207,32 @@
       ],
       "errors": [
         "DataLengthExceeded",
+        "TooManyKeys"
+      ]
+    },
+    {
+      "name": "SetTitleDataAndOverrides",
+      "summary": "Sets key-value pairs in a title data override instance.",
+      "requestDetails": "This API method is designed to set key-value for the title data override instance. If the key exists, it will update the value and if the value is empty it will delete the key. Keys are trimmed and cannot start with !.",
+      "subgroup": "Title-Wide Data Management",
+      "titleTiers": null,
+      "url": "/Admin/SetTitleDataAndOverrides",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "SetTitleDataAndOverridesRequest",
+      "requestExample": "{\r\n  \"OverrideLabel\": \"Holiday title data\",\r\n  \"KeyValues\": [\r\n    {\r\n      \"Key\": \"Running Speed\",\r\n      \"Value\": \"1.03\"\r\n    },\r\n    {\r\n      \"Key\": \"Walking Speed\",\r\n      \"Value\": \"0.05\"\r\n    }\r\n  ]\r\n}",
+      "result": "SetTitleDataAndOverridesResult",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Admin/GetTitleData"
+      ],
+      "errors": [
+        "DataLengthExceeded",
+        "DuplicateKeys",
+        "InvalidParams",
         "TooManyKeys"
       ]
     },
@@ -16499,13 +16651,13 @@
       "id": 1507,
       "name": "RequestMultiplayerServersThrottledFromRateLimiter"
     },
-    "TitleDataInstanceNotFound": {
+    "TitleDataOverrideNotFound": {
       "id": 1508,
-      "name": "TitleDataInstanceNotFound"
+      "name": "TitleDataOverrideNotFound"
     },
-    "DuplicateTitleDataOverrideInstanceName": {
+    "DuplicateKeys": {
       "id": 1509,
-      "name": "DuplicateTitleDataOverrideInstanceName"
+      "name": "DuplicateKeys"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -17342,8 +17494,8 @@
     "XboxServiceTooManyRequests",
     "NintendoSwitchNotEnabledForTitle",
     "RequestMultiplayerServersThrottledFromRateLimiter",
-    "TitleDataInstanceNotFound",
-    "DuplicateTitleDataOverrideInstanceName",
+    "TitleDataOverrideNotFound",
+    "DuplicateKeys",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
