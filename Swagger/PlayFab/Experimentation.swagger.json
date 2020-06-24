@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200615",
+    "version": "200624",
     "title": "PlayFab Experimentation API",
     "description": "APIs for managing experiments.",
     "termsOfService": "https://playfab.com/terms/",
@@ -48,11 +48,11 @@
           "200": {
             "$ref": "#/responses/CreateExperimentResult"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "FeatureNotConfiguredForTitle",
           "SegmentNotFound"
         ]
@@ -82,11 +82,11 @@
           "200": {
             "$ref": "#/responses/EmptyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationExperimentNotFound",
           "ExperimentationExperimentRunning",
           "FeatureNotConfiguredForTitle"
@@ -117,11 +117,11 @@
           "200": {
             "$ref": "#/responses/GetExperimentsResult"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "FeatureNotConfiguredForTitle"
         ]
       }
@@ -150,11 +150,11 @@
           "200": {
             "$ref": "#/responses/GetLatestScorecardResult"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationExperimentNotFound",
           "ExperimentationNoScorecard"
         ]
@@ -184,11 +184,11 @@
           "200": {
             "$ref": "#/responses/GetTreatmentAssignmentResult"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationClientTimeout",
           "ExperimentationTreatmentAssignmentFailed",
           "FeatureNotConfiguredForTitle",
@@ -220,11 +220,11 @@
           "200": {
             "$ref": "#/responses/EmptyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationExperimentNotFound",
           "ExperimentationExperimentRunning",
           "ExperimentationExperimentStopped",
@@ -256,11 +256,11 @@
           "200": {
             "$ref": "#/responses/EmptyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationExperimentNeverStarted",
           "ExperimentationExperimentNotFound",
           "ExperimentationExperimentStopped",
@@ -292,11 +292,11 @@
           "200": {
             "$ref": "#/responses/EmptyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "ExperimentationExperimentNotFound",
           "ExperimentationExperimentRunning",
           "ExperimentationExperimentStopped",
@@ -307,7 +307,7 @@
     }
   },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -342,7 +342,11 @@
       ]
     },
     "AnalysisTaskState": {
-      "type": "object",
+      "type": "string",
+      "x-ms-enum": {
+        "name": "AnalysisTaskState",
+        "modelAsString": false
+      },
       "enum": [
         "Waiting",
         "ReadyForSubmission",
@@ -363,8 +367,7 @@
         },
         "Duration": {
           "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -496,8 +499,7 @@
         },
         "Duration": {
           "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -549,7 +551,11 @@
       ]
     },
     "ExperimentState": {
-      "type": "object",
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ExperimentState",
+        "modelAsString": false
+      },
       "enum": [
         "New",
         "Started",
@@ -558,7 +564,11 @@
       ]
     },
     "ExperimentType": {
-      "type": "object",
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ExperimentType",
+        "modelAsString": false
+      },
       "enum": [
         "Active",
         "Snapshot"
@@ -644,21 +654,25 @@
         "ConfidenceIntervalEnd": {
           "description": "The upper bound of the confidence interval for the relative delta (Delta.RelativeValue).",
           "type": "number",
+          "format": "double",
           "x-actualtype": "double"
         },
         "ConfidenceIntervalStart": {
           "description": "The lower bound of the confidence interval for the relative delta (Delta.RelativeValue).",
           "type": "number",
+          "format": "double",
           "x-actualtype": "double"
         },
         "DeltaAbsoluteChange": {
           "description": "The absolute delta between TreatmentStats.Average and ControlStats.Average.",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "DeltaRelativeChange": {
           "description": "The relative delta ratio between TreatmentStats.Average and ControlStats.Average.",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "InternalName": {
@@ -676,16 +690,19 @@
         "PMove": {
           "description": "The expectation that a movement is real",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "PValue": {
           "description": "The p-value resulting from the statistical test run for this metric",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "PValueThreshold": {
           "description": "The threshold for observing sample ratio mismatch.",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "StatSigLevel": {
@@ -695,11 +712,13 @@
         "StdDev": {
           "description": "Observed standard deviation value of the metric.",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         },
         "Value": {
           "description": "Observed average value of the metric.",
           "type": "number",
+          "format": "float",
           "x-actualtype": "float"
         }
       },
@@ -729,6 +748,7 @@
         "EventsProcessed": {
           "description": "Represents the number of events processed for the generation of this scorecard",
           "type": "number",
+          "format": "double",
           "x-actualtype": "double"
         },
         "ExperimentId": {
@@ -771,15 +791,16 @@
           "type": "boolean"
         },
         "MetricDataRows": {
-          "$ref": "#/definitions/MetricData",
           "description": "Data of the analysis with the internal name of the metric as the key and an object of metric data as value.",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/MetricData"
+          },
           "x-isclass": true
         },
         "PlayerCount": {
           "description": "Represents the player count in the variant.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "VariantName": {
           "description": "Name of the variant of analysis.",
@@ -853,8 +874,7 @@
         },
         "Duration": {
           "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -970,14 +990,13 @@
           "description": "Name of the variant.",
           "type": "string"
         },
-        "TitleDataOverrideId": {
-          "description": "Id of the TitleDataOverrideGroup to use with this variant.",
+        "OverrideLabel": {
+          "description": "Id of the TitleDataOverride to use with this variant.",
           "type": "string"
         },
         "TrafficPercentage": {
           "description": "Percentage of target audience traffic that will see this variant.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "Variables": {
           "description": "Variables returned by this variant.",
@@ -1062,10 +1081,10 @@
     }
   },
   "responses": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/ApiError"
       }
     },
     "CreateExperimentResult": {
@@ -1222,7 +1241,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
