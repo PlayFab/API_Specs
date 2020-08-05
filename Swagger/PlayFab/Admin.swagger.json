@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200730",
+    "version": "200805",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -895,6 +895,40 @@
         ],
         "x-ms-docs-errors": [
           "TitleContainsUserAccounts"
+        ]
+      }
+    },
+    "/Admin/DeleteTitleDataOverride": {
+      "post": {
+        "operationId": "DeleteTitleDataOverride",
+        "tags": [
+          "Title-Wide Data Management"
+        ],
+        "description": "Deletes a specified set of title data overrides.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/title-wide-data-management/deletetitledataoverride"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteTitleDataOverrideRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteTitleDataOverrideResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API method is designed to delete specified title data overrides associated with the given label.",
+        "x-ms-docs-errors": [
+          "TitleDataOverrideNotFound"
         ]
       }
     },
@@ -3390,6 +3424,46 @@
         ],
         "x-ms-docs-errors": [
           "DataLengthExceeded",
+          "TooManyKeys"
+        ]
+      }
+    },
+    "/Admin/SetTitleDataAndOverrides": {
+      "post": {
+        "operationId": "SetTitleDataAndOverrides",
+        "tags": [
+          "Title-Wide Data Management"
+        ],
+        "description": "Set and delete key-value pairs in a title data override instance.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/title-wide-data-management/settitledataandoverrides"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetTitleDataAndOverridesRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetTitleDataAndOverridesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API method is designed to set and delete key-value pairs in a title data override instance. If the key exists and the new value is empty, the method will delete the key; otherwise, the method will update the current value with the new value. Keys are trimmed and cannot start with '!'.",
+        "x-seeAlso": [
+          "Admin/GetTitleData"
+        ],
+        "x-ms-docs-errors": [
+          "DataLengthExceeded",
+          "DuplicateKeys",
+          "InvalidParams",
           "TooManyKeys"
         ]
       }
@@ -6105,6 +6179,26 @@
         }
       }
     },
+    "DeleteTitleDataOverrideRequest": {
+      "description": "Will delete all the title data associated with the given override label.",
+      "type": "object",
+      "properties": {
+        "OverrideLabel": {
+          "description": "Name of the override.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "OverrideLabel"
+      ],
+      "example": {
+        "OverrideLabel": "LaunchData"
+      }
+    },
+    "DeleteTitleDataOverrideResult": {
+      "type": "object",
+      "properties": {}
+    },
     "DeleteTitleRequest": {
       "description": "Deletes all data associated with the title, including catalog, virtual currencies, leaderboard statistics, Cloud Script revisions, segment definitions, event rules, tasks, add-ons, secret keys, data encryption keys, and permission policies. Removes the title from its studio and removes all associated developer roles and permissions. Does not delete PlayStream event history associated with the title. Note, this API queues the title for deletion and returns immediately. It may take several hours or more before all title data is fully deleted. All player accounts in the title must be deleted before deleting the title. If any player accounts exist, the API will return a 'TitleContainsUserAccounts' error. Until the title data is fully deleted, attempts to call APIs with the title will fail with the 'TitleDeleted' error.",
       "type": "object",
@@ -6899,7 +6993,6 @@
         "ExperimentationInvalidDuration",
         "ExperimentationMaxExperimentsReached",
         "ExperimentationExperimentSchedulingInProgress",
-        "ExperimentationExistingCodelessScheduled",
         "MaxActionDepthExceeded",
         "TitleNotOnUpdatedPricingPlan",
         "SnapshotNotFound"
@@ -11109,6 +11202,44 @@
       "type": "object",
       "properties": {}
     },
+    "SetTitleDataAndOverridesRequest": {
+      "description": "Will set the given key values in the specified override or the primary title data based on whether the label is provided or not.",
+      "type": "object",
+      "properties": {
+        "KeyValues": {
+          "description": "List of titleData key-value pairs to set/delete. Use an empty value to delete an existing key; use a non-empty value to create/update a key.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TitleDataKeyValue"
+          },
+          "x-isclass": true
+        },
+        "OverrideLabel": {
+          "description": "Name of the override.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "KeyValues"
+      ],
+      "example": {
+        "OverrideLabel": "Holiday title data",
+        "KeyValues": [
+          {
+            "Key": "Running Speed",
+            "Value": "1.03"
+          },
+          {
+            "Key": "Walking Speed",
+            "Value": "0.05"
+          }
+        ]
+      }
+    },
+    "SetTitleDataAndOverridesResult": {
+      "type": "object",
+      "properties": {}
+    },
     "SetTitleDataRequest": {
       "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "type": "object",
@@ -11515,6 +11646,19 @@
         "ActivatedSteam",
         "RevokedSteam"
       ]
+    },
+    "TitleDataKeyValue": {
+      "type": "object",
+      "properties": {
+        "Key": {
+          "description": "Key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name.) Keys are trimmed of whitespace. Keys may not begin with the '!' character.",
+          "type": "string"
+        },
+        "Value": {
+          "description": "New value to set. Set to null to remove a value",
+          "type": "string"
+        }
+      }
     },
     "UpdateBanRequest": {
       "description": "Represents a single update ban request.",
@@ -13158,6 +13302,14 @@
         "$ref": "#/definitions/DeleteTaskRequest"
       }
     },
+    "DeleteTitleDataOverrideRequest": {
+      "name": "DeleteTitleDataOverrideRequest",
+      "in": "body",
+      "description": "Will delete all the title data associated with the given override label.",
+      "schema": {
+        "$ref": "#/definitions/DeleteTitleDataOverrideRequest"
+      }
+    },
     "DeleteTitleRequest": {
       "name": "DeleteTitleRequest",
       "in": "body",
@@ -13608,6 +13760,14 @@
       "description": "This API is designed to store publisher-specific values which can be read, but not written to, by the client. This data is shared across all titles assigned to a particular publisher, and can be used for cross-game coordination. Only titles assigned to a publisher can use this API. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value. For more information email helloplayfab@microsoft.com",
       "schema": {
         "$ref": "#/definitions/SetPublisherDataRequest"
+      }
+    },
+    "SetTitleDataAndOverridesRequest": {
+      "name": "SetTitleDataAndOverridesRequest",
+      "in": "body",
+      "description": "Will set the given key values in the specified override or the primary title data based on whether the label is provided or not.",
+      "schema": {
+        "$ref": "#/definitions/SetTitleDataAndOverridesRequest"
       }
     },
     "SetTitleDataRequest": {
@@ -14102,6 +14262,25 @@
           },
           "data": {
             "$ref": "#/definitions/DeleteStoreResult"
+          }
+        }
+      }
+    },
+    "DeleteTitleDataOverrideResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteTitleDataOverrideResult"
           }
         }
       }
@@ -16262,6 +16441,25 @@
           },
           "data": {
             "$ref": "#/definitions/SetPublisherDataResult"
+          }
+        }
+      }
+    },
+    "SetTitleDataAndOverridesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetTitleDataAndOverridesResult"
           }
         }
       }
@@ -18978,10 +19176,6 @@
     "ExperimentationExperimentSchedulingInProgress": {
       "id": 7014,
       "name": "ExperimentationExperimentSchedulingInProgress"
-    },
-    "ExperimentationExistingCodelessScheduled": {
-      "id": 7015,
-      "name": "ExperimentationExistingCodelessScheduled"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
