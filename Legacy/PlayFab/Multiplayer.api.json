@@ -428,6 +428,14 @@
           "optional": true
         },
         {
+          "name": "ScheduledStandbySettings",
+          "description": "Optional settings to set the standby target to specified values during the supplied schedules",
+          "jsontype": "Object",
+          "actualtype": "ScheduledStandbySettings",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "StandbyServers",
           "description": "The target number of standby multiplayer servers for the region.",
           "jsontype": "Number",
@@ -471,6 +479,14 @@
           "actualtype": "String",
           "isenum": false,
           "optional": false
+        },
+        {
+          "name": "ScheduledStandbySettings",
+          "description": "Optional settings to set the standby target to specified values during the supplied schedules",
+          "jsontype": "Object",
+          "actualtype": "ScheduledStandbySettings",
+          "isclass": true,
+          "optional": true
         },
         {
           "name": "StandbyServers",
@@ -4766,7 +4782,7 @@
           "description": "Indicates that the response should contain Qos servers for all regions, including those where there are no builds deployed for the title.",
           "jsontype": "Boolean",
           "actualtype": "Boolean",
-          "optional": false
+          "optional": true
         }
       ]
     },
@@ -6040,6 +6056,80 @@
         }
       ]
     },
+    "Schedule": {
+      "name": "Schedule",
+      "className": "Schedule",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "Description",
+          "description": "A short description about this schedule. For example, \"Game launch on July 15th\".",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EndTime",
+          "description": "The date and time in UTC at which the schedule ends. If IsRecurringWeekly is true, this schedule will keep renewing for future weeks until disabled or removed.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "IsDisabled",
+          "description": "Disables the schedule.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "IsRecurringWeekly",
+          "description": "If true, the StartTime and EndTime will get renewed every week.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "StartTime",
+          "description": "The date and time in UTC at which the schedule starts.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
+        },
+        {
+          "name": "TargetStandby",
+          "description": "The standby target to maintain for the duration of the schedule.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
+    "ScheduledStandbySettings": {
+      "name": "ScheduledStandbySettings",
+      "className": "ScheduledStandbySettings",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "IsEnabled",
+          "description": "When true, scheduled standby will be enabled",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        },
+        {
+          "name": "ScheduleList",
+          "description": "A list of non-overlapping schedules",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "Schedule",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "ServerDetails": {
       "name": "ServerDetails",
       "className": "ServerDetails",
@@ -6965,9 +7055,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBuildWithCustomContainerRequest",
-      "requestExample": "{\r\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"/data/Assets\"\r\n    }\r\n  ],\r\n  \"ContainerImageReference\": {\r\n    \"ImageName\": \"ContainerImageName\",\r\n    \"Tag\": \"ContainerTag\"\r\n  },\r\n  \"LinuxInstrumentationConfiguration\": {\r\n    \"IsEnabled\": false\r\n  },\r\n  \"ContainerFlavor\": \"CustomLinux\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"/data/Assets\"\r\n    }\r\n  ],\r\n  \"ContainerImageReference\": {\r\n    \"ImageName\": \"ContainerImageName\",\r\n    \"Tag\": \"ContainerTag\"\r\n  },\r\n  \"LinuxInstrumentationConfiguration\": {\r\n    \"IsEnabled\": false\r\n  },\r\n  \"ContainerFlavor\": \"CustomLinux\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5,\r\n      \"ScheduledStandbySettings\": {\r\n        \"IsEnabled\": true,\r\n        \"ScheduleList\": [\r\n          {\r\n            \"StartTime\": \"2020-08-21T17:00:00Z\",\r\n            \"EndTime\": \"2020-08-24T09:00:00Z\",\r\n            \"IsRecurringWeekly\": true,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Weekend Schedule\",\r\n            \"TargetStandby\": 8\r\n          },\r\n          {\r\n            \"StartTime\": \"2020-08-24T09:00:00Z\",\r\n            \"EndTime\": \"2020-08-28T17:00:00Z\",\r\n            \"IsRecurringWeekly\": true,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Weekday Schedule\",\r\n            \"TargetStandby\": 3\r\n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 50,\r\n      \"StandbyServers\": 8,\r\n      \"ScheduledStandbySettings\": {\r\n        \"IsEnabled\": true,\r\n        \"ScheduleList\": [\r\n          {\r\n            \"StartTime\": \"2020-08-21T09:00:00Z\",\r\n            \"EndTime\": \"2020-08-21T23:00:00Z\",\r\n            \"IsRecurringWeekly\": false,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Game Launch\",\r\n            \"TargetStandby\": 30\r\n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
       "result": "CreateBuildWithCustomContainerResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n    \"LinuxInstrumentationConfiguration\": {\r\n      \"IsEnabled\": false\r\n    },\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"OsPlatform\": \"Linux\",\r\n    \"ServerType\": \"Container\",\r\n    \"ContainerFlavor\": \"CustomLinux\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initialized\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Deployed\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"/data/Assets\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\r\n    \"LinuxInstrumentationConfiguration\": {\r\n      \"IsEnabled\": false\r\n    },\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"OsPlatform\": \"Linux\",\r\n    \"ServerType\": \"Container\",\r\n    \"ContainerFlavor\": \"CustomLinux\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initialized\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5,\r\n        \"ScheduledStandbySettings\": {\r\n          \"IsEnabled\": true,\r\n          \"ScheduleList\": [\r\n            {\r\n              \"StartTime\": \"2020-08-21T17:00:00Z\",\r\n              \"EndTime\": \"2020-08-24T09:00:00Z\",\r\n              \"IsRecurringWeekly\": true,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Weekend Schedule\",\r\n              \"TargetStandby\": 8\r\n            },\r\n            {\r\n              \"StartTime\": \"2020-08-24T09:00:00Z\",\r\n              \"EndTime\": \"2020-08-28T17:00:00Z\",\r\n              \"IsRecurringWeekly\": true,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Weekday Schedule\",\r\n              \"TargetStandby\": 3\r\n            }\r\n          ]\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Deployed\",\r\n        \"MaxServers\": 50,\r\n        \"StandbyServers\": 8,\r\n        \"ScheduledStandbySettings\": {\r\n          \"IsEnabled\": true,\r\n          \"ScheduleList\": [\r\n            {\r\n              \"StartTime\": \"2020-08-21T09:00:00Z\",\r\n              \"EndTime\": \"2020-08-21T23:00:00Z\",\r\n              \"IsRecurringWeekly\": false,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Game Launch\",\r\n              \"TargetStandby\": 30\r\n            }\r\n          ]\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"/data/Assets\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
       "seeAlso": [
         "MultiplayerServer/CreateBuildWithManagedContainer",
         "MultiplayerServer/DeleteBuild",
@@ -6995,9 +7085,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBuildWithManagedContainerRequest",
-      "requestExample": "{\r\n  \"StartMultiplayerServerCommand\": \"gameserver.exe -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"C:\\\\Asset\\\\\"\r\n    }\r\n  ],\r\n  \"InstrumentationConfiguration\": {\r\n    \"ProcessesToMonitor\": [\r\n      \"GameServerProcessName\"\r\n    ]\r\n  },\r\n  \"GameWorkingDirectory\": \"C:\\\\Assets\",\r\n  \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 12,\r\n      \"StandbyServers\": 8\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
+      "requestExample": "{\r\n  \"StartMultiplayerServerCommand\": \"gameserver.exe -startserver\",\r\n  \"GameAssetReferences\": [\r\n    {\r\n      \"FileName\": \"gameserver.zip\",\r\n      \"MountPath\": \"C:\\\\Asset\\\\\"\r\n    }\r\n  ],\r\n  \"InstrumentationConfiguration\": {\r\n    \"ProcessesToMonitor\": [\r\n      \"GameServerProcessName\"\r\n    ]\r\n  },\r\n  \"GameWorkingDirectory\": \"C:\\\\Assets\",\r\n  \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n  \"BuildName\": \"GameBuildName\",\r\n  \"Metadata\": {\r\n    \"MetadataKey\": \"MetadataValue\"\r\n  },\r\n  \"VmSize\": \"Standard_D2_v2\",\r\n  \"MultiplayerServerCountPerVm\": 10,\r\n  \"Ports\": [\r\n    {\r\n      \"Name\": \"PortName\",\r\n      \"Num\": 1243,\r\n      \"Protocol\": \"TCP\"\r\n    }\r\n  ],\r\n  \"RegionConfigurations\": [\r\n    {\r\n      \"Region\": \"EastUs\",\r\n      \"MaxServers\": 10,\r\n      \"StandbyServers\": 5,\r\n      \"ScheduledStandbySettings\": {\r\n        \"IsEnabled\": true,\r\n        \"ScheduleList\": [\r\n          {\r\n            \"StartTime\": \"2020-08-21T17:00:00Z\",\r\n            \"EndTime\": \"2020-08-24T09:00:00Z\",\r\n            \"IsRecurringWeekly\": true,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Weekend Schedule\",\r\n            \"TargetStandby\": 8\r\n          },\r\n          {\r\n            \"StartTime\": \"2020-08-24T09:00:00Z\",\r\n            \"EndTime\": \"2020-08-28T17:00:00Z\",\r\n            \"IsRecurringWeekly\": true,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Weekday Schedule\",\r\n            \"TargetStandby\": 3\r\n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"Region\": \"WestUs\",\r\n      \"MaxServers\": 50,\r\n      \"StandbyServers\": 8,\r\n      \"ScheduledStandbySettings\": {\r\n        \"IsEnabled\": true,\r\n        \"ScheduleList\": [\r\n          {\r\n            \"StartTime\": \"2020-08-21T09:00:00Z\",\r\n            \"EndTime\": \"2020-08-21T23:00:00Z\",\r\n            \"IsRecurringWeekly\": false,\r\n            \"IsDisabled\": false,\r\n            \"Description\": \"Game Launch\",\r\n            \"TargetStandby\": 30\r\n          }\r\n        ]\r\n      }\r\n    },\r\n    {\r\n      \"Region\": \"NorthEurope\",\r\n      \"MaxServers\": 7,\r\n      \"StandbyServers\": 3\r\n    }\r\n  ],\r\n  \"GameCertificateReferences\": [\r\n    {\r\n      \"Name\": \"CertName\",\r\n      \"GsdkAlias\": \"CertGsdkAlias\"\r\n    }\r\n  ]\r\n}",
       "result": "CreateBuildWithManagedContainerResponse",
-      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StartMultiplayerServerCommand\": \"gameserver.exe -startserver\",\r\n    \"InstrumentationConfiguration\": {\r\n      \"ProcessesToMonitor\": [\r\n        \"GameServerProcessName\"\r\n      ]\r\n    },\r\n    \"GameWorkingDirectory\": \"C:\\\\Assets\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"OsPlatform\": \"Windows\",\r\n    \"ServerType\": \"Container\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 12,\r\n        \"StandbyServers\": 8\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
+      "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"StartMultiplayerServerCommand\": \"gameserver.exe -startserver\",\r\n    \"InstrumentationConfiguration\": {\r\n      \"ProcessesToMonitor\": [\r\n        \"GameServerProcessName\"\r\n      ]\r\n    },\r\n    \"GameWorkingDirectory\": \"C:\\\\Assets\",\r\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\r\n    \"BuildName\": \"GameBuildName\",\r\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\r\n    \"Metadata\": {\r\n      \"MetadataKey\": \"MetadataValue\"\r\n    },\r\n    \"VmSize\": \"Standard_D2_v2\",\r\n    \"OsPlatform\": \"Windows\",\r\n    \"ServerType\": \"Container\",\r\n    \"ContainerFlavor\": \"ManagedWindowsServerCore\",\r\n    \"Ports\": [\r\n      {\r\n        \"Name\": \"PortName\",\r\n        \"Num\": 1243,\r\n        \"Protocol\": \"TCP\"\r\n      }\r\n    ],\r\n    \"RegionConfigurations\": [\r\n      {\r\n        \"Region\": \"EastUs\",\r\n        \"Status\": \"Initializing\",\r\n        \"MaxServers\": 10,\r\n        \"StandbyServers\": 5,\r\n        \"ScheduledStandbySettings\": {\r\n          \"IsEnabled\": true,\r\n          \"ScheduleList\": [\r\n            {\r\n              \"StartTime\": \"2020-08-21T17:00:00Z\",\r\n              \"EndTime\": \"2020-08-24T09:00:00Z\",\r\n              \"IsRecurringWeekly\": true,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Weekend Schedule\",\r\n              \"TargetStandby\": 8\r\n            },\r\n            {\r\n              \"StartTime\": \"2020-08-24T09:00:00Z\",\r\n              \"EndTime\": \"2020-08-28T17:00:00Z\",\r\n              \"IsRecurringWeekly\": true,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Weekday Schedule\",\r\n              \"TargetStandby\": 3\r\n            }\r\n          ]\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"WestUs\",\r\n        \"Status\": \"Succeeded\",\r\n        \"MaxServers\": 50,\r\n        \"StandbyServers\": 8,\r\n        \"ScheduledStandbySettings\": {\r\n          \"IsEnabled\": true,\r\n          \"ScheduleList\": [\r\n            {\r\n              \"StartTime\": \"2020-08-21T09:00:00Z\",\r\n              \"EndTime\": \"2020-08-21T23:00:00Z\",\r\n              \"IsRecurringWeekly\": false,\r\n              \"IsDisabled\": false,\r\n              \"Description\": \"Game Launch\",\r\n              \"TargetStandby\": 30\r\n            }\r\n          ]\r\n        }\r\n      },\r\n      {\r\n        \"Region\": \"NorthEurope\",\r\n        \"Status\": \"Unhealthy\",\r\n        \"MaxServers\": 7,\r\n        \"StandbyServers\": 3\r\n      }\r\n    ],\r\n    \"GameAssetReferences\": [\r\n      {\r\n        \"FileName\": \"gameserver.zip\",\r\n        \"MountPath\": \"C:\\\\Asset\\\\\"\r\n      }\r\n    ],\r\n    \"GameCertificateReferences\": [\r\n      {\r\n        \"Name\": \"CertName\",\r\n        \"GsdkAlias\": \"CertGsdkAlias\"\r\n      }\r\n    ],\r\n    \"MultiplayerServerCountPerVm\": 10\r\n  }\r\n}",
       "seeAlso": [
         "MultiplayerServer/DeleteBuild",
         "MultiplayerServer/GetBuild",
@@ -10865,6 +10955,22 @@
       "id": 9000,
       "name": "TitleNotOnUpdatedPricingPlan"
     },
+    "SegmentManagementTitleNotInFlight": {
+      "id": 10000,
+      "name": "SegmentManagementTitleNotInFlight"
+    },
+    "SegmentManagementNoExpressionTree": {
+      "id": 10001,
+      "name": "SegmentManagementNoExpressionTree"
+    },
+    "SegmentManagementTriggerActionCountOverLimit": {
+      "id": 10002,
+      "name": "SegmentManagementTriggerActionCountOverLimit"
+    },
+    "SegmentManagementSegmentCountOverLimit": {
+      "id": 10003,
+      "name": "SegmentManagementSegmentCountOverLimit"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -11454,6 +11560,10 @@
     "ExperimentationExperimentSchedulingInProgress",
     "MaxActionDepthExceeded",
     "TitleNotOnUpdatedPricingPlan",
+    "SegmentManagementTitleNotInFlight",
+    "SegmentManagementNoExpressionTree",
+    "SegmentManagementTriggerActionCountOverLimit",
+    "SegmentManagementSegmentCountOverLimit",
     "SnapshotNotFound"
   ]
 }
