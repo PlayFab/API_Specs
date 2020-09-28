@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "200914",
+    "version": "200928",
     "title": "PlayFab Experimentation API",
     "description": "APIs for managing experiments.",
     "termsOfService": "https://playfab.com/terms/",
@@ -53,6 +53,9 @@
           }
         },
         "x-ms-docs-errors": [
+          "ExperimentationInvalidEndDate",
+          "ExperimentationInvalidStartDate",
+          "ExperimentationMaxDurationExceeded",
           "FeatureNotConfiguredForTitle",
           "SegmentNotFound"
         ]
@@ -300,6 +303,9 @@
           "ExperimentationExperimentNotFound",
           "ExperimentationExperimentRunning",
           "ExperimentationExperimentStopped",
+          "ExperimentationInvalidEndDate",
+          "ExperimentationInvalidStartDate",
+          "ExperimentationMaxDurationExceeded",
           "FeatureNotConfiguredForTitle",
           "SegmentNotFound"
         ]
@@ -365,10 +371,9 @@
           "description": "Description of the experiment.",
           "type": "string"
         },
-        "Duration": {
-          "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+        "EndDate": {
+          "description": "When experiment should end.",
+          "type": "string"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -407,14 +412,13 @@
       "required": [
         "Name",
         "StartDate",
-        "Duration",
         "Variants"
       ],
       "example": {
         "Name": "BackgroundColor Experiment",
         "Description": "Tests whether a green background color increases revenue",
         "StartDate": "2019-10-25T20:37:00Z",
-        "Duration": 14,
+        "EndDate": "2019-11-13T20:37:00Z",
         "Variants": [
           {
             "Name": "Control",
@@ -502,10 +506,9 @@
           "description": "Description of the experiment.",
           "type": "string"
         },
-        "Duration": {
-          "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+        "EndDate": {
+          "description": "When experiment should end/was ended.",
+          "type": "string"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -552,8 +555,7 @@
         }
       },
       "required": [
-        "StartDate",
-        "Duration"
+        "StartDate"
       ]
     },
     "ExperimentState": {
@@ -884,10 +886,9 @@
           "description": "Description of the experiment.",
           "type": "string"
         },
-        "Duration": {
-          "description": "The duration of the experiment, in days.",
-          "type": "number",
-          "x-actualtype": "uint32"
+        "EndDate": {
+          "description": "When experiment should end.",
+          "type": "string"
         },
         "ExperimentType": {
           "$ref": "#/definitions/ExperimentType",
@@ -931,7 +932,6 @@
         "Name",
         "Id",
         "StartDate",
-        "Duration",
         "Variants"
       ],
       "example": {
@@ -939,7 +939,7 @@
         "Id": "B9A90E90-A009-4254-80A4-46B5933E9D26",
         "Description": "Tests whether a green background color increases revenue",
         "StartDate": "2019-10-25T20:37:00Z",
-        "Duration": 14,
+        "EndDate": "2019-11-13T20:37:00Z",
         "SegmentId": "0",
         "Variants": [
           {
@@ -3579,6 +3579,18 @@
       "id": 7014,
       "name": "ExperimentationExperimentSchedulingInProgress"
     },
+    "ExperimentationInvalidEndDate": {
+      "id": 7015,
+      "name": "ExperimentationInvalidEndDate"
+    },
+    "ExperimentationInvalidStartDate": {
+      "id": 7016,
+      "name": "ExperimentationInvalidStartDate"
+    },
+    "ExperimentationMaxDurationExceeded": {
+      "id": 7017,
+      "name": "ExperimentationMaxDurationExceeded"
+    },
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
@@ -3606,6 +3618,10 @@
     "SegmentManagementInvalidSegmentId": {
       "id": 10004,
       "name": "SegmentManagementInvalidSegmentId"
+    },
+    "SegmentManagementInvalidInput": {
+      "id": 10005,
+      "name": "SegmentManagementInvalidInput"
     },
     "SnapshotNotFound": {
       "id": 11000,
