@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "201026",
+    "version": "201014",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -484,41 +484,6 @@
           "InvalidItemProperties",
           "ItemNotFound",
           "NoRemainingUses"
-        ]
-      }
-    },
-    "/Client/ConsumeMicrosoftStoreEntitlements": {
-      "post": {
-        "operationId": "ConsumeMicrosoftStoreEntitlements",
-        "tags": [
-          "Platform Specific Methods"
-        ],
-        "description": "Grants the player's current entitlements from Microsoft Store's Collection API",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/client/platform-specific-methods/consumemicrosoftstoreentitlements"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ConsumeMicrosoftStoreEntitlementsRequest"
-          }
-        ],
-        "security": [
-          {
-            "SessionTicket": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ConsumeMicrosoftStoreEntitlementsResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-ms-docs-errors": [
-          "EconomyServiceInternalError",
-          "EconomyServiceUnavailable",
-          "InvalidRequest"
         ]
       }
     },
@@ -1309,7 +1274,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-responseDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the character defaults to 0 when the character does not have the corresponding statistic."
+        "x-responseDetails": "Note: When calling 'GetLeaderboardAround...' APIs, the position of the character defaults to 0 when the character does not have the corresponding statistic.",
+        "x-seeAlso": [
+          "Client/GetCharacterLeaderboard",
+          "Client/GetLeaderboard",
+          "Client/UpdateCharacterStatistics"
+        ]
       }
     },
     "/Client/GetLeaderboardAroundPlayer": {
@@ -6010,7 +5980,6 @@
         },
         "x-requestDetails": "In addition to the PlayFab username, titles can make use of a DisplayName which is also a unique identifier, but specific to the title. This allows for unique names which more closely match the theme or genre of a title, for example.",
         "x-ms-docs-errors": [
-          "AccountNotFound",
           "InvalidPartnerResponse",
           "NameNotAvailable",
           "ProfaneDisplayName"
@@ -7243,49 +7212,6 @@
       "example": {
         "ItemInstanceId": "a1de52",
         "RemainingUses": 4
-      }
-    },
-    "ConsumeMicrosoftStoreEntitlementsRequest": {
-      "type": "object",
-      "properties": {
-        "CatalogVersion": {
-          "description": "Catalog version to use",
-          "type": "string"
-        },
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        },
-        "MarketplaceSpecificData": {
-          "$ref": "#/definitions/MicrosoftStorePayload",
-          "description": "Marketplace specific payload containing details to fetch in app purchase transactions",
-          "type": "object",
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "MarketplaceSpecificData"
-      ],
-      "example": {
-        "MarketplaceSpecificData": {
-          "XboxToken": "XBL3.0 x=1981989841;akljdlkafdknad",
-          "userId": "46239871",
-          "collectionsMsIdKey": "MicrosoftStoreIdKey"
-        },
-        "CatalogVersion": "MainCatalog"
-      }
-    },
-    "ConsumeMicrosoftStoreEntitlementsResponse": {
-      "type": "object",
-      "properties": {
-        "Items": {
-          "description": "Details for the items purchased.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ItemInstance"
-          },
-          "x-isclass": true
-        }
       }
     },
     "ConsumePSNEntitlementsRequest": {
@@ -13447,23 +13373,6 @@
         "IsActive"
       ]
     },
-    "MicrosoftStorePayload": {
-      "type": "object",
-      "properties": {
-        "CollectionsMsIdKey": {
-          "description": "Microsoft store ID key. This is optional. Alternatively you can use XboxToken",
-          "type": "string"
-        },
-        "UserId": {
-          "description": "If collectionsMsIdKey is provided, this will verify the user id in the collectionsMsIdKey is the same.",
-          "type": "string"
-        },
-        "XboxToken": {
-          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\"). This is optional. Alternatively can use CollectionsMsIdKey",
-          "type": "string"
-        }
-      }
-    },
     "ModifyUserVirtualCurrencyResult": {
       "type": "object",
       "properties": {
@@ -17290,13 +17199,6 @@
         "$ref": "#/definitions/ConsumeItemRequest"
       }
     },
-    "ConsumeMicrosoftStoreEntitlementsRequest": {
-      "name": "ConsumeMicrosoftStoreEntitlementsRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/ConsumeMicrosoftStoreEntitlementsRequest"
-      }
-    },
     "ConsumePSNEntitlementsRequest": {
       "name": "ConsumePSNEntitlementsRequest",
       "in": "body",
@@ -18705,25 +18607,6 @@
           "data": {
             "ItemInstanceId": "a1de52",
             "RemainingUses": 4
-          }
-        }
-      }
-    },
-    "ConsumeMicrosoftStoreEntitlementsResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ConsumeMicrosoftStoreEntitlementsResponse"
           }
         }
       }
@@ -24756,6 +24639,10 @@
       "id": 4010,
       "name": "CatalogConfigInvalid"
     },
+    "CatalogUnauthorized": {
+      "id": 4011,
+      "name": "CatalogUnauthorized"
+    },
     "CatalogItemTypeInvalid": {
       "id": 4012,
       "name": "CatalogItemTypeInvalid"
@@ -24999,22 +24886,6 @@
     "SegmentManagementInvalidSegmentName": {
       "id": 10006,
       "name": "SegmentManagementInvalidSegmentName"
-    },
-    "DeleteSegmentRateLimitExceeded": {
-      "id": 10007,
-      "name": "DeleteSegmentRateLimitExceeded"
-    },
-    "CreateSegmentRateLimitExceeded": {
-      "id": 10008,
-      "name": "CreateSegmentRateLimitExceeded"
-    },
-    "UpdateSegmentRateLimitExceeded": {
-      "id": 10009,
-      "name": "UpdateSegmentRateLimitExceeded"
-    },
-    "GetSegmentsRateLimitExceeded": {
-      "id": 10010,
-      "name": "GetSegmentsRateLimitExceeded"
     },
     "SnapshotNotFound": {
       "id": 11000,
