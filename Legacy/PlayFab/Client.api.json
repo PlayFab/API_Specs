@@ -1176,6 +1176,56 @@
         }
       ]
     },
+    "ConsumeMicrosoftStoreEntitlementsRequest": {
+      "name": "ConsumeMicrosoftStoreEntitlementsRequest",
+      "className": "ConsumeMicrosoftStoreEntitlementsRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version to use",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MarketplaceSpecificData",
+          "description": "Marketplace specific payload containing details to fetch in app purchase transactions",
+          "jsontype": "Object",
+          "actualtype": "MicrosoftStorePayload",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "ConsumeMicrosoftStoreEntitlementsResponse": {
+      "name": "ConsumeMicrosoftStoreEntitlementsResponse",
+      "className": "ConsumeMicrosoftStoreEntitlementsResponse",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Items",
+          "description": "Details for the items purchased.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "ConsumePSNEntitlementsRequest": {
       "name": "ConsumePSNEntitlementsRequest",
       "className": "ConsumePSNEntitlementsRequest",
@@ -4557,7 +4607,7 @@
       "className": "GetLeaderboardResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "description": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired. If Xbox Live friends are included, make sure the access token from the previous LoginWithXbox call is still valid and not expired. ",
+      "description": "Note: the user's Position is relative to the overall leaderboard.",
       "isResult": true,
       "properties": [
         {
@@ -9568,6 +9618,35 @@
           "jsontype": "Object",
           "actualtype": "SubscriptionModel",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "MicrosoftStorePayload": {
+      "name": "MicrosoftStorePayload",
+      "className": "MicrosoftStorePayload",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "CollectionsMsIdKey",
+          "description": "Microsoft store ID key. This is optional. Alternatively you can use XboxToken",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "UserId",
+          "description": "If collectionsMsIdKey is provided, this will verify the user id in the collectionsMsIdKey is the same.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Token provided by the Xbox Live SDK/XDK method GetTokenAndSignatureAsync(\"POST\", \"https://playfabapi.com/\", \"\"). This is optional. Alternatively can use CollectionsMsIdKey",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -14855,6 +14934,7 @@
       "name": "Platform Specific Methods",
       "methods": [
         "AndroidDevicePushNotificationRegistration",
+        "ConsumeMicrosoftStoreEntitlements",
         "ConsumePSNEntitlements",
         "ConsumeXboxEntitlements",
         "RefreshPSNAuthToken",
@@ -15212,6 +15292,24 @@
         "InvalidItemProperties",
         "ItemNotFound",
         "NoRemainingUses"
+      ]
+    },
+    {
+      "name": "ConsumeMicrosoftStoreEntitlements",
+      "summary": "Grants the player's current entitlements from Microsoft Store's Collection API",
+      "subgroup": "Platform Specific Methods",
+      "titleTiers": null,
+      "url": "/Client/ConsumeMicrosoftStoreEntitlements",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ConsumeMicrosoftStoreEntitlementsRequest",
+      "requestExample": "{\r\n  \"MarketplaceSpecificData\": {\r\n    \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\r\n    \"userId\": \"46239871\",\r\n    \"collectionsMsIdKey\": \"MicrosoftStoreIdKey\"\r\n  },\r\n  \"CatalogVersion\": \"MainCatalog\"\r\n}",
+      "result": "ConsumeMicrosoftStoreEntitlementsResponse",
+      "resultExample": "",
+      "errors": [
+        "EconomyServiceInternalError",
+        "EconomyServiceUnavailable",
+        "InvalidRequest"
       ]
     },
     {
@@ -18443,6 +18541,7 @@
       "result": "UpdateUserTitleDisplayNameResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"DisplayName\": \"User Title Name\"\r\n  }\r\n}",
       "errors": [
+        "AccountNotFound",
         "InvalidPartnerResponse",
         "NameNotAvailable",
         "ProfaneDisplayName"
@@ -20741,10 +20840,6 @@
       "id": 4010,
       "name": "CatalogConfigInvalid"
     },
-    "CatalogUnauthorized": {
-      "id": 4011,
-      "name": "CatalogUnauthorized"
-    },
     "CatalogItemTypeInvalid": {
       "id": 4012,
       "name": "CatalogItemTypeInvalid"
@@ -20988,6 +21083,22 @@
     "SegmentManagementInvalidSegmentName": {
       "id": 10006,
       "name": "SegmentManagementInvalidSegmentName"
+    },
+    "DeleteSegmentRateLimitExceeded": {
+      "id": 10007,
+      "name": "DeleteSegmentRateLimitExceeded"
+    },
+    "CreateSegmentRateLimitExceeded": {
+      "id": 10008,
+      "name": "CreateSegmentRateLimitExceeded"
+    },
+    "UpdateSegmentRateLimitExceeded": {
+      "id": 10009,
+      "name": "UpdateSegmentRateLimitExceeded"
+    },
+    "GetSegmentsRateLimitExceeded": {
+      "id": 10010,
+      "name": "GetSegmentsRateLimitExceeded"
     },
     "SnapshotNotFound": {
       "id": 11000,
@@ -21530,7 +21641,6 @@
     "CatalogSearchParameterInvalid",
     "CatalogFeatureDisabled",
     "CatalogConfigInvalid",
-    "CatalogUnauthorized",
     "CatalogItemTypeInvalid",
     "CatalogBadRequest",
     "CatalogTooManyRequests",
@@ -21592,6 +21702,10 @@
     "SegmentManagementInvalidSegmentId",
     "SegmentManagementInvalidInput",
     "SegmentManagementInvalidSegmentName",
+    "DeleteSegmentRateLimitExceeded",
+    "CreateSegmentRateLimitExceeded",
+    "UpdateSegmentRateLimitExceeded",
+    "GetSegmentsRateLimitExceeded",
     "SnapshotNotFound"
   ]
 }
