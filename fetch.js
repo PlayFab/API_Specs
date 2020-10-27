@@ -87,12 +87,12 @@ function GetFileFromUrl(inputUrl, options, retry = 0) {
                 processedResponse = TabifyJson(rawResponse, options);
             }
             var callbackSuccess = res.statusCode == 200;
+            if (callbackSuccess && options.onFileDownload) {
+                callbackSuccess = options.onFileDownload(processedResponse, options);
+            }
             if (!callbackSuccess) {
                 console.log("  !!!  Failed to GetFileFromUrl (retry: " + retry + ", " + res.statusCode + "): " + inputUrl );
                 GetFileFromUrl(inputUrl, options, retry + 1)
-            } else if (options.onFileDownload) {
-                console.log("  GetFileFromUrl  success (" + res.statusCode + "): " + inputUrl );
-                callbackSuccess = options.onFileDownload(processedResponse, options);
             }
         });
     });
