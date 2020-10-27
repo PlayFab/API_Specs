@@ -87,8 +87,9 @@ function GetFileFromUrl(inputUrl, options, retry = 0) {
                 processedResponse = TabifyJson(rawResponse, options);
             }
             var callbackSuccess = res.statusCode == 200;
-            if (options.onFileDownload)
+            if (callbackSuccess && options.onFileDownload) {
                 callbackSuccess = options.onFileDownload(processedResponse, options);
+            }
             if (!callbackSuccess) {
                 console.log("  !!!  Failed to GetFileFromUrl (retry: " + retry + ", " + res.statusCode + "): " + inputUrl );
                 GetFileFromUrl(inputUrl, options, retry + 1)
