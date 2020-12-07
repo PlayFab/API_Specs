@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "201026",
+    "version": "201207",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -247,7 +247,8 @@
           "Admin/SubtractUserVirtualCurrency"
         ],
         "x-ms-docs-errors": [
-          "InvalidVirtualCurrency"
+          "InvalidVirtualCurrency",
+          "VirtualCurrencyCurrentlyUnavailable"
         ]
       }
     },
@@ -612,6 +613,47 @@
         ]
       }
     },
+    "/Admin/CreateSegment": {
+      "post": {
+        "operationId": "CreateSegment",
+        "tags": [
+          "Segments"
+        ],
+        "description": "Creates a new player segment by defining the conditions on player properties. Also, create actions to target the player segments for a title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/segments/createsegment"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateSegmentRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateSegmentResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Send all the segment details part of CreateSegmentRequest",
+        "x-ms-docs-errors": [
+          "InvalidSegment",
+          "NameNotAvailable",
+          "SegmentManagementInvalidInput",
+          "SegmentManagementInvalidSegmentId",
+          "SegmentManagementNoExpressionTree",
+          "SegmentManagementSegmentCountOverLimit",
+          "SegmentManagementTriggerActionCountOverLimit",
+          "UnknownError"
+        ]
+      }
+    },
     "/Admin/DeleteContent": {
       "post": {
         "operationId": "DeleteContent",
@@ -781,6 +823,41 @@
           "Admin/CreatePlayerSharedSecret",
           "Admin/GetPlayerSharedSecrets",
           "Admin/UpdatePlayerSharedSecret"
+        ]
+      }
+    },
+    "/Admin/DeleteSegment": {
+      "post": {
+        "operationId": "DeleteSegment",
+        "tags": [
+          "Segments"
+        ],
+        "description": "Deletes an existing player segment and its associated action(s) for a title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/segments/deletesegment"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteSegmentRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteSegmentsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Send segment id planning to delete part of DeleteSegmentRequest object",
+        "x-ms-docs-errors": [
+          "SegmentManagementInvalidSegmentId",
+          "UnknownError"
         ]
       }
     },
@@ -1801,6 +1878,40 @@
         },
         "x-seeAlso": [
           "Admin/UpdateRandomResultTables"
+        ]
+      }
+    },
+    "/Admin/GetSegments": {
+      "post": {
+        "operationId": "GetSegments",
+        "tags": [
+          "Segments"
+        ],
+        "description": "Get detail information of a segment and its associated definition(s) and action(s) for a title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/segments/getsegments"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSegmentsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSegmentsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Send segment filter details part of GetSegmentsRequest object",
+        "x-ms-docs-errors": [
+          "UnknownError"
         ]
       }
     },
@@ -3207,6 +3318,7 @@
         "x-ms-docs-errors": [
           "EmailRecipientBlacklisted",
           "InvalidEmailAddress",
+          "NoContactEmailAddressFound",
           "SmtpAddonNotEnabled"
         ]
       }
@@ -3578,7 +3690,8 @@
           "Admin/AddUserVirtualCurrency"
         ],
         "x-ms-docs-errors": [
-          "InvalidVirtualCurrency"
+          "InvalidVirtualCurrency",
+          "VirtualCurrencyCurrentlyUnavailable"
         ]
       }
     },
@@ -3875,6 +3988,45 @@
         "x-ms-docs-errors": [
           "InvalidDropTable",
           "InvalidJSONContent"
+        ]
+      }
+    },
+    "/Admin/UpdateSegment": {
+      "post": {
+        "operationId": "UpdateSegment",
+        "tags": [
+          "Segments"
+        ],
+        "description": "Updates an existing player segment and its associated definition(s) and action(s) for a title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/segments/updatesegment"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateSegmentRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateSegmentResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Update segment properties data which are planning to update",
+        "x-ms-docs-errors": [
+          "SegmentManagementInvalidInput",
+          "SegmentManagementInvalidSegmentId",
+          "SegmentManagementNoExpressionTree",
+          "SegmentManagementSegmentCountOverLimit",
+          "SegmentManagementTriggerActionCountOverLimit",
+          "UnknownError"
         ]
       }
     },
@@ -4428,6 +4580,25 @@
         "AttributedAt"
       ]
     },
+    "AdCampaignSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "CampaignId": {
+          "description": "Campaign id.",
+          "type": "string"
+        },
+        "CampaignSource": {
+          "description": "Campaign source.",
+          "type": "string"
+        },
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Campaign comparison.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
     "AddLocalizedNewsRequest": {
       "type": "object",
       "properties": {
@@ -4738,6 +4909,10 @@
         ]
       }
     },
+    "AllPlayersSegmentFilter": {
+      "type": "object",
+      "properties": {}
+    },
     "ApiCondition": {
       "type": "object",
       "properties": {
@@ -4795,6 +4970,20 @@
       "required": [
         "Active"
       ]
+    },
+    "BanPlayerSegmentAction": {
+      "type": "object",
+      "properties": {
+        "BanHours": {
+          "description": "Ban hours duration.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ReasonForBan": {
+          "description": "Reason for ban.",
+          "type": "string"
+        }
+      }
     },
     "BanRequest": {
       "description": "Represents a single ban request.",
@@ -5741,6 +5930,10 @@
           "description": "A name for the connection that identifies it within the title.",
           "type": "string"
         },
+        "IgnoreNonce": {
+          "description": "Ignore 'nonce' claim in identity tokens.",
+          "type": "boolean"
+        },
         "IssuerDiscoveryUrl": {
           "description": "The discovery document URL to read issuer information from. This must be the absolute URL to the JSON OpenId Configuration document and must be accessible from the internet. If you don't know it, try your issuer URL followed by \"/.well-known/openid-configuration\". For example, if the issuer is https://example.com, try https://example.com/.well-known/openid-configuration",
           "type": "string"
@@ -5846,6 +6039,64 @@
           "StatisticName": "headshots",
           "CurrentVersion": 2,
           "VersionChangeInterval": "Day"
+        }
+      }
+    },
+    "CreateSegmentRequest": {
+      "description": "Send all the segment details part of CreateSegmentRequest",
+      "type": "object",
+      "properties": {
+        "SegmentModel": {
+          "$ref": "#/definitions/SegmentModel",
+          "description": "Segment model with all of the segment properties data.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "SegmentModel"
+      ],
+      "example": {
+        "SegmentModel": {
+          "Name": "My user segment",
+          "SegmentOrDefinitions": [
+            {
+              "SegmentAndDefinitions": [
+                {
+                  "AllPlayersFilter": {}
+                }
+              ]
+            }
+          ],
+          "EnteredSegmentActions": [
+            {
+              "BanPlayerAction": {
+                "BanHours": 2,
+                "ReasonForBan": "Not played for a year"
+              }
+            }
+          ],
+          "LeftSegmentActions": [
+            {
+              "ExecuteAzureFunctionAction": {
+                "AzureFunction": "AzureFunction1",
+                "FunctionParameter": "{\"InputParam\": \"1\"}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "CreateSegmentResponse": {
+      "type": "object",
+      "properties": {
+        "ErrorMessage": {
+          "description": "Error message.",
+          "type": "string"
+        },
+        "SegmentId": {
+          "description": "Segment id.",
+          "type": "string"
         }
       }
     },
@@ -6122,6 +6373,10 @@
       "type": "object",
       "properties": {}
     },
+    "DeletePlayerSegmentAction": {
+      "type": "object",
+      "properties": {}
+    },
     "DeletePlayerSharedSecretRequest": {
       "description": "Player Shared Secret Keys are used for the call to Client/GetTitlePublicKey, which exchanges the shared secret for an RSA CSP blob to be used to encrypt the payload of account creation requests when that API requires a signature header.",
       "type": "object",
@@ -6138,6 +6393,40 @@
     "DeletePlayerSharedSecretResult": {
       "type": "object",
       "properties": {}
+    },
+    "DeletePlayerStatisticSegmentAction": {
+      "type": "object",
+      "properties": {
+        "StatisticName": {
+          "description": "Statistic name.",
+          "type": "string"
+        }
+      }
+    },
+    "DeleteSegmentRequest": {
+      "description": "Send segment id planning to delete part of DeleteSegmentRequest object",
+      "type": "object",
+      "properties": {
+        "SegmentId": {
+          "description": "Segment id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SegmentId"
+      ],
+      "example": {
+        "SegmentId": "97EF0E9302CBE996"
+      }
+    },
+    "DeleteSegmentsResponse": {
+      "type": "object",
+      "properties": {
+        "ErrorMessage": {
+          "description": "Error message.",
+          "type": "string"
+        }
+      }
     },
     "DeleteStoreRequest": {
       "description": "This non-reversible operation will permanently delete the requested store.",
@@ -6221,6 +6510,19 @@
         "Deny"
       ]
     },
+    "EmailNotificationSegmentAction": {
+      "type": "object",
+      "properties": {
+        "EmailTemplateId": {
+          "description": "Email template id.",
+          "type": "string"
+        },
+        "EmailTemplateName": {
+          "description": "Email template name.",
+          "type": "string"
+        }
+      }
+    },
     "EmailVerificationStatus": {
       "type": "object",
       "enum": [
@@ -6248,6 +6550,26 @@
       },
       "required": [
         "Id"
+      ]
+    },
+    "ExecuteAzureFunctionSegmentAction": {
+      "type": "object",
+      "properties": {
+        "AzureFunction": {
+          "description": "Azure function.",
+          "type": "string"
+        },
+        "FunctionParameter": {
+          "description": "Azure function parameter.",
+          "type": "object"
+        },
+        "GenerateFunctionExecutedEvents": {
+          "description": "Generate play stream event.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "GenerateFunctionExecutedEvents"
       ]
     },
     "ExecuteCloudScriptResult": {
@@ -6343,6 +6665,30 @@
         "APIRequestsIssued": 2
       }
     },
+    "ExecuteCloudScriptSegmentAction": {
+      "type": "object",
+      "properties": {
+        "CloudScriptFunction": {
+          "description": "Cloud script function.",
+          "type": "string"
+        },
+        "CloudScriptPublishResultsToPlayStream": {
+          "description": "Generate play stream event.",
+          "type": "boolean"
+        },
+        "FunctionParameter": {
+          "description": "Cloud script function parameter.",
+          "type": "object"
+        },
+        "FunctionParameterJson": {
+          "description": "Cloud script function parameter json text.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "CloudScriptPublishResultsToPlayStream"
+      ]
+    },
     "ExportMasterPlayerDataRequest": {
       "description": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
       "type": "object",
@@ -6370,6 +6716,43 @@
       "example": {
         "JobReceiptId": "A101202A2CD049A0A93C9531DFB37DE8"
       }
+    },
+    "FirstLoginDateSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "First player login date comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LogInDate": {
+          "description": "First player login date.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "LogInDate"
+      ]
+    },
+    "FirstLoginTimespanSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "First player login duration comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "DurationInMinutes": {
+          "description": "First player login duration.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "DurationInMinutes"
+      ]
     },
     "GameBuildStatus": {
       "type": "object",
@@ -6919,6 +7302,7 @@
         "DuplicateKeys",
         "WasNotCreatedWithCloudRoot",
         "LegacyMultiplayerServersDeprecated",
+        "VirtualCurrencyCurrentlyUnavailable",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -6980,6 +7364,20 @@
         "ExportCannotParseQuery",
         "ExportControlCommandsNotAllowed",
         "ExportQueryMissingTableReference",
+        "ExplorerBasicInvalidQueryName",
+        "ExplorerBasicInvalidQueryDescription",
+        "ExplorerBasicInvalidQueryConditions",
+        "ExplorerBasicInvalidQueryStartDate",
+        "ExplorerBasicInvalidQueryEndDate",
+        "ExplorerBasicInvalidQueryGroupBy",
+        "ExplorerBasicInvalidQueryAggregateType",
+        "ExplorerBasicInvalidQueryAggregateProperty",
+        "ExplorerBasicLoadQueriesError",
+        "ExplorerBasicLoadQueryError",
+        "ExplorerBasicCreateQueryError",
+        "ExplorerBasicDeleteQueryError",
+        "ExplorerBasicUpdateQueryError",
+        "ExplorerBasicSavedQueriesLimit",
         "TitleNotEnabledForParty",
         "PartyVersionNotFound",
         "MultiplayerServerBuildReferencedByMatchmakingQueue",
@@ -8263,6 +8661,45 @@
         "Name": "Fast Players"
       }
     },
+    "GetSegmentsRequest": {
+      "description": "Given input segment ids, return list of segments.",
+      "type": "object",
+      "properties": {
+        "SegmentIds": {
+          "description": "Segment ids to filter title segments.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "SegmentIds"
+      ],
+      "example": {
+        "SegmentIds": [
+          "B05FC8CB558A6570",
+          "97EF0E9302CBE996"
+        ]
+      }
+    },
+    "GetSegmentsResponse": {
+      "type": "object",
+      "properties": {
+        "ErrorMessage": {
+          "description": "Error message.",
+          "type": "string"
+        },
+        "Segments": {
+          "description": "List of title segments.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SegmentModel"
+          },
+          "x-isclass": true
+        }
+      }
+    },
     "GetServerBuildInfoRequest": {
       "type": "object",
       "properties": {
@@ -8918,6 +9355,27 @@
       },
       "x-sortKey": "ItemInstanceId"
     },
+    "GrantItemSegmentAction": {
+      "type": "object",
+      "properties": {
+        "CatelogId": {
+          "description": "Item catalog id.",
+          "type": "string"
+        },
+        "ItemId": {
+          "description": "Item id.",
+          "type": "string"
+        },
+        "Quantity": {
+          "description": "Item quantity.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      },
+      "required": [
+        "Quantity"
+      ]
+    },
     "GrantItemsToUsersRequest": {
       "description": "This function directly adds inventory items to user inventories. As a result of this operations, the user will not be charged any transaction fee, regardless of the inventory item catalog definition. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation.",
       "type": "object",
@@ -9011,6 +9469,23 @@
         ]
       }
     },
+    "GrantVirtualCurrencySegmentAction": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Virtual currency amount.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CurrencyCode": {
+          "description": "Virtual currency code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
+      ]
+    },
     "IncrementLimitedEditionItemAvailabilityRequest": {
       "description": "This operation will increment the global counter for the number of these items available. This number cannot be decremented, except by actual grants.",
       "type": "object",
@@ -9047,6 +9522,23 @@
       "type": "object",
       "properties": {},
       "example": {}
+    },
+    "IncrementPlayerStatisticSegmentAction": {
+      "type": "object",
+      "properties": {
+        "IncrementValue": {
+          "description": "Increment value.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StatisticName": {
+          "description": "Statistic name.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IncrementValue"
+      ]
     },
     "IncrementPlayerStatisticVersionRequest": {
       "description": "Statistics are numeric values, with each statistic in the title also generating a leaderboard. When this call is made on a given statistic, this forces a reset of that statistic. Upon reset, the statistic updates to a new version with no values (effectively removing all players from the leaderboard). The previous version's statistic values are also archived for retrieval, if needed (see GetPlayerStatisticVersions). Statistics not created via a call to CreatePlayerStatisticDefinition by default have a VersionChangeInterval of Never, meaning they do not reset on a schedule, but they can be set to do so via a call to UpdatePlayerStatisticDefinition. Once a statistic has been reset (sometimes referred to as versioned or incremented), the now-previous version can still be written to for up a short, pre-defined period (currently 10 seconds), to prevent issues with levels completing around the time of the reset. Also, once reset, the historical statistics for players in the title may be retrieved using the URL specified in the version information (GetPlayerStatisticVersions).",
@@ -9230,6 +9722,43 @@
       },
       "x-sortKey": "ItemInstanceId"
     },
+    "LastLoginDateSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Last player login date comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LogInDate": {
+          "description": "Last player login date.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "LogInDate"
+      ]
+    },
+    "LastLoginTimespanSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Last player login duration comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "DurationInMinutes": {
+          "description": "Last player login duration.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "DurationInMinutes"
+      ]
+    },
     "LinkedPlatformAccountModel": {
       "type": "object",
       "properties": {
@@ -9250,6 +9779,40 @@
         "Username": {
           "description": "Linked account username of the user on the platform, if available",
           "type": "string"
+        }
+      }
+    },
+    "LinkedUserAccountHasEmailSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Login provider comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LoginProvider": {
+          "$ref": "#/definitions/SegmentLoginIdentityProvider",
+          "description": "Login provider.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "LinkedUserAccountSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Login provider comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "LoginProvider": {
+          "$ref": "#/definitions/SegmentLoginIdentityProvider",
+          "description": "Login provider.",
+          "type": "string",
+          "x-isenum": true
         }
       }
     },
@@ -9407,6 +9970,17 @@
           "description": "Longitude coordinate of the geographic location.",
           "type": "number",
           "x-actualtype": "double"
+        }
+      }
+    },
+    "LocationSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "CountryCode": {
+          "$ref": "#/definitions/SegmentCountryCode",
+          "description": "Segment country code.",
+          "type": "string",
+          "x-isenum": true
         }
       }
     },
@@ -10435,6 +11009,26 @@
         }
       }
     },
+    "PushNotificationSegmentAction": {
+      "type": "object",
+      "properties": {
+        "PushNotificationTemplateId": {
+          "description": "Push notification template id.",
+          "type": "string"
+        }
+      }
+    },
+    "PushNotificationSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "PushNotificationDevicePlatform": {
+          "$ref": "#/definitions/SegmentPushNotificationDevicePlatform",
+          "description": "Push notification device platform.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
     "PushSetupPlatform": {
       "type": "object",
       "enum": [
@@ -11115,6 +11709,701 @@
         }
       }
     },
+    "SegmentAndDefinition": {
+      "type": "object",
+      "properties": {
+        "AdCampaignFilter": {
+          "$ref": "#/definitions/AdCampaignSegmentFilter",
+          "description": "Filter property for ad campaign filter.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "AllPlayersFilter": {
+          "$ref": "#/definitions/AllPlayersSegmentFilter",
+          "description": "property for all player filter.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FirstLoginDateFilter": {
+          "$ref": "#/definitions/FirstLoginDateSegmentFilter",
+          "description": "Filter property for first login date.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "FirstLoginFilter": {
+          "$ref": "#/definitions/FirstLoginTimespanSegmentFilter",
+          "description": "Filter property for first login timespan.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LastLoginDateFilter": {
+          "$ref": "#/definitions/LastLoginDateSegmentFilter",
+          "description": "Filter property for last login date.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LastLoginFilter": {
+          "$ref": "#/definitions/LastLoginTimespanSegmentFilter",
+          "description": "Filter property for last login timespan.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LinkedUserAccountFilter": {
+          "$ref": "#/definitions/LinkedUserAccountSegmentFilter",
+          "description": "Filter property for linked in user account.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LinkedUserAccountHasEmailFilter": {
+          "$ref": "#/definitions/LinkedUserAccountHasEmailSegmentFilter",
+          "description": "Filter property for linked in user account has email.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LocationFilter": {
+          "$ref": "#/definitions/LocationSegmentFilter",
+          "description": "Filter property for location.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PushNotificationFilter": {
+          "$ref": "#/definitions/PushNotificationSegmentFilter",
+          "description": "Filter property for push notification.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "StatisticFilter": {
+          "$ref": "#/definitions/StatisticSegmentFilter",
+          "description": "Filter property for statistics.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TagFilter": {
+          "$ref": "#/definitions/TagSegmentFilter",
+          "description": "Filter property for tags.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TotalValueToDateInUSDFilter": {
+          "$ref": "#/definitions/TotalValueToDateInUSDSegmentFilter",
+          "description": "Filter property for total value to date in USD.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "UserOriginationFilter": {
+          "$ref": "#/definitions/UserOriginationSegmentFilter",
+          "description": "Filter property for user origination.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ValueToDateFilter": {
+          "$ref": "#/definitions/ValueToDateSegmentFilter",
+          "description": "Filter property for value to date.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "VirtualCurrencyBalanceFilter": {
+          "$ref": "#/definitions/VirtualCurrencyBalanceSegmentFilter",
+          "description": "Filter property for virtual currency.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
+    "SegmentCountryCode": {
+      "type": "object",
+      "enum": [
+        "AF",
+        "AX",
+        "AL",
+        "DZ",
+        "AS",
+        "AD",
+        "AO",
+        "AI",
+        "AQ",
+        "AG",
+        "AR",
+        "AM",
+        "AW",
+        "AU",
+        "AT",
+        "AZ",
+        "BS",
+        "BH",
+        "BD",
+        "BB",
+        "BY",
+        "BE",
+        "BZ",
+        "BJ",
+        "BM",
+        "BT",
+        "BO",
+        "BQ",
+        "BA",
+        "BW",
+        "BV",
+        "BR",
+        "IO",
+        "BN",
+        "BG",
+        "BF",
+        "BI",
+        "KH",
+        "CM",
+        "CA",
+        "CV",
+        "KY",
+        "CF",
+        "TD",
+        "CL",
+        "CN",
+        "CX",
+        "CC",
+        "CO",
+        "KM",
+        "CG",
+        "CD",
+        "CK",
+        "CR",
+        "CI",
+        "HR",
+        "CU",
+        "CW",
+        "CY",
+        "CZ",
+        "DK",
+        "DJ",
+        "DM",
+        "DO",
+        "EC",
+        "EG",
+        "SV",
+        "GQ",
+        "ER",
+        "EE",
+        "ET",
+        "FK",
+        "FO",
+        "FJ",
+        "FI",
+        "FR",
+        "GF",
+        "PF",
+        "TF",
+        "GA",
+        "GM",
+        "GE",
+        "DE",
+        "GH",
+        "GI",
+        "GR",
+        "GL",
+        "GD",
+        "GP",
+        "GU",
+        "GT",
+        "GG",
+        "GN",
+        "GW",
+        "GY",
+        "HT",
+        "HM",
+        "VA",
+        "HN",
+        "HK",
+        "HU",
+        "IS",
+        "IN",
+        "ID",
+        "IR",
+        "IQ",
+        "IE",
+        "IM",
+        "IL",
+        "IT",
+        "JM",
+        "JP",
+        "JE",
+        "JO",
+        "KZ",
+        "KE",
+        "KI",
+        "KP",
+        "KR",
+        "KW",
+        "KG",
+        "LA",
+        "LV",
+        "LB",
+        "LS",
+        "LR",
+        "LY",
+        "LI",
+        "LT",
+        "LU",
+        "MO",
+        "MK",
+        "MG",
+        "MW",
+        "MY",
+        "MV",
+        "ML",
+        "MT",
+        "MH",
+        "MQ",
+        "MR",
+        "MU",
+        "YT",
+        "MX",
+        "FM",
+        "MD",
+        "MC",
+        "MN",
+        "ME",
+        "MS",
+        "MA",
+        "MZ",
+        "MM",
+        "NA",
+        "NR",
+        "NP",
+        "NL",
+        "NC",
+        "NZ",
+        "NI",
+        "NE",
+        "NG",
+        "NU",
+        "NF",
+        "MP",
+        "NO",
+        "OM",
+        "PK",
+        "PW",
+        "PS",
+        "PA",
+        "PG",
+        "PY",
+        "PE",
+        "PH",
+        "PN",
+        "PL",
+        "PT",
+        "PR",
+        "QA",
+        "RE",
+        "RO",
+        "RU",
+        "RW",
+        "BL",
+        "SH",
+        "KN",
+        "LC",
+        "MF",
+        "PM",
+        "VC",
+        "WS",
+        "SM",
+        "ST",
+        "SA",
+        "SN",
+        "RS",
+        "SC",
+        "SL",
+        "SG",
+        "SX",
+        "SK",
+        "SI",
+        "SB",
+        "SO",
+        "ZA",
+        "GS",
+        "SS",
+        "ES",
+        "LK",
+        "SD",
+        "SR",
+        "SJ",
+        "SZ",
+        "SE",
+        "CH",
+        "SY",
+        "TW",
+        "TJ",
+        "TZ",
+        "TH",
+        "TL",
+        "TG",
+        "TK",
+        "TO",
+        "TT",
+        "TN",
+        "TR",
+        "TM",
+        "TC",
+        "TV",
+        "UG",
+        "UA",
+        "AE",
+        "GB",
+        "US",
+        "UM",
+        "UY",
+        "UZ",
+        "VU",
+        "VE",
+        "VN",
+        "VG",
+        "VI",
+        "WF",
+        "EH",
+        "YE",
+        "ZM",
+        "ZW"
+      ]
+    },
+    "SegmentCurrency": {
+      "type": "object",
+      "enum": [
+        "AED",
+        "AFN",
+        "ALL",
+        "AMD",
+        "ANG",
+        "AOA",
+        "ARS",
+        "AUD",
+        "AWG",
+        "AZN",
+        "BAM",
+        "BBD",
+        "BDT",
+        "BGN",
+        "BHD",
+        "BIF",
+        "BMD",
+        "BND",
+        "BOB",
+        "BRL",
+        "BSD",
+        "BTN",
+        "BWP",
+        "BYR",
+        "BZD",
+        "CAD",
+        "CDF",
+        "CHF",
+        "CLP",
+        "CNY",
+        "COP",
+        "CRC",
+        "CUC",
+        "CUP",
+        "CVE",
+        "CZK",
+        "DJF",
+        "DKK",
+        "DOP",
+        "DZD",
+        "EGP",
+        "ERN",
+        "ETB",
+        "EUR",
+        "FJD",
+        "FKP",
+        "GBP",
+        "GEL",
+        "GGP",
+        "GHS",
+        "GIP",
+        "GMD",
+        "GNF",
+        "GTQ",
+        "GYD",
+        "HKD",
+        "HNL",
+        "HRK",
+        "HTG",
+        "HUF",
+        "IDR",
+        "ILS",
+        "IMP",
+        "INR",
+        "IQD",
+        "IRR",
+        "ISK",
+        "JEP",
+        "JMD",
+        "JOD",
+        "JPY",
+        "KES",
+        "KGS",
+        "KHR",
+        "KMF",
+        "KPW",
+        "KRW",
+        "KWD",
+        "KYD",
+        "KZT",
+        "LAK",
+        "LBP",
+        "LKR",
+        "LRD",
+        "LSL",
+        "LYD",
+        "MAD",
+        "MDL",
+        "MGA",
+        "MKD",
+        "MMK",
+        "MNT",
+        "MOP",
+        "MRO",
+        "MUR",
+        "MVR",
+        "MWK",
+        "MXN",
+        "MYR",
+        "MZN",
+        "NAD",
+        "NGN",
+        "NIO",
+        "NOK",
+        "NPR",
+        "NZD",
+        "OMR",
+        "PAB",
+        "PEN",
+        "PGK",
+        "PHP",
+        "PKR",
+        "PLN",
+        "PYG",
+        "QAR",
+        "RON",
+        "RSD",
+        "RUB",
+        "RWF",
+        "SAR",
+        "SBD",
+        "SCR",
+        "SDG",
+        "SEK",
+        "SGD",
+        "SHP",
+        "SLL",
+        "SOS",
+        "SPL",
+        "SRD",
+        "STD",
+        "SVC",
+        "SYP",
+        "SZL",
+        "THB",
+        "TJS",
+        "TMT",
+        "TND",
+        "TOP",
+        "TRY",
+        "TTD",
+        "TVD",
+        "TWD",
+        "TZS",
+        "UAH",
+        "UGX",
+        "USD",
+        "UYU",
+        "UZS",
+        "VEF",
+        "VND",
+        "VUV",
+        "WST",
+        "XAF",
+        "XCD",
+        "XDR",
+        "XOF",
+        "XPF",
+        "YER",
+        "ZAR",
+        "ZMW",
+        "ZWD"
+      ]
+    },
+    "SegmentFilterComparison": {
+      "type": "object",
+      "enum": [
+        "GreaterThan",
+        "LessThan",
+        "EqualTo",
+        "NotEqualTo",
+        "GreaterThanOrEqual",
+        "LessThanOrEqual",
+        "Exists",
+        "Contains",
+        "NotContains"
+      ]
+    },
+    "SegmentLoginIdentityProvider": {
+      "type": "object",
+      "enum": [
+        "Unknown",
+        "PlayFab",
+        "Custom",
+        "GameCenter",
+        "GooglePlay",
+        "Steam",
+        "XBoxLive",
+        "PSN",
+        "Kongregate",
+        "Facebook",
+        "IOSDevice",
+        "AndroidDevice",
+        "Twitch",
+        "WindowsHello",
+        "GameServer",
+        "CustomServer",
+        "NintendoSwitch",
+        "FacebookInstantGames",
+        "OpenIdConnect",
+        "Apple",
+        "NintendoSwitchAccount"
+      ]
+    },
+    "SegmentModel": {
+      "type": "object",
+      "properties": {
+        "Description": {
+          "description": "Segment description.",
+          "type": "string"
+        },
+        "EnteredSegmentActions": {
+          "description": "Segment actions for current entered segment players.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SegmentTrigger"
+          },
+          "x-isclass": true
+        },
+        "LastUpdateTime": {
+          "description": "Segment last updated date time.",
+          "type": "string"
+        },
+        "LeftSegmentActions": {
+          "description": "Segment actions for current left segment players.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SegmentTrigger"
+          },
+          "x-isclass": true
+        },
+        "Name": {
+          "description": "Segment name.",
+          "type": "string"
+        },
+        "SegmentId": {
+          "description": "Segment id in hex.",
+          "type": "string"
+        },
+        "SegmentOrDefinitions": {
+          "description": "Segment or definitions. This includes segment and definitions and filters.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SegmentOrDefinition"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "LastUpdateTime"
+      ]
+    },
+    "SegmentOrDefinition": {
+      "type": "object",
+      "properties": {
+        "SegmentAndDefinitions": {
+          "description": "List of segment and definitions.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SegmentAndDefinition"
+          },
+          "x-isclass": true
+        }
+      }
+    },
+    "SegmentPushNotificationDevicePlatform": {
+      "type": "object",
+      "enum": [
+        "ApplePushNotificationService",
+        "GoogleCloudMessaging"
+      ]
+    },
+    "SegmentTrigger": {
+      "type": "object",
+      "properties": {
+        "BanPlayerAction": {
+          "$ref": "#/definitions/BanPlayerSegmentAction",
+          "description": "Ban player segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DeletePlayerAction": {
+          "$ref": "#/definitions/DeletePlayerSegmentAction",
+          "description": "Delete player segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DeletePlayerStatisticAction": {
+          "$ref": "#/definitions/DeletePlayerStatisticSegmentAction",
+          "description": "Delete player statistic segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EmailNotificationAction": {
+          "$ref": "#/definitions/EmailNotificationSegmentAction",
+          "description": "Email notification segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExecuteAzureFunctionAction": {
+          "$ref": "#/definitions/ExecuteAzureFunctionSegmentAction",
+          "description": "Execute azure function segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ExecuteCloudScriptAction": {
+          "$ref": "#/definitions/ExecuteCloudScriptSegmentAction",
+          "description": "Execute cloud script segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "GrantItemAction": {
+          "$ref": "#/definitions/GrantItemSegmentAction",
+          "description": "Grant item segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "GrantVirtualCurrencyAction": {
+          "$ref": "#/definitions/GrantVirtualCurrencySegmentAction",
+          "description": "Grant virtual currency segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IncrementPlayerStatisticAction": {
+          "$ref": "#/definitions/IncrementPlayerStatisticSegmentAction",
+          "description": "Increment player statistic segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PushNotificationAction": {
+          "$ref": "#/definitions/PushNotificationSegmentAction",
+          "description": "Push notification segment trigger action.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
     "SendAccountRecoveryEmailRequest": {
       "description": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
       "type": "object",
@@ -11418,6 +12707,34 @@
         "Month"
       ]
     },
+    "StatisticSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Statistic filter comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "FilterValue": {
+          "description": "Statistic filter value.",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Statistic name.",
+          "type": "string"
+        },
+        "UseCurrentVersion": {
+          "description": "Use current version of statistic?",
+          "type": "boolean"
+        },
+        "Version": {
+          "description": "Statistic version.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      }
+    },
     "StatisticVersionArchivalStatus": {
       "type": "object",
       "enum": [
@@ -11583,6 +12900,21 @@
         }
       }
     },
+    "TagSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Tag comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "TagValue": {
+          "description": "Tag value.",
+          "type": "string"
+        }
+      }
+    },
     "TaskInstanceBasicSummary": {
       "type": "object",
       "properties": {
@@ -11680,6 +13012,21 @@
         "Value": {
           "description": "New value to set. Set to null to remove a value",
           "type": "string"
+        }
+      }
+    },
+    "TotalValueToDateInUSDSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Total value to date USD amount.",
+          "type": "string"
+        },
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Total value to date USD comparison.",
+          "type": "string",
+          "x-isenum": true
         }
       }
     },
@@ -12310,6 +13657,65 @@
       "type": "object",
       "properties": {}
     },
+    "UpdateSegmentRequest": {
+      "description": "Update segment properties data which are planning to update",
+      "type": "object",
+      "properties": {
+        "SegmentModel": {
+          "$ref": "#/definitions/SegmentModel",
+          "description": "Segment model with all of the segment properties data.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "SegmentModel"
+      ],
+      "example": {
+        "SegmentModel": {
+          "SegmentId": "B05FC8CB558A6570",
+          "Name": "My user segment",
+          "SegmentOrDefinitions": [
+            {
+              "SegmentAndDefinitions": [
+                {
+                  "AllPlayersFilter": {}
+                }
+              ]
+            }
+          ],
+          "EnteredSegmentActions": [
+            {
+              "BanPlayerAction": {
+                "BanHours": 2,
+                "ReasonForBan": "Not played for a year"
+              }
+            }
+          ],
+          "LeftSegmentActions": [
+            {
+              "ExecuteAzureFunctionAction": {
+                "AzureFunction": "AzureFunction1",
+                "FunctionParameter": "{\"InputParam\": \"1\"}"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "UpdateSegmentResponse": {
+      "type": "object",
+      "properties": {
+        "ErrorMessage": {
+          "description": "Error message.",
+          "type": "string"
+        },
+        "SegmentId": {
+          "description": "Segment id.",
+          "type": "string"
+        }
+      }
+    },
     "UpdateStoreItemsRequest": {
       "description": "This operation is not additive. Using it will cause the indicated virtual store to be created from scratch. If there is an existing store with the same storeId, it will be deleted and replaced with only the items specified in this call. A store contains an array of references to items defined inthe catalog, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "type": "object",
@@ -12938,6 +14344,17 @@
         "NintendoSwitchAccount"
       ]
     },
+    "UserOriginationSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "LoginProvider": {
+          "$ref": "#/definitions/SegmentLoginIdentityProvider",
+          "description": "User login provider.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
     "UserPrivateAccountInfo": {
       "type": "object",
       "properties": {
@@ -13087,6 +14504,50 @@
       },
       "required": [
         "TotalValue"
+      ]
+    },
+    "ValueToDateSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Value to date amount.",
+          "type": "string"
+        },
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Value to date comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Currency": {
+          "$ref": "#/definitions/SegmentCurrency",
+          "description": "Currency using for filter.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "VirtualCurrencyBalanceSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Total amount.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Amount comparison.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CurrencyCode": {
+          "description": "Currency code.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
       ]
     },
     "VirtualCurrencyData": {
@@ -13271,6 +14732,14 @@
         "$ref": "#/definitions/CreatePlayerStatisticDefinitionRequest"
       }
     },
+    "CreateSegmentRequest": {
+      "name": "CreateSegmentRequest",
+      "in": "body",
+      "description": "Send all the segment details part of CreateSegmentRequest",
+      "schema": {
+        "$ref": "#/definitions/CreateSegmentRequest"
+      }
+    },
     "DeleteContentRequest": {
       "name": "DeleteContentRequest",
       "in": "body",
@@ -13307,6 +14776,14 @@
       "description": "Player Shared Secret Keys are used for the call to Client/GetTitlePublicKey, which exchanges the shared secret for an RSA CSP blob to be used to encrypt the payload of account creation requests when that API requires a signature header.",
       "schema": {
         "$ref": "#/definitions/DeletePlayerSharedSecretRequest"
+      }
+    },
+    "DeleteSegmentRequest": {
+      "name": "DeleteSegmentRequest",
+      "in": "body",
+      "description": "Send segment id planning to delete part of DeleteSegmentRequest object",
+      "schema": {
+        "$ref": "#/definitions/DeleteSegmentRequest"
       }
     },
     "DeleteStoreRequest": {
@@ -13506,6 +14983,14 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetRandomResultTablesRequest"
+      }
+    },
+    "GetSegmentsRequest": {
+      "name": "GetSegmentsRequest",
+      "in": "body",
+      "description": "Given input segment ids, return list of segments.",
+      "schema": {
+        "$ref": "#/definitions/GetSegmentsRequest"
       }
     },
     "GetServerBuildInfoRequest": {
@@ -13878,6 +15363,14 @@
         "$ref": "#/definitions/UpdateRandomResultTablesRequest"
       }
     },
+    "UpdateSegmentRequest": {
+      "name": "UpdateSegmentRequest",
+      "in": "body",
+      "description": "Update segment properties data which are planning to update",
+      "schema": {
+        "$ref": "#/definitions/UpdateSegmentRequest"
+      }
+    },
     "UpdateStoreItemsRequest": {
       "name": "UpdateStoreItemsRequest",
       "in": "body",
@@ -14176,6 +15669,25 @@
         }
       }
     },
+    "CreateSegmentResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateSegmentResponse"
+          }
+        }
+      }
+    },
     "CreateTaskResult": {
       "description": "",
       "schema": {
@@ -14266,6 +15778,25 @@
           },
           "data": {
             "$ref": "#/definitions/DeletePlayerSharedSecretResult"
+          }
+        }
+      }
+    },
+    "DeleteSegmentsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteSegmentsResponse"
           }
         }
       }
@@ -15351,6 +16882,25 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    "GetSegmentsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetSegmentsResponse"
           }
         }
       }
@@ -16724,6 +18274,25 @@
           },
           "data": {
             "$ref": "#/definitions/UpdateRandomResultTablesResult"
+          }
+        }
+      }
+    },
+    "UpdateSegmentResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateSegmentResponse"
           }
         }
       }
@@ -18888,6 +20457,10 @@
       "id": 1511,
       "name": "LegacyMultiplayerServersDeprecated"
     },
+    "VirtualCurrencyCurrentlyUnavailable": {
+      "id": 1512,
+      "name": "VirtualCurrencyCurrentlyUnavailable"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -19131,6 +20704,62 @@
     "ExportQueryMissingTableReference": {
       "id": 5026,
       "name": "ExportQueryMissingTableReference"
+    },
+    "ExplorerBasicInvalidQueryName": {
+      "id": 5100,
+      "name": "ExplorerBasicInvalidQueryName"
+    },
+    "ExplorerBasicInvalidQueryDescription": {
+      "id": 5101,
+      "name": "ExplorerBasicInvalidQueryDescription"
+    },
+    "ExplorerBasicInvalidQueryConditions": {
+      "id": 5102,
+      "name": "ExplorerBasicInvalidQueryConditions"
+    },
+    "ExplorerBasicInvalidQueryStartDate": {
+      "id": 5103,
+      "name": "ExplorerBasicInvalidQueryStartDate"
+    },
+    "ExplorerBasicInvalidQueryEndDate": {
+      "id": 5104,
+      "name": "ExplorerBasicInvalidQueryEndDate"
+    },
+    "ExplorerBasicInvalidQueryGroupBy": {
+      "id": 5105,
+      "name": "ExplorerBasicInvalidQueryGroupBy"
+    },
+    "ExplorerBasicInvalidQueryAggregateType": {
+      "id": 5106,
+      "name": "ExplorerBasicInvalidQueryAggregateType"
+    },
+    "ExplorerBasicInvalidQueryAggregateProperty": {
+      "id": 5107,
+      "name": "ExplorerBasicInvalidQueryAggregateProperty"
+    },
+    "ExplorerBasicLoadQueriesError": {
+      "id": 5108,
+      "name": "ExplorerBasicLoadQueriesError"
+    },
+    "ExplorerBasicLoadQueryError": {
+      "id": 5109,
+      "name": "ExplorerBasicLoadQueryError"
+    },
+    "ExplorerBasicCreateQueryError": {
+      "id": 5110,
+      "name": "ExplorerBasicCreateQueryError"
+    },
+    "ExplorerBasicDeleteQueryError": {
+      "id": 5111,
+      "name": "ExplorerBasicDeleteQueryError"
+    },
+    "ExplorerBasicUpdateQueryError": {
+      "id": 5112,
+      "name": "ExplorerBasicUpdateQueryError"
+    },
+    "ExplorerBasicSavedQueriesLimit": {
+      "id": 5113,
+      "name": "ExplorerBasicSavedQueriesLimit"
     },
     "TitleNotEnabledForParty": {
       "id": 6000,
