@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "201217",
+    "version": "210111",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -521,6 +521,36 @@
           "EconomyServiceUnavailable",
           "InvalidRequest"
         ]
+      }
+    },
+    "/Client/ConsumePS5Entitlements": {
+      "post": {
+        "operationId": "ConsumePS5Entitlements",
+        "tags": [
+          "Platform Specific Methods"
+        ],
+        "description": "Checks for any new PS5 entitlements. If any are found, they are consumed (if they're consumables) and added as PlayFab items",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/platform-specific-methods/consumeps5entitlements"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ConsumePS5EntitlementsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ConsumePS5EntitlementsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        }
       }
     },
     "/Client/ConsumePSNEntitlements": {
@@ -7301,6 +7331,47 @@
         }
       }
     },
+    "ConsumePS5EntitlementsRequest": {
+      "type": "object",
+      "properties": {
+        "CatalogVersion": {
+          "description": "Catalog version to use",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "MarketplaceSpecificData": {
+          "$ref": "#/definitions/PlayStation5Payload",
+          "description": "Marketplace specific payload containing details to fetch in app purchase transactions",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "MarketplaceSpecificData"
+      ],
+      "example": {
+        "MarketplaceSpecificData": {
+          "ServiceLabel": "1"
+        },
+        "CatalogVersion": "MainCatalog"
+      }
+    },
+    "ConsumePS5EntitlementsResult": {
+      "type": "object",
+      "properties": {
+        "Items": {
+          "description": "Details for the items purchased.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ItemInstance"
+          },
+          "x-isclass": true
+        }
+      }
+    },
     "ConsumePSNEntitlementsRequest": {
       "type": "object",
       "properties": {
@@ -14025,6 +14096,22 @@
         "ActivationTime": "2015-12-05T10:02:01"
       }
     },
+    "PlayStation5Payload": {
+      "type": "object",
+      "properties": {
+        "Ids": {
+          "description": "An optional list of entitlement ids to query against PSN",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ServiceLabel": {
+          "description": "Id of the PSN service label to consume entitlements from",
+          "type": "string"
+        }
+      }
+    },
     "PSNAccountPlayFabIdPair": {
       "type": "object",
       "properties": {
@@ -17310,6 +17397,13 @@
         "$ref": "#/definitions/ConsumeMicrosoftStoreEntitlementsRequest"
       }
     },
+    "ConsumePS5EntitlementsRequest": {
+      "name": "ConsumePS5EntitlementsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ConsumePS5EntitlementsRequest"
+      }
+    },
     "ConsumePSNEntitlementsRequest": {
       "name": "ConsumePSNEntitlementsRequest",
       "in": "body",
@@ -18737,6 +18831,25 @@
           },
           "data": {
             "$ref": "#/definitions/ConsumeMicrosoftStoreEntitlementsResponse"
+          }
+        }
+      }
+    },
+    "ConsumePS5EntitlementsResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ConsumePS5EntitlementsResult"
           }
         }
       }
@@ -25040,6 +25153,10 @@
     "ExperimentationExclusionGroupInvalidTrafficAllocation": {
       "id": 7021,
       "name": "ExperimentationExclusionGroupInvalidTrafficAllocation"
+    },
+    "ExperimentationExclusionGroupInvalidName": {
+      "id": 7022,
+      "name": "ExperimentationExclusionGroupInvalidName"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,

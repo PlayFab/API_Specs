@@ -1226,6 +1226,56 @@
         }
       ]
     },
+    "ConsumePS5EntitlementsRequest": {
+      "name": "ConsumePS5EntitlementsRequest",
+      "className": "ConsumePS5EntitlementsRequest",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CatalogVersion",
+          "description": "Catalog version to use",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MarketplaceSpecificData",
+          "description": "Marketplace specific payload containing details to fetch in app purchase transactions",
+          "jsontype": "Object",
+          "actualtype": "PlayStation5Payload",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "ConsumePS5EntitlementsResult": {
+      "name": "ConsumePS5EntitlementsResult",
+      "className": "ConsumePS5EntitlementsResult",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Items",
+          "description": "Details for the items purchased.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ItemInstance",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "ConsumePSNEntitlementsRequest": {
       "name": "ConsumePSNEntitlementsRequest",
       "className": "ConsumePSNEntitlementsRequest",
@@ -10337,6 +10387,29 @@
         }
       ]
     },
+    "PlayStation5Payload": {
+      "name": "PlayStation5Payload",
+      "className": "PlayStation5Payload",
+      "classNameSpace": "PlayFab.Client.Models",
+      "assembly": "PlayFab.Client.Models",
+      "properties": [
+        {
+          "name": "Ids",
+          "description": "An optional list of entitlement ids to query against PSN",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServiceLabel",
+          "description": "Id of the PSN service label to consume entitlements from",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "PSNAccountPlayFabIdPair": {
       "name": "PSNAccountPlayFabIdPair",
       "className": "PSNAccountPlayFabIdPair",
@@ -14935,6 +15008,7 @@
       "methods": [
         "AndroidDevicePushNotificationRegistration",
         "ConsumeMicrosoftStoreEntitlements",
+        "ConsumePS5Entitlements",
         "ConsumePSNEntitlements",
         "ConsumeXboxEntitlements",
         "RefreshPSNAuthToken",
@@ -15312,6 +15386,19 @@
         "EconomyServiceUnavailable",
         "InvalidRequest"
       ]
+    },
+    {
+      "name": "ConsumePS5Entitlements",
+      "summary": "Checks for any new PS5 entitlements. If any are found, they are consumed (if they're consumables) and added as PlayFab items",
+      "subgroup": "Platform Specific Methods",
+      "titleTiers": null,
+      "url": "/Client/ConsumePS5Entitlements",
+      "auth": "SessionTicket",
+      "method": "POST",
+      "request": "ConsumePS5EntitlementsRequest",
+      "requestExample": "{\r\n  \"MarketplaceSpecificData\": {\r\n    \"ServiceLabel\": \"1\"\r\n  },\r\n  \"CatalogVersion\": \"MainCatalog\"\r\n}",
+      "result": "ConsumePS5EntitlementsResult",
+      "resultExample": ""
     },
     {
       "name": "ConsumePSNEntitlements",
@@ -15779,11 +15866,6 @@
       "requestExample": "{\r\n  \"StatisticName\": \"Kills\",\r\n  \"StartPosition\": 0,\r\n  \"MaxResultsCount\": 20\r\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"Leaderboard\": [\r\n      {\r\n        \"PlayFabId\": \"10931252888739651331\",\r\n        \"DisplayName\": \"username\",\r\n        \"StatValue\": 12,\r\n        \"Position\": 0\r\n      }\r\n    ],\r\n    \"Version\": 0\r\n  }\r\n}",
-      "seeAlso": [
-        "Client/GetFriendLeaderboard",
-        "Client/GetLeaderboardAroundPlayer",
-        "Client/GetUserStatistics"
-      ],
       "errors": [
         "LeaderboardVersionNotAvailable"
       ]
@@ -16626,10 +16708,6 @@
       "requestExample": "{\r\n  \"FacebookInstantGamesSignature\": \"abcdef\"\r\n}",
       "result": "LinkFacebookInstantGamesIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LoginWithFacebookInstantGamesId",
-        "Client/UnlinkFacebookInstantGamesId"
-      ],
       "errors": [
         "LinkedIdentifierAlreadyClaimed"
       ]
@@ -17079,10 +17157,6 @@
       "requestExample": "{\r\n  \"FacebookInstantGamesSignature\": \"abcdef\",\r\n  \"CreateAccount\": false,\r\n  \"TitleId\": \"1\"\r\n}",
       "result": "LoginResult",
       "resultExample": "{\r\n  \"code\": 200,\r\n  \"status\": \"OK\",\r\n  \"data\": {\r\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\r\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\r\n    \"NewlyCreated\": false\r\n  }\r\n}",
-      "seeAlso": [
-        "Client/LinkFacebookInstantGamesId",
-        "Client/UnlinkFacebookInstantGamesId"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18061,10 +18135,6 @@
       "requestExample": "{\r\n  \"FacebookInstantGamesId\": \"1114685845316173\"\r\n}",
       "result": "UnlinkFacebookInstantGamesIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkFacebookInstantGamesId",
-        "Client/LoginWithFacebookInstantGamesId"
-      ],
       "errors": [
         "AccountNotLinked",
         "FacebookInstantGamesIdNotLinked"
@@ -21120,6 +21190,10 @@
       "id": 7021,
       "name": "ExperimentationExclusionGroupInvalidTrafficAllocation"
     },
+    "ExperimentationExclusionGroupInvalidName": {
+      "id": 7022,
+      "name": "ExperimentationExclusionGroupInvalidName"
+    },
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
@@ -21781,6 +21855,7 @@
     "ExperimentationExclusionGroupInsufficientCapacity",
     "ExperimentationExclusionGroupCannotDelete",
     "ExperimentationExclusionGroupInvalidTrafficAllocation",
+    "ExperimentationExclusionGroupInvalidName",
     "MaxActionDepthExceeded",
     "TitleNotOnUpdatedPricingPlan",
     "SegmentManagementTitleNotInFlight",
