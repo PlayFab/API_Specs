@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210129",
+    "version": "210208",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2670,6 +2670,43 @@
         },
         "x-ms-docs-errors": [
           "EvaluationModePlayerCountExceeded"
+        ]
+      }
+    },
+    "/Server/LoginWithSteamId": {
+      "post": {
+        "operationId": "LoginWithSteamId",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs the user in using an Steam ID, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/authentication/loginwithsteamid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithSteamIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
+        "x-ms-docs-errors": [
+          "EvaluationModePlayerCountExceeded",
+          "RequestViewConstraintParamsNotAllowed",
+          "SteamNotEnabledForTitle",
+          "SteamUserNotFound"
         ]
       }
     },
@@ -10886,6 +10923,37 @@
         "CreateAccount": true
       }
     },
+    "LoginWithSteamIdRequest": {
+      "description": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SteamId": {
+          "description": "Unique Steam identifier for a user",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SteamId"
+      ],
+      "example": {
+        "SteamId": "12344553",
+        "CreateAccount": false
+      }
+    },
     "LoginWithXboxIdRequest": {
       "description": "If this is the first time a user has signed in with the Xbox ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "type": "object",
@@ -15269,6 +15337,14 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/LoginWithServerCustomIdRequest"
+      }
+    },
+    "LoginWithSteamIdRequest": {
+      "name": "LoginWithSteamIdRequest",
+      "in": "body",
+      "description": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithSteamIdRequest"
       }
     },
     "LoginWithXboxIdRequest": {

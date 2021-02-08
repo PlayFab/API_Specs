@@ -8494,6 +8494,59 @@
         }
       ]
     },
+    "LoginWithSteamIdRequest": {
+      "name": "LoginWithSteamIdRequest",
+      "className": "LoginWithSteamIdRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "SteamId",
+          "description": "Unique Steam identifier for a user",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "LoginWithXboxIdRequest": {
       "name": "LoginWithXboxIdRequest",
       "className": "LoginWithXboxIdRequest",
@@ -13673,6 +13726,7 @@
       "methods": [
         "AuthenticateSessionTicket",
         "LoginWithServerCustomId",
+        "LoginWithSteamId",
         "LoginWithXbox",
         "LoginWithXboxId",
         "SetPlayerSecret"
@@ -15328,6 +15382,26 @@
       "resultExample": "",
       "errors": [
         "EvaluationModePlayerCountExceeded"
+      ]
+    },
+    {
+      "name": "LoginWithSteamId",
+      "summary": "Signs the user in using an Steam ID, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Server/LoginWithSteamId",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithSteamIdRequest",
+      "requestExample": "{\r\n  \"SteamId\": \"12344553\",\r\n  \"CreateAccount\": false\r\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "errors": [
+        "EvaluationModePlayerCountExceeded",
+        "RequestViewConstraintParamsNotAllowed",
+        "SteamNotEnabledForTitle",
+        "SteamUserNotFound"
       ]
     },
     {
