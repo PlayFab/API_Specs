@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210208",
+    "version": "210315",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -1912,6 +1912,7 @@
         },
         "x-requestDetails": "Send segment filter details part of GetSegmentsRequest object",
         "x-ms-docs-errors": [
+          "GetSegmentsRateLimitExceeded",
           "UnknownError"
         ]
       }
@@ -3948,7 +3949,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what api calls are allowed.",
+        "x-requestDetails": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what API calls are allowed. To verify that you have the latest version always download the current policy from GetPolicy before uploading a new policy. PlayFab updates the base policy periodically and will automatically apply it to the uploaded policy. Overwriting the combined policy blindly may result in unexpected API errors.",
         "x-seeAlso": [
           "Admin/GetPolicy"
         ]
@@ -7307,6 +7308,7 @@
         "VirtualCurrencyCurrentlyUnavailable",
         "SteamUserNotFound",
         "ElasticSearchOperationFailed",
+        "NotImplemented",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -8538,6 +8540,11 @@
           "description": "The name of the policy read.",
           "type": "string"
         },
+        "PolicyVersion": {
+          "description": "Policy version.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
         "Statements": {
           "description": "The statements in the requested policy.",
           "type": "array",
@@ -8547,6 +8554,9 @@
           "x-isclass": true
         }
       },
+      "required": [
+        "PolicyVersion"
+      ],
       "example": {
         "PolicyName": "ApiPolicy",
         "Statements": [
@@ -13535,7 +13545,7 @@
       }
     },
     "UpdatePolicyRequest": {
-      "description": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what api calls are allowed.",
+      "description": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what API calls are allowed. To verify that you have the latest version always download the current policy from GetPolicy before uploading a new policy. PlayFab updates the base policy periodically and will automatically apply it to the uploaded policy. Overwriting the combined policy blindly may result in unexpected API errors.",
       "type": "object",
       "properties": {
         "OverwritePolicy": {
@@ -13545,6 +13555,11 @@
         "PolicyName": {
           "description": "The name of the policy being updated. Only supported name is 'ApiPolicy'",
           "type": "string"
+        },
+        "PolicyVersion": {
+          "description": "Version of the policy to update. Must be the latest (as returned by GetPolicy).",
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "Statements": {
           "description": "The new statements to include in the policy.",
@@ -13558,7 +13573,8 @@
       "required": [
         "PolicyName",
         "Statements",
-        "OverwritePolicy"
+        "OverwritePolicy",
+        "PolicyVersion"
       ],
       "example": {
         "PolicyName": "ApiPolicy",
@@ -15352,7 +15368,7 @@
     "UpdatePolicyRequest": {
       "name": "UpdatePolicyRequest",
       "in": "body",
-      "description": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what api calls are allowed.",
+      "description": "Updates permissions for your title. Policies affect what is allowed to happen on your title. Your policy is a collection of statements that, together, govern particular area for your title. Today, the only allowed policy is called 'ApiPolicy' and it governs what API calls are allowed. To verify that you have the latest version always download the current policy from GetPolicy before uploading a new policy. PlayFab updates the base policy periodically and will automatically apply it to the uploaded policy. Overwriting the combined policy blindly may result in unexpected API errors.",
       "schema": {
         "$ref": "#/definitions/UpdatePolicyRequest"
       }
@@ -20470,6 +20486,10 @@
     "ElasticSearchOperationFailed": {
       "id": 1514,
       "name": "ElasticSearchOperationFailed"
+    },
+    "NotImplemented": {
+      "id": 1515,
+      "name": "NotImplemented"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
