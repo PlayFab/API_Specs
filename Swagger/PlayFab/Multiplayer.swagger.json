@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210315",
+    "version": "210406",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1942,7 +1942,7 @@
         },
         "parameters": [
           {
-            "$ref": "#/parameters/MultiplayerEmptyRequest"
+            "$ref": "#/parameters/ListBuildAliasesRequest"
           }
         ],
         "security": [
@@ -1952,7 +1952,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/responses/ListBuildAliasesForTitleResponse"
+            "$ref": "#/responses/ListBuildAliasesResponse"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -3003,20 +3003,8 @@
             "$ref": "#/definitions/BuildSelectionCriterion"
           },
           "x-isclass": true
-        },
-        "PageSize": {
-          "description": "The page size on the response.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "SkipToken": {
-          "description": "The skip token for the paged response.",
-          "type": "string"
         }
       },
-      "required": [
-        "PageSize"
-      ],
       "example": {
         "AliasId": "21781fa8-096d-4d9c-b699-75433d579285",
         "AliasName": "AliasName",
@@ -4683,7 +4671,8 @@
               "Num": 1243
             }
           ],
-          "Region": "WestUS"
+          "Region": "WestUS",
+          "Fqdn": "vm.azure.cloudapp.net"
         },
         "QueueName": "custom123"
       }
@@ -5935,7 +5924,8 @@
               "Num": 1243
             }
           ],
-          "Region": "WestUS"
+          "Region": "WestUS",
+          "Fqdn": "vm.azure.cloudapp.net"
         }
       }
     },
@@ -5975,6 +5965,10 @@
     "GetMultiplayerServerDetailsResponse": {
       "type": "object",
       "properties": {
+        "BuildId": {
+          "description": "The identity of the build in which the server was allocated.",
+          "type": "string"
+        },
         "ConnectedPlayers": {
           "description": "The connected players in the multiplayer server.",
           "type": "array",
@@ -6046,7 +6040,8 @@
           {
             "PlayerId": "10271352123739051532"
           }
-        ]
+        ],
+        "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
       }
     },
     "GetMultiplayerServerLogsRequest": {
@@ -6303,7 +6298,8 @@
               "Num": 1243
             }
           ],
-          "Region": "WestUS"
+          "Region": "WestUS",
+          "Fqdn": "vm.azure.cloudapp.net"
         }
       }
     },
@@ -6686,7 +6682,29 @@
         "PageSize": 10
       }
     },
-    "ListBuildAliasesForTitleResponse": {
+    "ListBuildAliasesRequest": {
+      "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PageSize": {
+          "description": "The page size for the request.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "description": "The skip token for the paged request.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "PageSize": 10
+      }
+    },
+    "ListBuildAliasesResponse": {
       "type": "object",
       "properties": {
         "BuildAliases": {
@@ -6696,8 +6714,20 @@
             "$ref": "#/definitions/BuildAliasDetailsResponse"
           },
           "x-isclass": true
+        },
+        "PageSize": {
+          "description": "The page size on the response.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "SkipToken": {
+          "description": "The skip token for the paged response.",
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "PageSize"
+      ]
     },
     "ListBuildSummariesRequest": {
       "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
@@ -7830,17 +7860,6 @@
         "RequiresOptionalValueSupport"
       ]
     },
-    "MultiplayerEmptyRequest": {
-      "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
-      "type": "object",
-      "properties": {
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        }
-      },
-      "example": {}
-    },
     "MultiplayerServerSummary": {
       "type": "object",
       "properties": {
@@ -8180,6 +8199,10 @@
     "RequestMultiplayerServerResponse": {
       "type": "object",
       "properties": {
+        "BuildId": {
+          "description": "The identity of the build in which the server was allocated.",
+          "type": "string"
+        },
         "ConnectedPlayers": {
           "description": "The connected players in the multiplayer server.",
           "type": "array",
@@ -8251,7 +8274,8 @@
           {
             "PlayerId": "10271352123739051532"
           }
-        ]
+        ],
+        "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
       }
     },
     "RolloverContainerRegistryCredentialsRequest": {
@@ -8347,6 +8371,10 @@
     "ServerDetails": {
       "type": "object",
       "properties": {
+        "Fqdn": {
+          "description": "The fully qualified domain name of the virtual machine that is hosting this multiplayer server.",
+          "type": "string"
+        },
         "IPV4Address": {
           "description": "The IPv4 address of the virtual machine that is hosting this multiplayer server.",
           "type": "string"
@@ -8372,7 +8400,8 @@
             "Num": 1243
           }
         ],
-        "Region": "WestUS"
+        "Region": "WestUS",
+        "Fqdn": "vm.azure.cloudapp.net"
       }
     },
     "ServerType": {
@@ -9504,6 +9533,14 @@
         "$ref": "#/definitions/ListAssetSummariesRequest"
       }
     },
+    "ListBuildAliasesRequest": {
+      "name": "ListBuildAliasesRequest",
+      "in": "body",
+      "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
+      "schema": {
+        "$ref": "#/definitions/ListBuildAliasesRequest"
+      }
+    },
     "ListBuildSummariesRequest": {
       "name": "ListBuildSummariesRequest",
       "in": "body",
@@ -9598,14 +9635,6 @@
       "description": "Returns a list of virtual machines for a title.",
       "schema": {
         "$ref": "#/definitions/ListVirtualMachineSummariesRequest"
-      }
-    },
-    "MultiplayerEmptyRequest": {
-      "name": "MultiplayerEmptyRequest",
-      "in": "body",
-      "description": "Returns a list of summarized details of all multiplayer server builds for a title.",
-      "schema": {
-        "$ref": "#/definitions/MultiplayerEmptyRequest"
       }
     },
     "RemoveMatchmakingQueueRequest": {
@@ -10513,7 +10542,8 @@
                   "Num": 1243
                 }
               ],
-              "Region": "WestUS"
+              "Region": "WestUS",
+              "Fqdn": "vm.azure.cloudapp.net"
             }
           }
         }
@@ -10560,7 +10590,8 @@
               {
                 "PlayerId": "10271352123739051532"
               }
-            ]
+            ],
+            "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
           }
         }
       }
@@ -10686,7 +10717,8 @@
                   "Num": 1243
                 }
               ],
-              "Region": "WestUS"
+              "Region": "WestUS",
+              "Fqdn": "vm.azure.cloudapp.net"
             }
           }
         }
@@ -10847,7 +10879,7 @@
         }
       }
     },
-    "ListBuildAliasesForTitleResponse": {
+    "ListBuildAliasesResponse": {
       "description": "",
       "schema": {
         "type": "object",
@@ -10861,7 +10893,7 @@
             "description": "The Http status code as a string."
           },
           "data": {
-            "$ref": "#/definitions/ListBuildAliasesForTitleResponse"
+            "$ref": "#/definitions/ListBuildAliasesResponse"
           }
         }
       }
@@ -11339,7 +11371,8 @@
               {
                 "PlayerId": "10271352123739051532"
               }
-            ]
+            ],
+            "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
           }
         }
       }
@@ -13360,9 +13393,9 @@
       "id": 1492,
       "name": "CloudScriptFunctionNameSizeExceeded"
     },
-    "InsightsManagementTitleInEvaluationMode": {
+    "PaidInsightsFeaturesNotEnabled": {
       "id": 1493,
-      "name": "InsightsManagementTitleInEvaluationMode"
+      "name": "PaidInsightsFeaturesNotEnabled"
     },
     "CloudScriptAzureFunctionsQueueRequestError": {
       "id": 1494,
@@ -13915,6 +13948,10 @@
     "GetSegmentsRateLimitExceeded": {
       "id": 10010,
       "name": "GetSegmentsRateLimitExceeded"
+    },
+    "AsyncExportNotInFlight": {
+      "id": 10011,
+      "name": "AsyncExportNotInFlight"
     },
     "SnapshotNotFound": {
       "id": 11000,

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210315",
+    "version": "210406",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -515,12 +515,7 @@
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
-        },
-        "x-ms-docs-errors": [
-          "EconomyServiceInternalError",
-          "EconomyServiceUnavailable",
-          "InvalidRequest"
-        ]
+        }
       }
     },
     "/Client/ConsumePS5Entitlements": {
@@ -1420,6 +1415,9 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/GetPurchase"
+        ],
         "x-ms-docs-errors": [
           "InvalidPaymentProvider",
           "NoPartnerEnabled"
@@ -2761,6 +2759,7 @@
           "Client/UnlinkFacebookInstantGamesId"
         ],
         "x-ms-docs-errors": [
+          "InvalidFacebookInstantGamesSignature",
           "LinkedIdentifierAlreadyClaimed"
         ]
       }
@@ -2771,7 +2770,7 @@
         "tags": [
           "Account Management"
         ],
-        "description": "Links the Game Center account associated with the provided Game Center ID to the user's PlayFab account",
+        "description": "Links the Game Center account associated with the provided Game Center ID to the user's PlayFab account. Logging in with a Game Center ID is insecure if you do not include the optional PublicKeyUrl, Salt, Signature, and Timestamp parameters in this request. It is recommended you require these parameters on all Game Center calls by going to the Apple Add-ons page in the PlayFab Game Manager and enabling the 'Require secure authentication only for this app' option.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/linkgamecenteraccount"
         },
@@ -2951,6 +2950,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithNintendoServiceAccount",
+          "Client/UnlinkNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "InvalidIdentityProviderId",
           "LinkedIdentifierAlreadyClaimed",
@@ -2986,6 +2989,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithNintendoSwitchDeviceId",
+          "Client/UnlinkNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "LinkedIdentifierAlreadyClaimed"
         ]
@@ -3019,6 +3026,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithOpenIdConnect",
+          "Client/UnlinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "InvalidIdentityProviderId",
           "LinkedIdentifierAlreadyClaimed"
@@ -3459,7 +3470,7 @@
         "tags": [
           "Authentication"
         ],
-        "description": "Signs the user in using an iOS Game Center player identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+        "description": "Signs the user in using an iOS Game Center player identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user. Logging in with a Game Center ID is insecure if you do not include the optional PublicKeyUrl, Salt, Signature, and Timestamp parameters in this request. It is recommended you require these parameters on all Game Center calls by going to the Apple Add-ons page in the PlayFab Game Manager and enabling the 'Require secure authentication only for this app' option.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/authentication/loginwithgamecenter"
         },
@@ -3655,6 +3666,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoServiceAccount",
+          "Client/UnlinkNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3695,6 +3710,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchDeviceId",
+          "Client/UnlinkNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "EvaluationModePlayerCountExceeded",
           "InvalidSignature",
@@ -3733,6 +3752,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkOpenIdConnect",
+          "Client/UnlinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -5199,6 +5222,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoServiceAccount",
+          "Client/LoginWithNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "NintendoSwitchNotEnabledForTitle"
@@ -5233,6 +5260,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchDeviceId",
+          "Client/LoginWithNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "NintendoSwitchDeviceIdNotLinked"
@@ -5267,6 +5298,9 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
         ]
@@ -24121,9 +24155,9 @@
       "id": 1492,
       "name": "CloudScriptFunctionNameSizeExceeded"
     },
-    "InsightsManagementTitleInEvaluationMode": {
+    "PaidInsightsFeaturesNotEnabled": {
       "id": 1493,
-      "name": "InsightsManagementTitleInEvaluationMode"
+      "name": "PaidInsightsFeaturesNotEnabled"
     },
     "CloudScriptAzureFunctionsQueueRequestError": {
       "id": 1494,
@@ -24676,6 +24710,10 @@
     "GetSegmentsRateLimitExceeded": {
       "id": 10010,
       "name": "GetSegmentsRateLimitExceeded"
+    },
+    "AsyncExportNotInFlight": {
+      "id": 10011,
+      "name": "AsyncExportNotInFlight"
     },
     "SnapshotNotFound": {
       "id": 11000,
