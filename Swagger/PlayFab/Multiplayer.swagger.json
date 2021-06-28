@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210521",
+    "version": "210628",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties.",
     "termsOfService": "https://playfab.com/terms/",
@@ -129,6 +129,7 @@
           "MatchmakingEntityInvalid",
           "MatchmakingPlayerHasNotJoinedTicket",
           "MatchmakingQueueNotFound",
+          "MatchmakingRequestTypeMismatch",
           "MatchmakingTicketAlreadyCompleted",
           "MatchmakingTicketNotFound",
           "MatchmakingUnauthorized"
@@ -167,6 +168,7 @@
         "x-ms-docs-errors": [
           "MatchmakingEntityInvalid",
           "MatchmakingQueueNotFound",
+          "MatchmakingRequestTypeMismatch",
           "MatchmakingTicketAlreadyCompleted",
           "MatchmakingTicketNotFound",
           "MatchmakingUnauthorized"
@@ -1358,13 +1360,57 @@
         ]
       }
     },
+    "/MultiplayerServer/GetAssetDownloadUrl": {
+      "post": {
+        "operationId": "GetAssetDownloadUrl",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Gets a URL that can be used to download the specified asset. A sample pre-authenticated url - https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/getassetdownloadurl"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetAssetDownloadUrlRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAssetDownloadUrlResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Gets a URL that can be used to download the specified asset.",
+        "x-seeAlso": [
+          "MultiplayerServer/GetAssetUploadUrl",
+          "MultiplayerServer/ListAssetSummaries"
+        ],
+        "x-ms-docs-errors": [
+          "MultiplayerServerBadRequest",
+          "MultiplayerServerForbidden",
+          "MultiplayerServerInternalServerError",
+          "MultiplayerServerNotFound",
+          "MultiplayerServerTooManyRequests",
+          "MultiplayerServerUnauthorized",
+          "MultiplayerServerUnavailable"
+        ]
+      }
+    },
     "/MultiplayerServer/GetAssetUploadUrl": {
       "post": {
         "operationId": "GetAssetUploadUrl",
         "tags": [
           "MultiplayerServer"
         ],
-        "description": "Gets the URL to upload assets to.",
+        "description": "Gets the URL to upload assets to. A sample pre-authenticated url - https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/getassetuploadurl"
         },
@@ -5395,6 +5441,43 @@
         "GsdkAlias"
       ]
     },
+    "GetAssetDownloadUrlRequest": {
+      "description": "Gets a URL that can be used to download the specified asset.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "FileName": {
+          "description": "The asset's file name to get the download URL for.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "FileName"
+      ],
+      "example": {
+        "FileName": "gameserver.zip"
+      }
+    },
+    "GetAssetDownloadUrlResponse": {
+      "type": "object",
+      "properties": {
+        "AssetDownloadUrl": {
+          "description": "The asset's download URL.",
+          "type": "string"
+        },
+        "FileName": {
+          "description": "The asset's file name to get the download URL for.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "FileName": "gameserver.zip",
+        "AssetDownloadUrl": "https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29"
+      }
+    },
     "GetAssetUploadUrlRequest": {
       "description": "Gets the URL to upload assets to.",
       "type": "object",
@@ -5429,7 +5512,7 @@
       },
       "example": {
         "FileName": "gameserver.zip",
-        "AssetUploadUrl": "https://2mxyjirehzyc6.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=2018-08-21T20%3A27%3A47.5613204Z&se=2018-08-22T01%3A27%3A47.5613204Z&spr=https&sig=SJH%2B1rgFm6%2F6EkUWVPCI5pSR49W5EbZ4L51sDBlkAtE%3D&api-version=2017-07-29"
+        "AssetUploadUrl": "https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29"
       }
     },
     "GetBuildAliasRequest": {
@@ -9389,6 +9472,14 @@
         "$ref": "#/definitions/EnableMultiplayerServersForTitleRequest"
       }
     },
+    "GetAssetDownloadUrlRequest": {
+      "name": "GetAssetDownloadUrlRequest",
+      "in": "body",
+      "description": "Gets a URL that can be used to download the specified asset.",
+      "schema": {
+        "$ref": "#/definitions/GetAssetDownloadUrlRequest"
+      }
+    },
     "GetAssetUploadUrlRequest": {
       "name": "GetAssetUploadUrlRequest",
       "in": "body",
@@ -10297,6 +10388,33 @@
         }
       }
     },
+    "GetAssetDownloadUrlResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetAssetDownloadUrlResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "FileName": "gameserver.zip",
+            "AssetDownloadUrl": "https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29"
+          }
+        }
+      }
+    },
     "GetAssetUploadUrlResponse": {
       "description": "",
       "schema": {
@@ -10319,7 +10437,7 @@
           "status": "OK",
           "data": {
             "FileName": "gameserver.zip",
-            "AssetUploadUrl": "https://2mxyjirehzyc6.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=2018-08-21T20%3A27%3A47.5613204Z&se=2018-08-22T01%3A27%3A47.5613204Z&spr=https&sig=SJH%2B1rgFm6%2F6EkUWVPCI5pSR49W5EbZ4L51sDBlkAtE%3D&api-version=2017-07-29"
+            "AssetUploadUrl": "https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29"
           }
         }
       }
@@ -13792,6 +13910,10 @@
     "ExplorerBasicSavedQueryNotFound": {
       "id": 5114,
       "name": "ExplorerBasicSavedQueryNotFound"
+    },
+    "TenantShardMapperShardNotFound": {
+      "id": 5500,
+      "name": "TenantShardMapperShardNotFound"
     },
     "TitleNotEnabledForParty": {
       "id": 6000,
