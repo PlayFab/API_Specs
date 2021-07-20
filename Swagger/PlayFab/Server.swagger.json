@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210628",
+    "version": "210720",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -7317,7 +7317,10 @@
         "AsyncExportNotFound",
         "AsyncExportRateLimitExceeded",
         "SnapshotNotFound",
-        "InventoryApiNotImplemented"
+        "InventoryApiNotImplemented",
+        "EventSamplingInvalidRatio",
+        "EventSamplingInvalidEventName",
+        "EventSamplingRatioNotFound"
       ]
     },
     "GenericPlayFabIdPair": {
@@ -8279,11 +8282,6 @@
     "GetLeaderboardForUsersCharactersRequest": {
       "type": "object",
       "properties": {
-        "MaxResultsCount": {
-          "description": "Maximum number of entries to retrieve.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
         "PlayFabId": {
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "type": "string"
@@ -8295,13 +8293,11 @@
       },
       "required": [
         "StatisticName",
-        "PlayFabId",
-        "MaxResultsCount"
+        "PlayFabId"
       ],
       "example": {
         "StatisticName": "Kills",
-        "PlayFabId": "10931252888739651331",
-        "MaxResultsCount": 20
+        "PlayFabId": "10931252888739651331"
       }
     },
     "GetLeaderboardForUsersCharactersResult": {
@@ -11603,7 +11599,7 @@
           "type": "string"
         },
         "ExperimentVariants": {
-          "description": "List of experiment variants for the player.",
+          "description": "List of experiment variants for the player. Note that these variants are not guaranteed to be up-to-date when returned during login because the player profile is updated only after login. Instead, use the LoginResult.TreatmentAssignment property during login to get the correct variants and variables.",
           "type": "array",
           "items": {
             "type": "string"
@@ -21650,6 +21646,18 @@
     "InventoryApiNotImplemented": {
       "id": 12000,
       "name": "InventoryApiNotImplemented"
+    },
+    "EventSamplingInvalidRatio": {
+      "id": 14000,
+      "name": "EventSamplingInvalidRatio"
+    },
+    "EventSamplingInvalidEventName": {
+      "id": 14001,
+      "name": "EventSamplingInvalidEventName"
+    },
+    "EventSamplingRatioNotFound": {
+      "id": 14002,
+      "name": "EventSamplingRatioNotFound"
     }
   }
 }
