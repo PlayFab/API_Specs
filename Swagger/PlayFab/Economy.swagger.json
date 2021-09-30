@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210927",
+    "version": "210930",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -23,9 +23,869 @@
   "produces": [
     "application/json"
   ],
-  "paths": {},
+  "paths": {
+    "/Catalog/CreateDraftItem": {
+      "post": {
+        "operationId": "CreateDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates a new item in the working catalog using provided metadata.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/createdraftitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateDraftItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-requestDetails": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/CreateUploadUrls": {
+      "post": {
+        "operationId": "CreateUploadUrls",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates one or more upload URLs which can be used by the client to upload raw file data.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/createuploadurls"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateUploadUrlsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateUploadUrlsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-requestDetails": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and committed using the CreateDraftItem or UpdateDraftItem Item APIs."
+      }
+    },
+    "/Catalog/DeleteEntityItemReviews": {
+      "post": {
+        "operationId": "DeleteEntityItemReviews",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Deletes all reviews, helpfulness votes, and ratings submitted by the entity specified.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/deleteentityitemreviews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteEntityItemReviewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteEntityItemReviewsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "NotImplemented",
+          "ProfileDoesNotExist"
+        ]
+      }
+    },
+    "/Catalog/DeleteItem": {
+      "post": {
+        "operationId": "DeleteItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Removes an item from working catalog and all published versions from the public catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/deleteitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetCatalogConfig": {
+      "post": {
+        "operationId": "GetCatalogConfig",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the configuration for the catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getcatalogconfig"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetCatalogConfigRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetCatalogConfigResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "InvalidEntityType"
+        ]
+      }
+    },
+    "/Catalog/GetDraftItem": {
+      "post": {
+        "operationId": "GetDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves an item from the working catalog. This item represents the current working state of the item.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getdraftitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetDraftItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetDraftItems": {
+      "post": {
+        "operationId": "GetDraftItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves a paginated list of the items from the draft catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getdraftitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetDraftItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetDraftItemsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetEntityDraftItems": {
+      "post": {
+        "operationId": "GetEntityDraftItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves a paginated list of the items from the draft catalog created by the Entity.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getentitydraftitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetEntityDraftItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetEntityDraftItemsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded"
+        ]
+      }
+    },
+    "/Catalog/GetEntityItemReview": {
+      "post": {
+        "operationId": "GetEntityItemReview",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the submitted review for the specified item by the authenticated entity.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getentityitemreview"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetEntityItemReviewRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetEntityItemReviewResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItem": {
+      "post": {
+        "operationId": "GetItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves an item from the public catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItemModerationState": {
+      "post": {
+        "operationId": "GetItemModerationState",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the moderation state for an item, including the concern category and string reason.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitemmoderationstate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemModerationStateRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemModerationStateResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItemPublishStatus": {
+      "post": {
+        "operationId": "GetItemPublishStatus",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Gets the status of a publish of an item.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitempublishstatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemPublishStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemPublishStatusResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItemReviews": {
+      "post": {
+        "operationId": "GetItemReviews",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a paginated set of reviews associated with the specified item.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitemreviews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemReviewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemReviewsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItemReviewSummary": {
+      "post": {
+        "operationId": "GetItemReviewSummary",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Get a summary of all reviews associated with the specified item.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitemreviewsummary"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemReviewSummaryRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemReviewSummaryResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/GetItems": {
+      "post": {
+        "operationId": "GetItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves items from the public catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/PublishDraftItem": {
+      "post": {
+        "operationId": "PublishDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Initiates a publish of an item from the working catalog to the public catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/publishdraftitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PublishDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PublishDraftItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-requestDetails": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/ReportItem": {
+      "post": {
+        "operationId": "ReportItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a report for an item, indicating in what way the item is inappropriate.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/reportitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReportItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReportItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/ReportItemReview": {
+      "post": {
+        "operationId": "ReportItemReview",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a report for a review",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/reportitemreview"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReportItemReviewRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReportItemReviewResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-requestDetails": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded"
+        ]
+      }
+    },
+    "/Catalog/ReviewItem": {
+      "post": {
+        "operationId": "ReviewItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Creates or updates a review for the specified item.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/reviewitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ReviewItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ReviewItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/SearchItems": {
+      "post": {
+        "operationId": "SearchItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Executes a search against the public catalog using the provided search parameters and returns a set of paginated results.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/searchitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SearchItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SearchItemsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/SetItemModerationState": {
+      "post": {
+        "operationId": "SetItemModerationState",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Sets the moderation state for an item, including the concern category and string reason.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/setitemmoderationstate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetItemModerationStateRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetItemModerationStateResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    },
+    "/Catalog/SubmitItemReviewVote": {
+      "post": {
+        "operationId": "SubmitItemReviewVote",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a vote for a review, indicating whether the review was helpful or unhelpful.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/submititemreviewvote"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubmitItemReviewVoteRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SubmitItemReviewVoteResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded"
+        ]
+      }
+    },
+    "/Catalog/TakedownItemReviews": {
+      "post": {
+        "operationId": "TakedownItemReviews",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Submit a request to takedown one or more reviews.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/takedownitemreviews"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/TakedownItemReviewsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TakedownItemReviewsResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-requestDetails": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound"
+        ]
+      }
+    },
+    "/Catalog/UpdateCatalogConfig": {
+      "post": {
+        "operationId": "UpdateCatalogConfig",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Updates the configuration for the catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/updatecatalogconfig"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateCatalogConfigRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateCatalogConfigResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "CatalogConfigInvalid",
+          "InvalidEntityType"
+        ]
+      }
+    },
+    "/Catalog/UpdateDraftItem": {
+      "post": {
+        "operationId": "UpdateDraftItem",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Update the metadata for an item in the working catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/updatedraftitem"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateDraftItemRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UpdateDraftItemResponse"
+          },
+          "default": {
+            "$ref": "#/responses/ApiError"
+          }
+        },
+        "x-pf-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound",
+          "NotImplemented"
+        ]
+      }
+    }
+  },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -58,20 +918,4725 @@
         "code",
         "errorCode"
       ]
+    },
+    "CatalogAlternateId": {
+      "type": "object",
+      "properties": {
+        "Type": {
+          "description": "Type of the alternate ID.",
+          "type": "string"
+        },
+        "Value": {
+          "description": "Value of the alternate ID.",
+          "type": "string"
+        }
+      }
+    },
+    "CatalogConfig": {
+      "type": "object",
+      "properties": {
+        "Admins": {
+          "description": "A list of title player accounts that will have admin permissions.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Catalog": {
+          "$ref": "#/definitions/CatalogSpecificConfig",
+          "description": "The set of configuration that only applies to catalog items.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomCdnDomains": {
+          "description": "A set of Custom CDN domains to maps default domains to.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CustomCdnDomain"
+          },
+          "x-isclass": true
+        },
+        "DeepLinkFormats": {
+          "description": "A list of deep link formats.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeepLinkFormat"
+          },
+          "x-isclass": true
+        },
+        "DisplayPropertyIndexInfos": {
+          "description": "A list of display properties to index.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DisplayPropertyIndexInfo"
+          },
+          "x-isclass": true
+        },
+        "Reviewers": {
+          "description": "A set of player entity keys that are allowed to review content.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "UserGeneratedContent": {
+          "$ref": "#/definitions/UserGeneratedContentSpecificConfig",
+          "description": "The set of configuration that only applies to user generated contents.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
+    "CatalogItem": {
+      "type": "object",
+      "properties": {
+        "AlternateIds": {
+          "description": "The alternate IDs associated with this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogAlternateId"
+          },
+          "x-isclass": true
+        },
+        "Contents": {
+          "description": "The set of contents associated with this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Content"
+          },
+          "x-isclass": true
+        },
+        "ContentType": {
+          "description": "The client-defined type of the item.",
+          "type": "string"
+        },
+        "CreationDate": {
+          "description": "The date and time when this item was created.",
+          "type": "string"
+        },
+        "CreatorEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The ID of the creator of this catalog item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DeepLinks": {
+          "description": "The set of platform specific deep links for this item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DeepLink"
+          },
+          "x-isclass": true
+        },
+        "Description": {
+          "description": "A dictionary of localized descriptions. Key is language code and localized string is the value. The neutral locale is required.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "DisplayProperties": {
+          "description": "Game specific properties for display purposes. This is an arbitrary JSON blob.",
+          "type": "object"
+        },
+        "DisplayVersion": {
+          "description": "The user provided version of the item for display purposes.",
+          "type": "string"
+        },
+        "EndDate": {
+          "description": "The date of when the item will cease to be available. If not provided then the product will be available indefinitely.",
+          "type": "string"
+        },
+        "ETag": {
+          "description": "The current ETag value that can be used for optimistic concurrency in the If-None-Match header.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        },
+        "Images": {
+          "description": "The images associated with this item. Images can be thumbnails or screenshots.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Image"
+          },
+          "x-isclass": true
+        },
+        "IsHidden": {
+          "description": "Indicates if the item is hidden.",
+          "type": "boolean"
+        },
+        "Keywords": {
+          "description": "A dictionary of localized keywords. Key is language code and localized list of keywords is the value.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/KeywordSet"
+          },
+          "x-isclass": true
+        },
+        "LastModifiedDate": {
+          "description": "The date and time this item was last updated.",
+          "type": "string"
+        },
+        "Moderation": {
+          "$ref": "#/definitions/ModerationState",
+          "description": "The moderation state for this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Platforms": {
+          "description": "The platforms supported by this item.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Rating": {
+          "$ref": "#/definitions/Rating",
+          "description": "Rating summary for this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "StartDate": {
+          "description": "The date of when the item will be available. If not provided then the product will appear immediately.",
+          "type": "string"
+        },
+        "Tags": {
+          "description": "The list of tags that are associated with this item.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Title": {
+          "description": "A dictionary of localized titles. Key is language code and localized string is the value. The neutral locale is required.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Type": {
+          "description": "The high-level type of the item.",
+          "type": "string"
+        }
+      }
+    },
+    "CatalogSpecificConfig": {
+      "type": "object",
+      "properties": {
+        "ContentTypes": {
+          "description": "The set of content types that will be used for validation and if no values are provided then anything is allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Tags": {
+          "description": "The set of tags that will be used for validation and if no values are provided then anything is allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ConcernCategory": {
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ConcernCategory",
+        "modelAsString": false
+      },
+      "enum": [
+        "None",
+        "OffensiveContent",
+        "ChildExploitation",
+        "MalwareOrVirus",
+        "PrivacyConcerns",
+        "MisleadingApp",
+        "PoorPerformance",
+        "ReviewResponse",
+        "SpamAdvertising",
+        "Profanity"
+      ]
+    },
+    "Content": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "The content unique ID.",
+          "type": "string"
+        },
+        "MaxClientVersion": {
+          "description": "The maximum client version that this content is compatible with.",
+          "type": "string"
+        },
+        "MinClientVersion": {
+          "description": "The minimum client version that this content is compatible with.",
+          "type": "string"
+        },
+        "Tags": {
+          "description": "The list of tags that are associated with this content.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Type": {
+          "description": "The client-defined type of the content.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The Azure CDN URL for retrieval of the catalog item binary content.",
+          "type": "string"
+        }
+      }
+    },
+    "CreateDraftItemRequest": {
+      "description": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "Metadata describing the new catalog item to be created.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Publish": {
+          "description": "Whether the item should be published immediately.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Publish"
+      ],
+      "example": {
+        "Item": {
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "CreateDraftItemResponse": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "Updated metadata describing the catalog item just created.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "CreateUploadUrlsRequest": {
+      "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and committed using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Files": {
+          "description": "Description of the files to be uploaded by the client.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UploadInfo"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Files": [
+          {
+            "FileName": "textures.zip",
+            "FileSize": 100
+          },
+          {
+            "FileName": "sprites.png",
+            "FileSize": 200
+          }
+        ]
+      }
+    },
+    "CreateUploadUrlsResponse": {
+      "type": "object",
+      "properties": {
+        "UploadUrls": {
+          "description": "List of URLs metadata for the files to be uploaded by the client.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UploadUrlMetadata"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "UploadUrls": [
+          {
+            "Id": "11111111-1111-1111-1111-111111111111",
+            "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip",
+            "FileName": "textures.zip"
+          },
+          {
+            "Id": "22222222-2222-2222-2222-222222222222",
+            "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png",
+            "FileName": "sprites.png"
+          }
+        ]
+      }
+    },
+    "CustomCdnDomain": {
+      "type": "object",
+      "properties": {
+        "CdnHost": {
+          "description": "The custom CDN host URL to use.",
+          "type": "string"
+        },
+        "Name": {
+          "description": "Name of the CDN to replace the host for.",
+          "type": "string"
+        },
+        "OriginHost": {
+          "description": "Full uri to replace the host for.",
+          "type": "string"
+        }
+      }
+    },
+    "DeepLink": {
+      "type": "object",
+      "properties": {
+        "Platform": {
+          "description": "Target platform for this deep link.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The deep link for this platform.",
+          "type": "string"
+        }
+      }
+    },
+    "DeepLinkFormat": {
+      "type": "object",
+      "properties": {
+        "Format": {
+          "description": "The format of the deep link to return. The format should contain '{id}' to represent where the item ID should be placed.",
+          "type": "string"
+        },
+        "Platform": {
+          "description": "The target platform for the deep link.",
+          "type": "string"
+        }
+      }
+    },
+    "DeleteEntityItemReviewsRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
+    "DeleteEntityItemReviewsResponse": {
+      "type": "object",
+      "properties": {}
+    },
+    "DeleteItemRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "DeleteItemResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "DisplayPropertyIndexInfo": {
+      "type": "object",
+      "properties": {
+        "Name": {
+          "description": "The property name in the 'DisplayProperties' property to be indexed.",
+          "type": "string"
+        },
+        "Type": {
+          "$ref": "#/definitions/DisplayPropertyType",
+          "description": "The type of the property to be indexed.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "DisplayPropertyType": {
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DisplayPropertyType",
+        "modelAsString": false
+      },
+      "enum": [
+        "QueryDateTime",
+        "QueryDouble",
+        "QueryString",
+        "SearchString"
+      ]
+    },
+    "EntityKey": {
+      "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "Unique ID of the entity.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "Entity type. See https://docs.microsoft.com/gaming/playfab/features/data/entities/available-built-in-entity-types",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Id"
+      ]
+    },
+    "GetCatalogConfigRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {}
+    },
+    "GetCatalogConfigResponse": {
+      "type": "object",
+      "properties": {
+        "Config": {
+          "$ref": "#/definitions/CatalogConfig",
+          "description": "The catalog configuration.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Config": {
+          "Admins": [
+            "title_player_account!ABC123"
+          ],
+          "Catalog": {
+            "ContentTypes": [
+              "map",
+              "skin"
+            ],
+            "Tags": [
+              "sword",
+              "shield"
+            ]
+          },
+          "DeepLinkFormats": [
+            {
+              "Platform": "iOS",
+              "Format": "mygame://item/{id}"
+            }
+          ],
+          "DisplayPropertyIndexInfos": [
+            {
+              "Name": "damage",
+              "Type": "QueryDouble"
+            }
+          ],
+          "Reviewers": [
+            "title_player_account!ABC123"
+          ],
+          "UserGeneratedContent": {
+            "ContentTypes": [
+              "skin",
+              "map",
+              "weapon_balance"
+            ],
+            "Tags": [
+              "sword",
+              "shield"
+            ]
+          },
+          "FeedContentTypes": [
+            "map",
+            "weapon_balance"
+          ]
+        }
+      }
+    },
+    "GetDraftItemRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetDraftItemResponse": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "Full metadata of the catalog item requested.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "GetDraftItemsRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateIds": {
+          "description": "List of item alternate IDs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogAlternateId"
+          },
+          "x-isclass": true
+        },
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items created by the caller, if any are available. Should be null on initial request.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. Maximum page size is 10.",
+          "type": "integer"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Ids": {
+          "description": "List of Item Ids.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Count": 2
+      }
+    },
+    "GetDraftItemsResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A set of items created by the entity.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItem"
+          },
+          "x-isclass": true
+        },
+        "TotalCount": {
+          "description": "The total count of items satisfying the request condition.",
+          "type": "integer"
+        }
+      },
+      "example": {
+        "Items": [
+          {
+            "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          },
+          {
+            "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          }
+        ],
+        "TotalCount": 30,
+        "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+      }
+    },
+    "GetEntityDraftItemsRequest": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items created by the caller, if any are available. Should be null on initial request.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. Maximum page size is 10.",
+          "type": "integer"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Count": 2,
+        "Entity": {
+          "Id": "someId",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "GetEntityDraftItemsResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Items": {
+          "description": "A set of items created by the entity.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItem"
+          },
+          "x-isclass": true
+        },
+        "TotalCount": {
+          "description": "The total count of items satisfying the request condition.",
+          "type": "integer"
+        }
+      },
+      "example": {
+        "Items": [
+          {
+            "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          },
+          {
+            "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          }
+        ],
+        "TotalCount": 30,
+        "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+      }
+    },
+    "GetEntityItemReviewRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetEntityItemReviewResponse": {
+      "type": "object",
+      "properties": {
+        "Review": {
+          "$ref": "#/definitions/Review",
+          "description": "The review the entity submitted for the requested item.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Review": {
+          "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+          "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "ReviewerId": "title_player_account!ABCD1234",
+          "ItemVersion": "2.1.4",
+          "Title": "Best game ever",
+          "ReviewText": "I play this game every day. It's so much fun!",
+          "Rating": 4,
+          "IsInstalled": true,
+          "Locale": "en-us",
+          "HelpfulnessVotes": 10,
+          "HelpfulPositive": 13,
+          "HelpfulNegative": 15,
+          "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+        }
+      }
+    },
+    "GetItemModerationStateRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetItemModerationStateResponse": {
+      "type": "object",
+      "properties": {
+        "State": {
+          "$ref": "#/definitions/ModerationState",
+          "description": "The current moderation state for the requested item.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "State": {
+          "Status": "AwaitingModeration",
+          "Reason": "User reports over threshold"
+        }
+      }
+    },
+    "GetItemPublishStatusRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetItemPublishStatusResponse": {
+      "type": "object",
+      "properties": {
+        "FailedScanResults": {
+          "description": "Scan results for any items that failed content scans.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScanResult"
+          },
+          "x-isclass": true
+        },
+        "Result": {
+          "$ref": "#/definitions/PublishResult",
+          "description": "High level status of the published item.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "StatusMessage": {
+          "description": "Descriptive message about the current status of the publish.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Result": "Pending",
+        "StatusMessage": "scanning images",
+        "FailedScanResults": [
+          {
+            "Url": "http://example.com/00000000-0000-0000-0000-000000000000/content.bin"
+          }
+        ]
+      }
+    },
+    "GetItemRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetItemResponse": {
+      "description": "Get item result.",
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "The item result.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "GetItemReviewsRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. Maximum page size is 200. If not specified, defaults to 10.",
+          "type": "integer"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the query.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Count": 2,
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetItemReviewsResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Reviews": {
+          "description": "The paginated set of results.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Review"
+          },
+          "x-isclass": true
+        },
+        "TotalCount": {
+          "description": "The total count of items satisfying the request condition.",
+          "type": "integer"
+        }
+      },
+      "example": {
+        "Reviews": [
+          {
+            "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+            "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "ReviewerId": "title_player_account!ABCD1234",
+            "ItemVersion": "2.1.4",
+            "Title": "Best game ever",
+            "ReviewText": "I play this game every day. It's so much fun!",
+            "Rating": 1,
+            "IsInstalled": true,
+            "Locale": "en-us",
+            "HelpfulnessVotes": 8,
+            "HelpfulPositive": 15,
+            "HelpfulNegative": 8,
+            "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+          },
+          {
+            "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+            "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "ReviewerId": "title_player_account!ABCD1234",
+            "ItemVersion": "2.1.4",
+            "Title": "Best game ever",
+            "ReviewText": "I play this game every day. It's so much fun!",
+            "Rating": 2,
+            "IsInstalled": true,
+            "Locale": "en-us",
+            "HelpfulnessVotes": 4,
+            "HelpfulPositive": 10,
+            "HelpfulNegative": 4,
+            "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+          }
+        ],
+        "TotalCount": 13,
+        "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+      }
+    },
+    "GetItemReviewSummaryRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "GetItemReviewSummaryResponse": {
+      "type": "object",
+      "properties": {
+        "LeastFavorableReview": {
+          "$ref": "#/definitions/Review",
+          "description": "The least favorable review for this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "MostFavorableReview": {
+          "$ref": "#/definitions/Review",
+          "description": "The most favorable review for this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Rating": {
+          "$ref": "#/definitions/Rating",
+          "description": "The summary of ratings associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ReviewsCount": {
+          "description": "The total number of reviews associated with this item.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ReviewsCount"
+      ],
+      "example": {
+        "Rating": {
+          "Average": 3.6,
+          "TotalCount": 8,
+          "Count5Star": 1,
+          "Count4Star": 4,
+          "Count3Star": 2,
+          "Count2Star": 1,
+          "Count1Star": 0
+        },
+        "ReviewsCount": 8,
+        "MostFavorableReview": {
+          "ReviewId": "00000000-0000-0000-0000-000000000004",
+          "ItemId": "00000000-0000-0000-0000-000000000005",
+          "ReviewerId": "title_player_account!ABCD1234",
+          "ItemVersion": "2.1.4",
+          "Title": "Best game ever",
+          "ReviewText": "I play this game every day. It's so much fun!",
+          "Rating": 5,
+          "IsInstalled": true,
+          "Locale": "en-us",
+          "HelpfulnessVotes": 17,
+          "HelpfulPositive": 16,
+          "HelpfulNegative": 1,
+          "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+        },
+        "LeastFavorableReview": {
+          "ReviewId": "00000000-0000-0000-0000-000000000006",
+          "ItemId": "00000000-0000-0000-0000-000000000005",
+          "ReviewerId": "title_player_account!EFGH5678",
+          "ItemVersion": "2.1.2",
+          "Title": "It's a game",
+          "ReviewText": "",
+          "Rating": 2,
+          "IsInstalled": true,
+          "Locale": "en-us",
+          "HelpfulnessVotes": 10,
+          "HelpfulNegative": 10,
+          "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+        }
+      }
+    },
+    "GetItemsRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateIds": {
+          "description": "List of item alternate IDs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogAlternateId"
+          },
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Ids": {
+          "description": "List of Item Ids.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "Ids": [
+          "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"
+        ]
+      }
+    },
+    "GetItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Items": {
+          "description": "Metadata of set of items.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItem"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Items": [
+          {
+            "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          },
+          {
+            "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "neutral": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          }
+        ]
+      }
+    },
+    "HelpfulnessVote": {
+      "type": "string",
+      "x-ms-enum": {
+        "name": "HelpfulnessVote",
+        "modelAsString": false
+      },
+      "enum": [
+        "UnHelpful",
+        "Helpful"
+      ]
+    },
+    "Image": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "description": "The image unique ID.",
+          "type": "string"
+        },
+        "Locales": {
+          "description": "The optional list of locales that are supported by this image.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Tag": {
+          "description": "The client-defined tag associated with this image.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "The client-defined type of this image.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The URL for retrieval of the image.",
+          "type": "string"
+        }
+      }
+    },
+    "KeywordSet": {
+      "type": "object",
+      "properties": {
+        "Values": {
+          "description": "A list of localized keywords.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ModerationState": {
+      "type": "object",
+      "properties": {
+        "LastModifiedDate": {
+          "description": "The date and time this moderation state was last updated.",
+          "type": "string"
+        },
+        "Reason": {
+          "description": "The current stated reason for the associated item being moderated.",
+          "type": "string"
+        },
+        "Status": {
+          "$ref": "#/definitions/ModerationStatus",
+          "description": "The current moderation status for the associated item.",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "ModerationStatus": {
+      "type": "string",
+      "x-ms-enum": {
+        "name": "ModerationStatus",
+        "modelAsString": false
+      },
+      "enum": [
+        "Unknown",
+        "AwaitingModeration",
+        "Approved",
+        "Rejected"
+      ]
+    },
+    "PublishDraftItemRequest": {
+      "description": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ETag": {
+          "description": "ETag of the catalog item to published from the working catalog to the public catalog. Used for optimistic concurrency. If the provided ETag does not match the ETag in the current working catalog, the request will be rejected. If not provided, the current version of the document in the working catalog will be published.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "PublishDraftItemResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "PublishResult": {
+      "type": "string",
+      "x-ms-enum": {
+        "name": "PublishResult",
+        "modelAsString": false
+      },
+      "enum": [
+        "Unknown",
+        "Pending",
+        "Succeeded",
+        "Failed",
+        "Canceled"
+      ]
+    },
+    "Rating": {
+      "type": "object",
+      "properties": {
+        "Average": {
+          "description": "The average rating for this item.",
+          "type": "number",
+          "format": "float",
+          "x-actualtype": "float"
+        },
+        "Count1Star": {
+          "description": "The total count of 1 star ratings for this item.",
+          "type": "integer"
+        },
+        "Count2Star": {
+          "description": "The total count of 2 star ratings for this item.",
+          "type": "integer"
+        },
+        "Count3Star": {
+          "description": "The total count of 3 star ratings for this item.",
+          "type": "integer"
+        },
+        "Count4Star": {
+          "description": "The total count of 4 star ratings for this item.",
+          "type": "integer"
+        },
+        "Count5Star": {
+          "description": "The total count of 5 star ratings for this item.",
+          "type": "integer"
+        },
+        "TotalCount": {
+          "description": "The total count of ratings for this item.",
+          "type": "integer"
+        }
+      }
+    },
+    "ReportItemRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ConcernCategory": {
+          "$ref": "#/definitions/ConcernCategory",
+          "description": "Category of concern for this report.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        },
+        "Reason": {
+          "description": "The string reason for this report.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ConcernCategory": "Profanity",
+        "Reason": "There was swearing in the description.",
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "ReportItemResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "ReportItemReviewRequest": {
+      "description": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+      "type": "object",
+      "properties": {
+        "ConcernCategory": {
+          "$ref": "#/definitions/ConcernCategory",
+          "description": "The reason this review is being reported.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "ReviewId": {
+          "description": "The ID of the review to submit a report for.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+        "ConcernCategory": "OffensiveContent"
+      }
+    },
+    "ReportItemReviewResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "Review": {
+      "type": "object",
+      "properties": {
+        "HelpfulNegative": {
+          "description": "The number of negative helpfulness votes for this review.",
+          "type": "integer"
+        },
+        "HelpfulnessVotes": {
+          "description": "Total number of helpfulness votes for this review.",
+          "type": "integer"
+        },
+        "HelpfulPositive": {
+          "description": "The number of positive helpfulness votes for this review.",
+          "type": "integer"
+        },
+        "IsInstalled": {
+          "description": "Indicates whether the review author has the item installed.",
+          "type": "boolean"
+        },
+        "ItemId": {
+          "description": "The ID of the item being reviewed.",
+          "type": "string"
+        },
+        "ItemVersion": {
+          "description": "The version of the item being reviewed.",
+          "type": "string"
+        },
+        "Locale": {
+          "description": "The locale for which this review was submitted in.",
+          "type": "string"
+        },
+        "Rating": {
+          "description": "Star rating associated with this review.",
+          "type": "integer"
+        },
+        "ReviewerId": {
+          "description": "The ID of the author of the review.",
+          "type": "string"
+        },
+        "ReviewId": {
+          "description": "The ID of the review.",
+          "type": "string"
+        },
+        "ReviewText": {
+          "description": "The full text of this review.",
+          "type": "string"
+        },
+        "Submitted": {
+          "description": "The date and time this review was last submitted.",
+          "type": "string"
+        },
+        "Title": {
+          "description": "The title of this review.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Rating",
+        "IsInstalled",
+        "HelpfulnessVotes",
+        "HelpfulPositive",
+        "HelpfulNegative",
+        "Submitted"
+      ]
+    },
+    "ReviewItemRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        },
+        "Review": {
+          "$ref": "#/definitions/Review",
+          "description": "The review to submit.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Review": {
+          "ItemVersion": "2.4.1",
+          "Title": "Best Game Ever",
+          "ReviewText": "I play this game every day. It's my favorite game yet.",
+          "Rating": 5,
+          "IsInstalled": true
+        },
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "ReviewItemResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "ReviewTakedown": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ItemId": {
+          "description": "The ID of the item associated with the review to take down.",
+          "type": "string"
+        },
+        "ReviewId": {
+          "description": "The ID of the review to take down.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "ItemId": "00000000-0000-0000-0000-000000000003",
+        "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "ScanResult": {
+      "type": "object",
+      "properties": {
+        "Url": {
+          "description": "The URL of the item which failed the scan.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "Url": "http://example.com/00000000-0000-0000-0000-000000000000/content.bin"
+      }
+    },
+    "SearchItemsRequest": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. Maximum page size is 225. Default value is 10.",
+          "type": "integer"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Filter": {
+          "description": "An OData filter used to refine the search query.",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderBy used to order the results of the search query.",
+          "type": "string"
+        },
+        "Search": {
+          "description": "The text to search for.",
+          "type": "string"
+        },
+        "Select": {
+          "description": "An OData select query option used to augment the search results. If not defined, the default search result metadata will be returned.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Search": "Pirates",
+        "Filter": "tags/any(t:t eq 'desert') and contentType eq 'map'",
+        "OrderBy": "lastModifiedDate asc",
+        "ContinuationToken": "abc=",
+        "Count": 2
+      }
+    },
+    "SearchItemsResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available.",
+          "type": "string"
+        },
+        "Items": {
+          "description": "The paginated set of results for the search query.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItem"
+          },
+          "x-isclass": true
+        },
+        "TotalCount": {
+          "description": "The total count of items satisfying the request condition.",
+          "type": "integer"
+        }
+      },
+      "example": {
+        "Items": [
+          {
+            "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          },
+          {
+            "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+            "Type": "catalogItem",
+            "Title": {
+              "neutral": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "neutral": "Neutral description",
+              "en-US": "US English description"
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "Platforms": [
+              "android",
+              "xboxone",
+              "ios"
+            ],
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+            "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0",
+                "Tags": [
+                  "pirate",
+                  "desert"
+                ],
+                "Type": "textures"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Tag": "splashscreen",
+                "Type": "thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          }
+        ],
+        "TotalCount": 261,
+        "ContinuationToken": "def=#"
+      }
+    },
+    "SetItemModerationStateRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID associated with this item.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Id": {
+          "description": "The unique ID of the item.",
+          "type": "string"
+        },
+        "Reason": {
+          "description": "The reason for the moderation state change for the associated item.",
+          "type": "string"
+        },
+        "Status": {
+          "$ref": "#/definitions/ModerationStatus",
+          "description": "The status to set for the associated item.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "example": {
+        "Status": "AwaitingModeration",
+        "Reason": "User reports over threshold",
+        "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+      }
+    },
+    "SetItemModerationStateResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "SubmitItemReviewVoteRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ReviewId": {
+          "description": "The ID of the review to submit a helpfulness vote for.",
+          "type": "string"
+        },
+        "Vote": {
+          "$ref": "#/definitions/HelpfulnessVote",
+          "description": "The helpfulness vote of the review.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "example": {
+        "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+        "Vote": "Helpful"
+      }
+    },
+    "SubmitItemReviewVoteResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "TakedownItemReviewsRequest": {
+      "description": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Reviews": {
+          "description": "The set of reviews to take down.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReviewTakedown"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Reviews": [
+          {
+            "ItemId": "00000000-0000-0000-0000-000000000003",
+            "ReviewId": "dddddddd-dddd-dddd-dddd-dddddddddddd"
+          }
+        ]
+      }
+    },
+    "TakedownItemReviewsResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "UpdateCatalogConfigRequest": {
+      "type": "object",
+      "properties": {
+        "Config": {
+          "$ref": "#/definitions/CatalogConfig",
+          "description": "The updated catalog configuration.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "Config": {
+          "Admins": [
+            "title_player_account!ABC123"
+          ],
+          "Catalog": {
+            "ContentTypes": [
+              "map",
+              "skin"
+            ],
+            "Tags": [
+              "sword",
+              "shield"
+            ]
+          },
+          "DeepLinkFormats": [
+            {
+              "Platform": "iOS",
+              "Format": "mygame://item/{id}"
+            }
+          ],
+          "DisplayPropertyIndexInfos": [
+            {
+              "Name": "damage",
+              "Type": "QueryDouble"
+            }
+          ],
+          "Reviewers": [
+            "title_player_account!ABC123"
+          ],
+          "UserGeneratedContent": {
+            "ContentTypes": [
+              "skin",
+              "map",
+              "weapon_balance"
+            ],
+            "Tags": [
+              "sword",
+              "shield"
+            ]
+          },
+          "FeedContentTypes": [
+            "map",
+            "weapon_balance"
+          ]
+        }
+      }
+    },
+    "UpdateCatalogConfigResponse": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
+    "UpdateDraftItemRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "Updated metadata describing the catalog item to be updated.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Publish": {
+          "description": "Whether the item should be published immediately.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Publish"
+      ],
+      "example": {
+        "Item": {
+          "Id": "qqqqqqqq-qqqq-qqqq-qqqq-qqqqqqqqqqqq",
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "UpdateDraftItemResponse": {
+      "type": "object",
+      "properties": {
+        "Item": {
+          "$ref": "#/definitions/CatalogItem",
+          "description": "Updated metadata describing the catalog item just updated.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Item": {
+          "Id": "qqqqqqqq-qqqq-qqqq-qqqq-qqqqqqqqqqqq",
+          "Type": "catalogItem",
+          "Title": {
+            "neutral": "Neutral title",
+            "en-US": "US English title"
+          },
+          "Description": {
+            "neutral": "Neutral description",
+            "en-US": "US English description"
+          },
+          "Keywords": {
+            "neutral": {
+              "Values": [
+                "Keyword_1",
+                "Keyword_2"
+              ]
+            }
+          },
+          "ContentType": "example item",
+          "CreatorEntity": {
+            "Id": "someId",
+            "Type": "title_player_account",
+            "TypeString": "title_player_account"
+          },
+          "IsHidden": false,
+          "Platforms": [
+            "android",
+            "xboxone",
+            "ios"
+          ],
+          "Tags": [
+            "pirates",
+            "holiday"
+          ],
+          "DisplayVersion": "1.0.0",
+          "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+          "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+          "Contents": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000001",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+              "MaxClientVersion": "2.4.1",
+              "MinClientVersion": "2.0.0",
+              "Tags": [
+                "pirate",
+                "desert"
+              ],
+              "Type": "textures"
+            }
+          ],
+          "Images": [
+            {
+              "Id": "00000000-0000-0000-0000-000000000003",
+              "Tag": "splashscreen",
+              "Type": "thumbnail",
+              "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+            }
+          ],
+          "DisplayProperties": {
+            "mapDetails": {
+              "mapType": "desertIsland",
+              "gameMode": "capture",
+              "maxPlayers": 16
+            },
+            "averageMatchLengthInSeconds": 947
+          },
+          "ETag": "opaqueString"
+        }
+      }
+    },
+    "UploadInfo": {
+      "type": "object",
+      "properties": {
+        "FileName": {
+          "description": "Name of the file to be uploaded.",
+          "type": "string"
+        },
+        "FileSize": {
+          "description": "Size of the file to be uploaded, in bytes.",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "FileSize"
+      ]
+    },
+    "UploadUrlMetadata": {
+      "type": "object",
+      "properties": {
+        "FileName": {
+          "description": "Name of the file for which this upload URL was requested.",
+          "type": "string"
+        },
+        "Id": {
+          "description": "Unique ID for the binary content to be uploaded to the target URL.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "URL for the binary content to be uploaded to.",
+          "type": "string"
+        }
+      }
+    },
+    "UserGeneratedContentSpecificConfig": {
+      "type": "object",
+      "properties": {
+        "ContentTypes": {
+          "description": "The set of content types that will be used for validation and if no values are provided then anything is allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Enabled": {
+          "description": "Flag defining whether user generated content is enabled.",
+          "type": "boolean"
+        },
+        "Tags": {
+          "description": "The set of tags that will be used for validation and if no values are provided then anything is allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "Enabled"
+      ]
     }
   },
-  "parameters": {},
-  "responses": {
-    "ApiErrorWrapper": {
-      "description": "This is the outer wrapper for all responses with errors",
+  "parameters": {
+    "CreateDraftItemRequest": {
+      "name": "CreateDraftItemRequest",
+      "in": "body",
+      "description": "The item will not be published to the public catalog until the PublishItem API is called for the item.",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/CreateDraftItemRequest"
+      }
+    },
+    "CreateUploadUrlsRequest": {
+      "name": "CreateUploadUrlsRequest",
+      "in": "body",
+      "description": "Upload URLs point to Azure Blobs; clients must follow the Microsoft Azure Storage Blob Service REST API pattern for uploading content. The response contains upload URLs and IDs for each file. The IDs and URLs returned must be added to the item metadata and committed using the CreateDraftItem or UpdateDraftItem Item APIs.",
+      "schema": {
+        "$ref": "#/definitions/CreateUploadUrlsRequest"
+      }
+    },
+    "DeleteEntityItemReviewsRequest": {
+      "name": "DeleteEntityItemReviewsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeleteEntityItemReviewsRequest"
+      }
+    },
+    "DeleteItemRequest": {
+      "name": "DeleteItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeleteItemRequest"
+      }
+    },
+    "GetCatalogConfigRequest": {
+      "name": "GetCatalogConfigRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetCatalogConfigRequest"
+      }
+    },
+    "GetDraftItemRequest": {
+      "name": "GetDraftItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetDraftItemRequest"
+      }
+    },
+    "GetDraftItemsRequest": {
+      "name": "GetDraftItemsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetDraftItemsRequest"
+      }
+    },
+    "GetEntityDraftItemsRequest": {
+      "name": "GetEntityDraftItemsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetEntityDraftItemsRequest"
+      }
+    },
+    "GetEntityItemReviewRequest": {
+      "name": "GetEntityItemReviewRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetEntityItemReviewRequest"
+      }
+    },
+    "GetItemModerationStateRequest": {
+      "name": "GetItemModerationStateRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemModerationStateRequest"
+      }
+    },
+    "GetItemPublishStatusRequest": {
+      "name": "GetItemPublishStatusRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemPublishStatusRequest"
+      }
+    },
+    "GetItemRequest": {
+      "name": "GetItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemRequest"
+      }
+    },
+    "GetItemReviewsRequest": {
+      "name": "GetItemReviewsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemReviewsRequest"
+      }
+    },
+    "GetItemReviewSummaryRequest": {
+      "name": "GetItemReviewSummaryRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemReviewSummaryRequest"
+      }
+    },
+    "GetItemsRequest": {
+      "name": "GetItemsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemsRequest"
+      }
+    },
+    "PublishDraftItemRequest": {
+      "name": "PublishDraftItemRequest",
+      "in": "body",
+      "description": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
+      "schema": {
+        "$ref": "#/definitions/PublishDraftItemRequest"
+      }
+    },
+    "ReportItemRequest": {
+      "name": "ReportItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ReportItemRequest"
+      }
+    },
+    "ReportItemReviewRequest": {
+      "name": "ReportItemReviewRequest",
+      "in": "body",
+      "description": "Submit a report for an inappropriate review, allowing the submitting user to specify their concern.",
+      "schema": {
+        "$ref": "#/definitions/ReportItemReviewRequest"
+      }
+    },
+    "ReviewItemRequest": {
+      "name": "ReviewItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ReviewItemRequest"
+      }
+    },
+    "SearchItemsRequest": {
+      "name": "SearchItemsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SearchItemsRequest"
+      }
+    },
+    "SetItemModerationStateRequest": {
+      "name": "SetItemModerationStateRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SetItemModerationStateRequest"
+      }
+    },
+    "SubmitItemReviewVoteRequest": {
+      "name": "SubmitItemReviewVoteRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SubmitItemReviewVoteRequest"
+      }
+    },
+    "TakedownItemReviewsRequest": {
+      "name": "TakedownItemReviewsRequest",
+      "in": "body",
+      "description": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
+      "schema": {
+        "$ref": "#/definitions/TakedownItemReviewsRequest"
+      }
+    },
+    "UpdateCatalogConfigRequest": {
+      "name": "UpdateCatalogConfigRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UpdateCatalogConfigRequest"
+      }
+    },
+    "UpdateDraftItemRequest": {
+      "name": "UpdateDraftItemRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UpdateDraftItemRequest"
       }
     }
   },
-  "x-AnyInclusiveFlags": [
-    "Beta"
-  ],
+  "responses": {
+    "ApiError": {
+      "description": "This is the outer wrapper for all responses with errors",
+      "schema": {
+        "$ref": "#/definitions/ApiError"
+      }
+    },
+    "CreateDraftItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateDraftItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {
+              "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+              "Type": "catalogItem",
+              "Title": {
+                "neutral": "Neutral title",
+                "en-US": "US English title"
+              },
+              "Description": {
+                "neutral": "Neutral description",
+                "en-US": "US English description"
+              },
+              "Keywords": {
+                "neutral": {
+                  "Values": [
+                    "Keyword_1",
+                    "Keyword_2"
+                  ]
+                }
+              },
+              "ContentType": "example item",
+              "CreatorEntity": {
+                "Id": "someId",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+              },
+              "IsHidden": false,
+              "Platforms": [
+                "android",
+                "xboxone",
+                "ios"
+              ],
+              "Tags": [
+                "pirates",
+                "holiday"
+              ],
+              "DisplayVersion": "1.0.0",
+              "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+              "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+              "Contents": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000001",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                  "MaxClientVersion": "2.4.1",
+                  "MinClientVersion": "2.0.0",
+                  "Tags": [
+                    "pirate",
+                    "desert"
+                  ],
+                  "Type": "textures"
+                }
+              ],
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "splashscreen",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                }
+              ],
+              "DisplayProperties": {
+                "mapDetails": {
+                  "mapType": "desertIsland",
+                  "gameMode": "capture",
+                  "maxPlayers": 16
+                },
+                "averageMatchLengthInSeconds": 947
+              },
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    },
+    "CreateUploadUrlsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateUploadUrlsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "UploadUrls": [
+              {
+                "Id": "11111111-1111-1111-1111-111111111111",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/11111111-1111-1111-1111-111111111111/textures.zip",
+                "FileName": "textures.zip"
+              },
+              {
+                "Id": "22222222-2222-2222-2222-222222222222",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/22222222-2222-2222-2222-222222222222/sprites.png",
+                "FileName": "sprites.png"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "DeleteEntityItemReviewsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteEntityItemReviewsResponse"
+          }
+        }
+      }
+    },
+    "DeleteItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "GetCatalogConfigResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetCatalogConfigResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Config": {
+              "Admins": [
+                "title_player_account!ABC123"
+              ],
+              "Catalog": {
+                "ContentTypes": [
+                  "map",
+                  "skin"
+                ],
+                "Tags": [
+                  "sword",
+                  "shield"
+                ]
+              },
+              "DeepLinkFormats": [
+                {
+                  "Platform": "iOS",
+                  "Format": "mygame://item/{id}"
+                }
+              ],
+              "DisplayPropertyIndexInfos": [
+                {
+                  "Name": "damage",
+                  "Type": "QueryDouble"
+                }
+              ],
+              "Reviewers": [
+                "title_player_account!ABC123"
+              ],
+              "UserGeneratedContent": {
+                "ContentTypes": [
+                  "skin",
+                  "map",
+                  "weapon_balance"
+                ],
+                "Tags": [
+                  "sword",
+                  "shield"
+                ]
+              },
+              "FeedContentTypes": [
+                "map",
+                "weapon_balance"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "GetDraftItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetDraftItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {
+              "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+              "Type": "catalogItem",
+              "Title": {
+                "neutral": "Neutral title",
+                "en-US": "US English title"
+              },
+              "Description": {
+                "neutral": "Neutral description",
+                "en-US": "US English description"
+              },
+              "Keywords": {
+                "neutral": {
+                  "Values": [
+                    "Keyword_1",
+                    "Keyword_2"
+                  ]
+                }
+              },
+              "ContentType": "example item",
+              "CreatorEntity": {
+                "Id": "someId",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+              },
+              "IsHidden": false,
+              "Platforms": [
+                "android",
+                "xboxone",
+                "ios"
+              ],
+              "Tags": [
+                "pirates",
+                "holiday"
+              ],
+              "DisplayVersion": "1.0.0",
+              "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+              "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+              "Contents": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000001",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                  "MaxClientVersion": "2.4.1",
+                  "MinClientVersion": "2.0.0",
+                  "Tags": [
+                    "pirate",
+                    "desert"
+                  ],
+                  "Type": "textures"
+                }
+              ],
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "splashscreen",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                }
+              ],
+              "DisplayProperties": {
+                "mapDetails": {
+                  "mapType": "desertIsland",
+                  "gameMode": "capture",
+                  "maxPlayers": 16
+                },
+                "averageMatchLengthInSeconds": 947
+              },
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    },
+    "GetDraftItemsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetDraftItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Items": [
+              {
+                "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              },
+              {
+                "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              }
+            ],
+            "TotalCount": 30,
+            "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+          }
+        }
+      }
+    },
+    "GetEntityDraftItemsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetEntityDraftItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Items": [
+              {
+                "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              },
+              {
+                "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              }
+            ],
+            "TotalCount": 30,
+            "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+          }
+        }
+      }
+    },
+    "GetEntityItemReviewResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetEntityItemReviewResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Review": {
+              "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+              "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+              "ReviewerId": "title_player_account!ABCD1234",
+              "ItemVersion": "2.1.4",
+              "Title": "Best game ever",
+              "ReviewText": "I play this game every day. It's so much fun!",
+              "Rating": 4,
+              "IsInstalled": true,
+              "Locale": "en-us",
+              "HelpfulnessVotes": 10,
+              "HelpfulPositive": 13,
+              "HelpfulNegative": 15,
+              "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+            }
+          }
+        }
+      }
+    },
+    "GetItemModerationStateResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemModerationStateResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "State": {
+              "Status": "AwaitingModeration",
+              "Reason": "User reports over threshold"
+            }
+          }
+        }
+      }
+    },
+    "GetItemPublishStatusResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemPublishStatusResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Result": "Pending",
+            "StatusMessage": "scanning images",
+            "FailedScanResults": [
+              {
+                "Url": "http://example.com/00000000-0000-0000-0000-000000000000/content.bin"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetItemResponse": {
+      "description": "Get item result.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {
+              "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+              "Type": "catalogItem",
+              "Title": {
+                "neutral": "Neutral title",
+                "en-US": "US English title"
+              },
+              "Description": {
+                "neutral": "Neutral description",
+                "en-US": "US English description"
+              },
+              "Keywords": {
+                "neutral": {
+                  "Values": [
+                    "Keyword_1",
+                    "Keyword_2"
+                  ]
+                }
+              },
+              "ContentType": "example item",
+              "CreatorEntity": {
+                "Id": "someId",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+              },
+              "IsHidden": false,
+              "Platforms": [
+                "android",
+                "xboxone",
+                "ios"
+              ],
+              "Tags": [
+                "pirates",
+                "holiday"
+              ],
+              "DisplayVersion": "1.0.0",
+              "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+              "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+              "Contents": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000001",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                  "MaxClientVersion": "2.4.1",
+                  "MinClientVersion": "2.0.0",
+                  "Tags": [
+                    "pirate",
+                    "desert"
+                  ],
+                  "Type": "textures"
+                }
+              ],
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "splashscreen",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                }
+              ],
+              "DisplayProperties": {
+                "mapDetails": {
+                  "mapType": "desertIsland",
+                  "gameMode": "capture",
+                  "maxPlayers": 16
+                },
+                "averageMatchLengthInSeconds": 947
+              },
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    },
+    "GetItemReviewsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemReviewsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Reviews": [
+              {
+                "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+                "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "ReviewerId": "title_player_account!ABCD1234",
+                "ItemVersion": "2.1.4",
+                "Title": "Best game ever",
+                "ReviewText": "I play this game every day. It's so much fun!",
+                "Rating": 1,
+                "IsInstalled": true,
+                "Locale": "en-us",
+                "HelpfulnessVotes": 8,
+                "HelpfulPositive": 15,
+                "HelpfulNegative": 8,
+                "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+              },
+              {
+                "ReviewId": "372f84cd-b45b-48a7-9549-2c09a6c12104",
+                "ItemId": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "ReviewerId": "title_player_account!ABCD1234",
+                "ItemVersion": "2.1.4",
+                "Title": "Best game ever",
+                "ReviewText": "I play this game every day. It's so much fun!",
+                "Rating": 2,
+                "IsInstalled": true,
+                "Locale": "en-us",
+                "HelpfulnessVotes": 4,
+                "HelpfulPositive": 10,
+                "HelpfulNegative": 4,
+                "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+              }
+            ],
+            "TotalCount": 13,
+            "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
+          }
+        }
+      }
+    },
+    "GetItemReviewSummaryResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemReviewSummaryResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Rating": {
+              "Average": 3.6,
+              "TotalCount": 8,
+              "Count5Star": 1,
+              "Count4Star": 4,
+              "Count3Star": 2,
+              "Count2Star": 1,
+              "Count1Star": 0
+            },
+            "ReviewsCount": 8,
+            "MostFavorableReview": {
+              "ReviewId": "00000000-0000-0000-0000-000000000004",
+              "ItemId": "00000000-0000-0000-0000-000000000005",
+              "ReviewerId": "title_player_account!ABCD1234",
+              "ItemVersion": "2.1.4",
+              "Title": "Best game ever",
+              "ReviewText": "I play this game every day. It's so much fun!",
+              "Rating": 5,
+              "IsInstalled": true,
+              "Locale": "en-us",
+              "HelpfulnessVotes": 17,
+              "HelpfulPositive": 16,
+              "HelpfulNegative": 1,
+              "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+            },
+            "LeastFavorableReview": {
+              "ReviewId": "00000000-0000-0000-0000-000000000006",
+              "ItemId": "00000000-0000-0000-0000-000000000005",
+              "ReviewerId": "title_player_account!EFGH5678",
+              "ItemVersion": "2.1.2",
+              "Title": "It's a game",
+              "ReviewText": "",
+              "Rating": 2,
+              "IsInstalled": true,
+              "Locale": "en-us",
+              "HelpfulnessVotes": 10,
+              "HelpfulNegative": 10,
+              "Submitted": "2018-08-17T15:32:10.4729879-07:00"
+            }
+          }
+        }
+      }
+    },
+    "GetItemsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Items": [
+              {
+                "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              },
+              {
+                "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "neutral": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "PublishDraftItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/PublishDraftItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "ReportItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ReportItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "ReportItemReviewResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ReportItemReviewResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "ReviewItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ReviewItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "SearchItemsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SearchItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Items": [
+              {
+                "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              },
+              {
+                "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+                "Type": "catalogItem",
+                "Title": {
+                  "neutral": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "neutral": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "Platforms": [
+                  "android",
+                  "xboxone",
+                  "ios"
+                ],
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+                "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0",
+                    "Tags": [
+                      "pirate",
+                      "desert"
+                    ],
+                    "Type": "textures"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Tag": "splashscreen",
+                    "Type": "thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              }
+            ],
+            "TotalCount": 261,
+            "ContinuationToken": "def=#"
+          }
+        }
+      }
+    },
+    "SetItemModerationStateResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetItemModerationStateResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "SubmitItemReviewVoteResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SubmitItemReviewVoteResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "TakedownItemReviewsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/TakedownItemReviewsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "UpdateCatalogConfigResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateCatalogConfigResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
+    },
+    "UpdateDraftItemResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UpdateDraftItemResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Item": {
+              "Id": "qqqqqqqq-qqqq-qqqq-qqqq-qqqqqqqqqqqq",
+              "Type": "catalogItem",
+              "Title": {
+                "neutral": "Neutral title",
+                "en-US": "US English title"
+              },
+              "Description": {
+                "neutral": "Neutral description",
+                "en-US": "US English description"
+              },
+              "Keywords": {
+                "neutral": {
+                  "Values": [
+                    "Keyword_1",
+                    "Keyword_2"
+                  ]
+                }
+              },
+              "ContentType": "example item",
+              "CreatorEntity": {
+                "Id": "someId",
+                "Type": "title_player_account",
+                "TypeString": "title_player_account"
+              },
+              "IsHidden": false,
+              "Platforms": [
+                "android",
+                "xboxone",
+                "ios"
+              ],
+              "Tags": [
+                "pirates",
+                "holiday"
+              ],
+              "DisplayVersion": "1.0.0",
+              "CreationDate": "2018-08-17T15:32:10.4729879-07:00",
+              "LastModifiedDate": "2018-08-17T15:32:31.911375-07:00",
+              "Contents": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000001",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                  "MaxClientVersion": "2.4.1",
+                  "MinClientVersion": "2.0.0",
+                  "Tags": [
+                    "pirate",
+                    "desert"
+                  ],
+                  "Type": "textures"
+                }
+              ],
+              "Images": [
+                {
+                  "Id": "00000000-0000-0000-0000-000000000003",
+                  "Tag": "splashscreen",
+                  "Type": "thumbnail",
+                  "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                }
+              ],
+              "DisplayProperties": {
+                "mapDetails": {
+                  "mapType": "desertIsland",
+                  "gameMode": "capture",
+                  "maxPlayers": 16
+                },
+                "averageMatchLengthInSeconds": 947
+              },
+              "ETag": "opaqueString"
+            }
+          }
+        }
+      }
+    }
+  },
   "tags": [
     {
       "name": "Catalog",
@@ -108,7 +5673,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -2255,6 +7820,18 @@
     "PubSubTooManyRequests": {
       "id": 2501,
       "name": "PubSubTooManyRequests"
+    },
+    "PubSubConnectionHandleAccessDenied": {
+      "id": 2502,
+      "name": "PubSubConnectionHandleAccessDenied"
+    },
+    "PubSubConnectionHandleInvalid": {
+      "id": 2503,
+      "name": "PubSubConnectionHandleInvalid"
+    },
+    "PubSubSubscriptionLimitExceeded": {
+      "id": 2504,
+      "name": "PubSubSubscriptionLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,

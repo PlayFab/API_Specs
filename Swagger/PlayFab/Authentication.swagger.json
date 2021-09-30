@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210927",
+    "version": "210930",
     "title": "PlayFab Authentication API",
     "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -48,12 +48,12 @@
           "200": {
             "$ref": "#/responses/GetEntityTokenResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "EncryptionKeyBroken"
         ]
       }
@@ -82,8 +82,8 @@
           "200": {
             "$ref": "#/responses/ValidateEntityTokenResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Given an entity token, validates that it hasn't expired or been revoked and will return details of the owner."
@@ -91,7 +91,7 @@
     }
   },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -177,7 +177,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -217,6 +220,10 @@
     },
     "IdentifiedDeviceType": {
       "type": "string",
+      "x-ms-enum": {
+        "name": "IdentifiedDeviceType",
+        "modelAsString": false
+      },
       "enum": [
         "Unknown",
         "XboxOne",
@@ -225,6 +232,10 @@
     },
     "LoginIdentityProvider": {
       "type": "string",
+      "x-ms-enum": {
+        "name": "LoginIdentityProvider",
+        "modelAsString": false
+      },
       "enum": [
         "Unknown",
         "PlayFab",
@@ -255,7 +266,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "EntityToken": {
           "description": "Client EntityToken",
@@ -290,6 +304,10 @@
           "type": "string",
           "x-isenum": true
         },
+        "IdentityProviderIssuedId": {
+          "description": "The ID issued by the identity provider, e.g. a XUID on Xbox Live",
+          "type": "string"
+        },
         "Lineage": {
           "$ref": "#/definitions/EntityLineage",
           "description": "The lineage of this profile.",
@@ -306,6 +324,7 @@
         },
         "IdentityProvider": "PlayFab",
         "IdentifiedDeviceType": "XboxOne",
+        "IdentityProviderIssuedId": "2533274790395904",
         "Entity": {
           "Id": "42434567785265",
           "Type": "title_player_account",
@@ -333,10 +352,10 @@
     }
   },
   "responses": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/ApiError"
       }
     },
     "GetEntityTokenResponse": {
@@ -399,6 +418,7 @@
             },
             "IdentityProvider": "PlayFab",
             "IdentifiedDeviceType": "XboxOne",
+            "IdentityProviderIssuedId": "2533274790395904",
             "Entity": {
               "Id": "42434567785265",
               "Type": "title_player_account",
@@ -445,7 +465,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -2592,6 +2612,18 @@
     "PubSubTooManyRequests": {
       "id": 2501,
       "name": "PubSubTooManyRequests"
+    },
+    "PubSubConnectionHandleAccessDenied": {
+      "id": 2502,
+      "name": "PubSubConnectionHandleAccessDenied"
+    },
+    "PubSubConnectionHandleInvalid": {
+      "id": 2503,
+      "name": "PubSubConnectionHandleInvalid"
+    },
+    "PubSubSubscriptionLimitExceeded": {
+      "id": 2504,
+      "name": "PubSubSubscriptionLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,
