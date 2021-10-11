@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210923",
+    "version": "211011",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -722,6 +722,40 @@
         "x-requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
         "x-seeAlso": [
           "Admin/GetPlayedTitleList"
+        ]
+      }
+    },
+    "/Admin/DeleteMembershipSubscription": {
+      "post": {
+        "operationId": "DeleteMembershipSubscription",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Deletes a player's subscription",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/account-management/deletemembershipsubscription"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteMembershipSubscriptionRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteMembershipSubscriptionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API lets developers delete a membership subscription.",
+        "x-ms-docs-errors": [
+          "MembershipNotFound"
         ]
       }
     },
@@ -3364,6 +3398,40 @@
           "InvalidItemId",
           "InvalidItemProperties",
           "InvalidJSONContent"
+        ]
+      }
+    },
+    "/Admin/SetMembershipOverride": {
+      "post": {
+        "operationId": "SetMembershipOverride",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Sets the override expiration for a membership subscription",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/account-management/setmembershipoverride"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetMembershipOverrideRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetMembershipOverrideResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API lets developers set overrides for membership expirations, independent of any subscriptions setting it.",
+        "x-ms-docs-errors": [
+          "MembershipNotFound"
         ]
       }
     },
@@ -6344,6 +6412,42 @@
         ]
       }
     },
+    "DeleteMembershipSubscriptionRequest": {
+      "description": "This API lets developers delete a membership subscription.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "MembershipId": {
+          "description": "Id of the membership to apply the override expiration date to.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        },
+        "SubscriptionId": {
+          "description": "Id of the subscription that should be deleted from the membership.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "MembershipId",
+        "SubscriptionId",
+        "PlayFabId"
+      ],
+      "example": {
+        "MembershipId": "ShieldBonusMembership",
+        "SubscriptionId": "39F6B89A-0F0C-4D96-B12C-BA89543A11A1",
+        "PlayFabId": "204883457"
+      }
+    },
+    "DeleteMembershipSubscriptionResult": {
+      "type": "object",
+      "properties": {}
+    },
     "DeleteOpenIdConnectionRequest": {
       "type": "object",
       "properties": {
@@ -7344,6 +7448,9 @@
         "MatchmakingBadRequest",
         "PubSubFeatureNotEnabledForTitle",
         "PubSubTooManyRequests",
+        "PubSubConnectionHandleAccessDenied",
+        "PubSubConnectionHandleInvalid",
+        "PubSubSubscriptionLimitExceeded",
         "TitleConfigNotFound",
         "TitleConfigUpdateConflict",
         "TitleConfigSerializationError",
@@ -7461,7 +7568,10 @@
         "EventSamplingInvalidRatio",
         "EventSamplingInvalidEventNamespace",
         "EventSamplingInvalidEventName",
-        "EventSamplingRatioNotFound"
+        "EventSamplingRatioNotFound",
+        "EventSinkConnectionInvalid",
+        "EventSinkConnectionUnauthorized",
+        "EventSinkRegionInvalid"
       ]
     },
     "GetActionsOnPlayersInSegmentTaskInstanceResult": {
@@ -12321,6 +12431,10 @@
     "SegmentModel": {
       "type": "object",
       "properties": {
+        "AzureResourceId": {
+          "description": "ResourceId of Segment resource",
+          "type": "string"
+        },
         "Description": {
           "description": "Segment description.",
           "type": "string"
@@ -12477,6 +12591,42 @@
       }
     },
     "SendAccountRecoveryEmailResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "SetMembershipOverrideRequest": {
+      "description": "This API lets developers set overrides for membership expirations, independent of any subscriptions setting it.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ExpirationTime": {
+          "description": "Expiration time for the membership in DateTime format, will override any subscription expirations.",
+          "type": "string"
+        },
+        "MembershipId": {
+          "description": "Id of the membership to apply the override expiration date to.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExpirationTime",
+        "MembershipId",
+        "PlayFabId"
+      ],
+      "example": {
+        "ExpirationTime": "2021-10-11T16:51:09.4653689+00:00",
+        "MembershipId": "ShieldBonusMembership",
+        "PlayFabId": "204883457"
+      }
+    },
+    "SetMembershipOverrideResult": {
       "type": "object",
       "properties": {}
     },
@@ -14787,6 +14937,14 @@
         "$ref": "#/definitions/DeleteMasterPlayerAccountRequest"
       }
     },
+    "DeleteMembershipSubscriptionRequest": {
+      "name": "DeleteMembershipSubscriptionRequest",
+      "in": "body",
+      "description": "This API lets developers delete a membership subscription.",
+      "schema": {
+        "$ref": "#/definitions/DeleteMembershipSubscriptionRequest"
+      }
+    },
     "DeleteOpenIdConnectionRequest": {
       "name": "DeleteOpenIdConnectionRequest",
       "in": "body",
@@ -15277,6 +15435,14 @@
       "description": "If the account in question is a \"temporary\" account (for example, one that was created via a call to LoginFromIOSDeviceID), thisfunction will have no effect. Only PlayFab accounts which have valid email addresses will be able to receive a password reset email using this API.",
       "schema": {
         "$ref": "#/definitions/SendAccountRecoveryEmailRequest"
+      }
+    },
+    "SetMembershipOverrideRequest": {
+      "name": "SetMembershipOverrideRequest",
+      "in": "body",
+      "description": "This API lets developers set overrides for membership expirations, independent of any subscriptions setting it.",
+      "schema": {
+        "$ref": "#/definitions/SetMembershipOverrideRequest"
       }
     },
     "SetPlayerSecretRequest": {
@@ -15772,6 +15938,25 @@
               "A248",
               "19B0"
             ]
+          }
+        }
+      }
+    },
+    "DeleteMembershipSubscriptionResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteMembershipSubscriptionResult"
           }
         }
       }
@@ -17989,6 +18174,25 @@
           },
           "data": {
             "$ref": "#/definitions/SendAccountRecoveryEmailResult"
+          }
+        }
+      }
+    },
+    "SetMembershipOverrideResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetMembershipOverrideResult"
           }
         }
       }
@@ -20633,6 +20837,18 @@
       "id": 2501,
       "name": "PubSubTooManyRequests"
     },
+    "PubSubConnectionHandleAccessDenied": {
+      "id": 2502,
+      "name": "PubSubConnectionHandleAccessDenied"
+    },
+    "PubSubConnectionHandleInvalid": {
+      "id": 2503,
+      "name": "PubSubConnectionHandleInvalid"
+    },
+    "PubSubSubscriptionLimitExceeded": {
+      "id": 2504,
+      "name": "PubSubSubscriptionLimitExceeded"
+    },
     "TitleConfigNotFound": {
       "id": 3001,
       "name": "TitleConfigNotFound"
@@ -21104,6 +21320,18 @@
     "EventSamplingRatioNotFound": {
       "id": 14003,
       "name": "EventSamplingRatioNotFound"
+    },
+    "EventSinkConnectionInvalid": {
+      "id": 15000,
+      "name": "EventSinkConnectionInvalid"
+    },
+    "EventSinkConnectionUnauthorized": {
+      "id": 15001,
+      "name": "EventSinkConnectionUnauthorized"
+    },
+    "EventSinkRegionInvalid": {
+      "id": 15002,
+      "name": "EventSinkRegionInvalid"
     }
   }
 }
