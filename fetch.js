@@ -124,7 +124,9 @@ function ExtractArgs(args) {
 
 function GetPlayFabUrl() {
     var argsDict = ExtractArgs(process.argv);
-    var playFabUrl = "https://www.playfabapi.com/";
+    var verticalUrl = "www";
+    verticalUrl = "low";
+    var playFabUrl = "https://"+verticalUrl+".playfabapi.com/";
     if (argsDict["playFabUrl"])
         playFabUrl = argsDict["playFabUrl"];
     if (!playFabUrl.endsWith("/"))
