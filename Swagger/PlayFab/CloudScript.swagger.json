@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "210927",
+    "version": "211025",
     "title": "PlayFab CloudScript API",
     "description": "API methods for executing CloudScript using an Entity Profile",
     "termsOfService": "https://playfab.com/terms/",
@@ -104,6 +104,43 @@
           "CloudScriptAzureFunctionsQueueRequestError",
           "CloudScriptAzureFunctionsReturnSizeExceeded",
           "InvalidEntityType"
+        ]
+      }
+    },
+    "/CloudScript/GetFunction": {
+      "post": {
+        "operationId": "GetFunction",
+        "tags": [
+          "Server-Side Cloud Script"
+        ],
+        "description": "Gets registered Azure Functions for a given title id and function name.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/cloudscript/server-side-cloud-script/getfunction"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetFunctionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetFunctionResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "CloudScript/ListFunctions",
+          "CloudScript/ListHttpFunctions",
+          "CloudScript/ListQueuedFunctions",
+          "CloudScript/RegisterHttpFunction",
+          "CloudScript/RegisterQueuedFunction"
         ]
       }
     },
@@ -1114,6 +1151,49 @@
         }
       }
     },
+    "GetFunctionRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "FunctionName": {
+          "description": "The name of the function to register",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "The Id of the parent Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "FunctionName"
+      ],
+      "example": {}
+    },
+    "GetFunctionResult": {
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "The connection string for the storage account containing the queue for a queue trigger Azure Function.",
+          "type": "string"
+        },
+        "FunctionUrl": {
+          "description": "The URL to be invoked to execute an HTTP triggered function.",
+          "type": "string"
+        },
+        "QueueName": {
+          "description": "The name of the queue for a queue trigger Azure Function.",
+          "type": "string"
+        },
+        "TriggerType": {
+          "$ref": "#/definitions/TriggerType",
+          "description": "The trigger type for the function.",
+          "type": "string"
+        }
+      }
+    },
     "HttpFunctionModel": {
       "type": "object",
       "properties": {
@@ -1708,6 +1788,10 @@
     "RegisterHttpFunctionRequest": {
       "type": "object",
       "properties": {
+        "AzureResourceId": {
+          "description": "The Id of the Azure Resource",
+          "type": "string"
+        },
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
@@ -1719,21 +1803,29 @@
         "FunctionUrl": {
           "description": "Full URL for Azure Function that implements the function.",
           "type": "string"
+        },
+        "TitleId": {
+          "description": "The Id of the parent Title",
+          "type": "string"
         }
       },
       "required": [
-        "FunctionName",
-        "FunctionUrl"
+        "FunctionUrl",
+        "FunctionName"
       ],
       "example": {
-        "FunctionName": "functionName",
-        "FunctionUrl": "http://function.url"
+        "FunctionUrl": "http://function.url",
+        "FunctionName": "functionName"
       }
     },
     "RegisterQueuedFunctionRequest": {
       "description": "A title can have many functions, RegisterQueuedFunction associates a function name with a queue name and connection string.",
       "type": "object",
       "properties": {
+        "AzureResourceId": {
+          "description": "The Id of the Azure Resource",
+          "type": "string"
+        },
         "ConnectionString": {
           "description": "A connection string for the storage account that hosts the queue for the Azure Function.",
           "type": "string"
@@ -1749,17 +1841,21 @@
         "QueueName": {
           "description": "The name of the queue for the Azure Function.",
           "type": "string"
+        },
+        "TitleId": {
+          "description": "The Id of the parent Title",
+          "type": "string"
         }
       },
       "required": [
-        "FunctionName",
         "QueueName",
-        "ConnectionString"
+        "ConnectionString",
+        "FunctionName"
       ],
       "example": {
-        "FunctionName": "functionName",
         "QueueName": "fn-queue",
-        "ConnectionString": "SampleConnectionString"
+        "ConnectionString": "SampleConnectionString",
+        "FunctionName": "functionName"
       }
     },
     "ScriptExecutionError": {
@@ -1879,7 +1975,11 @@
           "type": "object"
         },
         "FunctionName": {
-          "description": "The name of the function to unregister",
+          "description": "The name of the function to register",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "The Id of the parent Title",
           "type": "string"
         }
       },
@@ -1927,6 +2027,13 @@
       "description": "Executes an Azure Function with the profile of the entity that is defined in the request.",
       "schema": {
         "$ref": "#/definitions/ExecuteFunctionRequest"
+      }
+    },
+    "GetFunctionRequest": {
+      "name": "GetFunctionRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetFunctionRequest"
       }
     },
     "ListFunctionsRequest": {
@@ -2085,6 +2192,25 @@
             "FunctionResult": {
               "newScore": 25
             }
+          }
+        }
+      }
+    },
+    "GetFunctionResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetFunctionResult"
           }
         }
       }
@@ -4231,9 +4357,21 @@
       "id": 1523,
       "name": "DuplicateAzureResourceId"
     },
-    "TitleContraintsPublisherDeletion": {
+    "TitleConstraintsPublisherDeletion": {
       "id": 1524,
-      "name": "TitleContraintsPublisherDeletion"
+      "name": "TitleConstraintsPublisherDeletion"
+    },
+    "InvalidPlayerAccountPoolId": {
+      "id": 1525,
+      "name": "InvalidPlayerAccountPoolId"
+    },
+    "PlayerAccountPoolNotFound": {
+      "id": 1526,
+      "name": "PlayerAccountPoolNotFound"
+    },
+    "PlayerAccountPoolDeleted": {
+      "id": 1527,
+      "name": "PlayerAccountPoolDeleted"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -4326,6 +4464,18 @@
     "PubSubTooManyRequests": {
       "id": 2501,
       "name": "PubSubTooManyRequests"
+    },
+    "PubSubConnectionHandleAccessDenied": {
+      "id": 2502,
+      "name": "PubSubConnectionHandleAccessDenied"
+    },
+    "PubSubConnectionHandleInvalid": {
+      "id": 2503,
+      "name": "PubSubConnectionHandleInvalid"
+    },
+    "PubSubSubscriptionLimitExceeded": {
+      "id": 2504,
+      "name": "PubSubSubscriptionLimitExceeded"
     },
     "TitleConfigNotFound": {
       "id": 3001,
@@ -4798,6 +4948,22 @@
     "EventSamplingRatioNotFound": {
       "id": 14003,
       "name": "EventSamplingRatioNotFound"
+    },
+    "EventSinkConnectionInvalid": {
+      "id": 15000,
+      "name": "EventSinkConnectionInvalid"
+    },
+    "EventSinkConnectionUnauthorized": {
+      "id": 15001,
+      "name": "EventSinkConnectionUnauthorized"
+    },
+    "EventSinkRegionInvalid": {
+      "id": 15002,
+      "name": "EventSinkRegionInvalid"
+    },
+    "OperationCanceled": {
+      "id": 16000,
+      "name": "OperationCanceled"
     }
   }
 }
