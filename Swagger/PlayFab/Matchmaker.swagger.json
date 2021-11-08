@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "211025",
+    "version": "211108",
     "title": "PlayFab Matchmaker API",
     "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
     "termsOfService": "https://playfab.com/terms/",
@@ -130,45 +130,6 @@
           "Matchmaker/PlayerJoined",
           "Matchmaker/StartGame",
           "Matchmaker/UserInfo"
-        ]
-      }
-    },
-    "/Matchmaker/StartGame": {
-      "post": {
-        "operationId": "StartGame",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Instructs the PlayFab game server hosting service to instantiate a new Game Server Instance",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/matchmaker/matchmaking/startgame"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/StartGameRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/StartGameResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Matchmaker/AuthUser",
-          "Matchmaker/PlayerJoined",
-          "Matchmaker/PlayerLeft",
-          "Matchmaker/UserInfo"
-        ],
-        "x-ms-docs-errors": [
-          "BuildNotFound"
         ]
       }
     },
@@ -425,96 +386,6 @@
       "type": "object",
       "properties": {}
     },
-    "Region": {
-      "type": "string",
-      "enum": [
-        "USCentral",
-        "USEast",
-        "EUWest",
-        "Singapore",
-        "Japan",
-        "Brazil",
-        "Australia"
-      ]
-    },
-    "StartGameRequest": {
-      "type": "object",
-      "properties": {
-        "Build": {
-          "description": "Unique identifier of the previously uploaded build executable which is to be started.",
-          "type": "string"
-        },
-        "CustomCommandLineData": {
-          "description": "Custom command line argument when starting game server process.",
-          "type": "string"
-        },
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        },
-        "ExternalMatchmakerEventEndpoint": {
-          "description": "HTTP endpoint URL for receiving game status events, if using an external matchmaker. When the game ends, PlayFab will make a POST request to this URL with the X-SecretKey header set to the value of the game's secret and an application/json body of { \"EventName\": \"game_ended\", \"GameID\": \"<gameid>\" }.",
-          "type": "string"
-        },
-        "GameMode": {
-          "description": "Game mode for this Game Server Instance.",
-          "type": "string"
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "Region with which to associate the server, for filtering.",
-          "type": "string",
-          "x-isenum": true
-        }
-      },
-      "required": [
-        "Build",
-        "Region",
-        "GameMode",
-        "ExternalMatchmakerEventEndpoint"
-      ],
-      "example": {
-        "Build": "6.01",
-        "GameMode": "capture_the_flag",
-        "CustomCommandLineData": "custom_gameserver_commandline_parameter",
-        "ExternalMatchmakerEventEndpoint": "https://yourmatchmaker.com/gamestatusevents/"
-      }
-    },
-    "StartGameResponse": {
-      "type": "object",
-      "properties": {
-        "GameID": {
-          "description": "Unique identifier for the game/lobby in the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerIPV4Address": {
-          "description": "IPV4 address of the server",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the new Game Server Instance.",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "Port number for communication with the Game Server Instance.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "ServerPublicDNSName": {
-          "description": "Public DNS name (if any) of the server",
-          "type": "string"
-        }
-      },
-      "required": [
-        "ServerPort"
-      ],
-      "example": {
-        "GameID": "1913398545777970887",
-        "ServerHostname": "14.57.243.85",
-        "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-        "ServerPort": 1200
-      }
-    },
     "UserInfoRequest": {
       "type": "object",
       "properties": {
@@ -674,13 +545,6 @@
         "$ref": "#/definitions/PlayerLeftRequest"
       }
     },
-    "StartGameRequest": {
-      "name": "StartGameRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/StartGameRequest"
-      }
-    },
     "UserInfoRequest": {
       "name": "UserInfoRequest",
       "in": "body",
@@ -757,35 +621,6 @@
           },
           "data": {
             "$ref": "#/definitions/PlayerLeftResponse"
-          }
-        }
-      }
-    },
-    "StartGameResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/StartGameResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "GameID": "1913398545777970887",
-            "ServerHostname": "14.57.243.85",
-            "ServerIPV6Address": "2600:1f18:70d:5100:8949:a309:976a:e6fa",
-            "ServerPort": 1200
           }
         }
       }
@@ -2945,6 +2780,14 @@
     "PlayerAccountPoolDeleted": {
       "id": 1527,
       "name": "PlayerAccountPoolDeleted"
+    },
+    "TitleCleanupInProgress": {
+      "id": 1528,
+      "name": "TitleCleanupInProgress"
+    },
+    "AzureResourceManagerNotSupportedInStamp": {
+      "id": 1531,
+      "name": "AzureResourceManagerNotSupportedInStamp"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "211025",
+    "version": "211108",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -167,51 +167,6 @@
         ],
         "x-ms-docs-errors": [
           "PlayerTagCountLimitExceeded"
-        ]
-      }
-    },
-    "/Admin/AddServerBuild": {
-      "post": {
-        "operationId": "AddServerBuild",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Adds the game server executable specified (previously uploaded - see GetServerBuildUploadUrl) to the set of those a client is permitted to request in a call to StartGame",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/addserverbuild"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/AddServerBuildRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/AddServerBuildResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/GetServerBuildInfo",
-          "Admin/ListServerBuilds",
-          "Client/Matchmake",
-          "Admin/ModifyServerBuild",
-          "Admin/RemoveServerBuild",
-          "Matchmaker/StartGame"
-        ],
-        "x-ms-docs-errors": [
-          "BuildAlreadyExists",
-          "BuildPackageDoesNotExist",
-          "GameServerBuildSizeLimitExceeded",
-          "GameServerHostCountLimitExceeded",
-          "LegacyMultiplayerServersDeprecated"
         ]
       }
     },
@@ -1991,46 +1946,6 @@
         ]
       }
     },
-    "/Admin/GetServerBuildUploadUrl": {
-      "post": {
-        "operationId": "GetServerBuildUploadUrl",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Retrieves the pre-authorized URL for uploading a game server package containing a build (does not enable the build for use - see AddServerBuild)",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/getserverbuilduploadurl"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetServerBuildUploadURLRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetServerBuildUploadURLResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/AddServerBuild",
-          "Admin/ListServerBuilds",
-          "Admin/ModifyServerBuild",
-          "Admin/RemoveServerBuild"
-        ],
-        "x-ms-docs-errors": [
-          "BuildAlreadyExists",
-          "LegacyMultiplayerServersDeprecated"
-        ]
-      }
-    },
     "/Admin/GetStoreItems": {
       "post": {
         "operationId": "GetStoreItems",
@@ -2779,41 +2694,6 @@
         "x-seeAlso": [
           "Admin/AddVirtualCurrencyTypes",
           "Admin/RemoveVirtualCurrencyTypes"
-        ]
-      }
-    },
-    "/Admin/ModifyMatchmakerGameModes": {
-      "post": {
-        "operationId": "ModifyMatchmakerGameModes",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Updates the game server mode details for the specified game server executable",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/matchmaking/modifymatchmakergamemodes"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ModifyMatchmakerGameModesRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ModifyMatchmakerGameModesResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts. This operation is not additive. Using it will cause the game mode definition for the game server executable in question to be created from scratch. If there is an existing game server mode definition for the given BuildVersion, it will be deleted and replaced with the data specified in this call.",
-        "x-seeAlso": [
-          "Admin/GetMatchmakerGameInfo",
-          "Admin/GetMatchmakerGameModes"
         ]
       }
     },
@@ -4786,139 +4666,6 @@
     "AddPlayerTagResult": {
       "type": "object",
       "properties": {}
-    },
-    "AddServerBuildRequest": {
-      "type": "object",
-      "properties": {
-        "ActiveRegions": {
-          "description": "server host regions in which this build should be running and available",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Region"
-          },
-          "x-isenum": true
-        },
-        "BuildId": {
-          "description": "unique identifier for the build executable",
-          "type": "string"
-        },
-        "CommandLineTemplate": {
-          "description": "appended to the end of the command line when starting game servers",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "developer comment(s) for this build",
-          "type": "string"
-        },
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        },
-        "ExecutablePath": {
-          "description": "path to the game server executable. Defaults to gameserver.exe",
-          "type": "string"
-        },
-        "MaxGamesPerHost": {
-          "description": "maximum number of game server instances that can run on a single host machine",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "MinFreeGameSlots": {
-          "description": "minimum capacity of additional game server instances that can be started before the autoscaling service starts new host machines (given the number of current running host machines and game server instances)",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "BuildId",
-        "MaxGamesPerHost",
-        "MinFreeGameSlots"
-      ],
-      "example": {
-        "BuildId": "5.0.1",
-        "CommandLineTemplate": "-game_id=<game_id> -game_build_version=<game_build_version> -game_mode=<game_mode> -server_host_domain=<server_host_domain> -server_host_port=<server_host_port> -server_host_region=<server_host_region> -playfab_api_endpoint=<playfab_api_endpoint> -title_secret_key=<title_secret_key> -custom_data=<custom_data> -log_file_path=<log_file_path> -output_files_directory_path=<output_files_directory_path>",
-        "ExecutablePath": "\\ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
-        "ActiveRegions": [
-          "USCentral",
-          "EUWest"
-        ],
-        "Comment": "Testing new IAP methods",
-        "MaxGamesPerHost": 5,
-        "MinFreeGameSlots": 1
-      }
-    },
-    "AddServerBuildResult": {
-      "type": "object",
-      "properties": {
-        "ActiveRegions": {
-          "description": "array of regions where this build can used, when it is active",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Region"
-          },
-          "x-isenum": true
-        },
-        "BuildId": {
-          "description": "unique identifier for this build executable",
-          "type": "string"
-        },
-        "CommandLineTemplate": {
-          "description": "appended to the end of the command line when starting game servers",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "developer comment(s) for this build",
-          "type": "string"
-        },
-        "ExecutablePath": {
-          "description": "path to the game server executable. Defaults to gameserver.exe",
-          "type": "string"
-        },
-        "MaxGamesPerHost": {
-          "description": "maximum number of game server instances that can run on a single host machine",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "MinFreeGameSlots": {
-          "description": "minimum capacity of additional game server instances that can be started before the autoscaling service starts new host machines (given the number of current running host machines and game server instances)",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "Status": {
-          "$ref": "#/definitions/GameBuildStatus",
-          "description": "the current status of the build validation and processing steps",
-          "type": "string",
-          "x-isenum": true
-        },
-        "Timestamp": {
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "type": "string"
-        },
-        "TitleId": {
-          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "MaxGamesPerHost",
-        "MinFreeGameSlots",
-        "Timestamp"
-      ],
-      "example": {
-        "BuildId": "5.0.1",
-        "ActiveRegions": [
-          "USCentral",
-          "EUWest"
-        ],
-        "MaxGamesPerHost": 5,
-        "MinFreeGameSlots": 2,
-        "CommandLineTemplate": "-game_id=<game_id> -game_build_version=<game_build_version> -game_mode=<game_mode> -server_host_domain=<server_host_domain> -server_host_port=<server_host_port> -server_host_region=<server_host_region> -playfab_api_endpoint=<playfab_api_endpoint> -title_secret_key=<title_secret_key> -custom_data=<custom_data> -log_file_path=<log_file_path> -output_files_directory_path=<output_files_directory_path> -batchmode",
-        "ExecutablePath": "\\ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
-        "Comment": "Testing new IAP methods",
-        "Timestamp": "2014-03-24T00:00:00",
-        "TitleId": "2074",
-        "Status": "Validating"
-      }
     },
     "AddUserVirtualCurrencyRequest": {
       "type": "object",
@@ -7428,6 +7175,8 @@
         "InvalidPlayerAccountPoolId",
         "PlayerAccountPoolNotFound",
         "PlayerAccountPoolDeleted",
+        "TitleCleanupInProgress",
+        "AzureResourceManagerNotSupportedInStamp",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -8951,33 +8700,6 @@
       },
       "x-sortKey": "BuildId"
     },
-    "GetServerBuildUploadURLRequest": {
-      "type": "object",
-      "properties": {
-        "BuildId": {
-          "description": "unique identifier of the game server build to upload",
-          "type": "string"
-        }
-      },
-      "required": [
-        "BuildId"
-      ],
-      "example": {
-        "BuildId": "5.0.1"
-      }
-    },
-    "GetServerBuildUploadURLResult": {
-      "type": "object",
-      "properties": {
-        "URL": {
-          "description": "pre-authorized URL for uploading the game server build package",
-          "type": "string"
-        }
-      },
-      "example": {
-        "URL": "https://gamebuild-playfab-dev.s3-us-west-2.amazonaws.com/2fa/5.0.1.zip?AWSAccessKeyId=AKIAIIJIWKXBLUSUIK6Q&Expires=1409094544&Signature=uofoHau9V%2BcC%2BX%2BGaTAKdyAN%2BLE%3F"
-      }
-    },
     "GetStoreItemsRequest": {
       "description": "A store contains an array of references to items defined in the catalog, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "type": "object",
@@ -10289,48 +10011,6 @@
         "MembershipExpiration",
         "IsActive"
       ]
-    },
-    "ModifyMatchmakerGameModesRequest": {
-      "description": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts. This operation is not additive. Using it will cause the game mode definition for the game server executable in question to be created from scratch. If there is an existing game server mode definition for the given BuildVersion, it will be deleted and replaced with the data specified in this call.",
-      "type": "object",
-      "properties": {
-        "BuildVersion": {
-          "description": "previously uploaded build version for which game modes are being specified",
-          "type": "string"
-        },
-        "GameModes": {
-          "description": "array of game modes (Note: this will replace all game modes for the indicated build version)",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GameModeInfo"
-          },
-          "x-isclass": true
-        }
-      },
-      "required": [
-        "BuildVersion",
-        "GameModes"
-      ],
-      "example": {
-        "BuildVersion": "5.0.1",
-        "GameModes": [
-          {
-            "Gamemode": "0",
-            "MinPlayerCount": 2,
-            "MaxPlayerCount": 25
-          },
-          {
-            "Gamemode": "1",
-            "MinPlayerCount": 4,
-            "MaxPlayerCount": 35,
-            "StartOpen": false
-          }
-        ]
-      }
-    },
-    "ModifyMatchmakerGameModesResult": {
-      "type": "object",
-      "properties": {}
     },
     "ModifyServerBuildRequest": {
       "type": "object",
@@ -12625,7 +12305,7 @@
         "PlayFabId"
       ],
       "example": {
-        "ExpirationTime": "2021-10-25T16:31:58.0611545+00:00",
+        "ExpirationTime": "2021-11-08T21:25:28.1194949+00:00",
         "MembershipId": "ShieldBonusMembership",
         "PlayFabId": "204883457"
       }
@@ -14850,13 +14530,6 @@
         "$ref": "#/definitions/AddPlayerTagRequest"
       }
     },
-    "AddServerBuildRequest": {
-      "name": "AddServerBuildRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/AddServerBuildRequest"
-      }
-    },
     "AddUserVirtualCurrencyRequest": {
       "name": "AddUserVirtualCurrencyRequest",
       "in": "body",
@@ -15211,13 +14884,6 @@
         "$ref": "#/definitions/GetServerBuildInfoRequest"
       }
     },
-    "GetServerBuildUploadURLRequest": {
-      "name": "GetServerBuildUploadURLRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/GetServerBuildUploadURLRequest"
-      }
-    },
     "GetStoreItemsRequest": {
       "name": "GetStoreItemsRequest",
       "in": "body",
@@ -15332,14 +14998,6 @@
       "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/LookupUserAccountInfoRequest"
-      }
-    },
-    "ModifyMatchmakerGameModesRequest": {
-      "name": "ModifyMatchmakerGameModesRequest",
-      "in": "body",
-      "description": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts. This operation is not additive. Using it will cause the game mode definition for the game server executable in question to be created from scratch. If there is an existing game server mode definition for the given BuildVersion, it will be deleted and replaced with the data specified in this call.",
-      "schema": {
-        "$ref": "#/definitions/ModifyMatchmakerGameModesRequest"
       }
     },
     "ModifyServerBuildRequest": {
@@ -15703,44 +15361,6 @@
           },
           "data": {
             "$ref": "#/definitions/AddPlayerTagResult"
-          }
-        }
-      }
-    },
-    "AddServerBuildResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/AddServerBuildResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "BuildId": "5.0.1",
-            "ActiveRegions": [
-              "USCentral",
-              "EUWest"
-            ],
-            "MaxGamesPerHost": 5,
-            "MinFreeGameSlots": 2,
-            "CommandLineTemplate": "-game_id=<game_id> -game_build_version=<game_build_version> -game_mode=<game_mode> -server_host_domain=<server_host_domain> -server_host_port=<server_host_port> -server_host_region=<server_host_region> -playfab_api_endpoint=<playfab_api_endpoint> -title_secret_key=<title_secret_key> -custom_data=<custom_data> -log_file_path=<log_file_path> -output_files_directory_path=<output_files_directory_path> -batchmode",
-            "ExecutablePath": "\\ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
-            "Comment": "Testing new IAP methods",
-            "Timestamp": "2014-03-24T00:00:00",
-            "TitleId": "2074",
-            "Status": "Validating"
           }
         }
       }
@@ -17178,32 +16798,6 @@
         }
       }
     },
-    "GetServerBuildUploadURLResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetServerBuildUploadURLResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "URL": "https://gamebuild-playfab-dev.s3-us-west-2.amazonaws.com/2fa/5.0.1.zip?AWSAccessKeyId=AKIAIIJIWKXBLUSUIK6Q&Expires=1409094544&Signature=uofoHau9V%2BcC%2BX%2BGaTAKdyAN%2BLE%3F"
-          }
-        }
-      }
-    },
     "GetStoreItemsResult": {
       "description": "",
       "schema": {
@@ -17799,25 +17393,6 @@
                 "GameCenterId": "someone"
               }
             }
-          }
-        }
-      }
-    },
-    "ModifyMatchmakerGameModesResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ModifyMatchmakerGameModesResult"
           }
         }
       }
@@ -20777,6 +20352,14 @@
     "PlayerAccountPoolDeleted": {
       "id": 1527,
       "name": "PlayerAccountPoolDeleted"
+    },
+    "TitleCleanupInProgress": {
+      "id": 1528,
+      "name": "TitleCleanupInProgress"
+    },
+    "AzureResourceManagerNotSupportedInStamp": {
+      "id": 1531,
+      "name": "AzureResourceManagerNotSupportedInStamp"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
