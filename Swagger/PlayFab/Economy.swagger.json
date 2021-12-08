@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "211108",
+    "version": "211208",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -493,6 +493,39 @@
         "x-ms-docs-errors": [
           "DatabaseThroughputExceeded",
           "ItemNotFound"
+        ]
+      }
+    },
+    "/Catalog/GetItems": {
+      "post": {
+        "operationId": "GetItems",
+        "tags": [
+          "Catalog"
+        ],
+        "description": "Retrieves items from the public catalog.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/catalog/getitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetItemsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "NotImplemented"
         ]
       }
     },
@@ -1934,12 +1967,12 @@
           "ItemVersion": "2.1.4",
           "Title": "Best game ever",
           "ReviewText": "I play this game every day. It's so much fun!",
-          "Rating": 3,
+          "Rating": 4,
           "IsInstalled": true,
           "Locale": "en-us",
-          "HelpfulnessVotes": 9,
-          "HelpfulPositive": 18,
-          "HelpfulNegative": 8,
+          "HelpfulnessVotes": 14,
+          "HelpfulPositive": 1,
+          "HelpfulNegative": 17,
           "Submitted": "2018-08-17T22:32:10.4729879+00:00"
         }
       }
@@ -2208,12 +2241,12 @@
             "ItemVersion": "2.1.4",
             "Title": "Best game ever",
             "ReviewText": "I play this game every day. It's so much fun!",
-            "Rating": 4,
+            "Rating": 3,
             "IsInstalled": true,
             "Locale": "en-us",
-            "HelpfulnessVotes": 18,
+            "HelpfulnessVotes": 15,
             "HelpfulPositive": 6,
-            "HelpfulNegative": 17,
+            "HelpfulNegative": 5,
             "Submitted": "2018-08-17T22:32:10.4729879+00:00"
           },
           {
@@ -2223,12 +2256,12 @@
             "ItemVersion": "2.1.4",
             "Title": "Best game ever",
             "ReviewText": "I play this game every day. It's so much fun!",
-            "Rating": 1,
+            "Rating": 2,
             "IsInstalled": true,
             "Locale": "en-us",
-            "HelpfulnessVotes": 14,
-            "HelpfulPositive": 5,
-            "HelpfulNegative": 17,
+            "HelpfulnessVotes": 16,
+            "HelpfulPositive": 10,
+            "HelpfulNegative": 8,
             "Submitted": "2018-08-17T22:32:10.4729879+00:00"
           }
         ],
@@ -2327,6 +2360,175 @@
           "HelpfulNegative": 10,
           "Submitted": "2018-08-17T22:32:10.4729879+00:00"
         }
+      }
+    },
+    "GetItemsRequest": {
+      "type": "object",
+      "properties": {
+        "AlternateIds": {
+          "description": "List of item alternate IDs.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogAlternateId"
+          },
+          "x-isclass": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Ids": {
+          "description": "List of Item Ids.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "Ids": [
+          "dddddddd-dddd-dddd-dddd-dddddddddddd",
+          "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"
+        ]
+      }
+    },
+    "GetItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Items": {
+          "description": "Metadata of set of items.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogItem"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Items": [
+          {
+            "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+            "Type": "ugc",
+            "Title": {
+              "NEUTRAL": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "NEUTRAL": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "NEUTRAL": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+            "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Type": "Thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          },
+          {
+            "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+            "Type": "ugc",
+            "Title": {
+              "NEUTRAL": "Neutral title",
+              "en-US": "US English title"
+            },
+            "Description": {
+              "NEUTRAL": "Neutral description",
+              "en-US": "US English description"
+            },
+            "Keywords": {
+              "NEUTRAL": {
+                "Values": [
+                  "Keyword_1",
+                  "Keyword_2"
+                ]
+              }
+            },
+            "ContentType": "example item",
+            "CreatorEntity": {
+              "Id": "someId",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            },
+            "IsHidden": false,
+            "Tags": [
+              "pirates",
+              "holiday"
+            ],
+            "DisplayVersion": "1.0.0",
+            "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+            "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+            "Contents": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000001",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                "MaxClientVersion": "2.4.1",
+                "MinClientVersion": "2.0.0"
+              }
+            ],
+            "Images": [
+              {
+                "Id": "00000000-0000-0000-0000-000000000003",
+                "Type": "Thumbnail",
+                "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+              }
+            ],
+            "DisplayProperties": {
+              "mapDetails": {
+                "mapType": "desertIsland",
+                "gameMode": "capture",
+                "maxPlayers": 16
+              },
+              "averageMatchLengthInSeconds": 947
+            },
+            "ETag": "opaqueString"
+          }
+        ]
       }
     },
     "HelpfulnessVote": {
@@ -3363,6 +3565,13 @@
         "$ref": "#/definitions/GetItemReviewSummaryRequest"
       }
     },
+    "GetItemsRequest": {
+      "name": "GetItemsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetItemsRequest"
+      }
+    },
     "PublishDraftItemRequest": {
       "name": "PublishDraftItemRequest",
       "in": "body",
@@ -4070,12 +4279,12 @@
               "ItemVersion": "2.1.4",
               "Title": "Best game ever",
               "ReviewText": "I play this game every day. It's so much fun!",
-              "Rating": 3,
+              "Rating": 4,
               "IsInstalled": true,
               "Locale": "en-us",
-              "HelpfulnessVotes": 9,
-              "HelpfulPositive": 18,
-              "HelpfulNegative": 8,
+              "HelpfulnessVotes": 14,
+              "HelpfulPositive": 1,
+              "HelpfulNegative": 17,
               "Submitted": "2018-08-17T22:32:10.4729879+00:00"
             }
           }
@@ -4255,12 +4464,12 @@
                 "ItemVersion": "2.1.4",
                 "Title": "Best game ever",
                 "ReviewText": "I play this game every day. It's so much fun!",
-                "Rating": 4,
+                "Rating": 3,
                 "IsInstalled": true,
                 "Locale": "en-us",
-                "HelpfulnessVotes": 18,
+                "HelpfulnessVotes": 15,
                 "HelpfulPositive": 6,
-                "HelpfulNegative": 17,
+                "HelpfulNegative": 5,
                 "Submitted": "2018-08-17T22:32:10.4729879+00:00"
               },
               {
@@ -4270,12 +4479,12 @@
                 "ItemVersion": "2.1.4",
                 "Title": "Best game ever",
                 "ReviewText": "I play this game every day. It's so much fun!",
-                "Rating": 1,
+                "Rating": 2,
                 "IsInstalled": true,
                 "Locale": "en-us",
-                "HelpfulnessVotes": 14,
-                "HelpfulPositive": 5,
-                "HelpfulNegative": 17,
+                "HelpfulnessVotes": 16,
+                "HelpfulPositive": 10,
+                "HelpfulNegative": 8,
                 "Submitted": "2018-08-17T22:32:10.4729879+00:00"
               }
             ],
@@ -4344,6 +4553,149 @@
               "HelpfulNegative": 10,
               "Submitted": "2018-08-17T22:32:10.4729879+00:00"
             }
+          }
+        }
+      }
+    },
+    "GetItemsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Items": [
+              {
+                "Id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+                "Type": "ugc",
+                "Title": {
+                  "NEUTRAL": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "NEUTRAL": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "NEUTRAL": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+                "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Type": "Thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              },
+              {
+                "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+                "Type": "ugc",
+                "Title": {
+                  "NEUTRAL": "Neutral title",
+                  "en-US": "US English title"
+                },
+                "Description": {
+                  "NEUTRAL": "Neutral description",
+                  "en-US": "US English description"
+                },
+                "Keywords": {
+                  "NEUTRAL": {
+                    "Values": [
+                      "Keyword_1",
+                      "Keyword_2"
+                    ]
+                  }
+                },
+                "ContentType": "example item",
+                "CreatorEntity": {
+                  "Id": "someId",
+                  "Type": "title_player_account",
+                  "TypeString": "title_player_account"
+                },
+                "IsHidden": false,
+                "Tags": [
+                  "pirates",
+                  "holiday"
+                ],
+                "DisplayVersion": "1.0.0",
+                "CreationDate": "2018-08-17T22:32:10.4729879+00:00",
+                "LastModifiedDate": "2018-08-17T22:32:31.911375+00:00",
+                "Contents": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000001",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000001/textures.zip",
+                    "MaxClientVersion": "2.4.1",
+                    "MinClientVersion": "2.0.0"
+                  }
+                ],
+                "Images": [
+                  {
+                    "Id": "00000000-0000-0000-0000-000000000003",
+                    "Type": "Thumbnail",
+                    "Url": "https://endpoint.blob.core.windows.net/some-identifier-private/00000000-0000-0000-0000-000000000003/splashscreen_thumb.jpg"
+                  }
+                ],
+                "DisplayProperties": {
+                  "mapDetails": {
+                    "mapType": "desertIsland",
+                    "gameMode": "capture",
+                    "maxPlayers": 16
+                  },
+                  "averageMatchLengthInSeconds": 947
+                },
+                "ETag": "opaqueString"
+              }
+            ]
           }
         }
       }
@@ -6854,9 +7206,21 @@
       "id": 1528,
       "name": "TitleCleanupInProgress"
     },
+    "AzureResourceConcurrentOperationInProgress": {
+      "id": 1529,
+      "name": "AzureResourceConcurrentOperationInProgress"
+    },
+    "TitlePublisherUpdateNotAllowed": {
+      "id": 1530,
+      "name": "TitlePublisherUpdateNotAllowed"
+    },
     "AzureResourceManagerNotSupportedInStamp": {
       "id": 1531,
       "name": "AzureResourceManagerNotSupportedInStamp"
+    },
+    "ApiNotIncludedInAzurePlayFabFeatureSet": {
+      "id": 1532,
+      "name": "ApiNotIncludedInAzurePlayFabFeatureSet"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
