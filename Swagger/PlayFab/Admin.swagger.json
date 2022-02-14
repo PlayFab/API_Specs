@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220131",
+    "version": "220214",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -5144,6 +5144,15 @@
       "example": {
         "Amount": 49
       }
+    },
+    "ChurnRiskLevel": {
+      "type": "string",
+      "enum": [
+        "NoData",
+        "LowRisk",
+        "MediumRisk",
+        "HighRisk"
+      ]
     },
     "CloudScriptFile": {
       "type": "object",
@@ -10328,6 +10337,59 @@
         "Principal"
       ]
     },
+    "PlayerChurnPredictionSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Comparison",
+          "type": "string",
+          "x-isenum": true
+        },
+        "RiskLevel": {
+          "$ref": "#/definitions/ChurnRiskLevel",
+          "description": "RiskLevel",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
+    "PlayerChurnPredictionTimeSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Comparison",
+          "type": "string",
+          "x-isenum": true
+        },
+        "DurationInDays": {
+          "description": "DurationInDays",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "DurationInDays"
+      ]
+    },
+    "PlayerChurnPreviousPredictionSegmentFilter": {
+      "type": "object",
+      "properties": {
+        "Comparison": {
+          "$ref": "#/definitions/SegmentFilterComparison",
+          "description": "Comparison",
+          "type": "string",
+          "x-isenum": true
+        },
+        "RiskLevel": {
+          "$ref": "#/definitions/ChurnRiskLevel",
+          "description": "RiskLevel",
+          "type": "string",
+          "x-isenum": true
+        }
+      }
+    },
     "PlayerLinkedAccount": {
       "type": "object",
       "properties": {
@@ -11641,6 +11703,24 @@
           "type": "object",
           "x-isclass": true
         },
+        "PlayerChurnPredictionFilter": {
+          "$ref": "#/definitions/PlayerChurnPredictionSegmentFilter",
+          "description": "Filter property for current player churn value.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayerChurnPredictionTimeFilter": {
+          "$ref": "#/definitions/PlayerChurnPredictionTimeSegmentFilter",
+          "description": "Filter property for player churn timespan.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayerChurnPreviousPredictionFilter": {
+          "$ref": "#/definitions/PlayerChurnPreviousPredictionSegmentFilter",
+          "description": "Filter property for previous player churn value.",
+          "type": "object",
+          "x-isclass": true
+        },
         "PushNotificationFilter": {
           "$ref": "#/definitions/PushNotificationSegmentFilter",
           "description": "Filter property for push notification.",
@@ -12149,10 +12229,6 @@
     "SegmentModel": {
       "type": "object",
       "properties": {
-        "AzureResourceId": {
-          "description": "ResourceId of Segment resource",
-          "type": "string"
-        },
         "Description": {
           "description": "Segment description.",
           "type": "string"
@@ -12339,7 +12415,7 @@
         "PlayFabId"
       ],
       "example": {
-        "ExpirationTime": "2022-01-31T21:34:54.2866824+00:00",
+        "ExpirationTime": "2022-02-14T16:59:51.5918023+00:00",
         "MembershipId": "ShieldBonusMembership",
         "PlayFabId": "204883457"
       }
@@ -12471,10 +12547,6 @@
       "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "type": "object",
       "properties": {
-        "AzureResourceId": {
-          "description": "Id of azure resource",
-          "type": "string"
-        },
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
@@ -12482,12 +12554,6 @@
         "Key": {
           "description": "key we want to set a value on (note, this is additive - will only replace an existing key's value if they are the same name.) Keys are trimmed of whitespace. Keys may not begin with the '!' character.",
           "type": "string"
-        },
-        "SystemData": {
-          "$ref": "#/definitions/AzureResourceSystemData",
-          "description": "System Data of the Azure Resource",
-          "type": "object",
-          "x-isclass": true
         },
         "TitleId": {
           "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
@@ -12508,12 +12574,7 @@
     },
     "SetTitleDataResult": {
       "type": "object",
-      "properties": {
-        "AzureResourceId": {
-          "description": "Id of azure resource",
-          "type": "string"
-        }
-      }
+      "properties": {}
     },
     "SetupPushNotificationRequest": {
       "description": "When using the Apple Push Notification service (APNS) or the development version (APNS_SANDBOX), the APNS Private Key should be used as the Credential in this call. With Google Cloud Messaging (GCM), the Android API Key should be used. The current ARN (if one exists) can be overwritten by setting the OverwriteOldARN boolean to true.",
