@@ -189,6 +189,28 @@ function CheckSwaggerApiGroupList(playFabUrl, tocObj) {
     GetFileFromUrl(swaggerApiListUrl, options);
 }
 
+function CheckAzureApiSpecGroupList(playFabUrl, tocObj) {
+    var azureApiSpecListUrl = playFabUrl + "apispec/azure/";
+    var options = {
+        description: "azureApiSpecList",
+        expectJson: true,
+        jsonTabSpaces: 0
+        // TODO: Add a function to compare tocObj with the json result
+    };
+    GetFileFromUrl(azureApiSpecListUrl, options);
+}
+
+function CheckAzureApiSpecGroupList(playFabUrl, tocObj) {
+    var azureSwaggerApiListUrl = playFabUrl + "swagger/azure/";
+    var options = {
+        description: "azureSwaggerApiList",
+        expectJson: true,
+        jsonTabSpaces: 0
+        // TODO: Add a function to compare tocObj with the json result
+    };
+    GetFileFromUrl(azureSwaggerApiListUrl, options);
+}
+
 function DoWork() {
     var playFabUrl = GetPlayFabUrl();
     var tocObj = require("./TOC.json");
@@ -197,6 +219,8 @@ function DoWork() {
     UpdateSdkManualNotes();
     CheckLegacyApiGroupList(playFabUrl, tocObj);
     CheckSwaggerApiGroupList(playFabUrl, tocObj);
+    // CheckAzureApiSpecGroupList(playFabUrl, tocObj);
+    // CheckAzureSwaggerApiGroupList(playFabUrl, tocObj);
     
     // TODO: Some kind of final global report, with an errors list from all threads
 }
