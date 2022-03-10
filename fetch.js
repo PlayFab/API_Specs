@@ -123,13 +123,14 @@ function ExtractArgs(args) {
 }
 
 function GetPlayFabUrl() {
-    var argsDict = ExtractArgs(process.argv);
-    var verticalUrl = "www";
-    var playFabUrl = "https://"+verticalUrl+".playfabapi.com/";
-    if (argsDict["playFabUrl"])
-        playFabUrl = argsDict["playFabUrl"];
-    if (!playFabUrl.endsWith("/"))
-        playFabUrl = playFabUrl + "/";
+    // var argsDict = ExtractArgs(process.argv);
+    // var verticalUrl = "www";
+    // var playFabUrl = "https://"+verticalUrl+".playfabapi.com/";
+    // if (argsDict["playFabUrl"])
+    //     playFabUrl = argsDict["playFabUrl"];
+    // if (!playFabUrl.endsWith("/"))
+    //     playFabUrl = playFabUrl + "/";
+    playFabUrl = "https://localhost:44367/";
     return playFabUrl;
 }
 
