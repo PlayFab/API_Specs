@@ -48,12 +48,12 @@
           "200": {
             "$ref": "#/responses/GetEntityTokenResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "EncryptionKeyBroken",
           "NoValidCertificateForAad"
         ]
@@ -83,8 +83,8 @@
           "200": {
             "$ref": "#/responses/ValidateEntityTokenResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Given an entity token, validates that it hasn't expired or been revoked and will return details of the owner."
@@ -92,7 +92,7 @@
     }
   },
   "definitions": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -178,10 +178,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -222,10 +219,6 @@
     },
     "IdentifiedDeviceType": {
       "type": "string",
-      "x-ms-enum": {
-        "name": "IdentifiedDeviceType",
-        "modelAsString": false
-      },
       "enum": [
         "Unknown",
         "XboxOne",
@@ -234,10 +227,6 @@
     },
     "LoginIdentityProvider": {
       "type": "string",
-      "x-ms-enum": {
-        "name": "LoginIdentityProvider",
-        "modelAsString": false
-      },
       "enum": [
         "Unknown",
         "PlayFab",
@@ -268,10 +257,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "EntityToken": {
           "description": "Client EntityToken",
@@ -354,10 +340,10 @@
     }
   },
   "responses": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiError"
+        "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
     "GetEntityTokenResponse": {
@@ -468,7 +454,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-pf-docs-errors-mapping": {
+  "x-ms-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
