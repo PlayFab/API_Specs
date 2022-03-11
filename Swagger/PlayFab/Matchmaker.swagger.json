@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220305",
+    "version": "220311",
     "title": "PlayFab Matchmaker API",
     "description": "Enables the use of an external match-making service in conjunction with PlayFab hosted Game Server instances",
     "termsOfService": "https://playfab.com/terms/",
@@ -48,8 +48,8 @@
           "200": {
             "$ref": "#/responses/AuthUserResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "This API allows the external match-making service to confirm that the user has a valid Session Ticket for the title, in order to securely enable match-making. The client passes the user's Session Ticket to the external match-making service, which then passes the Session Ticket in as the AuthorizationTicket in this call.",
@@ -85,8 +85,8 @@
           "200": {
             "$ref": "#/responses/PlayerJoinedResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-seeAlso": [
@@ -121,8 +121,8 @@
           "200": {
             "$ref": "#/responses/PlayerLeftResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-seeAlso": [
@@ -157,8 +157,8 @@
           "200": {
             "$ref": "#/responses/UserInfoResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-seeAlso": [
@@ -171,7 +171,7 @@
     }
   },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -266,7 +266,10 @@
         },
         "CustomData": {
           "description": "A set of custom key-value pairs on the instance of the inventory item, which is not to be confused with the catalog item's custom data.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "DisplayName": {
           "description": "CatalogItem.DisplayName at the time this item was purchased.",
@@ -294,8 +297,7 @@
         },
         "RemainingUses": {
           "description": "Total number of remaining uses, if this is a consumable item.",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "UnitCurrency": {
           "description": "Currency type for the cost of the catalog item. Not available when granting items.",
@@ -303,13 +305,11 @@
         },
         "UnitPrice": {
           "description": "Cost of the catalog item in the given currency. Not available when granting items.",
-          "type": "number",
-          "x-actualtype": "uint32"
+          "type": "integer"
         },
         "UsesIncrementedBy": {
           "description": "The number of uses that were added or removed to this item in this call.",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -333,7 +333,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "LobbyId": {
           "description": "Unique identifier of the Game Server Instance the user is joining. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
@@ -362,7 +365,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "LobbyId": {
           "description": "Unique identifier of the Game Server Instance the user is leaving. This must be a Game Server Instance started with the Matchmaker/StartGame API.",
@@ -391,12 +397,14 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "MinCatalogVersion": {
           "description": "Minimum catalog version for which data is requested (filters the results to only contain inventory items which have a catalog version of this or higher).",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "PlayFabId": {
           "description": "PlayFab unique identifier of the user whose information is being requested.",
@@ -447,12 +455,16 @@
         "VirtualCurrency": {
           "description": "Array of virtual currency balance(s) belonging to the user.",
           "type": "object",
-          "x-actualtype": "int32"
+          "additionalProperties": {
+            "type": "integer"
+          }
         },
         "VirtualCurrencyRechargeTimes": {
-          "$ref": "#/definitions/VirtualCurrencyRechargeTime",
           "description": "Array of remaining times and timestamps for virtual currencies.",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/VirtualCurrencyRechargeTime"
+          },
           "x-isclass": true
         }
       },
@@ -497,8 +509,7 @@
       "properties": {
         "RechargeMax": {
           "description": "Maximum value to which the regenerating currency will automatically increment. Note that it can exceed this value through use of the AddUserVirtualCurrency API call. However, it will not regenerate automatically until it has fallen below this value.",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "RechargeTime": {
           "description": "Server timestamp in UTC indicating the next time the virtual currency will be incremented.",
@@ -506,8 +517,7 @@
         },
         "SecondsToRecharge": {
           "description": "Time remaining (in seconds) before the next recharge increment of the virtual currency.",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -554,10 +564,10 @@
     }
   },
   "responses": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/ApiError"
       }
     },
     "AuthUserResponse": {
@@ -713,7 +723,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -3408,6 +3418,14 @@
     "EventSinkRegionInvalid": {
       "id": 15002,
       "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
     },
     "OperationCanceled": {
       "id": 16000,
