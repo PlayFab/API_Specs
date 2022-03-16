@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220305",
+    "version": "220316",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -955,6 +955,13 @@
           "description": "Flag defining whether catalog is enabled.",
           "type": "boolean"
         },
+        "Platforms": {
+          "description": "A list of Platforms that can be applied to catalog items.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "ReviewerEntities": {
           "description": "A set of player entity keys that are allowed to review content.",
           "type": "array",
@@ -1083,6 +1090,101 @@
         "Type": {
           "description": "The high-level type of the item.",
           "type": "string"
+        }
+      }
+    },
+    "CatalogItemReference": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The amount of the catalog item.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Id": {
+          "description": "The unique ID of the catalog item.",
+          "type": "string"
+        },
+        "Price": {
+          "$ref": "#/definitions/CatalogPrice",
+          "description": "The price of the catalog item.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
+    "CatalogPrice": {
+      "type": "object",
+      "properties": {
+        "Prices": {
+          "description": "Prices of the catalog item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogPriceInstance"
+          },
+          "x-isclass": true
+        },
+        "RealPrices": {
+          "description": "Real prices of the catalog item.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogPriceInstance"
+          },
+          "x-isclass": true
+        },
+        "Sort": {
+          "description": "A standardized sorting key to allow proper sorting between items with prices in different currencies.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      }
+    },
+    "CatalogPriceAmount": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The amount of the catalog price.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Id": {
+          "description": "The Item ID of the price.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Amount"
+      ]
+    },
+    "CatalogPriceInstance": {
+      "type": "object",
+      "properties": {
+        "Amounts": {
+          "description": "The amounts of the catalog item price.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogPriceAmount"
+          },
+          "x-isclass": true
+        }
+      }
+    },
+    "CatalogSpecificConfig": {
+      "type": "object",
+      "properties": {
+        "ContentTypes": {
+          "description": "The set of content types that will be used for validation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Tags": {
+          "description": "The set of tags that will be used for validation.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -1339,6 +1441,19 @@
         ]
       }
     },
+    "DeepLinkFormat": {
+      "type": "object",
+      "properties": {
+        "Format": {
+          "description": "The format of the deep link to return. The format should contain '{id}' to represent where the item ID should be placed.",
+          "type": "string"
+        },
+        "Platform": {
+          "description": "The target platform for the deep link.",
+          "type": "string"
+        }
+      }
+    },
     "DeleteEntityItemReviewsRequest": {
       "type": "object",
       "properties": {
@@ -1535,10 +1650,6 @@
           "description": "The entity to perform this action on.",
           "type": "object",
           "x-isclass": true
-        },
-        "ExpandScanningStatus": {
-          "description": "Whether to fetch metadata of the scan status.",
-          "type": "boolean"
         },
         "Id": {
           "description": "The unique ID of the item.",
@@ -2013,12 +2124,11 @@
           "ItemVersion": "2.1.4",
           "Title": "Best game ever",
           "ReviewText": "I play this game every day. It's so much fun!",
-          "Rating": 2,
+          "Rating": 3,
           "IsInstalled": true,
           "Locale": "en-us",
-          "HelpfulnessVotes": 3,
-          "HelpfulPositive": 13,
-          "HelpfulNegative": 17,
+          "HelpfulPositive": 12,
+          "HelpfulNegative": 15,
           "Submitted": "2018-08-17T22:32:10.4729879+00:00"
         }
       }
@@ -2093,14 +2203,6 @@
     "GetItemPublishStatusResponse": {
       "type": "object",
       "properties": {
-        "FailedScanResults": {
-          "description": "Scan results for any items that failed content scans.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ScanResult"
-          },
-          "x-isclass": true
-        },
         "Result": {
           "$ref": "#/definitions/PublishResult",
           "description": "High level status of the published item.",
@@ -2114,12 +2216,7 @@
       },
       "example": {
         "Result": "Pending",
-        "StatusMessage": "scanning images",
-        "FailedScanResults": [
-          {
-            "Url": "http://example.com/00000000-0000-0000-0000-000000000000/content.bin"
-          }
-        ]
+        "StatusMessage": "publishing"
       }
     },
     "GetItemRequest": {
@@ -2287,12 +2384,11 @@
             "ItemVersion": "2.1.4",
             "Title": "Best game ever",
             "ReviewText": "I play this game every day. It's so much fun!",
-            "Rating": 2,
+            "Rating": 4,
             "IsInstalled": true,
             "Locale": "en-us",
-            "HelpfulnessVotes": 6,
-            "HelpfulPositive": 16,
-            "HelpfulNegative": 14,
+            "HelpfulPositive": 13,
+            "HelpfulNegative": 16,
             "Submitted": "2018-08-17T22:32:10.4729879+00:00"
           },
           {
@@ -2305,9 +2401,8 @@
             "Rating": 1,
             "IsInstalled": true,
             "Locale": "en-us",
-            "HelpfulnessVotes": 14,
-            "HelpfulPositive": 2,
-            "HelpfulNegative": 12,
+            "HelpfulPositive": 13,
+            "HelpfulNegative": 17,
             "Submitted": "2018-08-17T22:32:10.4729879+00:00"
           }
         ],
@@ -2387,7 +2482,6 @@
           "Rating": 5,
           "IsInstalled": true,
           "Locale": "en-us",
-          "HelpfulnessVotes": 17,
           "HelpfulPositive": 16,
           "HelpfulNegative": 1,
           "Submitted": "2018-08-17T22:32:10.4729879+00:00"
@@ -2402,7 +2496,6 @@
           "Rating": 2,
           "IsInstalled": true,
           "Locale": "en-us",
-          "HelpfulnessVotes": 10,
           "HelpfulNegative": 10,
           "Submitted": "2018-08-17T22:32:10.4729879+00:00"
         }
@@ -2658,6 +2751,23 @@
         "Rejected"
       ]
     },
+    "PayoutDetails": {
+      "type": "object",
+      "properties": {
+        "AccountSellerId": {
+          "description": "The Dev Center account ID of the payee.",
+          "type": "string"
+        },
+        "TaxCode": {
+          "description": "The tax code for payout calculations.",
+          "type": "string"
+        },
+        "Uaid": {
+          "description": "The Universal account ID of the payee.",
+          "type": "string"
+        }
+      }
+    },
     "PublishDraftItemRequest": {
       "description": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
       "type": "object",
@@ -2850,11 +2960,6 @@
           "type": "number",
           "x-actualtype": "int32"
         },
-        "HelpfulnessVotes": {
-          "description": "Total number of helpfulness votes for this review.",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
         "HelpfulPositive": {
           "description": "The number of positive helpfulness votes for this review.",
           "type": "number",
@@ -2905,7 +3010,6 @@
       "required": [
         "Rating",
         "IsInstalled",
-        "HelpfulnessVotes",
         "HelpfulPositive",
         "HelpfulNegative",
         "Submitted"
@@ -3197,6 +3301,21 @@
       "properties": {},
       "example": {}
     },
+    "StoreInfo": {
+      "type": "object",
+      "properties": {
+        "AlternateId": {
+          "$ref": "#/definitions/CatalogAlternateId",
+          "description": "An alternate ID of the store.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Id": {
+          "description": "The unique ID of the store.",
+          "type": "string"
+        }
+      }
+    },
     "SubmitItemReviewVoteRequest": {
       "type": "object",
       "properties": {
@@ -3241,6 +3360,19 @@
       "type": "object",
       "properties": {},
       "example": {}
+    },
+    "SubscriptionDetails": {
+      "type": "object",
+      "properties": {
+        "DurationInSeconds": {
+          "description": "The length of time that the subscription will last in seconds.",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "DurationInSeconds"
+      ]
     },
     "TakedownItemReviewsRequest": {
       "description": "Submit a request to takedown one or more reviews, removing them from public view. Authors will still be able to see their reviews after being taken down.",
@@ -4341,12 +4473,11 @@
               "ItemVersion": "2.1.4",
               "Title": "Best game ever",
               "ReviewText": "I play this game every day. It's so much fun!",
-              "Rating": 2,
+              "Rating": 3,
               "IsInstalled": true,
               "Locale": "en-us",
-              "HelpfulnessVotes": 3,
-              "HelpfulPositive": 13,
-              "HelpfulNegative": 17,
+              "HelpfulPositive": 12,
+              "HelpfulNegative": 15,
               "Submitted": "2018-08-17T22:32:10.4729879+00:00"
             }
           }
@@ -4404,12 +4535,7 @@
           "status": "OK",
           "data": {
             "Result": "Pending",
-            "StatusMessage": "scanning images",
-            "FailedScanResults": [
-              {
-                "Url": "http://example.com/00000000-0000-0000-0000-000000000000/content.bin"
-              }
-            ]
+            "StatusMessage": "publishing"
           }
         }
       }
@@ -4526,12 +4652,11 @@
                 "ItemVersion": "2.1.4",
                 "Title": "Best game ever",
                 "ReviewText": "I play this game every day. It's so much fun!",
-                "Rating": 2,
+                "Rating": 4,
                 "IsInstalled": true,
                 "Locale": "en-us",
-                "HelpfulnessVotes": 6,
-                "HelpfulPositive": 16,
-                "HelpfulNegative": 14,
+                "HelpfulPositive": 13,
+                "HelpfulNegative": 16,
                 "Submitted": "2018-08-17T22:32:10.4729879+00:00"
               },
               {
@@ -4544,9 +4669,8 @@
                 "Rating": 1,
                 "IsInstalled": true,
                 "Locale": "en-us",
-                "HelpfulnessVotes": 14,
-                "HelpfulPositive": 2,
-                "HelpfulNegative": 12,
+                "HelpfulPositive": 13,
+                "HelpfulNegative": 17,
                 "Submitted": "2018-08-17T22:32:10.4729879+00:00"
               }
             ],
@@ -4596,7 +4720,6 @@
               "Rating": 5,
               "IsInstalled": true,
               "Locale": "en-us",
-              "HelpfulnessVotes": 17,
               "HelpfulPositive": 16,
               "HelpfulNegative": 1,
               "Submitted": "2018-08-17T22:32:10.4729879+00:00"
@@ -4611,7 +4734,6 @@
               "Rating": 2,
               "IsInstalled": true,
               "Locale": "en-us",
-              "HelpfulnessVotes": 10,
               "HelpfulNegative": 10,
               "Submitted": "2018-08-17T22:32:10.4729879+00:00"
             }
@@ -7891,6 +8013,22 @@
     "EventSinkRegionInvalid": {
       "id": 15002,
       "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,

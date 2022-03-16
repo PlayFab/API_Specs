@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220305",
+    "version": "220316",
     "title": "PlayFab Multiplayer API",
-    "description": "API methods for managing multiplayer servers. API methods for managing parties.",
+    "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -24,6 +24,486 @@
     "application/json"
   ],
   "paths": {
+    "/Lobby/CreateLobby": {
+      "post": {
+        "operationId": "CreateLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Create a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/createlobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateLobbyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Creates a multiplayer lobby. The caller is the lobby creator. Caller may be a server or player entity.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyPlayerMaxLobbyLimitExceeded",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/DeleteLobby": {
+      "post": {
+        "operationId": "DeleteLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Delete a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/deletelobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Delete a lobby. This method is only callable by servers.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/FindFriendLobbies": {
+      "post": {
+        "operationId": "FindFriendLobbies",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Find lobbies which match certain criteria, and which friends are in.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/findfriendlobbies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/FindFriendLobbiesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/FindFriendLobbiesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Find lobbies which match certain criteria and contain friends of the caller. Friends optionally include Steam, Facebook and Xbox friends. Returns a maximum of 50 instances for client calls. This method is not callable by servers.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/FindLobbies": {
+      "post": {
+        "operationId": "FindLobbies",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Find all the lobbies that match certain criteria.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/findlobbies"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/FindLobbiesRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/FindLobbiesResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/GetLobby": {
+      "post": {
+        "operationId": "GetLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Get a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/getlobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetLobbyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/InviteToLobby": {
+      "post": {
+        "operationId": "InviteToLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Send a notification to invite a player to a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/invitetolobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/InviteToLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Invite a player to a lobby the caller is already a member of. Only players may call this.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyPlayerNotPresent",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/JoinArrangedLobby": {
+      "post": {
+        "operationId": "JoinArrangedLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Join an Arranged lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/joinarrangedlobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/JoinArrangedLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/JoinLobbyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyMemberCannotRejoin",
+          "LobbyNotJoinable",
+          "LobbyPlayerAlreadyJoined",
+          "LobbyPlayerMaxLobbyLimitExceeded",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/JoinLobby": {
+      "post": {
+        "operationId": "JoinLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Join a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/joinlobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/JoinLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/JoinLobbyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyMemberCannotRejoin",
+          "LobbyNotJoinable",
+          "LobbyPlayerAlreadyJoined",
+          "LobbyPlayerMaxLobbyLimitExceeded",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/LeaveLobby": {
+      "post": {
+        "operationId": "LeaveLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Leave a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/leavelobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LeaveLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Leave a lobby. Members will also be automatically unsubscribed from the lobby.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyPlayerNotPresent",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/RemoveMember": {
+      "post": {
+        "operationId": "RemoveMember",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Remove a member from a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/removemember"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RemoveMemberFromLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Remove another member from a lobby. Owners and servers may remove any member from a lobby. Members cannot remove themselves but they can use LeaveLobby instead. Members are also unsubscribed from the lobby.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyPlayerNotPresent",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/SubscribeToLobbyResource": {
+      "post": {
+        "operationId": "SubscribeToLobbyResource",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Subscribe to lobby resource notifications.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/subscribetolobbyresource"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubscribeToLobbyResourceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SubscribeToLobbyResourceResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Subscribe to lobby resource notifications. Lobby subscriptions have two types; LobbyChange and LobbyInvite.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyRateLimitExceeded",
+          "PubSubConnectionHandleInvalid",
+          "PubSubConnectionNotFoundForEntity",
+          "PubSubSubscriptionLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/UnsubscribeFromLobbyResource": {
+      "post": {
+        "operationId": "UnsubscribeFromLobbyResource",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Unsubscribe from lobby notifications.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/unsubscribefromlobbyresource"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnsubscribeFromLobbyResourceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Unsubscribe from lobby notifications. Only players may call this.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyRateLimitExceeded",
+          "PubSubConnectionHandleInvalid",
+          "PubSubConnectionNotFoundForEntity"
+        ]
+      }
+    },
+    "/Lobby/UpdateLobby": {
+      "post": {
+        "operationId": "UpdateLobby",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Update a lobby.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/updatelobby"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateLobbyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyCurrentOwnerStillConnected",
+          "LobbyCurrentPlayersMoreThanMaxPlayers",
+          "LobbyDoesNotExist",
+          "LobbyMemberIsNotOwner",
+          "LobbyNewOwnerMustBeConnected",
+          "LobbyRateLimitExceeded"
+        ]
+      }
+    },
     "/Match/CancelAllMatchmakingTicketsForPlayer": {
       "post": {
         "operationId": "CancelAllMatchmakingTicketsForPlayer",
@@ -802,6 +1282,7 @@
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2"
         ],
         "x-ms-docs-errors": [
@@ -848,6 +1329,7 @@
         "x-seeAlso": [
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2"
         ],
         "x-ms-docs-errors": [
@@ -895,6 +1377,7 @@
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2"
         ],
         "x-ms-docs-errors": [
@@ -1075,6 +1558,7 @@
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2"
         ],
         "x-ms-docs-errors": [
@@ -1166,6 +1650,7 @@
         "x-seeAlso": [
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/UpdateBuildRegion",
           "MultiplayerServer/UpdateBuildRegions"
@@ -1437,6 +1922,8 @@
         "x-seeAlso": [
           "MultiplayerServer/ListAssetSummaries",
           "MultiplayerServer/ListCertificateSummaries",
+          "MultiplayerServer/ListCertificateSummaries",
+          "MultiplayerServer/UploadCertificate",
           "MultiplayerServer/UploadCertificate"
         ],
         "x-ms-docs-errors": [
@@ -1484,6 +1971,7 @@
         "x-seeAlso": [
           "MultiplayerServer/CreateBuildWithManagedContainer",
           "MultiplayerServer/DeleteBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2"
         ],
         "x-ms-docs-errors": [
@@ -1964,6 +2452,8 @@
         "x-seeAlso": [
           "MultiplayerServer/GetAssetUploadUrl",
           "MultiplayerServer/ListCertificateSummaries",
+          "MultiplayerServer/ListCertificateSummaries",
+          "MultiplayerServer/UploadCertificate",
           "MultiplayerServer/UploadCertificate"
         ],
         "x-ms-docs-errors": [
@@ -2662,6 +3152,7 @@
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/GetBuild",
           "MultiplayerServer/ListBuildSummariesV2",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/UpdateBuildRegion",
           "MultiplayerServer/UpdateBuildRegions"
         ],
@@ -2709,6 +3200,7 @@
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/DeleteBuildRegion",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/UpdateBuildRegions"
         ],
@@ -2758,6 +3250,7 @@
           "MultiplayerServer/DeleteBuild",
           "MultiplayerServer/DeleteBuildRegion",
           "MultiplayerServer/GetBuild",
+          "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/ListBuildSummariesV2",
           "MultiplayerServer/UpdateBuildRegion"
         ],
@@ -2855,6 +3348,14 @@
       "required": [
         "code",
         "errorCode"
+      ]
+    },
+    "AccessPolicy": {
+      "type": "string",
+      "enum": [
+        "Public",
+        "Friends",
+        "Private"
       ]
     },
     "AssetReference": {
@@ -4642,6 +5143,107 @@
         "MultiplayerServerCountPerVm": 10
       }
     },
+    "CreateLobbyRequest": {
+      "description": "Request to create a lobby. A Server or client can create a lobby.",
+      "type": "object",
+      "properties": {
+        "AccessPolicy": {
+          "$ref": "#/definitions/AccessPolicy",
+          "description": "The policy indicating who is allowed to join the lobby, and the visibility to queries. May be 'Public', 'Friends' or 'Private'. Public means the lobby is both visible in queries and any player may join, including invited players. Friends means that users who are bidirectional friends of members in the lobby may search to find friend lobbies, to retrieve its connection string. Private means the lobby is not visible in queries, and a player must receive an invitation to join. Defaults to 'Public' on creation. Can only be changed by the lobby owner.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyData": {
+          "description": "The private key-value pairs which are only visible to members of the lobby. At most 30 key-value pairs may be stored here, keys are limited to 30 characters and values to 1000. The total size of all lobbyData values may not exceed 4096 bytes. Keys are case sensitive.",
+          "type": "object"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby. The value must be between 2 and 128.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Members": {
+          "description": "The member initially added to the lobby. Client must specify exactly one member, which is the creator's entity and member data. Member PubSubConnectionHandle must be null or empty. Game servers must not specify any members.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Member"
+          },
+          "x-isclass": true
+        },
+        "Owner": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The lobby owner. Must be the calling entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "OwnerMigrationPolicy": {
+          "$ref": "#/definitions/OwnerMigrationPolicy",
+          "description": "The policy for how a new owner is chosen. May be 'Automatic', 'Manual' or 'None'. Can only be specified by clients. If client-owned and 'Automatic' - The Lobby service will automatically assign another connected owner when the current owner leaves or disconnects. The useConnections property must be true. If client - owned and 'Manual' - Ownership is protected as long as the current owner is connected. If the current owner leaves or disconnects any member may set themselves as the current owner. The useConnections property must be true. If client-owned and 'None' - Any member can set ownership. The useConnections property can be either true or false.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "SearchData": {
+          "description": "The public key-value pairs which allow queries to differentiate between lobbies. Queries will refer to these key-value pairs in their filter and order by clauses to retrieve lobbies fitting the specified criteria. At most 30 key-value pairs may be stored here. Keys are of the format string_key1, string_key2 ... string_key30 for string values, or number_key1, number_key2, ... number_key30 for numeric values.Numeric values are floats. Values can be at most 256 characters long. The total size of all searchData values may not exceed 1024 bytes.",
+          "type": "object"
+        },
+        "UseConnections": {
+          "description": "A setting to control whether connections are used. Defaults to true. When true, notifications are sent to subscribed players, disconnect detection removes connectionHandles, only owner migration policies using connections are allowed, and lobbies must have at least one connected member to be searchable or be a server hosted lobby with a connected server. If false, then notifications are not sent, connections are not allowed, and lobbies do not need connections to be searchable.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "MaxPlayers",
+        "Owner",
+        "UseConnections"
+      ],
+      "example": {
+        "MaxPlayers": 50,
+        "Owner": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "OwnerMigrationPolicy": "Automatic",
+        "UseConnections": true,
+        "AccessPolicy": "Public",
+        "SearchData": {
+          "string_key1": "searchable value"
+        },
+        "LobbyData": {
+          "MyGameKey": "MyGameKey value"
+        },
+        "Members": [
+          {
+            "MemberEntity": {
+              "Id": "1234",
+              "Type": "title_player_account",
+              "TypeString": "title_player_account"
+            }
+          }
+        ]
+      }
+    },
+    "CreateLobbyResult": {
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "A field which indicates which lobby the user will be joining.",
+          "type": "string"
+        },
+        "LobbyId": {
+          "description": "Id to uniquely identify a lobby.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "LobbyId",
+        "ConnectionString"
+      ]
+    },
     "CreateMatchmakingTicketRequest": {
       "description": "The client specifies the creator's attributes and optionally a list of other users to match with.",
       "type": "object",
@@ -5291,6 +5893,23 @@
         "ImageName": "imageName1"
       }
     },
+    "DeleteLobbyRequest": {
+      "description": "Request to delete a lobby. Only servers can delete lobbies.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC"
+      }
+    },
     "DeleteRemoteUserRequest": {
       "description": "Deletes a remote user to log on to a VM for a multiplayer server build in a specific region. Returns user credential information necessary to log on.",
       "type": "object",
@@ -5502,6 +6121,183 @@
       },
       "required": [
         "Id"
+      ]
+    },
+    "FindFriendLobbiesRequest": {
+      "description": "Request to find friends lobbies. Only a client can find friend lobbies.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ExcludeFacebookFriends": {
+          "description": "Controls whether this query should link to friends made on the Facebook network. Defaults to false",
+          "type": "boolean"
+        },
+        "ExcludeSteamFriends": {
+          "description": "Controls whether this query should link to friends made on the Steam network. Defaults to false",
+          "type": "boolean"
+        },
+        "Filter": {
+          "description": "OData style string that contains one or more filters. The OR and grouping operators are not allowed.",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "OData style string that contains sorting for this query. To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
+          "type": "string"
+        },
+        "Pagination": {
+          "$ref": "#/definitions/PaginationRequest",
+          "description": "Request pagination information.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "XboxToken": {
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExcludeFacebookFriends",
+        "ExcludeSteamFriends"
+      ],
+      "example": {
+        "Filter": "string_key1 eq 'Wizard' and number_key5 gt 5",
+        "OrderBy": "number_key5 desc",
+        "ExcludeFacebookFriends": true,
+        "ExcludeSteamFriends": true,
+        "XboxToken": "XBOXTOKEN",
+        "Pagination": {
+          "ContinuationToken": "",
+          "PageSizeRequested": 20
+        }
+      }
+    },
+    "FindFriendLobbiesResult": {
+      "type": "object",
+      "properties": {
+        "Lobbies": {
+          "description": "Array of lobbies found that matched FindFriendLobbies request.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FriendLobbySummary"
+          },
+          "x-isclass": true
+        },
+        "Pagination": {
+          "$ref": "#/definitions/PaginationResponse",
+          "description": "Pagination response for FindFriendLobbies request.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Lobbies",
+        "Pagination"
+      ]
+    },
+    "FindLobbiesRequest": {
+      "description": "Request to find lobbies.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Filter": {
+          "description": "OData style string that contains one or more filters. The OR and grouping operators are not allowed.",
+          "type": "string"
+        },
+        "OrderBy": {
+          "description": "OData style string that contains sorting for this query. To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
+          "type": "string"
+        },
+        "Pagination": {
+          "$ref": "#/definitions/PaginationRequest",
+          "description": "Request pagination information.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Filter": "string_key1 eq 'Wizard' and number_key5 gt 5",
+        "OrderBy": "number_key5 desc",
+        "Pagination": {
+          "ContinuationToken": "",
+          "PageSizeRequested": 20
+        }
+      }
+    },
+    "FindLobbiesResult": {
+      "type": "object",
+      "properties": {
+        "Lobbies": {
+          "description": "Array of lobbies found that matched FindLobbies request.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LobbySummary"
+          },
+          "x-isclass": true
+        },
+        "Pagination": {
+          "$ref": "#/definitions/PaginationResponse",
+          "description": "Pagination response for FindLobbies request.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Lobbies",
+        "Pagination"
+      ]
+    },
+    "FriendLobbySummary": {
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "A string used to join the lobby.This field is populated by the Lobby service.Invites are performed by communicating this connectionString to other players.",
+          "type": "string"
+        },
+        "CurrentPlayers": {
+          "description": "The current number of players in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Friends": {
+          "description": "Friends in Lobby.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityKey"
+          },
+          "x-isclass": true
+        },
+        "LobbyId": {
+          "description": "Id to uniquely identify a lobby.",
+          "type": "string"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Owner": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The client or server entity which owns this lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SearchData": {
+          "description": "Search data.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "LobbyId",
+        "Owner",
+        "MaxPlayers",
+        "CurrentPlayers",
+        "ConnectionString"
       ]
     },
     "GameCertificateReference": {
@@ -5861,6 +6657,37 @@
         "Username": "RegistryUser",
         "Password": "ExampleSecret"
       }
+    },
+    "GetLobbyRequest": {
+      "description": "Request to get a lobby.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC"
+      }
+    },
+    "GetLobbyResult": {
+      "type": "object",
+      "properties": {
+        "Lobby": {
+          "$ref": "#/definitions/Lobby",
+          "description": "The information pertaining to the requested lobby.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Lobby"
+      ]
     },
     "GetMatchmakingQueueRequest": {
       "description": "Gets the current configuration for a queue.",
@@ -6597,6 +7424,158 @@
         }
       }
     },
+    "InviteToLobbyRequest": {
+      "description": "Request to invite a player to a lobby the caller is already a member of. Only a client can invite another player to a lobby.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "InviteeEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity invited to the lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity sending the invite. Must be a member of the lobby.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC",
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "InviteeEntity": {
+          "Id": "4321",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "JoinArrangedLobbyRequest": {
+      "description": "Request to join an arranged lobby. Only a client can join an arranged lobby.",
+      "type": "object",
+      "properties": {
+        "AccessPolicy": {
+          "$ref": "#/definitions/AccessPolicy",
+          "description": "The policy indicating who is allowed to join the lobby, and the visibility to queries. May be 'Public', 'Friends' or 'Private'. Public means the lobby is both visible in queries and any player may join, including invited players. Friends means that users who are bidirectional friends of members in the lobby may search to find friend lobbies, to retrieve its connection string. Private means the lobby is not visible in queries, and a player must receive an invitation to join. Defaults to 'Public' on creation. Can only be changed by the lobby owner.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "ArrangementString": {
+          "description": "A field which indicates which lobby the user will be joining. This field is opaque to everyone except the Lobby service and the creator of the arrangementString (Matchmaking). This string defines a unique identifier for the arranged lobby as well as the title and member the string is valid for. Arrangement strings have an expiration.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby. The value must be between 2 and 128.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MemberData": {
+          "description": "The private key-value pairs used by the member to communicate information to other members and the owner. Visible to all members of the lobby. At most 30 key-value pairs may be stored here, keys are limited to 30 characters and values to 1000. The total size of all memberData values may not exceed 4096 bytes. Keys are case sensitive.",
+          "type": "object"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity who is joining the lobby. The first member to join will be the lobby owner.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "OwnerMigrationPolicy": {
+          "$ref": "#/definitions/OwnerMigrationPolicy",
+          "description": "The policy for how a new owner is chosen. May be 'Automatic', 'Manual' or 'None'. Can only be specified by clients. If client-owned and 'Automatic' - The Lobby service will automatically assign another connected owner when the current owner leaves or disconnects. The useConnections property must be true. If client - owned and 'Manual' - Ownership is protected as long as the current owner is connected. If the current owner leaves or disconnects any member may set themselves as the current owner. The useConnections property must be true. If client-owned and 'None' - Any member can set ownership. The useConnections property can be either true or false.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "UseConnections": {
+          "description": "A setting to control whether connections are used. Defaults to true. When true, notifications are sent to subscribed players, disconnect detection removes connectionHandles, only owner migration policies using connections are allowed, and lobbies must have at least one connected member to be searchable or be a server hosted lobby with a connected server. If false, then notifications are not sent, connections are not allowed, and lobbies do not need connections to be searchable.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "MaxPlayers",
+        "UseConnections",
+        "MemberEntity",
+        "ArrangementString"
+      ],
+      "example": {
+        "MaxPlayers": 50,
+        "OwnerMigrationPolicy": "Automatic",
+        "UseConnections": true,
+        "AccessPolicy": "Public",
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "ArrangementString": "arrangementString",
+        "MemberData": {
+          "MyMemberKey": "MyMemberKey value"
+        }
+      }
+    },
+    "JoinLobbyRequest": {
+      "description": "Request to join a lobby. Only a client can join a lobby.",
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "A field which indicates which lobby the user will be joining. This field is opaque to everyone except the Lobby service.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "MemberData": {
+          "description": "The private key-value pairs used by the member to communicate information to other members and the owner. Visible to all members of the lobby. At most 30 key-value pairs may be stored here, keys are limited to 30 characters and values to 1000. The total size of all memberData values may not exceed 4096 bytes.Keys are case sensitive.",
+          "type": "object"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity who is joining the lobby.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "ConnectionString": "connString",
+        "MemberData": {
+          "MyDataKey": "MyDataKey value"
+        }
+      }
+    },
+    "JoinLobbyResult": {
+      "type": "object",
+      "properties": {
+        "LobbyId": {
+          "description": "Successfully joined lobby's id.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "LobbyId"
+      ]
+    },
     "JoinMatchmakingTicketRequest": {
       "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
       "type": "object",
@@ -6635,6 +7614,34 @@
       "type": "object",
       "properties": {},
       "example": {}
+    },
+    "LeaveLobbyRequest": {
+      "description": "Request to leave a lobby. Only a client can leave a lobby.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity leaving the lobby.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC",
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
     },
     "LinearDifferenceRuleExpansion": {
       "type": "object",
@@ -7588,6 +8595,130 @@
         "PageSize": 10
       }
     },
+    "Lobby": {
+      "type": "object",
+      "properties": {
+        "AccessPolicy": {
+          "$ref": "#/definitions/AccessPolicy",
+          "description": "A setting indicating who is allowed to join this lobby, as well as see it in queries.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "ChangeNumber": {
+          "description": "A number that increments once for each request that modifies the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "ConnectionString": {
+          "description": "A string used to join the lobby. This field is populated by the Lobby service. Invites are performed by communicating this connectionString to other players.",
+          "type": "string"
+        },
+        "LobbyData": {
+          "description": "Lobby data.",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "Id to uniquely identify a lobby.",
+          "type": "string"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Members": {
+          "description": "Array of all lobby members.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Member"
+          },
+          "x-isclass": true
+        },
+        "MembershipLock": {
+          "$ref": "#/definitions/MembershipLock",
+          "description": "A setting indicating whether members are allowed to join this lobby. When Locked new members are prevented from joining.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Owner": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The client or server entity which owns this lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "OwnerMigrationPolicy": {
+          "$ref": "#/definitions/OwnerMigrationPolicy",
+          "description": "A setting indicating the owner migration policy. If server owned, this field is not present.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "An opaque string stored on a SubscribeToLobbyResource call, which indicates the connection an owner or member has with PubSub.",
+          "type": "string"
+        },
+        "SearchData": {
+          "description": "Search data.",
+          "type": "object"
+        },
+        "UseConnections": {
+          "description": "A flag which determines if connections are used. Defaults to true. Only set on create.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "LobbyId",
+        "ChangeNumber",
+        "MaxPlayers",
+        "UseConnections",
+        "AccessPolicy",
+        "MembershipLock",
+        "ConnectionString"
+      ]
+    },
+    "LobbyEmptyResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "LobbySummary": {
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "A string used to join the lobby.This field is populated by the Lobby service.Invites are performed by communicating this connectionString to other players.",
+          "type": "string"
+        },
+        "CurrentPlayers": {
+          "description": "The current number of players in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "LobbyId": {
+          "description": "Id to uniquely identify a lobby.",
+          "type": "string"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Owner": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The client or server entity which owns this lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SearchData": {
+          "description": "Search data.",
+          "type": "object"
+        }
+      },
+      "required": [
+        "LobbyId",
+        "Owner",
+        "MaxPlayers",
+        "CurrentPlayers",
+        "ConnectionString"
+      ]
+    },
     "MatchmakingPlayer": {
       "description": "A user in a matchmaking ticket.",
       "type": "object",
@@ -8055,6 +9186,32 @@
         "RequiresOptionalValueSupport"
       ]
     },
+    "Member": {
+      "type": "object",
+      "properties": {
+        "MemberData": {
+          "description": "Key-value pairs specific to member.",
+          "type": "object"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity key.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, stored on a Subscribe call, which indicates the connection an owner or member has with PubSub.",
+          "type": "string"
+        }
+      }
+    },
+    "MembershipLock": {
+      "type": "string",
+      "enum": [
+        "Unlocked",
+        "Locked"
+      ]
+    },
     "MonitoringApplicationConfiguration": {
       "type": "object",
       "properties": {
@@ -8187,6 +9344,43 @@
       "x-AnyInclusiveFlags": [
         "RequiresOptionalValueSupport"
       ]
+    },
+    "OwnerMigrationPolicy": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Automatic",
+        "Manual",
+        "Server"
+      ]
+    },
+    "PaginationRequest": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "Continuation token returned as a result in a previous FindLobbies call. Cannot be specified by clients.",
+          "type": "string"
+        },
+        "PageSizeRequested": {
+          "description": "The number of lobbies that should be retrieved. Cannot be specified by servers, clients may specify any value up to 50",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      }
+    },
+    "PaginationResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "Continuation token returned by server call. Not returned for clients",
+          "type": "string"
+        },
+        "TotalMatchedLobbyCount": {
+          "description": "The number of lobbies that matched the search request.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        }
+      }
     },
     "Port": {
       "type": "object",
@@ -8387,6 +9581,41 @@
       "x-AnyInclusiveFlags": [
         "RequiresOptionalValueSupport"
       ]
+    },
+    "RemoveMemberFromLobbyRequest": {
+      "description": "Request to remove a member from a lobby. Owners may remove other members from a lobby. Members cannot remove themselves (use LeaveLobby instead).",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity to be removed from the lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PreventRejoin": {
+          "description": "If true, removed member can never rejoin this lobby.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "PreventRejoin"
+      ],
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC",
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
     },
     "RequestMultiplayerServerRequest": {
       "description": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
@@ -9091,6 +10320,77 @@
         "RequiresOptionalValueSupport"
       ]
     },
+    "SubscribeToLobbyResourceRequest": {
+      "description": "Request to subscribe to lobby resource notifications.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity performing the subscription.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, given to a client upon creating a connection with PubSub.",
+          "type": "string"
+        },
+        "ResourceId": {
+          "description": "The name of the resource to subscribe to.",
+          "type": "string"
+        },
+        "SubscriptionVersion": {
+          "description": "Version number for the subscription of this resource.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Type": {
+          "$ref": "#/definitions/SubscriptionType",
+          "description": "Subscription type.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "Type",
+        "ResourceId",
+        "SubscriptionVersion",
+        "PubSubConnectionHandle",
+        "EntityKey"
+      ],
+      "example": {
+        "ResourceId": "5c905725-0184-4112-a563-2f4187710d06",
+        "SubscriptionVersion": 1,
+        "PubSubConnectionHandle": "PubSubConnection",
+        "EntityKey": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        }
+      }
+    },
+    "SubscribeToLobbyResourceResult": {
+      "type": "object",
+      "properties": {
+        "Topic": {
+          "description": "Topic will be returned in all notifications that are the result of this subscription.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Topic"
+      ]
+    },
+    "SubscriptionType": {
+      "type": "string",
+      "enum": [
+        "LobbyChange",
+        "LobbyInvite"
+      ]
+    },
     "TeamDifferenceRule": {
       "type": "object",
       "properties": {
@@ -9245,6 +10545,58 @@
             "$ref": "#/definitions/CoreCapacity"
           },
           "x-isclass": true
+        }
+      }
+    },
+    "UnsubscribeFromLobbyResourceRequest": {
+      "description": "Request to unsubscribe from lobby notifications. Only a client can unsubscribe from notifications.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity which performed the subscription.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, given to a client upon creating a connection with PubSub.",
+          "type": "string"
+        },
+        "ResourceId": {
+          "description": "The name of the resource to unsubscribe from.",
+          "type": "string"
+        },
+        "SubscriptionVersion": {
+          "description": "Version number passed for the subscription of this resource.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Type": {
+          "$ref": "#/definitions/SubscriptionType",
+          "description": "Subscription type.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "Type",
+        "ResourceId",
+        "SubscriptionVersion",
+        "PubSubConnectionHandle",
+        "EntityKey"
+      ],
+      "example": {
+        "ResourceId": "5c905725-0184-4112-a563-2f4187710d06",
+        "SubscriptionVersion": 1,
+        "PubSubConnectionHandle": "PubSubConnection",
+        "EntityKey": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         }
       }
     },
@@ -9414,6 +10766,109 @@
         ]
       }
     },
+    "UpdateLobbyRequest": {
+      "description": "Request to update a lobby.",
+      "type": "object",
+      "properties": {
+        "AccessPolicy": {
+          "$ref": "#/definitions/AccessPolicy",
+          "description": "The policy indicating who is allowed to join the lobby, and the visibility to queries. May be 'Public', 'Friends' or 'Private'. Public means the lobby is both visible in queries and any player may join, including invited players. Friends means that users who are bidirectional friends of members in the lobby may search to find friend lobbies, to retrieve its connection string. Private means the lobby is not visible in queries, and a player must receive an invitation to join. Defaults to 'Public' on creation. Can only be changed by the lobby owner.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyData": {
+          "description": "The private key-value pairs which are only visible to members of the lobby. Optional. Sets or updates key-value pairs on the lobby. Only the current lobby owner can set lobby data. Keys may be an arbitrary string of at most 30 characters. The total size of all lobbyData values may not exceed 4096 bytes. Values are not individually limited. There can be up to 30 key-value pairs stored here. Keys are case sensitive.",
+          "type": "object"
+        },
+        "LobbyDataToDelete": {
+          "description": "The keys to delete from the lobby LobbyData. Optional. Behaves similar to searchDataToDelete, but applies to lobbyData.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "MaxPlayers": {
+          "description": "The maximum number of players allowed in the lobby. Updates the maximum allowed number of players in the lobby. Only the current lobby owner can set this. If set, the value must be greater than or equal to the number of members currently in the lobby.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MemberData": {
+          "description": "The private key-value pairs used by the member to communicate information to other members and the owner. Optional. Sets or updates new key-value pairs on the caller's member data. New keys will be added with their values and existing keys will be updated with the new values. Visible to all members of the lobby. At most 30 key-value pairs may be stored here, keys are limited to 30 characters and values to 1000. The total size of all memberData values may not exceed 4096 bytes. Keys are case sensitive. Servers cannot specifiy this.",
+          "type": "object"
+        },
+        "MemberDataToDelete": {
+          "description": "The keys to delete from the lobby MemberData. Optional. Deletes key-value pairs on the caller's member data. All the specified keys will be removed from the caller's member data. Keys that do not exist are a no-op. If the key to delete exists in the memberData (same request) it will result in a bad request. Servers cannot specifiy this.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "MemberEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The member entity whose data is being modified. Servers cannot specify this.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "MembershipLock": {
+          "$ref": "#/definitions/MembershipLock",
+          "description": "A setting indicating whether the lobby is locked. May be 'Unlocked' or 'Locked'. When Locked new members are not allowed to join. Defaults to 'Unlocked' on creation. Can only be changed by the lobby owner.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "Owner": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The lobby owner. Optional. Set to transfer ownership of the lobby. If client - owned and 'Automatic' - The Lobby service will automatically assign another connected owner when the current owner leaves or disconnects. useConnections must be true. If client - owned and 'Manual' - Ownership is protected as long as the current owner is connected. If the current owner leaves or disconnects any member may set themselves as the current owner. The useConnections property must be true. If client-owned and 'None' - Any member can set ownership. The useConnections property can be either true or false. For all client-owned lobbies when the owner leaves and a new owner can not be automatically selected - The owner field is set to null. For all client-owned lobbies when the owner disconnects and a new owner can not be automatically selected - The owner field remains unchanged and the current owner retains all owner abilities for the lobby. If server-owned (must be 'Server') - Any server can set ownership. The useConnections property must be true.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SearchData": {
+          "description": "The public key-value pairs which allow queries to differentiate between lobbies. Optional. Sets or updates key-value pairs on the lobby for use with queries. Only the current lobby owner can set search data. New keys will be added with their values and existing keys will be updated with the new values. There can be up to 30 key-value pairs stored here. Keys are of the format string_key1, string_key2... string_key30 for string values, or number_key1, number_key2, ... number_key30 for numeric values. Numeric values are floats. Values can be at most 256 characters long. The total size of all searchData values may not exceed 1024 bytes.Keys are case sensitive.",
+          "type": "object"
+        },
+        "SearchDataToDelete": {
+          "description": "The keys to delete from the lobby SearchData. Optional. Deletes key-value pairs on the lobby. Only the current lobby owner can delete search data. All the specified keys will be removed from the search data. Keys that do not exist in the lobby are a no-op.If the key to delete exists in the searchData (same request) it will result in a bad request.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC",
+        "MaxPlayers": 50,
+        "AccessPolicy": "Friends",
+        "MembershipLock": "Locked",
+        "SearchData": {
+          "string_key1": "searchable value"
+        },
+        "LobbyData": {
+          "MyGameKey": "MyGameKey value"
+        },
+        "MemberEntity": {
+          "Id": "1234",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "MemberData": {
+          "MyDataKey": "MyDataKey updated value"
+        },
+        "SearchDataToDelete": [
+          "number_key1"
+        ],
+        "LobbyDataToDelete": [
+          "MyOldGameKey"
+        ],
+        "MemberDataToDelete": []
+      }
+    },
     "UploadCertificateRequest": {
       "description": "Uploads a multiplayer server game certificate.",
       "type": "object",
@@ -9545,6 +11000,14 @@
         "$ref": "#/definitions/CreateBuildWithProcessBasedServerRequest"
       }
     },
+    "CreateLobbyRequest": {
+      "name": "CreateLobbyRequest",
+      "in": "body",
+      "description": "Request to create a lobby. A Server or client can create a lobby.",
+      "schema": {
+        "$ref": "#/definitions/CreateLobbyRequest"
+      }
+    },
     "CreateMatchmakingTicketRequest": {
       "name": "CreateMatchmakingTicketRequest",
       "in": "body",
@@ -9633,6 +11096,14 @@
         "$ref": "#/definitions/DeleteContainerImageRequest"
       }
     },
+    "DeleteLobbyRequest": {
+      "name": "DeleteLobbyRequest",
+      "in": "body",
+      "description": "Request to delete a lobby. Only servers can delete lobbies.",
+      "schema": {
+        "$ref": "#/definitions/DeleteLobbyRequest"
+      }
+    },
     "DeleteRemoteUserRequest": {
       "name": "DeleteRemoteUserRequest",
       "in": "body",
@@ -9647,6 +11118,22 @@
       "description": "Enables the multiplayer server feature for a title and returns the enabled status. The enabled status can be Initializing, Enabled, and Disabled. It can up to 20 minutes or more for the title to be enabled for the feature. On average, it can take up to 20 minutes for the title to be enabled for the feature.",
       "schema": {
         "$ref": "#/definitions/EnableMultiplayerServersForTitleRequest"
+      }
+    },
+    "FindFriendLobbiesRequest": {
+      "name": "FindFriendLobbiesRequest",
+      "in": "body",
+      "description": "Request to find friends lobbies. Only a client can find friend lobbies.",
+      "schema": {
+        "$ref": "#/definitions/FindFriendLobbiesRequest"
+      }
+    },
+    "FindLobbiesRequest": {
+      "name": "FindLobbiesRequest",
+      "in": "body",
+      "description": "Request to find lobbies.",
+      "schema": {
+        "$ref": "#/definitions/FindLobbiesRequest"
       }
     },
     "GetAssetDownloadUrlRequest": {
@@ -9687,6 +11174,14 @@
       "description": "Gets credentials to the container registry where game developers can upload custom container images to before creating a new build.",
       "schema": {
         "$ref": "#/definitions/GetContainerRegistryCredentialsRequest"
+      }
+    },
+    "GetLobbyRequest": {
+      "name": "GetLobbyRequest",
+      "in": "body",
+      "description": "Request to get a lobby.",
+      "schema": {
+        "$ref": "#/definitions/GetLobbyRequest"
       }
     },
     "GetMatchmakingQueueRequest": {
@@ -9785,12 +11280,44 @@
         "$ref": "#/definitions/GetTitleMultiplayerServersQuotasRequest"
       }
     },
+    "InviteToLobbyRequest": {
+      "name": "InviteToLobbyRequest",
+      "in": "body",
+      "description": "Request to invite a player to a lobby the caller is already a member of. Only a client can invite another player to a lobby.",
+      "schema": {
+        "$ref": "#/definitions/InviteToLobbyRequest"
+      }
+    },
+    "JoinArrangedLobbyRequest": {
+      "name": "JoinArrangedLobbyRequest",
+      "in": "body",
+      "description": "Request to join an arranged lobby. Only a client can join an arranged lobby.",
+      "schema": {
+        "$ref": "#/definitions/JoinArrangedLobbyRequest"
+      }
+    },
+    "JoinLobbyRequest": {
+      "name": "JoinLobbyRequest",
+      "in": "body",
+      "description": "Request to join a lobby. Only a client can join a lobby.",
+      "schema": {
+        "$ref": "#/definitions/JoinLobbyRequest"
+      }
+    },
     "JoinMatchmakingTicketRequest": {
       "name": "JoinMatchmakingTicketRequest",
       "in": "body",
       "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
       "schema": {
         "$ref": "#/definitions/JoinMatchmakingTicketRequest"
+      }
+    },
+    "LeaveLobbyRequest": {
+      "name": "LeaveLobbyRequest",
+      "in": "body",
+      "description": "Request to leave a lobby. Only a client can leave a lobby.",
+      "schema": {
+        "$ref": "#/definitions/LeaveLobbyRequest"
       }
     },
     "ListAssetSummariesRequest": {
@@ -9913,6 +11440,14 @@
         "$ref": "#/definitions/RemoveMatchmakingQueueRequest"
       }
     },
+    "RemoveMemberFromLobbyRequest": {
+      "name": "RemoveMemberFromLobbyRequest",
+      "in": "body",
+      "description": "Request to remove a member from a lobby. Owners may remove other members from a lobby. Members cannot remove themselves (use LeaveLobby instead).",
+      "schema": {
+        "$ref": "#/definitions/RemoveMemberFromLobbyRequest"
+      }
+    },
     "RequestMultiplayerServerRequest": {
       "name": "RequestMultiplayerServerRequest",
       "in": "body",
@@ -9943,6 +11478,22 @@
       "description": "Executes the shutdown callback from the GSDK and terminates the multiplayer server session. The callback in the GSDK will allow for graceful shutdown with a 15 minute timeoutIf graceful shutdown has not been completed before 15 minutes have elapsed, the multiplayer server session will be forcefully terminated on it's own.",
       "schema": {
         "$ref": "#/definitions/ShutdownMultiplayerServerRequest"
+      }
+    },
+    "SubscribeToLobbyResourceRequest": {
+      "name": "SubscribeToLobbyResourceRequest",
+      "in": "body",
+      "description": "Request to subscribe to lobby resource notifications.",
+      "schema": {
+        "$ref": "#/definitions/SubscribeToLobbyResourceRequest"
+      }
+    },
+    "UnsubscribeFromLobbyResourceRequest": {
+      "name": "UnsubscribeFromLobbyResourceRequest",
+      "in": "body",
+      "description": "Request to unsubscribe from lobby notifications. Only a client can unsubscribe from notifications.",
+      "schema": {
+        "$ref": "#/definitions/UnsubscribeFromLobbyResourceRequest"
       }
     },
     "UntagContainerImageRequest": {
@@ -9983,6 +11534,14 @@
       "description": "Updates a multiplayer server build's regions.",
       "schema": {
         "$ref": "#/definitions/UpdateBuildRegionsRequest"
+      }
+    },
+    "UpdateLobbyRequest": {
+      "name": "UpdateLobbyRequest",
+      "in": "body",
+      "description": "Request to update a lobby.",
+      "schema": {
+        "$ref": "#/definitions/UpdateLobbyRequest"
       }
     },
     "UploadCertificateRequest": {
@@ -10426,6 +11985,25 @@
         }
       }
     },
+    "CreateLobbyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateLobbyResult"
+          }
+        }
+      }
+    },
     "CreateMatchmakingTicketResult": {
       "description": "",
       "schema": {
@@ -10564,6 +12142,44 @@
           "code": 200,
           "status": "OK",
           "data": {}
+        }
+      }
+    },
+    "FindFriendLobbiesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/FindFriendLobbiesResult"
+          }
+        }
+      }
+    },
+    "FindLobbiesResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/FindLobbiesResult"
+          }
         }
       }
     },
@@ -10738,6 +12354,25 @@
             "DnsName": "registry.azurecr.io",
             "Username": "RegistryUser",
             "Password": "ExampleSecret"
+          }
+        }
+      }
+    },
+    "GetLobbyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetLobbyResult"
           }
         }
       }
@@ -11117,6 +12752,25 @@
                 }
               ]
             }
+          }
+        }
+      }
+    },
+    "JoinLobbyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/JoinLobbyResult"
           }
         }
       }
@@ -11627,6 +13281,25 @@
         }
       }
     },
+    "LobbyEmptyResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LobbyEmptyResult"
+          }
+        }
+      }
+    },
     "RemoveMatchmakingQueueResult": {
       "description": "",
       "schema": {
@@ -11739,9 +13412,32 @@
           }
         }
       }
+    },
+    "SubscribeToLobbyResourceResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SubscribeToLobbyResourceResult"
+          }
+        }
+      }
     }
   },
   "tags": [
+    {
+      "name": "Lobby",
+      "description": ""
+    },
     {
       "name": "Matchmaking",
       "description": "Matchmaking APIs"
@@ -14476,6 +16172,22 @@
     "EventSinkRegionInvalid": {
       "id": 15002,
       "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,
