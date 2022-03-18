@@ -1,0 +1,2830 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "220318",
+    "title": "PlayFab Client API",
+    "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
+    "termsOfService": "https://playfab.com/terms/",
+    "contact": {
+      "url": "https://community.playfab.com/index.html"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://github.com/PlayFab/API_Specs/blob/master/LICENSE"
+    }
+  },
+  "host": "titleId.playfabapi.com",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "ApiError": {
+      "description": "The basic wrapper around every failed API response",
+      "type": "object",
+      "properties": {
+        "code": {
+          "description": "Numerical HTTP code",
+          "type": "integer"
+        },
+        "status": {
+          "description": "String HTTP code",
+          "type": "string"
+        },
+        "error": {
+          "description": "Playfab error code",
+          "type": "string"
+        },
+        "errorCode": {
+          "description": "Numerical PlayFab error code",
+          "type": "integer"
+        },
+        "errorMessage": {
+          "description": "Description for the PlayFab errorCode",
+          "type": "string"
+        },
+        "errorDetails": {
+          "description": "Detailed description of individual issues with the request object",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "errorCode"
+      ]
+    }
+  },
+  "parameters": {},
+  "responses": {
+    "ApiError": {
+      "description": "This is the outer wrapper for all responses with errors",
+      "schema": {
+        "$ref": "#/definitions/ApiError"
+      }
+    }
+  },
+  "x-AnyInclusiveFlags": [
+    "Beta",
+    "RequiresOptionalValueSupport",
+    "Testing",
+    "All"
+  ],
+  "tags": [],
+  "securityDefinitions": {
+    "None": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "None",
+      "description": "This API requires no authentication headers (usually provides one to other calls)."
+    },
+    "SessionTicket": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-Authorization",
+      "description": "This API requires a client session ticket, available from any Client Login function."
+    },
+    "SecretKey": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-SecretKey",
+      "description": "This API requires a title secret key, available to title admins, from PlayFab Game Manager."
+    },
+    "EntityToken": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-EntityToken",
+      "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
+    }
+  },
+  "x-pf-docs-errors-mapping": {
+    "Success": {
+      "name": "Success"
+    },
+    "UnkownError": {
+      "id": 500,
+      "name": "UnkownError"
+    },
+    "InvalidParams": {
+      "id": 1000,
+      "name": "InvalidParams"
+    },
+    "AccountNotFound": {
+      "id": 1001,
+      "name": "AccountNotFound"
+    },
+    "AccountBanned": {
+      "id": 1002,
+      "name": "AccountBanned"
+    },
+    "InvalidUsernameOrPassword": {
+      "id": 1003,
+      "name": "InvalidUsernameOrPassword"
+    },
+    "InvalidTitleId": {
+      "id": 1004,
+      "name": "InvalidTitleId"
+    },
+    "InvalidEmailAddress": {
+      "id": 1005,
+      "name": "InvalidEmailAddress"
+    },
+    "EmailAddressNotAvailable": {
+      "id": 1006,
+      "name": "EmailAddressNotAvailable"
+    },
+    "InvalidUsername": {
+      "id": 1007,
+      "name": "InvalidUsername"
+    },
+    "InvalidPassword": {
+      "id": 1008,
+      "name": "InvalidPassword"
+    },
+    "UsernameNotAvailable": {
+      "id": 1009,
+      "name": "UsernameNotAvailable"
+    },
+    "InvalidSteamTicket": {
+      "id": 1010,
+      "name": "InvalidSteamTicket"
+    },
+    "AccountAlreadyLinked": {
+      "id": 1011,
+      "name": "AccountAlreadyLinked"
+    },
+    "LinkedAccountAlreadyClaimed": {
+      "id": 1012,
+      "name": "LinkedAccountAlreadyClaimed"
+    },
+    "InvalidFacebookToken": {
+      "id": 1013,
+      "name": "InvalidFacebookToken"
+    },
+    "AccountNotLinked": {
+      "id": 1014,
+      "name": "AccountNotLinked"
+    },
+    "FailedByPaymentProvider": {
+      "id": 1015,
+      "name": "FailedByPaymentProvider"
+    },
+    "CouponCodeNotFound": {
+      "id": 1016,
+      "name": "CouponCodeNotFound"
+    },
+    "InvalidContainerItem": {
+      "id": 1017,
+      "name": "InvalidContainerItem"
+    },
+    "ContainerNotOwned": {
+      "id": 1018,
+      "name": "ContainerNotOwned"
+    },
+    "KeyNotOwned": {
+      "id": 1019,
+      "name": "KeyNotOwned"
+    },
+    "InvalidItemIdInTable": {
+      "id": 1020,
+      "name": "InvalidItemIdInTable"
+    },
+    "InvalidReceipt": {
+      "id": 1021,
+      "name": "InvalidReceipt"
+    },
+    "ReceiptAlreadyUsed": {
+      "id": 1022,
+      "name": "ReceiptAlreadyUsed"
+    },
+    "ReceiptCancelled": {
+      "id": 1023,
+      "name": "ReceiptCancelled"
+    },
+    "GameNotFound": {
+      "id": 1024,
+      "name": "GameNotFound"
+    },
+    "GameModeNotFound": {
+      "id": 1025,
+      "name": "GameModeNotFound"
+    },
+    "InvalidGoogleToken": {
+      "id": 1026,
+      "name": "InvalidGoogleToken"
+    },
+    "UserIsNotPartOfDeveloper": {
+      "id": 1027,
+      "name": "UserIsNotPartOfDeveloper"
+    },
+    "InvalidTitleForDeveloper": {
+      "id": 1028,
+      "name": "InvalidTitleForDeveloper"
+    },
+    "TitleNameConflicts": {
+      "id": 1029,
+      "name": "TitleNameConflicts"
+    },
+    "UserisNotValid": {
+      "id": 1030,
+      "name": "UserisNotValid"
+    },
+    "ValueAlreadyExists": {
+      "id": 1031,
+      "name": "ValueAlreadyExists"
+    },
+    "BuildNotFound": {
+      "id": 1032,
+      "name": "BuildNotFound"
+    },
+    "PlayerNotInGame": {
+      "id": 1033,
+      "name": "PlayerNotInGame"
+    },
+    "InvalidTicket": {
+      "id": 1034,
+      "name": "InvalidTicket"
+    },
+    "InvalidDeveloper": {
+      "id": 1035,
+      "name": "InvalidDeveloper"
+    },
+    "InvalidOrderInfo": {
+      "id": 1036,
+      "name": "InvalidOrderInfo"
+    },
+    "RegistrationIncomplete": {
+      "id": 1037,
+      "name": "RegistrationIncomplete"
+    },
+    "InvalidPlatform": {
+      "id": 1038,
+      "name": "InvalidPlatform"
+    },
+    "UnknownError": {
+      "id": 1039,
+      "name": "UnknownError"
+    },
+    "SteamApplicationNotOwned": {
+      "id": 1040,
+      "name": "SteamApplicationNotOwned"
+    },
+    "WrongSteamAccount": {
+      "id": 1041,
+      "name": "WrongSteamAccount"
+    },
+    "TitleNotActivated": {
+      "id": 1042,
+      "name": "TitleNotActivated"
+    },
+    "RegistrationSessionNotFound": {
+      "id": 1043,
+      "name": "RegistrationSessionNotFound"
+    },
+    "NoSuchMod": {
+      "id": 1044,
+      "name": "NoSuchMod"
+    },
+    "FileNotFound": {
+      "id": 1045,
+      "name": "FileNotFound"
+    },
+    "DuplicateEmail": {
+      "id": 1046,
+      "name": "DuplicateEmail"
+    },
+    "ItemNotFound": {
+      "id": 1047,
+      "name": "ItemNotFound"
+    },
+    "ItemNotOwned": {
+      "id": 1048,
+      "name": "ItemNotOwned"
+    },
+    "ItemNotRecycleable": {
+      "id": 1049,
+      "name": "ItemNotRecycleable"
+    },
+    "ItemNotAffordable": {
+      "id": 1050,
+      "name": "ItemNotAffordable"
+    },
+    "InvalidVirtualCurrency": {
+      "id": 1051,
+      "name": "InvalidVirtualCurrency"
+    },
+    "WrongVirtualCurrency": {
+      "id": 1052,
+      "name": "WrongVirtualCurrency"
+    },
+    "WrongPrice": {
+      "id": 1053,
+      "name": "WrongPrice"
+    },
+    "NonPositiveValue": {
+      "id": 1054,
+      "name": "NonPositiveValue"
+    },
+    "InvalidRegion": {
+      "id": 1055,
+      "name": "InvalidRegion"
+    },
+    "RegionAtCapacity": {
+      "id": 1056,
+      "name": "RegionAtCapacity"
+    },
+    "ServerFailedToStart": {
+      "id": 1057,
+      "name": "ServerFailedToStart"
+    },
+    "NameNotAvailable": {
+      "id": 1058,
+      "name": "NameNotAvailable"
+    },
+    "InsufficientFunds": {
+      "id": 1059,
+      "name": "InsufficientFunds"
+    },
+    "InvalidDeviceID": {
+      "id": 1060,
+      "name": "InvalidDeviceID"
+    },
+    "InvalidPushNotificationToken": {
+      "id": 1061,
+      "name": "InvalidPushNotificationToken"
+    },
+    "NoRemainingUses": {
+      "id": 1062,
+      "name": "NoRemainingUses"
+    },
+    "InvalidPaymentProvider": {
+      "id": 1063,
+      "name": "InvalidPaymentProvider"
+    },
+    "PurchaseInitializationFailure": {
+      "id": 1064,
+      "name": "PurchaseInitializationFailure"
+    },
+    "DuplicateUsername": {
+      "id": 1065,
+      "name": "DuplicateUsername"
+    },
+    "InvalidBuyerInfo": {
+      "id": 1066,
+      "name": "InvalidBuyerInfo"
+    },
+    "NoGameModeParamsSet": {
+      "id": 1067,
+      "name": "NoGameModeParamsSet"
+    },
+    "BodyTooLarge": {
+      "id": 1068,
+      "name": "BodyTooLarge"
+    },
+    "ReservedWordInBody": {
+      "id": 1069,
+      "name": "ReservedWordInBody"
+    },
+    "InvalidTypeInBody": {
+      "id": 1070,
+      "name": "InvalidTypeInBody"
+    },
+    "InvalidRequest": {
+      "id": 1071,
+      "name": "InvalidRequest"
+    },
+    "ReservedEventName": {
+      "id": 1072,
+      "name": "ReservedEventName"
+    },
+    "InvalidUserStatistics": {
+      "id": 1073,
+      "name": "InvalidUserStatistics"
+    },
+    "NotAuthenticated": {
+      "id": 1074,
+      "name": "NotAuthenticated"
+    },
+    "StreamAlreadyExists": {
+      "id": 1075,
+      "name": "StreamAlreadyExists"
+    },
+    "ErrorCreatingStream": {
+      "id": 1076,
+      "name": "ErrorCreatingStream"
+    },
+    "StreamNotFound": {
+      "id": 1077,
+      "name": "StreamNotFound"
+    },
+    "InvalidAccount": {
+      "id": 1078,
+      "name": "InvalidAccount"
+    },
+    "PurchaseDoesNotExist": {
+      "id": 1080,
+      "name": "PurchaseDoesNotExist"
+    },
+    "InvalidPurchaseTransactionStatus": {
+      "id": 1081,
+      "name": "InvalidPurchaseTransactionStatus"
+    },
+    "APINotEnabledForGameClientAccess": {
+      "id": 1082,
+      "name": "APINotEnabledForGameClientAccess"
+    },
+    "NoPushNotificationARNForTitle": {
+      "id": 1083,
+      "name": "NoPushNotificationARNForTitle"
+    },
+    "BuildAlreadyExists": {
+      "id": 1084,
+      "name": "BuildAlreadyExists"
+    },
+    "BuildPackageDoesNotExist": {
+      "id": 1085,
+      "name": "BuildPackageDoesNotExist"
+    },
+    "CustomAnalyticsEventsNotEnabledForTitle": {
+      "id": 1087,
+      "name": "CustomAnalyticsEventsNotEnabledForTitle"
+    },
+    "InvalidSharedGroupId": {
+      "id": 1088,
+      "name": "InvalidSharedGroupId"
+    },
+    "NotAuthorized": {
+      "id": 1089,
+      "name": "NotAuthorized"
+    },
+    "MissingTitleGoogleProperties": {
+      "id": 1090,
+      "name": "MissingTitleGoogleProperties"
+    },
+    "InvalidItemProperties": {
+      "id": 1091,
+      "name": "InvalidItemProperties"
+    },
+    "InvalidPSNAuthCode": {
+      "id": 1092,
+      "name": "InvalidPSNAuthCode"
+    },
+    "InvalidItemId": {
+      "id": 1093,
+      "name": "InvalidItemId"
+    },
+    "PushNotEnabledForAccount": {
+      "id": 1094,
+      "name": "PushNotEnabledForAccount"
+    },
+    "PushServiceError": {
+      "id": 1095,
+      "name": "PushServiceError"
+    },
+    "ReceiptDoesNotContainInAppItems": {
+      "id": 1096,
+      "name": "ReceiptDoesNotContainInAppItems"
+    },
+    "ReceiptContainsMultipleInAppItems": {
+      "id": 1097,
+      "name": "ReceiptContainsMultipleInAppItems"
+    },
+    "InvalidBundleID": {
+      "id": 1098,
+      "name": "InvalidBundleID"
+    },
+    "JavascriptException": {
+      "id": 1099,
+      "name": "JavascriptException"
+    },
+    "InvalidSessionTicket": {
+      "id": 1100,
+      "name": "InvalidSessionTicket"
+    },
+    "UnableToConnectToDatabase": {
+      "id": 1101,
+      "name": "UnableToConnectToDatabase"
+    },
+    "InternalServerError": {
+      "id": 1110,
+      "name": "InternalServerError"
+    },
+    "InvalidReportDate": {
+      "id": 1111,
+      "name": "InvalidReportDate"
+    },
+    "ReportNotAvailable": {
+      "id": 1112,
+      "name": "ReportNotAvailable"
+    },
+    "DatabaseThroughputExceeded": {
+      "id": 1113,
+      "name": "DatabaseThroughputExceeded"
+    },
+    "InvalidGameTicket": {
+      "id": 1115,
+      "name": "InvalidGameTicket"
+    },
+    "ExpiredGameTicket": {
+      "id": 1116,
+      "name": "ExpiredGameTicket"
+    },
+    "GameTicketDoesNotMatchLobby": {
+      "id": 1117,
+      "name": "GameTicketDoesNotMatchLobby"
+    },
+    "LinkedDeviceAlreadyClaimed": {
+      "id": 1118,
+      "name": "LinkedDeviceAlreadyClaimed"
+    },
+    "DeviceAlreadyLinked": {
+      "id": 1119,
+      "name": "DeviceAlreadyLinked"
+    },
+    "DeviceNotLinked": {
+      "id": 1120,
+      "name": "DeviceNotLinked"
+    },
+    "PartialFailure": {
+      "id": 1121,
+      "name": "PartialFailure"
+    },
+    "PublisherNotSet": {
+      "id": 1122,
+      "name": "PublisherNotSet"
+    },
+    "ServiceUnavailable": {
+      "id": 1123,
+      "name": "ServiceUnavailable"
+    },
+    "VersionNotFound": {
+      "id": 1124,
+      "name": "VersionNotFound"
+    },
+    "RevisionNotFound": {
+      "id": 1125,
+      "name": "RevisionNotFound"
+    },
+    "InvalidPublisherId": {
+      "id": 1126,
+      "name": "InvalidPublisherId"
+    },
+    "DownstreamServiceUnavailable": {
+      "id": 1127,
+      "name": "DownstreamServiceUnavailable"
+    },
+    "APINotIncludedInTitleUsageTier": {
+      "id": 1128,
+      "name": "APINotIncludedInTitleUsageTier"
+    },
+    "DAULimitExceeded": {
+      "id": 1129,
+      "name": "DAULimitExceeded"
+    },
+    "APIRequestLimitExceeded": {
+      "id": 1130,
+      "name": "APIRequestLimitExceeded"
+    },
+    "InvalidAPIEndpoint": {
+      "id": 1131,
+      "name": "InvalidAPIEndpoint"
+    },
+    "BuildNotAvailable": {
+      "id": 1132,
+      "name": "BuildNotAvailable"
+    },
+    "ConcurrentEditError": {
+      "id": 1133,
+      "name": "ConcurrentEditError"
+    },
+    "ContentNotFound": {
+      "id": 1134,
+      "name": "ContentNotFound"
+    },
+    "CharacterNotFound": {
+      "id": 1135,
+      "name": "CharacterNotFound"
+    },
+    "CloudScriptNotFound": {
+      "id": 1136,
+      "name": "CloudScriptNotFound"
+    },
+    "ContentQuotaExceeded": {
+      "id": 1137,
+      "name": "ContentQuotaExceeded"
+    },
+    "InvalidCharacterStatistics": {
+      "id": 1138,
+      "name": "InvalidCharacterStatistics"
+    },
+    "PhotonNotEnabledForTitle": {
+      "id": 1139,
+      "name": "PhotonNotEnabledForTitle"
+    },
+    "PhotonApplicationNotFound": {
+      "id": 1140,
+      "name": "PhotonApplicationNotFound"
+    },
+    "PhotonApplicationNotAssociatedWithTitle": {
+      "id": 1141,
+      "name": "PhotonApplicationNotAssociatedWithTitle"
+    },
+    "InvalidEmailOrPassword": {
+      "id": 1142,
+      "name": "InvalidEmailOrPassword"
+    },
+    "FacebookAPIError": {
+      "id": 1143,
+      "name": "FacebookAPIError"
+    },
+    "InvalidContentType": {
+      "id": 1144,
+      "name": "InvalidContentType"
+    },
+    "KeyLengthExceeded": {
+      "id": 1145,
+      "name": "KeyLengthExceeded"
+    },
+    "DataLengthExceeded": {
+      "id": 1146,
+      "name": "DataLengthExceeded"
+    },
+    "TooManyKeys": {
+      "id": 1147,
+      "name": "TooManyKeys"
+    },
+    "FreeTierCannotHaveVirtualCurrency": {
+      "id": 1148,
+      "name": "FreeTierCannotHaveVirtualCurrency"
+    },
+    "MissingAmazonSharedKey": {
+      "id": 1149,
+      "name": "MissingAmazonSharedKey"
+    },
+    "AmazonValidationError": {
+      "id": 1150,
+      "name": "AmazonValidationError"
+    },
+    "InvalidPSNIssuerId": {
+      "id": 1151,
+      "name": "InvalidPSNIssuerId"
+    },
+    "PSNInaccessible": {
+      "id": 1152,
+      "name": "PSNInaccessible"
+    },
+    "ExpiredAuthToken": {
+      "id": 1153,
+      "name": "ExpiredAuthToken"
+    },
+    "FailedToGetEntitlements": {
+      "id": 1154,
+      "name": "FailedToGetEntitlements"
+    },
+    "FailedToConsumeEntitlement": {
+      "id": 1155,
+      "name": "FailedToConsumeEntitlement"
+    },
+    "TradeAcceptingUserNotAllowed": {
+      "id": 1156,
+      "name": "TradeAcceptingUserNotAllowed"
+    },
+    "TradeInventoryItemIsAssignedToCharacter": {
+      "id": 1157,
+      "name": "TradeInventoryItemIsAssignedToCharacter"
+    },
+    "TradeInventoryItemIsBundle": {
+      "id": 1158,
+      "name": "TradeInventoryItemIsBundle"
+    },
+    "TradeStatusNotValidForCancelling": {
+      "id": 1159,
+      "name": "TradeStatusNotValidForCancelling"
+    },
+    "TradeStatusNotValidForAccepting": {
+      "id": 1160,
+      "name": "TradeStatusNotValidForAccepting"
+    },
+    "TradeDoesNotExist": {
+      "id": 1161,
+      "name": "TradeDoesNotExist"
+    },
+    "TradeCancelled": {
+      "id": 1162,
+      "name": "TradeCancelled"
+    },
+    "TradeAlreadyFilled": {
+      "id": 1163,
+      "name": "TradeAlreadyFilled"
+    },
+    "TradeWaitForStatusTimeout": {
+      "id": 1164,
+      "name": "TradeWaitForStatusTimeout"
+    },
+    "TradeInventoryItemExpired": {
+      "id": 1165,
+      "name": "TradeInventoryItemExpired"
+    },
+    "TradeMissingOfferedAndAcceptedItems": {
+      "id": 1166,
+      "name": "TradeMissingOfferedAndAcceptedItems"
+    },
+    "TradeAcceptedItemIsBundle": {
+      "id": 1167,
+      "name": "TradeAcceptedItemIsBundle"
+    },
+    "TradeAcceptedItemIsStackable": {
+      "id": 1168,
+      "name": "TradeAcceptedItemIsStackable"
+    },
+    "TradeInventoryItemInvalidStatus": {
+      "id": 1169,
+      "name": "TradeInventoryItemInvalidStatus"
+    },
+    "TradeAcceptedCatalogItemInvalid": {
+      "id": 1170,
+      "name": "TradeAcceptedCatalogItemInvalid"
+    },
+    "TradeAllowedUsersInvalid": {
+      "id": 1171,
+      "name": "TradeAllowedUsersInvalid"
+    },
+    "TradeInventoryItemDoesNotExist": {
+      "id": 1172,
+      "name": "TradeInventoryItemDoesNotExist"
+    },
+    "TradeInventoryItemIsConsumed": {
+      "id": 1173,
+      "name": "TradeInventoryItemIsConsumed"
+    },
+    "TradeInventoryItemIsStackable": {
+      "id": 1174,
+      "name": "TradeInventoryItemIsStackable"
+    },
+    "TradeAcceptedItemsMismatch": {
+      "id": 1175,
+      "name": "TradeAcceptedItemsMismatch"
+    },
+    "InvalidKongregateToken": {
+      "id": 1176,
+      "name": "InvalidKongregateToken"
+    },
+    "FeatureNotConfiguredForTitle": {
+      "id": 1177,
+      "name": "FeatureNotConfiguredForTitle"
+    },
+    "NoMatchingCatalogItemForReceipt": {
+      "id": 1178,
+      "name": "NoMatchingCatalogItemForReceipt"
+    },
+    "InvalidCurrencyCode": {
+      "id": 1179,
+      "name": "InvalidCurrencyCode"
+    },
+    "NoRealMoneyPriceForCatalogItem": {
+      "id": 1180,
+      "name": "NoRealMoneyPriceForCatalogItem"
+    },
+    "TradeInventoryItemIsNotTradable": {
+      "id": 1181,
+      "name": "TradeInventoryItemIsNotTradable"
+    },
+    "TradeAcceptedCatalogItemIsNotTradable": {
+      "id": 1182,
+      "name": "TradeAcceptedCatalogItemIsNotTradable"
+    },
+    "UsersAlreadyFriends": {
+      "id": 1183,
+      "name": "UsersAlreadyFriends"
+    },
+    "LinkedIdentifierAlreadyClaimed": {
+      "id": 1184,
+      "name": "LinkedIdentifierAlreadyClaimed"
+    },
+    "CustomIdNotLinked": {
+      "id": 1185,
+      "name": "CustomIdNotLinked"
+    },
+    "TotalDataSizeExceeded": {
+      "id": 1186,
+      "name": "TotalDataSizeExceeded"
+    },
+    "DeleteKeyConflict": {
+      "id": 1187,
+      "name": "DeleteKeyConflict"
+    },
+    "InvalidXboxLiveToken": {
+      "id": 1188,
+      "name": "InvalidXboxLiveToken"
+    },
+    "ExpiredXboxLiveToken": {
+      "id": 1189,
+      "name": "ExpiredXboxLiveToken"
+    },
+    "ResettableStatisticVersionRequired": {
+      "id": 1190,
+      "name": "ResettableStatisticVersionRequired"
+    },
+    "NotAuthorizedByTitle": {
+      "id": 1191,
+      "name": "NotAuthorizedByTitle"
+    },
+    "NoPartnerEnabled": {
+      "id": 1192,
+      "name": "NoPartnerEnabled"
+    },
+    "InvalidPartnerResponse": {
+      "id": 1193,
+      "name": "InvalidPartnerResponse"
+    },
+    "APINotEnabledForGameServerAccess": {
+      "id": 1194,
+      "name": "APINotEnabledForGameServerAccess"
+    },
+    "StatisticNotFound": {
+      "id": 1195,
+      "name": "StatisticNotFound"
+    },
+    "StatisticNameConflict": {
+      "id": 1196,
+      "name": "StatisticNameConflict"
+    },
+    "StatisticVersionClosedForWrites": {
+      "id": 1197,
+      "name": "StatisticVersionClosedForWrites"
+    },
+    "StatisticVersionInvalid": {
+      "id": 1198,
+      "name": "StatisticVersionInvalid"
+    },
+    "APIClientRequestRateLimitExceeded": {
+      "id": 1199,
+      "name": "APIClientRequestRateLimitExceeded"
+    },
+    "InvalidJSONContent": {
+      "id": 1200,
+      "name": "InvalidJSONContent"
+    },
+    "InvalidDropTable": {
+      "id": 1201,
+      "name": "InvalidDropTable"
+    },
+    "StatisticVersionAlreadyIncrementedForScheduledInterval": {
+      "id": 1202,
+      "name": "StatisticVersionAlreadyIncrementedForScheduledInterval"
+    },
+    "StatisticCountLimitExceeded": {
+      "id": 1203,
+      "name": "StatisticCountLimitExceeded"
+    },
+    "StatisticVersionIncrementRateExceeded": {
+      "id": 1204,
+      "name": "StatisticVersionIncrementRateExceeded"
+    },
+    "ContainerKeyInvalid": {
+      "id": 1205,
+      "name": "ContainerKeyInvalid"
+    },
+    "CloudScriptExecutionTimeLimitExceeded": {
+      "id": 1206,
+      "name": "CloudScriptExecutionTimeLimitExceeded"
+    },
+    "NoWritePermissionsForEvent": {
+      "id": 1207,
+      "name": "NoWritePermissionsForEvent"
+    },
+    "CloudScriptFunctionArgumentSizeExceeded": {
+      "id": 1208,
+      "name": "CloudScriptFunctionArgumentSizeExceeded"
+    },
+    "CloudScriptAPIRequestCountExceeded": {
+      "id": 1209,
+      "name": "CloudScriptAPIRequestCountExceeded"
+    },
+    "CloudScriptAPIRequestError": {
+      "id": 1210,
+      "name": "CloudScriptAPIRequestError"
+    },
+    "CloudScriptHTTPRequestError": {
+      "id": 1211,
+      "name": "CloudScriptHTTPRequestError"
+    },
+    "InsufficientGuildRole": {
+      "id": 1212,
+      "name": "InsufficientGuildRole"
+    },
+    "GuildNotFound": {
+      "id": 1213,
+      "name": "GuildNotFound"
+    },
+    "OverLimit": {
+      "id": 1214,
+      "name": "OverLimit"
+    },
+    "EventNotFound": {
+      "id": 1215,
+      "name": "EventNotFound"
+    },
+    "InvalidEventField": {
+      "id": 1216,
+      "name": "InvalidEventField"
+    },
+    "InvalidEventName": {
+      "id": 1217,
+      "name": "InvalidEventName"
+    },
+    "CatalogNotConfigured": {
+      "id": 1218,
+      "name": "CatalogNotConfigured"
+    },
+    "OperationNotSupportedForPlatform": {
+      "id": 1219,
+      "name": "OperationNotSupportedForPlatform"
+    },
+    "SegmentNotFound": {
+      "id": 1220,
+      "name": "SegmentNotFound"
+    },
+    "StoreNotFound": {
+      "id": 1221,
+      "name": "StoreNotFound"
+    },
+    "InvalidStatisticName": {
+      "id": 1222,
+      "name": "InvalidStatisticName"
+    },
+    "TitleNotQualifiedForLimit": {
+      "id": 1223,
+      "name": "TitleNotQualifiedForLimit"
+    },
+    "InvalidServiceLimitLevel": {
+      "id": 1224,
+      "name": "InvalidServiceLimitLevel"
+    },
+    "ServiceLimitLevelInTransition": {
+      "id": 1225,
+      "name": "ServiceLimitLevelInTransition"
+    },
+    "CouponAlreadyRedeemed": {
+      "id": 1226,
+      "name": "CouponAlreadyRedeemed"
+    },
+    "GameServerBuildSizeLimitExceeded": {
+      "id": 1227,
+      "name": "GameServerBuildSizeLimitExceeded"
+    },
+    "GameServerBuildCountLimitExceeded": {
+      "id": 1228,
+      "name": "GameServerBuildCountLimitExceeded"
+    },
+    "VirtualCurrencyCountLimitExceeded": {
+      "id": 1229,
+      "name": "VirtualCurrencyCountLimitExceeded"
+    },
+    "VirtualCurrencyCodeExists": {
+      "id": 1230,
+      "name": "VirtualCurrencyCodeExists"
+    },
+    "TitleNewsItemCountLimitExceeded": {
+      "id": 1231,
+      "name": "TitleNewsItemCountLimitExceeded"
+    },
+    "InvalidTwitchToken": {
+      "id": 1232,
+      "name": "InvalidTwitchToken"
+    },
+    "TwitchResponseError": {
+      "id": 1233,
+      "name": "TwitchResponseError"
+    },
+    "ProfaneDisplayName": {
+      "id": 1234,
+      "name": "ProfaneDisplayName"
+    },
+    "UserAlreadyAdded": {
+      "id": 1235,
+      "name": "UserAlreadyAdded"
+    },
+    "InvalidVirtualCurrencyCode": {
+      "id": 1236,
+      "name": "InvalidVirtualCurrencyCode"
+    },
+    "VirtualCurrencyCannotBeDeleted": {
+      "id": 1237,
+      "name": "VirtualCurrencyCannotBeDeleted"
+    },
+    "IdentifierAlreadyClaimed": {
+      "id": 1238,
+      "name": "IdentifierAlreadyClaimed"
+    },
+    "IdentifierNotLinked": {
+      "id": 1239,
+      "name": "IdentifierNotLinked"
+    },
+    "InvalidContinuationToken": {
+      "id": 1240,
+      "name": "InvalidContinuationToken"
+    },
+    "ExpiredContinuationToken": {
+      "id": 1241,
+      "name": "ExpiredContinuationToken"
+    },
+    "InvalidSegment": {
+      "id": 1242,
+      "name": "InvalidSegment"
+    },
+    "InvalidSessionId": {
+      "id": 1243,
+      "name": "InvalidSessionId"
+    },
+    "SessionLogNotFound": {
+      "id": 1244,
+      "name": "SessionLogNotFound"
+    },
+    "InvalidSearchTerm": {
+      "id": 1245,
+      "name": "InvalidSearchTerm"
+    },
+    "TwoFactorAuthenticationTokenRequired": {
+      "id": 1246,
+      "name": "TwoFactorAuthenticationTokenRequired"
+    },
+    "GameServerHostCountLimitExceeded": {
+      "id": 1247,
+      "name": "GameServerHostCountLimitExceeded"
+    },
+    "PlayerTagCountLimitExceeded": {
+      "id": 1248,
+      "name": "PlayerTagCountLimitExceeded"
+    },
+    "RequestAlreadyRunning": {
+      "id": 1249,
+      "name": "RequestAlreadyRunning"
+    },
+    "ActionGroupNotFound": {
+      "id": 1250,
+      "name": "ActionGroupNotFound"
+    },
+    "MaximumSegmentBulkActionJobsRunning": {
+      "id": 1251,
+      "name": "MaximumSegmentBulkActionJobsRunning"
+    },
+    "NoActionsOnPlayersInSegmentJob": {
+      "id": 1252,
+      "name": "NoActionsOnPlayersInSegmentJob"
+    },
+    "DuplicateStatisticName": {
+      "id": 1253,
+      "name": "DuplicateStatisticName"
+    },
+    "ScheduledTaskNameConflict": {
+      "id": 1254,
+      "name": "ScheduledTaskNameConflict"
+    },
+    "ScheduledTaskCreateConflict": {
+      "id": 1255,
+      "name": "ScheduledTaskCreateConflict"
+    },
+    "InvalidScheduledTaskName": {
+      "id": 1256,
+      "name": "InvalidScheduledTaskName"
+    },
+    "InvalidTaskSchedule": {
+      "id": 1257,
+      "name": "InvalidTaskSchedule"
+    },
+    "SteamNotEnabledForTitle": {
+      "id": 1258,
+      "name": "SteamNotEnabledForTitle"
+    },
+    "LimitNotAnUpgradeOption": {
+      "id": 1259,
+      "name": "LimitNotAnUpgradeOption"
+    },
+    "NoSecretKeyEnabledForCloudScript": {
+      "id": 1260,
+      "name": "NoSecretKeyEnabledForCloudScript"
+    },
+    "TaskNotFound": {
+      "id": 1261,
+      "name": "TaskNotFound"
+    },
+    "TaskInstanceNotFound": {
+      "id": 1262,
+      "name": "TaskInstanceNotFound"
+    },
+    "InvalidIdentityProviderId": {
+      "id": 1263,
+      "name": "InvalidIdentityProviderId"
+    },
+    "MisconfiguredIdentityProvider": {
+      "id": 1264,
+      "name": "MisconfiguredIdentityProvider"
+    },
+    "InvalidScheduledTaskType": {
+      "id": 1265,
+      "name": "InvalidScheduledTaskType"
+    },
+    "BillingInformationRequired": {
+      "id": 1266,
+      "name": "BillingInformationRequired"
+    },
+    "LimitedEditionItemUnavailable": {
+      "id": 1267,
+      "name": "LimitedEditionItemUnavailable"
+    },
+    "InvalidAdPlacementAndReward": {
+      "id": 1268,
+      "name": "InvalidAdPlacementAndReward"
+    },
+    "AllAdPlacementViewsAlreadyConsumed": {
+      "id": 1269,
+      "name": "AllAdPlacementViewsAlreadyConsumed"
+    },
+    "GoogleOAuthNotConfiguredForTitle": {
+      "id": 1270,
+      "name": "GoogleOAuthNotConfiguredForTitle"
+    },
+    "GoogleOAuthError": {
+      "id": 1271,
+      "name": "GoogleOAuthError"
+    },
+    "UserNotFriend": {
+      "id": 1272,
+      "name": "UserNotFriend"
+    },
+    "InvalidSignature": {
+      "id": 1273,
+      "name": "InvalidSignature"
+    },
+    "InvalidPublicKey": {
+      "id": 1274,
+      "name": "InvalidPublicKey"
+    },
+    "GoogleOAuthNoIdTokenIncludedInResponse": {
+      "id": 1275,
+      "name": "GoogleOAuthNoIdTokenIncludedInResponse"
+    },
+    "StatisticUpdateInProgress": {
+      "id": 1276,
+      "name": "StatisticUpdateInProgress"
+    },
+    "LeaderboardVersionNotAvailable": {
+      "id": 1277,
+      "name": "LeaderboardVersionNotAvailable"
+    },
+    "StatisticAlreadyHasPrizeTable": {
+      "id": 1279,
+      "name": "StatisticAlreadyHasPrizeTable"
+    },
+    "PrizeTableHasOverlappingRanks": {
+      "id": 1280,
+      "name": "PrizeTableHasOverlappingRanks"
+    },
+    "PrizeTableHasMissingRanks": {
+      "id": 1281,
+      "name": "PrizeTableHasMissingRanks"
+    },
+    "PrizeTableRankStartsAtZero": {
+      "id": 1282,
+      "name": "PrizeTableRankStartsAtZero"
+    },
+    "InvalidStatistic": {
+      "id": 1283,
+      "name": "InvalidStatistic"
+    },
+    "ExpressionParseFailure": {
+      "id": 1284,
+      "name": "ExpressionParseFailure"
+    },
+    "ExpressionInvokeFailure": {
+      "id": 1285,
+      "name": "ExpressionInvokeFailure"
+    },
+    "ExpressionTooLong": {
+      "id": 1286,
+      "name": "ExpressionTooLong"
+    },
+    "DataUpdateRateExceeded": {
+      "id": 1287,
+      "name": "DataUpdateRateExceeded"
+    },
+    "RestrictedEmailDomain": {
+      "id": 1288,
+      "name": "RestrictedEmailDomain"
+    },
+    "EncryptionKeyDisabled": {
+      "id": 1289,
+      "name": "EncryptionKeyDisabled"
+    },
+    "EncryptionKeyMissing": {
+      "id": 1290,
+      "name": "EncryptionKeyMissing"
+    },
+    "EncryptionKeyBroken": {
+      "id": 1291,
+      "name": "EncryptionKeyBroken"
+    },
+    "NoSharedSecretKeyConfigured": {
+      "id": 1292,
+      "name": "NoSharedSecretKeyConfigured"
+    },
+    "SecretKeyNotFound": {
+      "id": 1293,
+      "name": "SecretKeyNotFound"
+    },
+    "PlayerSecretAlreadyConfigured": {
+      "id": 1294,
+      "name": "PlayerSecretAlreadyConfigured"
+    },
+    "APIRequestsDisabledForTitle": {
+      "id": 1295,
+      "name": "APIRequestsDisabledForTitle"
+    },
+    "InvalidSharedSecretKey": {
+      "id": 1296,
+      "name": "InvalidSharedSecretKey"
+    },
+    "PrizeTableHasNoRanks": {
+      "id": 1297,
+      "name": "PrizeTableHasNoRanks"
+    },
+    "ProfileDoesNotExist": {
+      "id": 1298,
+      "name": "ProfileDoesNotExist"
+    },
+    "ContentS3OriginBucketNotConfigured": {
+      "id": 1299,
+      "name": "ContentS3OriginBucketNotConfigured"
+    },
+    "InvalidEnvironmentForReceipt": {
+      "id": 1300,
+      "name": "InvalidEnvironmentForReceipt"
+    },
+    "EncryptedRequestNotAllowed": {
+      "id": 1301,
+      "name": "EncryptedRequestNotAllowed"
+    },
+    "SignedRequestNotAllowed": {
+      "id": 1302,
+      "name": "SignedRequestNotAllowed"
+    },
+    "RequestViewConstraintParamsNotAllowed": {
+      "id": 1303,
+      "name": "RequestViewConstraintParamsNotAllowed"
+    },
+    "BadPartnerConfiguration": {
+      "id": 1304,
+      "name": "BadPartnerConfiguration"
+    },
+    "XboxBPCertificateFailure": {
+      "id": 1305,
+      "name": "XboxBPCertificateFailure"
+    },
+    "XboxXASSExchangeFailure": {
+      "id": 1306,
+      "name": "XboxXASSExchangeFailure"
+    },
+    "InvalidEntityId": {
+      "id": 1307,
+      "name": "InvalidEntityId"
+    },
+    "StatisticValueAggregationOverflow": {
+      "id": 1308,
+      "name": "StatisticValueAggregationOverflow"
+    },
+    "EmailMessageFromAddressIsMissing": {
+      "id": 1309,
+      "name": "EmailMessageFromAddressIsMissing"
+    },
+    "EmailMessageToAddressIsMissing": {
+      "id": 1310,
+      "name": "EmailMessageToAddressIsMissing"
+    },
+    "SmtpServerAuthenticationError": {
+      "id": 1311,
+      "name": "SmtpServerAuthenticationError"
+    },
+    "SmtpServerLimitExceeded": {
+      "id": 1312,
+      "name": "SmtpServerLimitExceeded"
+    },
+    "SmtpServerInsufficientStorage": {
+      "id": 1313,
+      "name": "SmtpServerInsufficientStorage"
+    },
+    "SmtpServerCommunicationError": {
+      "id": 1314,
+      "name": "SmtpServerCommunicationError"
+    },
+    "SmtpServerGeneralFailure": {
+      "id": 1315,
+      "name": "SmtpServerGeneralFailure"
+    },
+    "EmailClientTimeout": {
+      "id": 1316,
+      "name": "EmailClientTimeout"
+    },
+    "EmailClientCanceledTask": {
+      "id": 1317,
+      "name": "EmailClientCanceledTask"
+    },
+    "EmailTemplateMissing": {
+      "id": 1318,
+      "name": "EmailTemplateMissing"
+    },
+    "InvalidHostForTitleId": {
+      "id": 1319,
+      "name": "InvalidHostForTitleId"
+    },
+    "EmailConfirmationTokenDoesNotExist": {
+      "id": 1320,
+      "name": "EmailConfirmationTokenDoesNotExist"
+    },
+    "EmailConfirmationTokenExpired": {
+      "id": 1321,
+      "name": "EmailConfirmationTokenExpired"
+    },
+    "AccountDeleted": {
+      "id": 1322,
+      "name": "AccountDeleted"
+    },
+    "PlayerSecretNotConfigured": {
+      "id": 1323,
+      "name": "PlayerSecretNotConfigured"
+    },
+    "InvalidSignatureTime": {
+      "id": 1324,
+      "name": "InvalidSignatureTime"
+    },
+    "NoContactEmailAddressFound": {
+      "id": 1325,
+      "name": "NoContactEmailAddressFound"
+    },
+    "InvalidAuthToken": {
+      "id": 1326,
+      "name": "InvalidAuthToken"
+    },
+    "AuthTokenDoesNotExist": {
+      "id": 1327,
+      "name": "AuthTokenDoesNotExist"
+    },
+    "AuthTokenExpired": {
+      "id": 1328,
+      "name": "AuthTokenExpired"
+    },
+    "AuthTokenAlreadyUsedToResetPassword": {
+      "id": 1329,
+      "name": "AuthTokenAlreadyUsedToResetPassword"
+    },
+    "MembershipNameTooLong": {
+      "id": 1330,
+      "name": "MembershipNameTooLong"
+    },
+    "MembershipNotFound": {
+      "id": 1331,
+      "name": "MembershipNotFound"
+    },
+    "GoogleServiceAccountInvalid": {
+      "id": 1332,
+      "name": "GoogleServiceAccountInvalid"
+    },
+    "GoogleServiceAccountParseFailure": {
+      "id": 1333,
+      "name": "GoogleServiceAccountParseFailure"
+    },
+    "EntityTokenMissing": {
+      "id": 1334,
+      "name": "EntityTokenMissing"
+    },
+    "EntityTokenInvalid": {
+      "id": 1335,
+      "name": "EntityTokenInvalid"
+    },
+    "EntityTokenExpired": {
+      "id": 1336,
+      "name": "EntityTokenExpired"
+    },
+    "EntityTokenRevoked": {
+      "id": 1337,
+      "name": "EntityTokenRevoked"
+    },
+    "InvalidProductForSubscription": {
+      "id": 1338,
+      "name": "InvalidProductForSubscription"
+    },
+    "XboxInaccessible": {
+      "id": 1339,
+      "name": "XboxInaccessible"
+    },
+    "SubscriptionAlreadyTaken": {
+      "id": 1340,
+      "name": "SubscriptionAlreadyTaken"
+    },
+    "SmtpAddonNotEnabled": {
+      "id": 1341,
+      "name": "SmtpAddonNotEnabled"
+    },
+    "APIConcurrentRequestLimitExceeded": {
+      "id": 1342,
+      "name": "APIConcurrentRequestLimitExceeded"
+    },
+    "XboxRejectedXSTSExchangeRequest": {
+      "id": 1343,
+      "name": "XboxRejectedXSTSExchangeRequest"
+    },
+    "VariableNotDefined": {
+      "id": 1344,
+      "name": "VariableNotDefined"
+    },
+    "TemplateVersionNotDefined": {
+      "id": 1345,
+      "name": "TemplateVersionNotDefined"
+    },
+    "FileTooLarge": {
+      "id": 1346,
+      "name": "FileTooLarge"
+    },
+    "TitleDeleted": {
+      "id": 1347,
+      "name": "TitleDeleted"
+    },
+    "TitleContainsUserAccounts": {
+      "id": 1348,
+      "name": "TitleContainsUserAccounts"
+    },
+    "TitleDeletionPlayerCleanupFailure": {
+      "id": 1349,
+      "name": "TitleDeletionPlayerCleanupFailure"
+    },
+    "EntityFileOperationPending": {
+      "id": 1350,
+      "name": "EntityFileOperationPending"
+    },
+    "NoEntityFileOperationPending": {
+      "id": 1351,
+      "name": "NoEntityFileOperationPending"
+    },
+    "EntityProfileVersionMismatch": {
+      "id": 1352,
+      "name": "EntityProfileVersionMismatch"
+    },
+    "TemplateVersionTooOld": {
+      "id": 1353,
+      "name": "TemplateVersionTooOld"
+    },
+    "MembershipDefinitionInUse": {
+      "id": 1354,
+      "name": "MembershipDefinitionInUse"
+    },
+    "PaymentPageNotConfigured": {
+      "id": 1355,
+      "name": "PaymentPageNotConfigured"
+    },
+    "FailedLoginAttemptRateLimitExceeded": {
+      "id": 1356,
+      "name": "FailedLoginAttemptRateLimitExceeded"
+    },
+    "EntityBlockedByGroup": {
+      "id": 1357,
+      "name": "EntityBlockedByGroup"
+    },
+    "RoleDoesNotExist": {
+      "id": 1358,
+      "name": "RoleDoesNotExist"
+    },
+    "EntityIsAlreadyMember": {
+      "id": 1359,
+      "name": "EntityIsAlreadyMember"
+    },
+    "DuplicateRoleId": {
+      "id": 1360,
+      "name": "DuplicateRoleId"
+    },
+    "GroupInvitationNotFound": {
+      "id": 1361,
+      "name": "GroupInvitationNotFound"
+    },
+    "GroupApplicationNotFound": {
+      "id": 1362,
+      "name": "GroupApplicationNotFound"
+    },
+    "OutstandingInvitationAcceptedInstead": {
+      "id": 1363,
+      "name": "OutstandingInvitationAcceptedInstead"
+    },
+    "OutstandingApplicationAcceptedInstead": {
+      "id": 1364,
+      "name": "OutstandingApplicationAcceptedInstead"
+    },
+    "RoleIsGroupDefaultMember": {
+      "id": 1365,
+      "name": "RoleIsGroupDefaultMember"
+    },
+    "RoleIsGroupAdmin": {
+      "id": 1366,
+      "name": "RoleIsGroupAdmin"
+    },
+    "RoleNameNotAvailable": {
+      "id": 1367,
+      "name": "RoleNameNotAvailable"
+    },
+    "GroupNameNotAvailable": {
+      "id": 1368,
+      "name": "GroupNameNotAvailable"
+    },
+    "EmailReportAlreadySent": {
+      "id": 1369,
+      "name": "EmailReportAlreadySent"
+    },
+    "EmailReportRecipientBlacklisted": {
+      "id": 1370,
+      "name": "EmailReportRecipientBlacklisted"
+    },
+    "EventNamespaceNotAllowed": {
+      "id": 1371,
+      "name": "EventNamespaceNotAllowed"
+    },
+    "EventEntityNotAllowed": {
+      "id": 1372,
+      "name": "EventEntityNotAllowed"
+    },
+    "InvalidEntityType": {
+      "id": 1373,
+      "name": "InvalidEntityType"
+    },
+    "NullTokenResultFromAad": {
+      "id": 1374,
+      "name": "NullTokenResultFromAad"
+    },
+    "InvalidTokenResultFromAad": {
+      "id": 1375,
+      "name": "InvalidTokenResultFromAad"
+    },
+    "NoValidCertificateForAad": {
+      "id": 1376,
+      "name": "NoValidCertificateForAad"
+    },
+    "InvalidCertificateForAad": {
+      "id": 1377,
+      "name": "InvalidCertificateForAad"
+    },
+    "DuplicateDropTableId": {
+      "id": 1378,
+      "name": "DuplicateDropTableId"
+    },
+    "MultiplayerServerError": {
+      "id": 1379,
+      "name": "MultiplayerServerError"
+    },
+    "MultiplayerServerTooManyRequests": {
+      "id": 1380,
+      "name": "MultiplayerServerTooManyRequests"
+    },
+    "MultiplayerServerNoContent": {
+      "id": 1381,
+      "name": "MultiplayerServerNoContent"
+    },
+    "MultiplayerServerBadRequest": {
+      "id": 1382,
+      "name": "MultiplayerServerBadRequest"
+    },
+    "MultiplayerServerUnauthorized": {
+      "id": 1383,
+      "name": "MultiplayerServerUnauthorized"
+    },
+    "MultiplayerServerForbidden": {
+      "id": 1384,
+      "name": "MultiplayerServerForbidden"
+    },
+    "MultiplayerServerNotFound": {
+      "id": 1385,
+      "name": "MultiplayerServerNotFound"
+    },
+    "MultiplayerServerConflict": {
+      "id": 1386,
+      "name": "MultiplayerServerConflict"
+    },
+    "MultiplayerServerInternalServerError": {
+      "id": 1387,
+      "name": "MultiplayerServerInternalServerError"
+    },
+    "MultiplayerServerUnavailable": {
+      "id": 1388,
+      "name": "MultiplayerServerUnavailable"
+    },
+    "ExplicitContentDetected": {
+      "id": 1389,
+      "name": "ExplicitContentDetected"
+    },
+    "PIIContentDetected": {
+      "id": 1390,
+      "name": "PIIContentDetected"
+    },
+    "InvalidScheduledTaskParameter": {
+      "id": 1391,
+      "name": "InvalidScheduledTaskParameter"
+    },
+    "PerEntityEventRateLimitExceeded": {
+      "id": 1392,
+      "name": "PerEntityEventRateLimitExceeded"
+    },
+    "TitleDefaultLanguageNotSet": {
+      "id": 1393,
+      "name": "TitleDefaultLanguageNotSet"
+    },
+    "EmailTemplateMissingDefaultVersion": {
+      "id": 1394,
+      "name": "EmailTemplateMissingDefaultVersion"
+    },
+    "FacebookInstantGamesIdNotLinked": {
+      "id": 1395,
+      "name": "FacebookInstantGamesIdNotLinked"
+    },
+    "InvalidFacebookInstantGamesSignature": {
+      "id": 1396,
+      "name": "InvalidFacebookInstantGamesSignature"
+    },
+    "FacebookInstantGamesAuthNotConfiguredForTitle": {
+      "id": 1397,
+      "name": "FacebookInstantGamesAuthNotConfiguredForTitle"
+    },
+    "EntityProfileConstraintValidationFailed": {
+      "id": 1398,
+      "name": "EntityProfileConstraintValidationFailed"
+    },
+    "TelemetryIngestionKeyPending": {
+      "id": 1399,
+      "name": "TelemetryIngestionKeyPending"
+    },
+    "TelemetryIngestionKeyNotFound": {
+      "id": 1400,
+      "name": "TelemetryIngestionKeyNotFound"
+    },
+    "StatisticChildNameInvalid": {
+      "id": 1402,
+      "name": "StatisticChildNameInvalid"
+    },
+    "DataIntegrityError": {
+      "id": 1403,
+      "name": "DataIntegrityError"
+    },
+    "VirtualCurrencyCannotBeSetToOlderVersion": {
+      "id": 1404,
+      "name": "VirtualCurrencyCannotBeSetToOlderVersion"
+    },
+    "VirtualCurrencyMustBeWithinIntegerRange": {
+      "id": 1405,
+      "name": "VirtualCurrencyMustBeWithinIntegerRange"
+    },
+    "EmailTemplateInvalidSyntax": {
+      "id": 1406,
+      "name": "EmailTemplateInvalidSyntax"
+    },
+    "EmailTemplateMissingCallback": {
+      "id": 1407,
+      "name": "EmailTemplateMissingCallback"
+    },
+    "PushNotificationTemplateInvalidPayload": {
+      "id": 1408,
+      "name": "PushNotificationTemplateInvalidPayload"
+    },
+    "InvalidLocalizedPushNotificationLanguage": {
+      "id": 1409,
+      "name": "InvalidLocalizedPushNotificationLanguage"
+    },
+    "MissingLocalizedPushNotificationMessage": {
+      "id": 1410,
+      "name": "MissingLocalizedPushNotificationMessage"
+    },
+    "PushNotificationTemplateMissingPlatformPayload": {
+      "id": 1411,
+      "name": "PushNotificationTemplateMissingPlatformPayload"
+    },
+    "PushNotificationTemplatePayloadContainsInvalidJson": {
+      "id": 1412,
+      "name": "PushNotificationTemplatePayloadContainsInvalidJson"
+    },
+    "PushNotificationTemplateContainsInvalidIosPayload": {
+      "id": 1413,
+      "name": "PushNotificationTemplateContainsInvalidIosPayload"
+    },
+    "PushNotificationTemplateContainsInvalidAndroidPayload": {
+      "id": 1414,
+      "name": "PushNotificationTemplateContainsInvalidAndroidPayload"
+    },
+    "PushNotificationTemplateIosPayloadMissingNotificationBody": {
+      "id": 1415,
+      "name": "PushNotificationTemplateIosPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateAndroidPayloadMissingNotificationBody": {
+      "id": 1416,
+      "name": "PushNotificationTemplateAndroidPayloadMissingNotificationBody"
+    },
+    "PushNotificationTemplateNotFound": {
+      "id": 1417,
+      "name": "PushNotificationTemplateNotFound"
+    },
+    "PushNotificationTemplateMissingDefaultVersion": {
+      "id": 1418,
+      "name": "PushNotificationTemplateMissingDefaultVersion"
+    },
+    "PushNotificationTemplateInvalidSyntax": {
+      "id": 1419,
+      "name": "PushNotificationTemplateInvalidSyntax"
+    },
+    "PushNotificationTemplateNoCustomPayloadForV1": {
+      "id": 1420,
+      "name": "PushNotificationTemplateNoCustomPayloadForV1"
+    },
+    "NoLeaderboardForStatistic": {
+      "id": 1421,
+      "name": "NoLeaderboardForStatistic"
+    },
+    "TitleNewsMissingDefaultLanguage": {
+      "id": 1422,
+      "name": "TitleNewsMissingDefaultLanguage"
+    },
+    "TitleNewsNotFound": {
+      "id": 1423,
+      "name": "TitleNewsNotFound"
+    },
+    "TitleNewsDuplicateLanguage": {
+      "id": 1424,
+      "name": "TitleNewsDuplicateLanguage"
+    },
+    "TitleNewsMissingTitleOrBody": {
+      "id": 1425,
+      "name": "TitleNewsMissingTitleOrBody"
+    },
+    "TitleNewsInvalidLanguage": {
+      "id": 1426,
+      "name": "TitleNewsInvalidLanguage"
+    },
+    "EmailRecipientBlacklisted": {
+      "id": 1427,
+      "name": "EmailRecipientBlacklisted"
+    },
+    "InvalidGameCenterAuthRequest": {
+      "id": 1428,
+      "name": "InvalidGameCenterAuthRequest"
+    },
+    "GameCenterAuthenticationFailed": {
+      "id": 1429,
+      "name": "GameCenterAuthenticationFailed"
+    },
+    "CannotEnablePartiesForTitle": {
+      "id": 1430,
+      "name": "CannotEnablePartiesForTitle"
+    },
+    "PartyError": {
+      "id": 1431,
+      "name": "PartyError"
+    },
+    "PartyRequests": {
+      "id": 1432,
+      "name": "PartyRequests"
+    },
+    "PartyNoContent": {
+      "id": 1433,
+      "name": "PartyNoContent"
+    },
+    "PartyBadRequest": {
+      "id": 1434,
+      "name": "PartyBadRequest"
+    },
+    "PartyUnauthorized": {
+      "id": 1435,
+      "name": "PartyUnauthorized"
+    },
+    "PartyForbidden": {
+      "id": 1436,
+      "name": "PartyForbidden"
+    },
+    "PartyNotFound": {
+      "id": 1437,
+      "name": "PartyNotFound"
+    },
+    "PartyConflict": {
+      "id": 1438,
+      "name": "PartyConflict"
+    },
+    "PartyInternalServerError": {
+      "id": 1439,
+      "name": "PartyInternalServerError"
+    },
+    "PartyUnavailable": {
+      "id": 1440,
+      "name": "PartyUnavailable"
+    },
+    "PartyTooManyRequests": {
+      "id": 1441,
+      "name": "PartyTooManyRequests"
+    },
+    "PushNotificationTemplateMissingName": {
+      "id": 1442,
+      "name": "PushNotificationTemplateMissingName"
+    },
+    "CannotEnableMultiplayerServersForTitle": {
+      "id": 1443,
+      "name": "CannotEnableMultiplayerServersForTitle"
+    },
+    "WriteAttemptedDuringExport": {
+      "id": 1444,
+      "name": "WriteAttemptedDuringExport"
+    },
+    "MultiplayerServerTitleQuotaCoresExceeded": {
+      "id": 1445,
+      "name": "MultiplayerServerTitleQuotaCoresExceeded"
+    },
+    "AutomationRuleNotFound": {
+      "id": 1446,
+      "name": "AutomationRuleNotFound"
+    },
+    "EntityAPIKeyLimitExceeded": {
+      "id": 1447,
+      "name": "EntityAPIKeyLimitExceeded"
+    },
+    "EntityAPIKeyNotFound": {
+      "id": 1448,
+      "name": "EntityAPIKeyNotFound"
+    },
+    "EntityAPIKeyOrSecretInvalid": {
+      "id": 1449,
+      "name": "EntityAPIKeyOrSecretInvalid"
+    },
+    "EconomyServiceUnavailable": {
+      "id": 1450,
+      "name": "EconomyServiceUnavailable"
+    },
+    "EconomyServiceInternalError": {
+      "id": 1451,
+      "name": "EconomyServiceInternalError"
+    },
+    "QueryRateLimitExceeded": {
+      "id": 1452,
+      "name": "QueryRateLimitExceeded"
+    },
+    "EntityAPIKeyCreationDisabledForEntity": {
+      "id": 1453,
+      "name": "EntityAPIKeyCreationDisabledForEntity"
+    },
+    "ForbiddenByEntityPolicy": {
+      "id": 1454,
+      "name": "ForbiddenByEntityPolicy"
+    },
+    "UpdateInventoryRateLimitExceeded": {
+      "id": 1455,
+      "name": "UpdateInventoryRateLimitExceeded"
+    },
+    "StudioCreationRateLimited": {
+      "id": 1456,
+      "name": "StudioCreationRateLimited"
+    },
+    "StudioCreationInProgress": {
+      "id": 1457,
+      "name": "StudioCreationInProgress"
+    },
+    "DuplicateStudioName": {
+      "id": 1458,
+      "name": "DuplicateStudioName"
+    },
+    "StudioNotFound": {
+      "id": 1459,
+      "name": "StudioNotFound"
+    },
+    "StudioDeleted": {
+      "id": 1460,
+      "name": "StudioDeleted"
+    },
+    "StudioDeactivated": {
+      "id": 1461,
+      "name": "StudioDeactivated"
+    },
+    "StudioActivated": {
+      "id": 1462,
+      "name": "StudioActivated"
+    },
+    "TitleCreationRateLimited": {
+      "id": 1463,
+      "name": "TitleCreationRateLimited"
+    },
+    "TitleCreationInProgress": {
+      "id": 1464,
+      "name": "TitleCreationInProgress"
+    },
+    "DuplicateTitleName": {
+      "id": 1465,
+      "name": "DuplicateTitleName"
+    },
+    "TitleActivationRateLimited": {
+      "id": 1466,
+      "name": "TitleActivationRateLimited"
+    },
+    "TitleActivationInProgress": {
+      "id": 1467,
+      "name": "TitleActivationInProgress"
+    },
+    "TitleDeactivated": {
+      "id": 1468,
+      "name": "TitleDeactivated"
+    },
+    "TitleActivated": {
+      "id": 1469,
+      "name": "TitleActivated"
+    },
+    "CloudScriptAzureFunctionsExecutionTimeLimitExceeded": {
+      "id": 1470,
+      "name": "CloudScriptAzureFunctionsExecutionTimeLimitExceeded"
+    },
+    "CloudScriptAzureFunctionsArgumentSizeExceeded": {
+      "id": 1471,
+      "name": "CloudScriptAzureFunctionsArgumentSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsReturnSizeExceeded": {
+      "id": 1472,
+      "name": "CloudScriptAzureFunctionsReturnSizeExceeded"
+    },
+    "CloudScriptAzureFunctionsHTTPRequestError": {
+      "id": 1473,
+      "name": "CloudScriptAzureFunctionsHTTPRequestError"
+    },
+    "VirtualCurrencyBetaGetError": {
+      "id": 1474,
+      "name": "VirtualCurrencyBetaGetError"
+    },
+    "VirtualCurrencyBetaCreateError": {
+      "id": 1475,
+      "name": "VirtualCurrencyBetaCreateError"
+    },
+    "VirtualCurrencyBetaInitialDepositSaveError": {
+      "id": 1476,
+      "name": "VirtualCurrencyBetaInitialDepositSaveError"
+    },
+    "VirtualCurrencyBetaSaveError": {
+      "id": 1477,
+      "name": "VirtualCurrencyBetaSaveError"
+    },
+    "VirtualCurrencyBetaDeleteError": {
+      "id": 1478,
+      "name": "VirtualCurrencyBetaDeleteError"
+    },
+    "VirtualCurrencyBetaRestoreError": {
+      "id": 1479,
+      "name": "VirtualCurrencyBetaRestoreError"
+    },
+    "VirtualCurrencyBetaSaveConflict": {
+      "id": 1480,
+      "name": "VirtualCurrencyBetaSaveConflict"
+    },
+    "VirtualCurrencyBetaUpdateError": {
+      "id": 1481,
+      "name": "VirtualCurrencyBetaUpdateError"
+    },
+    "InsightsManagementDatabaseNotFound": {
+      "id": 1482,
+      "name": "InsightsManagementDatabaseNotFound"
+    },
+    "InsightsManagementOperationNotFound": {
+      "id": 1483,
+      "name": "InsightsManagementOperationNotFound"
+    },
+    "InsightsManagementErrorPendingOperationExists": {
+      "id": 1484,
+      "name": "InsightsManagementErrorPendingOperationExists"
+    },
+    "InsightsManagementSetPerformanceLevelInvalidParameter": {
+      "id": 1485,
+      "name": "InsightsManagementSetPerformanceLevelInvalidParameter"
+    },
+    "InsightsManagementSetStorageRetentionInvalidParameter": {
+      "id": 1486,
+      "name": "InsightsManagementSetStorageRetentionInvalidParameter"
+    },
+    "InsightsManagementGetStorageUsageInvalidParameter": {
+      "id": 1487,
+      "name": "InsightsManagementGetStorageUsageInvalidParameter"
+    },
+    "InsightsManagementGetOperationStatusInvalidParameter": {
+      "id": 1488,
+      "name": "InsightsManagementGetOperationStatusInvalidParameter"
+    },
+    "DuplicatePurchaseTransactionId": {
+      "id": 1489,
+      "name": "DuplicatePurchaseTransactionId"
+    },
+    "EvaluationModePlayerCountExceeded": {
+      "id": 1490,
+      "name": "EvaluationModePlayerCountExceeded"
+    },
+    "GetPlayersInSegmentRateLimitExceeded": {
+      "id": 1491,
+      "name": "GetPlayersInSegmentRateLimitExceeded"
+    },
+    "CloudScriptFunctionNameSizeExceeded": {
+      "id": 1492,
+      "name": "CloudScriptFunctionNameSizeExceeded"
+    },
+    "PaidInsightsFeaturesNotEnabled": {
+      "id": 1493,
+      "name": "PaidInsightsFeaturesNotEnabled"
+    },
+    "CloudScriptAzureFunctionsQueueRequestError": {
+      "id": 1494,
+      "name": "CloudScriptAzureFunctionsQueueRequestError"
+    },
+    "EvaluationModeTitleCountExceeded": {
+      "id": 1495,
+      "name": "EvaluationModeTitleCountExceeded"
+    },
+    "InsightsManagementTitleNotInFlight": {
+      "id": 1496,
+      "name": "InsightsManagementTitleNotInFlight"
+    },
+    "LimitNotFound": {
+      "id": 1497,
+      "name": "LimitNotFound"
+    },
+    "LimitNotAvailableViaAPI": {
+      "id": 1498,
+      "name": "LimitNotAvailableViaAPI"
+    },
+    "InsightsManagementSetStorageRetentionBelowMinimum": {
+      "id": 1499,
+      "name": "InsightsManagementSetStorageRetentionBelowMinimum"
+    },
+    "InsightsManagementSetStorageRetentionAboveMaximum": {
+      "id": 1500,
+      "name": "InsightsManagementSetStorageRetentionAboveMaximum"
+    },
+    "AppleNotEnabledForTitle": {
+      "id": 1501,
+      "name": "AppleNotEnabledForTitle"
+    },
+    "InsightsManagementNewActiveEventExportLimitInvalid": {
+      "id": 1502,
+      "name": "InsightsManagementNewActiveEventExportLimitInvalid"
+    },
+    "InsightsManagementSetPerformanceRateLimited": {
+      "id": 1503,
+      "name": "InsightsManagementSetPerformanceRateLimited"
+    },
+    "PartyRequestsThrottledFromRateLimiter": {
+      "id": 1504,
+      "name": "PartyRequestsThrottledFromRateLimiter"
+    },
+    "XboxServiceTooManyRequests": {
+      "id": 1505,
+      "name": "XboxServiceTooManyRequests"
+    },
+    "NintendoSwitchNotEnabledForTitle": {
+      "id": 1506,
+      "name": "NintendoSwitchNotEnabledForTitle"
+    },
+    "RequestMultiplayerServersThrottledFromRateLimiter": {
+      "id": 1507,
+      "name": "RequestMultiplayerServersThrottledFromRateLimiter"
+    },
+    "TitleDataOverrideNotFound": {
+      "id": 1508,
+      "name": "TitleDataOverrideNotFound"
+    },
+    "DuplicateKeys": {
+      "id": 1509,
+      "name": "DuplicateKeys"
+    },
+    "WasNotCreatedWithCloudRoot": {
+      "id": 1510,
+      "name": "WasNotCreatedWithCloudRoot"
+    },
+    "LegacyMultiplayerServersDeprecated": {
+      "id": 1511,
+      "name": "LegacyMultiplayerServersDeprecated"
+    },
+    "VirtualCurrencyCurrentlyUnavailable": {
+      "id": 1512,
+      "name": "VirtualCurrencyCurrentlyUnavailable"
+    },
+    "SteamUserNotFound": {
+      "id": 1513,
+      "name": "SteamUserNotFound"
+    },
+    "ElasticSearchOperationFailed": {
+      "id": 1514,
+      "name": "ElasticSearchOperationFailed"
+    },
+    "NotImplemented": {
+      "id": 1515,
+      "name": "NotImplemented"
+    },
+    "PublisherNotFound": {
+      "id": 1516,
+      "name": "PublisherNotFound"
+    },
+    "PublisherDeleted": {
+      "id": 1517,
+      "name": "PublisherDeleted"
+    },
+    "ApiDisabledForMigration": {
+      "id": 1518,
+      "name": "ApiDisabledForMigration"
+    },
+    "ResourceNameUpdateNotAllowed": {
+      "id": 1519,
+      "name": "ResourceNameUpdateNotAllowed"
+    },
+    "ApiNotEnabledForTitle": {
+      "id": 1520,
+      "name": "ApiNotEnabledForTitle"
+    },
+    "DuplicateTitleNameForPublisher": {
+      "id": 1521,
+      "name": "DuplicateTitleNameForPublisher"
+    },
+    "AzureTitleCreationInProgress": {
+      "id": 1522,
+      "name": "AzureTitleCreationInProgress"
+    },
+    "TitleConstraintsPublisherDeletion": {
+      "id": 1524,
+      "name": "TitleConstraintsPublisherDeletion"
+    },
+    "InvalidPlayerAccountPoolId": {
+      "id": 1525,
+      "name": "InvalidPlayerAccountPoolId"
+    },
+    "PlayerAccountPoolNotFound": {
+      "id": 1526,
+      "name": "PlayerAccountPoolNotFound"
+    },
+    "PlayerAccountPoolDeleted": {
+      "id": 1527,
+      "name": "PlayerAccountPoolDeleted"
+    },
+    "TitleCleanupInProgress": {
+      "id": 1528,
+      "name": "TitleCleanupInProgress"
+    },
+    "AzureResourceConcurrentOperationInProgress": {
+      "id": 1529,
+      "name": "AzureResourceConcurrentOperationInProgress"
+    },
+    "TitlePublisherUpdateNotAllowed": {
+      "id": 1530,
+      "name": "TitlePublisherUpdateNotAllowed"
+    },
+    "AzureResourceManagerNotSupportedInStamp": {
+      "id": 1531,
+      "name": "AzureResourceManagerNotSupportedInStamp"
+    },
+    "ApiNotIncludedInAzurePlayFabFeatureSet": {
+      "id": 1532,
+      "name": "ApiNotIncludedInAzurePlayFabFeatureSet"
+    },
+    "GoogleServiceAccountFailedAuth": {
+      "id": 1533,
+      "name": "GoogleServiceAccountFailedAuth"
+    },
+    "GoogleAPIServiceUnavailable": {
+      "id": 1534,
+      "name": "GoogleAPIServiceUnavailable"
+    },
+    "GoogleAPIServiceUnknownError": {
+      "id": 1535,
+      "name": "GoogleAPIServiceUnknownError"
+    },
+    "NoValidIdentityForAad": {
+      "id": 1536,
+      "name": "NoValidIdentityForAad"
+    },
+    "PlayerIdentityLinkNotFound": {
+      "id": 1537,
+      "name": "PlayerIdentityLinkNotFound"
+    },
+    "PhotonApplicationIdAlreadyInUse": {
+      "id": 1538,
+      "name": "PhotonApplicationIdAlreadyInUse"
+    },
+    "MatchmakingEntityInvalid": {
+      "id": 2001,
+      "name": "MatchmakingEntityInvalid"
+    },
+    "MatchmakingPlayerAttributesInvalid": {
+      "id": 2002,
+      "name": "MatchmakingPlayerAttributesInvalid"
+    },
+    "MatchmakingQueueNotFound": {
+      "id": 2016,
+      "name": "MatchmakingQueueNotFound"
+    },
+    "MatchmakingMatchNotFound": {
+      "id": 2017,
+      "name": "MatchmakingMatchNotFound"
+    },
+    "MatchmakingTicketNotFound": {
+      "id": 2018,
+      "name": "MatchmakingTicketNotFound"
+    },
+    "MatchmakingAlreadyJoinedTicket": {
+      "id": 2028,
+      "name": "MatchmakingAlreadyJoinedTicket"
+    },
+    "MatchmakingTicketAlreadyCompleted": {
+      "id": 2029,
+      "name": "MatchmakingTicketAlreadyCompleted"
+    },
+    "MatchmakingQueueConfigInvalid": {
+      "id": 2031,
+      "name": "MatchmakingQueueConfigInvalid"
+    },
+    "MatchmakingMemberProfileInvalid": {
+      "id": 2032,
+      "name": "MatchmakingMemberProfileInvalid"
+    },
+    "NintendoSwitchDeviceIdNotLinked": {
+      "id": 2034,
+      "name": "NintendoSwitchDeviceIdNotLinked"
+    },
+    "MatchmakingNotEnabled": {
+      "id": 2035,
+      "name": "MatchmakingNotEnabled"
+    },
+    "MatchmakingPlayerAttributesTooLarge": {
+      "id": 2043,
+      "name": "MatchmakingPlayerAttributesTooLarge"
+    },
+    "MatchmakingNumberOfPlayersInTicketTooLarge": {
+      "id": 2044,
+      "name": "MatchmakingNumberOfPlayersInTicketTooLarge"
+    },
+    "MatchmakingAttributeInvalid": {
+      "id": 2046,
+      "name": "MatchmakingAttributeInvalid"
+    },
+    "MatchmakingPlayerHasNotJoinedTicket": {
+      "id": 2053,
+      "name": "MatchmakingPlayerHasNotJoinedTicket"
+    },
+    "MatchmakingRateLimitExceeded": {
+      "id": 2054,
+      "name": "MatchmakingRateLimitExceeded"
+    },
+    "MatchmakingTicketMembershipLimitExceeded": {
+      "id": 2055,
+      "name": "MatchmakingTicketMembershipLimitExceeded"
+    },
+    "MatchmakingUnauthorized": {
+      "id": 2056,
+      "name": "MatchmakingUnauthorized"
+    },
+    "MatchmakingQueueLimitExceeded": {
+      "id": 2057,
+      "name": "MatchmakingQueueLimitExceeded"
+    },
+    "MatchmakingRequestTypeMismatch": {
+      "id": 2058,
+      "name": "MatchmakingRequestTypeMismatch"
+    },
+    "MatchmakingBadRequest": {
+      "id": 2059,
+      "name": "MatchmakingBadRequest"
+    },
+    "PubSubFeatureNotEnabledForTitle": {
+      "id": 2500,
+      "name": "PubSubFeatureNotEnabledForTitle"
+    },
+    "PubSubTooManyRequests": {
+      "id": 2501,
+      "name": "PubSubTooManyRequests"
+    },
+    "PubSubConnectionNotFoundForEntity": {
+      "id": 2502,
+      "name": "PubSubConnectionNotFoundForEntity"
+    },
+    "PubSubConnectionHandleInvalid": {
+      "id": 2503,
+      "name": "PubSubConnectionHandleInvalid"
+    },
+    "PubSubSubscriptionLimitExceeded": {
+      "id": 2504,
+      "name": "PubSubSubscriptionLimitExceeded"
+    },
+    "TitleConfigNotFound": {
+      "id": 3001,
+      "name": "TitleConfigNotFound"
+    },
+    "TitleConfigUpdateConflict": {
+      "id": 3002,
+      "name": "TitleConfigUpdateConflict"
+    },
+    "TitleConfigSerializationError": {
+      "id": 3003,
+      "name": "TitleConfigSerializationError"
+    },
+    "CatalogApiNotImplemented": {
+      "id": 4000,
+      "name": "CatalogApiNotImplemented"
+    },
+    "CatalogEntityInvalid": {
+      "id": 4001,
+      "name": "CatalogEntityInvalid"
+    },
+    "CatalogTitleIdMissing": {
+      "id": 4002,
+      "name": "CatalogTitleIdMissing"
+    },
+    "CatalogPlayerIdMissing": {
+      "id": 4003,
+      "name": "CatalogPlayerIdMissing"
+    },
+    "CatalogClientIdentityInvalid": {
+      "id": 4004,
+      "name": "CatalogClientIdentityInvalid"
+    },
+    "CatalogOneOrMoreFilesInvalid": {
+      "id": 4005,
+      "name": "CatalogOneOrMoreFilesInvalid"
+    },
+    "CatalogItemMetadataInvalid": {
+      "id": 4006,
+      "name": "CatalogItemMetadataInvalid"
+    },
+    "CatalogItemIdInvalid": {
+      "id": 4007,
+      "name": "CatalogItemIdInvalid"
+    },
+    "CatalogSearchParameterInvalid": {
+      "id": 4008,
+      "name": "CatalogSearchParameterInvalid"
+    },
+    "CatalogFeatureDisabled": {
+      "id": 4009,
+      "name": "CatalogFeatureDisabled"
+    },
+    "CatalogConfigInvalid": {
+      "id": 4010,
+      "name": "CatalogConfigInvalid"
+    },
+    "CatalogItemTypeInvalid": {
+      "id": 4012,
+      "name": "CatalogItemTypeInvalid"
+    },
+    "CatalogBadRequest": {
+      "id": 4013,
+      "name": "CatalogBadRequest"
+    },
+    "CatalogTooManyRequests": {
+      "id": 4014,
+      "name": "CatalogTooManyRequests"
+    },
+    "ExportInvalidStatusUpdate": {
+      "id": 5000,
+      "name": "ExportInvalidStatusUpdate"
+    },
+    "ExportInvalidPrefix": {
+      "id": 5001,
+      "name": "ExportInvalidPrefix"
+    },
+    "ExportBlobContainerDoesNotExist": {
+      "id": 5002,
+      "name": "ExportBlobContainerDoesNotExist"
+    },
+    "ExportNotFound": {
+      "id": 5004,
+      "name": "ExportNotFound"
+    },
+    "ExportCouldNotUpdate": {
+      "id": 5005,
+      "name": "ExportCouldNotUpdate"
+    },
+    "ExportInvalidStorageType": {
+      "id": 5006,
+      "name": "ExportInvalidStorageType"
+    },
+    "ExportAmazonBucketDoesNotExist": {
+      "id": 5007,
+      "name": "ExportAmazonBucketDoesNotExist"
+    },
+    "ExportInvalidBlobStorage": {
+      "id": 5008,
+      "name": "ExportInvalidBlobStorage"
+    },
+    "ExportKustoException": {
+      "id": 5009,
+      "name": "ExportKustoException"
+    },
+    "ExportKustoConnectionFailed": {
+      "id": 5012,
+      "name": "ExportKustoConnectionFailed"
+    },
+    "ExportUnknownError": {
+      "id": 5013,
+      "name": "ExportUnknownError"
+    },
+    "ExportCantEditPendingExport": {
+      "id": 5014,
+      "name": "ExportCantEditPendingExport"
+    },
+    "ExportLimitExports": {
+      "id": 5015,
+      "name": "ExportLimitExports"
+    },
+    "ExportLimitEvents": {
+      "id": 5016,
+      "name": "ExportLimitEvents"
+    },
+    "ExportInvalidPartitionStatusModification": {
+      "id": 5017,
+      "name": "ExportInvalidPartitionStatusModification"
+    },
+    "ExportCouldNotCreate": {
+      "id": 5018,
+      "name": "ExportCouldNotCreate"
+    },
+    "ExportNoBackingDatabaseFound": {
+      "id": 5019,
+      "name": "ExportNoBackingDatabaseFound"
+    },
+    "ExportCouldNotDelete": {
+      "id": 5020,
+      "name": "ExportCouldNotDelete"
+    },
+    "ExportCannotDetermineEventQuery": {
+      "id": 5021,
+      "name": "ExportCannotDetermineEventQuery"
+    },
+    "ExportInvalidQuerySchemaModification": {
+      "id": 5022,
+      "name": "ExportInvalidQuerySchemaModification"
+    },
+    "ExportQuerySchemaMissingRequiredColumns": {
+      "id": 5023,
+      "name": "ExportQuerySchemaMissingRequiredColumns"
+    },
+    "ExportCannotParseQuery": {
+      "id": 5024,
+      "name": "ExportCannotParseQuery"
+    },
+    "ExportControlCommandsNotAllowed": {
+      "id": 5025,
+      "name": "ExportControlCommandsNotAllowed"
+    },
+    "ExportQueryMissingTableReference": {
+      "id": 5026,
+      "name": "ExportQueryMissingTableReference"
+    },
+    "ExplorerBasicInvalidQueryName": {
+      "id": 5100,
+      "name": "ExplorerBasicInvalidQueryName"
+    },
+    "ExplorerBasicInvalidQueryDescription": {
+      "id": 5101,
+      "name": "ExplorerBasicInvalidQueryDescription"
+    },
+    "ExplorerBasicInvalidQueryConditions": {
+      "id": 5102,
+      "name": "ExplorerBasicInvalidQueryConditions"
+    },
+    "ExplorerBasicInvalidQueryStartDate": {
+      "id": 5103,
+      "name": "ExplorerBasicInvalidQueryStartDate"
+    },
+    "ExplorerBasicInvalidQueryEndDate": {
+      "id": 5104,
+      "name": "ExplorerBasicInvalidQueryEndDate"
+    },
+    "ExplorerBasicInvalidQueryGroupBy": {
+      "id": 5105,
+      "name": "ExplorerBasicInvalidQueryGroupBy"
+    },
+    "ExplorerBasicInvalidQueryAggregateType": {
+      "id": 5106,
+      "name": "ExplorerBasicInvalidQueryAggregateType"
+    },
+    "ExplorerBasicInvalidQueryAggregateProperty": {
+      "id": 5107,
+      "name": "ExplorerBasicInvalidQueryAggregateProperty"
+    },
+    "ExplorerBasicLoadQueriesError": {
+      "id": 5108,
+      "name": "ExplorerBasicLoadQueriesError"
+    },
+    "ExplorerBasicLoadQueryError": {
+      "id": 5109,
+      "name": "ExplorerBasicLoadQueryError"
+    },
+    "ExplorerBasicCreateQueryError": {
+      "id": 5110,
+      "name": "ExplorerBasicCreateQueryError"
+    },
+    "ExplorerBasicDeleteQueryError": {
+      "id": 5111,
+      "name": "ExplorerBasicDeleteQueryError"
+    },
+    "ExplorerBasicUpdateQueryError": {
+      "id": 5112,
+      "name": "ExplorerBasicUpdateQueryError"
+    },
+    "ExplorerBasicSavedQueriesLimit": {
+      "id": 5113,
+      "name": "ExplorerBasicSavedQueriesLimit"
+    },
+    "ExplorerBasicSavedQueryNotFound": {
+      "id": 5114,
+      "name": "ExplorerBasicSavedQueryNotFound"
+    },
+    "TenantShardMapperShardNotFound": {
+      "id": 5500,
+      "name": "TenantShardMapperShardNotFound"
+    },
+    "TitleNotEnabledForParty": {
+      "id": 6000,
+      "name": "TitleNotEnabledForParty"
+    },
+    "PartyVersionNotFound": {
+      "id": 6001,
+      "name": "PartyVersionNotFound"
+    },
+    "MultiplayerServerBuildReferencedByMatchmakingQueue": {
+      "id": 6002,
+      "name": "MultiplayerServerBuildReferencedByMatchmakingQueue"
+    },
+    "MultiplayerServerBuildReferencedByBuildAlias": {
+      "id": 6003,
+      "name": "MultiplayerServerBuildReferencedByBuildAlias"
+    },
+    "ExperimentationExperimentStopped": {
+      "id": 7000,
+      "name": "ExperimentationExperimentStopped"
+    },
+    "ExperimentationExperimentRunning": {
+      "id": 7001,
+      "name": "ExperimentationExperimentRunning"
+    },
+    "ExperimentationExperimentNotFound": {
+      "id": 7002,
+      "name": "ExperimentationExperimentNotFound"
+    },
+    "ExperimentationExperimentNeverStarted": {
+      "id": 7003,
+      "name": "ExperimentationExperimentNeverStarted"
+    },
+    "ExperimentationExperimentDeleted": {
+      "id": 7004,
+      "name": "ExperimentationExperimentDeleted"
+    },
+    "ExperimentationClientTimeout": {
+      "id": 7005,
+      "name": "ExperimentationClientTimeout"
+    },
+    "ExperimentationInvalidVariantConfiguration": {
+      "id": 7006,
+      "name": "ExperimentationInvalidVariantConfiguration"
+    },
+    "ExperimentationInvalidVariableConfiguration": {
+      "id": 7007,
+      "name": "ExperimentationInvalidVariableConfiguration"
+    },
+    "ExperimentInvalidId": {
+      "id": 7008,
+      "name": "ExperimentInvalidId"
+    },
+    "ExperimentationNoScorecard": {
+      "id": 7009,
+      "name": "ExperimentationNoScorecard"
+    },
+    "ExperimentationTreatmentAssignmentFailed": {
+      "id": 7010,
+      "name": "ExperimentationTreatmentAssignmentFailed"
+    },
+    "ExperimentationTreatmentAssignmentDisabled": {
+      "id": 7011,
+      "name": "ExperimentationTreatmentAssignmentDisabled"
+    },
+    "ExperimentationInvalidDuration": {
+      "id": 7012,
+      "name": "ExperimentationInvalidDuration"
+    },
+    "ExperimentationMaxExperimentsReached": {
+      "id": 7013,
+      "name": "ExperimentationMaxExperimentsReached"
+    },
+    "ExperimentationExperimentSchedulingInProgress": {
+      "id": 7014,
+      "name": "ExperimentationExperimentSchedulingInProgress"
+    },
+    "ExperimentationInvalidEndDate": {
+      "id": 7015,
+      "name": "ExperimentationInvalidEndDate"
+    },
+    "ExperimentationInvalidStartDate": {
+      "id": 7016,
+      "name": "ExperimentationInvalidStartDate"
+    },
+    "ExperimentationMaxDurationExceeded": {
+      "id": 7017,
+      "name": "ExperimentationMaxDurationExceeded"
+    },
+    "ExperimentationExclusionGroupNotFound": {
+      "id": 7018,
+      "name": "ExperimentationExclusionGroupNotFound"
+    },
+    "ExperimentationExclusionGroupInsufficientCapacity": {
+      "id": 7019,
+      "name": "ExperimentationExclusionGroupInsufficientCapacity"
+    },
+    "ExperimentationExclusionGroupCannotDelete": {
+      "id": 7020,
+      "name": "ExperimentationExclusionGroupCannotDelete"
+    },
+    "ExperimentationExclusionGroupInvalidTrafficAllocation": {
+      "id": 7021,
+      "name": "ExperimentationExclusionGroupInvalidTrafficAllocation"
+    },
+    "ExperimentationExclusionGroupInvalidName": {
+      "id": 7022,
+      "name": "ExperimentationExclusionGroupInvalidName"
+    },
+    "MaxActionDepthExceeded": {
+      "id": 8000,
+      "name": "MaxActionDepthExceeded"
+    },
+    "TitleNotOnUpdatedPricingPlan": {
+      "id": 9000,
+      "name": "TitleNotOnUpdatedPricingPlan"
+    },
+    "SegmentManagementTitleNotInFlight": {
+      "id": 10000,
+      "name": "SegmentManagementTitleNotInFlight"
+    },
+    "SegmentManagementNoExpressionTree": {
+      "id": 10001,
+      "name": "SegmentManagementNoExpressionTree"
+    },
+    "SegmentManagementTriggerActionCountOverLimit": {
+      "id": 10002,
+      "name": "SegmentManagementTriggerActionCountOverLimit"
+    },
+    "SegmentManagementSegmentCountOverLimit": {
+      "id": 10003,
+      "name": "SegmentManagementSegmentCountOverLimit"
+    },
+    "SegmentManagementInvalidSegmentId": {
+      "id": 10004,
+      "name": "SegmentManagementInvalidSegmentId"
+    },
+    "SegmentManagementInvalidInput": {
+      "id": 10005,
+      "name": "SegmentManagementInvalidInput"
+    },
+    "SegmentManagementInvalidSegmentName": {
+      "id": 10006,
+      "name": "SegmentManagementInvalidSegmentName"
+    },
+    "DeleteSegmentRateLimitExceeded": {
+      "id": 10007,
+      "name": "DeleteSegmentRateLimitExceeded"
+    },
+    "CreateSegmentRateLimitExceeded": {
+      "id": 10008,
+      "name": "CreateSegmentRateLimitExceeded"
+    },
+    "UpdateSegmentRateLimitExceeded": {
+      "id": 10009,
+      "name": "UpdateSegmentRateLimitExceeded"
+    },
+    "GetSegmentsRateLimitExceeded": {
+      "id": 10010,
+      "name": "GetSegmentsRateLimitExceeded"
+    },
+    "AsyncExportNotInFlight": {
+      "id": 10011,
+      "name": "AsyncExportNotInFlight"
+    },
+    "AsyncExportNotFound": {
+      "id": 10012,
+      "name": "AsyncExportNotFound"
+    },
+    "AsyncExportRateLimitExceeded": {
+      "id": 10013,
+      "name": "AsyncExportRateLimitExceeded"
+    },
+    "SnapshotNotFound": {
+      "id": 11000,
+      "name": "SnapshotNotFound"
+    },
+    "InventoryApiNotImplemented": {
+      "id": 12000,
+      "name": "InventoryApiNotImplemented"
+    },
+    "LobbyDoesNotExist": {
+      "id": 13000,
+      "name": "LobbyDoesNotExist"
+    },
+    "LobbyRateLimitExceeded": {
+      "id": 13001,
+      "name": "LobbyRateLimitExceeded"
+    },
+    "LobbyPlayerAlreadyJoined": {
+      "id": 13002,
+      "name": "LobbyPlayerAlreadyJoined"
+    },
+    "LobbyNotJoinable": {
+      "id": 13003,
+      "name": "LobbyNotJoinable"
+    },
+    "LobbyMemberCannotRejoin": {
+      "id": 13004,
+      "name": "LobbyMemberCannotRejoin"
+    },
+    "LobbyCurrentPlayersMoreThanMaxPlayers": {
+      "id": 13005,
+      "name": "LobbyCurrentPlayersMoreThanMaxPlayers"
+    },
+    "LobbyPlayerNotPresent": {
+      "id": 13006,
+      "name": "LobbyPlayerNotPresent"
+    },
+    "LobbyBadRequest": {
+      "id": 13007,
+      "name": "LobbyBadRequest"
+    },
+    "LobbyPlayerMaxLobbyLimitExceeded": {
+      "id": 13008,
+      "name": "LobbyPlayerMaxLobbyLimitExceeded"
+    },
+    "LobbyNewOwnerMustBeConnected": {
+      "id": 13009,
+      "name": "LobbyNewOwnerMustBeConnected"
+    },
+    "LobbyCurrentOwnerStillConnected": {
+      "id": 13010,
+      "name": "LobbyCurrentOwnerStillConnected"
+    },
+    "LobbyMemberIsNotOwner": {
+      "id": 13011,
+      "name": "LobbyMemberIsNotOwner"
+    },
+    "EventSamplingInvalidRatio": {
+      "id": 14000,
+      "name": "EventSamplingInvalidRatio"
+    },
+    "EventSamplingInvalidEventNamespace": {
+      "id": 14001,
+      "name": "EventSamplingInvalidEventNamespace"
+    },
+    "EventSamplingInvalidEventName": {
+      "id": 14002,
+      "name": "EventSamplingInvalidEventName"
+    },
+    "EventSamplingRatioNotFound": {
+      "id": 14003,
+      "name": "EventSamplingRatioNotFound"
+    },
+    "EventSinkConnectionInvalid": {
+      "id": 15000,
+      "name": "EventSinkConnectionInvalid"
+    },
+    "EventSinkConnectionUnauthorized": {
+      "id": 15001,
+      "name": "EventSinkConnectionUnauthorized"
+    },
+    "EventSinkRegionInvalid": {
+      "id": 15002,
+      "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
+    },
+    "OperationCanceled": {
+      "id": 16000,
+      "name": "OperationCanceled"
+    },
+    "InvalidDisplayNameRandomSuffixLength": {
+      "id": 17000,
+      "name": "InvalidDisplayNameRandomSuffixLength"
+    },
+    "AllowNonUniquePlayerDisplayNamesDisableNotAllowed": {
+      "id": 17001,
+      "name": "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
+    }
+  }
+}
