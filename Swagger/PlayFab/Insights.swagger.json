@@ -48,8 +48,8 @@
           "200": {
             "$ref": "#/responses/InsightsGetDetailsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         }
       }
@@ -78,8 +78,8 @@
           "200": {
             "$ref": "#/responses/InsightsGetLimitsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         }
       }
@@ -108,11 +108,11 @@
           "200": {
             "$ref": "#/responses/InsightsGetOperationStatusResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "InsightsManagementGetOperationStatusInvalidParameter",
           "InsightsManagementOperationNotFound"
         ]
@@ -142,8 +142,8 @@
           "200": {
             "$ref": "#/responses/InsightsGetPendingOperationsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         }
       }
@@ -172,11 +172,11 @@
           "200": {
             "$ref": "#/responses/InsightsOperationResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "InsightsManagementDatabaseNotFound",
           "InsightsManagementErrorPendingOperationExists",
           "InsightsManagementNewActiveEventExportLimitInvalid",
@@ -210,11 +210,11 @@
           "200": {
             "$ref": "#/responses/InsightsOperationResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "InsightsManagementDatabaseNotFound",
           "InsightsManagementErrorPendingOperationExists",
           "InsightsManagementSetStorageRetentionInvalidParameter",
@@ -225,7 +225,7 @@
     }
   },
   "definitions": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -264,10 +264,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         }
       },
       "example": {}
@@ -277,7 +274,8 @@
       "properties": {
         "DataUsageMb": {
           "description": "Amount of data (in MB) currently used by Insights.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "uint32"
         },
         "ErrorMessage": {
           "description": "Details of any error that occurred while retrieving Insights details.",
@@ -299,11 +297,13 @@
         },
         "PerformanceLevel": {
           "description": "Current Insights performance level setting.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "RetentionDays": {
           "description": "Current Insights data storage retention value in days.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -317,19 +317,23 @@
       "properties": {
         "DefaultPerformanceLevel": {
           "description": "Default Insights performance level.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "DefaultStorageRetentionDays": {
           "description": "Default Insights data storage retention days.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "StorageMaxRetentionDays": {
           "description": "Maximum allowed data storage retention days.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "StorageMinRetentionDays": {
           "description": "Minimum allowed data storage retention days.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "SubMeters": {
           "description": "List of Insights submeter limits for the allowed performance levels.",
@@ -353,10 +357,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "OperationId": {
           "description": "Id of the Insights operation.",
@@ -396,7 +397,8 @@
         },
         "OperationValue": {
           "description": "The value requested for the operation.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "Status": {
           "description": "Current status of the operation.",
@@ -416,10 +418,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "OperationType": {
           "description": "The type of pending operations requested, or blank for all operation types.",
@@ -465,37 +464,43 @@
       "properties": {
         "ActiveEventExports": {
           "description": "Number of allowed active event exports.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "CacheSizeMB": {
           "description": "Maximum cache size.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "Concurrency": {
           "description": "Maximum number of concurrent queries.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "CreditsPerMinute": {
           "description": "Number of Insights credits consumed per minute.",
           "type": "number",
-          "format": "double",
           "x-actualtype": "double"
         },
         "EventsPerSecond": {
           "description": "Maximum events per second.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "Level": {
           "description": "Performance level.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "MaxMemoryPerQueryMB": {
           "description": "Maximum amount of memory allowed per query.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "VirtualCpuCores": {
           "description": "Amount of compute power allocated for queries and operations.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -515,14 +520,12 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "PerformanceLevel": {
           "description": "The Insights performance level to apply to the title.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -538,14 +541,12 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "RetentionDays": {
           "description": "The Insights data storage retention value (in days) to apply to the title.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -598,10 +599,10 @@
     }
   },
   "responses": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiError"
+        "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
     "InsightsGetDetailsResponse": {
@@ -732,7 +733,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-pf-docs-errors-mapping": {
+  "x-ms-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },

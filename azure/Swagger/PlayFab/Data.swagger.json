@@ -48,8 +48,8 @@
           "200": {
             "$ref": "#/responses/AbortFileUploadsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Aborts the pending upload of the requested files.",
@@ -59,7 +59,7 @@
           "File/GetFiles",
           "File/InitiateFileUploads"
         ],
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "FileNotFound",
           "NoEntityFileOperationPending"
         ]
@@ -89,8 +89,8 @@
           "200": {
             "$ref": "#/responses/DeleteFilesResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Deletes the requested files from the entity's profile.",
@@ -100,7 +100,7 @@
           "File/GetFiles",
           "File/InitiateFileUploads"
         ],
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "EntityFileOperationPending",
           "FileNotFound"
         ]
@@ -130,8 +130,8 @@
           "200": {
             "$ref": "#/responses/FinalizeFileUploadsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Finalizes the upload of the requested files. Verifies that the files have been successfully uploaded and moves the file pointers from pending to live.",
@@ -141,7 +141,7 @@
           "File/GetFiles",
           "File/InitiateFileUploads"
         ],
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "FileNotFound",
           "NoEntityFileOperationPending"
         ]
@@ -171,8 +171,8 @@
           "200": {
             "$ref": "#/responses/GetFilesResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing.",
@@ -208,8 +208,8 @@
           "200": {
             "$ref": "#/responses/InitiateFileUploadsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Returns URLs that may be used to upload the files for a profile 5 minutes. After using the upload calls FinalizeFileUploads must be called to move the file status from pending to live.",
@@ -219,7 +219,7 @@
           "File/FinalizeFileUploads",
           "File/GetFiles"
         ],
-        "x-pf-docs-errors": [
+        "x-ms-docs-errors": [
           "EntityFileOperationPending"
         ]
       }
@@ -248,8 +248,8 @@
           "200": {
             "$ref": "#/responses/GetObjectsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Gets JSON objects from an entity profile and returns it. ",
@@ -282,8 +282,8 @@
           "200": {
             "$ref": "#/responses/SetObjectsResponse"
           },
-          "default": {
-            "$ref": "#/responses/ApiError"
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
           }
         },
         "x-requestDetails": "Sets JSON objects on the requested entity profile. May include a version number to be used to perform optimistic concurrency operations during update. If the current version differs from the version in the request the request will be ignored. If no version is set on the request then the value will always be updated if the values differ. Using the version value does not guarantee a write though, ConcurrentEditError may still occur if multiple clients are attempting to update the same profile. ",
@@ -294,7 +294,7 @@
     }
   },
   "definitions": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -334,10 +334,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -354,7 +351,8 @@
         },
         "ProfileVersion": {
           "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -383,7 +381,8 @@
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -404,10 +403,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -424,7 +420,8 @@
         },
         "ProfileVersion": {
           "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -454,7 +451,8 @@
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -492,10 +490,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -512,7 +507,8 @@
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -542,16 +538,15 @@
           "x-isclass": true
         },
         "Metadata": {
+          "$ref": "#/definitions/GetFileMetadata",
           "description": "Collection of metadata for the entity's files",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/GetFileMetadata"
-          },
           "x-isclass": true
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -579,7 +574,8 @@
         },
         "Size": {
           "description": "Storage service's reported byte count",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -593,10 +589,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -626,16 +619,15 @@
           "x-isclass": true
         },
         "Metadata": {
+          "$ref": "#/definitions/GetFileMetadata",
           "description": "Collection of metadata for the entity's files",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/GetFileMetadata"
-          },
           "x-isclass": true
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -665,10 +657,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -702,16 +691,15 @@
           "x-isclass": true
         },
         "Objects": {
+          "$ref": "#/definitions/ObjectResult",
           "description": "Requested objects that the calling entity has access to",
           "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/ObjectResult"
-          },
           "x-isclass": true
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -751,10 +739,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -771,7 +756,8 @@
         },
         "ProfileVersion": {
           "description": "The expected version of the profile, if set and doesn't match the current version of the profile the operation will not be performed.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         }
       },
       "required": [
@@ -801,7 +787,8 @@
         },
         "ProfileVersion": {
           "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "UploadDetails": {
           "description": "Collection of file names and upload urls",
@@ -857,10 +844,6 @@
     },
     "OperationTypes": {
       "type": "string",
-      "x-ms-enum": {
-        "name": "OperationTypes",
-        "modelAsString": false
-      },
       "enum": [
         "Created",
         "Updated",
@@ -917,10 +900,7 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "type": "object"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -930,7 +910,8 @@
         },
         "ExpectedProfileVersion": {
           "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the object set will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "Objects": {
           "description": "Collection of objects to set on the profile.",
@@ -992,7 +973,8 @@
       "properties": {
         "ProfileVersion": {
           "description": "New version of the entity profile.",
-          "type": "integer"
+          "type": "number",
+          "x-actualtype": "int32"
         },
         "SetResults": {
           "description": "New version of the entity profile.",
@@ -1073,10 +1055,10 @@
     }
   },
   "responses": {
-    "ApiError": {
+    "ApiErrorWrapper": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiError"
+        "$ref": "#/definitions/ApiErrorWrapper"
       }
     },
     "AbortFileUploadsResponse": {
@@ -1344,7 +1326,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-pf-docs-errors-mapping": {
+  "x-ms-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
