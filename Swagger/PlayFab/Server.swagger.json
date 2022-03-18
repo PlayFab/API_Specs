@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220305",
+    "version": "220316",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -3082,6 +3082,39 @@
         },
         "x-ms-docs-errors": [
           "GameNotFound"
+        ]
+      }
+    },
+    "/Server/RegisterGame": {
+      "post": {
+        "operationId": "RegisterGame",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Inform the matchmaker that a new Game Server Instance is added.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/matchmaking/registergame"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RegisterGameRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RegisterGameResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/DeregisterGame"
         ]
       }
     },
@@ -7328,6 +7361,10 @@
         "EventSinkConnectionInvalid",
         "EventSinkConnectionUnauthorized",
         "EventSinkRegionInvalid",
+        "EventSinkLimitExceeded",
+        "EventSinkSasTokenInvalid",
+        "EventSinkNotFound",
+        "EventSinkNameInvalid",
         "OperationCanceled",
         "InvalidDisplayNameRandomSuffixLength",
         "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
@@ -12112,6 +12149,94 @@
       "type": "object",
       "properties": {}
     },
+    "Region": {
+      "type": "string",
+      "enum": [
+        "USCentral",
+        "USEast",
+        "EUWest",
+        "Singapore",
+        "Japan",
+        "Brazil",
+        "Australia"
+      ]
+    },
+    "RegisterGameRequest": {
+      "type": "object",
+      "properties": {
+        "Build": {
+          "description": "Unique identifier of the build running on the Game Server Instance.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "GameMode": {
+          "description": "Game Mode the Game Server instance is running. Note that this must be defined in the Game Modes tab in the PlayFab Game Manager, along with the Build ID (the same Game Mode can be defined for multiple Build IDs).",
+          "type": "string"
+        },
+        "LobbyId": {
+          "description": "Previous lobby id if re-registering an existing game.",
+          "type": "string"
+        },
+        "Region": {
+          "$ref": "#/definitions/Region",
+          "description": "Region in which the Game Server Instance is running. For matchmaking using non-AWS region names, set this to any AWS region and use Tags (below) to specify your custom region.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "ServerIPV4Address": {
+          "description": "IPV4 address of the game server instance.",
+          "type": "string"
+        },
+        "ServerIPV6Address": {
+          "description": "IPV6 address (if any) of the game server instance.",
+          "type": "string"
+        },
+        "ServerPort": {
+          "description": "Port number for communication with the Game Server Instance.",
+          "type": "string"
+        },
+        "ServerPublicDNSName": {
+          "description": "Public DNS name (if any) of the server",
+          "type": "string"
+        },
+        "Tags": {
+          "description": "Tags for the Game Server Instance",
+          "type": "object"
+        }
+      },
+      "required": [
+        "ServerPort",
+        "Build",
+        "Region",
+        "GameMode"
+      ],
+      "example": {
+        "ServerHost": "118.129.31.244",
+        "ServerPort": "9984",
+        "Build": "11_034234.13",
+        "Region": "USEast",
+        "GameMode": "FreeForAll",
+        "Tags": {
+          "level_cap": "high",
+          "no_smoking": "1"
+        }
+      }
+    },
+    "RegisterGameResponse": {
+      "type": "object",
+      "properties": {
+        "LobbyId": {
+          "description": "Unique identifier generated for the Game Server Instance that is registered. If LobbyId is specified in request and the game still exists in PlayFab, the LobbyId in request is returned. Otherwise a new lobby id will be returned.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "LobbyId": "8285313"
+      }
+    },
     "RemoveFriendRequest": {
       "type": "object",
       "properties": {
@@ -15337,6 +15462,13 @@
         "$ref": "#/definitions/RefreshGameServerInstanceHeartbeatRequest"
       }
     },
+    "RegisterGameRequest": {
+      "name": "RegisterGameRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/RegisterGameRequest"
+      }
+    },
     "RemoveFriendRequest": {
       "name": "RemoveFriendRequest",
       "in": "body",
@@ -18243,6 +18375,32 @@
           },
           "data": {
             "$ref": "#/definitions/RefreshGameServerInstanceHeartbeatResult"
+          }
+        }
+      }
+    },
+    "RegisterGameResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RegisterGameResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "LobbyId": "8285313"
           }
         }
       }
@@ -21707,6 +21865,22 @@
     "EventSinkRegionInvalid": {
       "id": 15002,
       "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,

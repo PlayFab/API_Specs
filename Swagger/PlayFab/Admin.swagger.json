@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220305",
+    "version": "220316",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -1907,45 +1907,6 @@
         ]
       }
     },
-    "/Admin/GetServerBuildInfo": {
-      "post": {
-        "operationId": "GetServerBuildInfo",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Retrieves the build details for the specified game server executable",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/getserverbuildinfo"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetServerBuildInfoRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetServerBuildInfoResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/AddServerBuild",
-          "Admin/ListServerBuilds",
-          "Admin/ModifyServerBuild",
-          "Admin/RemoveServerBuild"
-        ],
-        "x-ms-docs-errors": [
-          "BuildNotFound"
-        ]
-      }
-    },
     "/Admin/GetStoreItems": {
       "post": {
         "operationId": "GetStoreItems",
@@ -2625,44 +2586,6 @@
         ]
       }
     },
-    "/Admin/ListServerBuilds": {
-      "post": {
-        "operationId": "ListServerBuilds",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Retrieves the build details for all game server executables which are currently defined for the title",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/listserverbuilds"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ListBuildsRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ListBuildsResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/AddServerBuild",
-          "Admin/GetServerBuildInfo",
-          "Client/Matchmake",
-          "Admin/ModifyServerBuild",
-          "Admin/RemoveServerBuild",
-          "Matchmaker/StartGame"
-        ]
-      }
-    },
     "/Admin/ListVirtualCurrencyTypes": {
       "post": {
         "operationId": "ListVirtualCurrencyTypes",
@@ -2800,44 +2723,6 @@
         "x-seeAlso": [
           "Admin/AddPlayerTag",
           "Admin/GetPlayerTags"
-        ]
-      }
-    },
-    "/Admin/RemoveServerBuild": {
-      "post": {
-        "operationId": "RemoveServerBuild",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Removes the game server executable specified from the set of those a client is permitted to request in a call to StartGame",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/removeserverbuild"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/RemoveServerBuildRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/RemoveServerBuildResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/AddServerBuild",
-          "Admin/GetServerBuildInfo",
-          "Admin/ListServerBuilds",
-          "Client/Matchmake",
-          "Admin/ModifyServerBuild",
-          "Matchmaker/StartGame"
         ]
       }
     },
@@ -7337,6 +7222,10 @@
         "EventSinkConnectionInvalid",
         "EventSinkConnectionUnauthorized",
         "EventSinkRegionInvalid",
+        "EventSinkLimitExceeded",
+        "EventSinkSasTokenInvalid",
+        "EventSinkNotFound",
+        "EventSinkNameInvalid",
         "OperationCanceled",
         "InvalidDisplayNameRandomSuffixLength",
         "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
@@ -8631,90 +8520,6 @@
         }
       }
     },
-    "GetServerBuildInfoRequest": {
-      "type": "object",
-      "properties": {
-        "BuildId": {
-          "description": "unique identifier of the previously uploaded build executable for which information is being requested",
-          "type": "string"
-        }
-      },
-      "required": [
-        "BuildId"
-      ],
-      "example": {
-        "BuildId": "5.0.1"
-      }
-    },
-    "GetServerBuildInfoResult": {
-      "description": "Information about a particular server build",
-      "type": "object",
-      "properties": {
-        "ActiveRegions": {
-          "description": "array of regions where this build can used, when it is active",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Region"
-          },
-          "x-isUnordered": true,
-          "x-isenum": true
-        },
-        "BuildId": {
-          "description": "unique identifier for this build executable",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "developer comment(s) for this build",
-          "type": "string"
-        },
-        "ErrorMessage": {
-          "description": "error message, if any, about this build",
-          "type": "string"
-        },
-        "MaxGamesPerHost": {
-          "description": "maximum number of game server instances that can run on a single host machine",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "MinFreeGameSlots": {
-          "description": "minimum capacity of additional game server instances that can be started before the autoscaling service starts new host machines (given the number of current running host machines and game server instances)",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "Status": {
-          "$ref": "#/definitions/GameBuildStatus",
-          "description": "the current status of the build validation and processing steps",
-          "type": "string",
-          "x-isenum": true
-        },
-        "Timestamp": {
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "type": "string"
-        },
-        "TitleId": {
-          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "MaxGamesPerHost",
-        "MinFreeGameSlots",
-        "Timestamp"
-      ],
-      "example": {
-        "BuildId": "67732",
-        "ActiveRegions": [
-          "USCentral",
-          "EUWest"
-        ],
-        "MaxGamesPerHost": 5,
-        "MinFreeGameSlots": 2,
-        "Comment": "Testing new IAP methods",
-        "Timestamp": "2014-03-24T00:00:00",
-        "TitleId": "2074"
-      },
-      "x-sortKey": "BuildId"
-    },
     "GetStoreItemsRequest": {
       "description": "A store contains an array of references to items defined in the catalog, along with the prices for the item, in both real world and virtual currencies. These prices act as an override to any prices defined in the catalog. In this way, the base definitions of the items may be defined in the catalog, with all associated properties, while the pricing can be set for each store, as needed. This allows for subsets of goods to be defined for different purposes (in order to simplify showing some, but not all catalog items to users, based upon different characteristics), along with unique prices. Note that all prices defined in the catalog and store definitions for the item are considered valid, and that a compromised client can be made to send a request for an item based upon any of these definitions. If no price is specified in the store for an item, the price set in the catalog should be displayed to the user.",
       "type": "object",
@@ -9712,53 +9517,6 @@
           "type": "string",
           "x-isenum": true
         }
-      }
-    },
-    "ListBuildsRequest": {
-      "type": "object",
-      "properties": {},
-      "example": {}
-    },
-    "ListBuildsResult": {
-      "type": "object",
-      "properties": {
-        "Builds": {
-          "description": "array of uploaded game server builds",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GetServerBuildInfoResult"
-          },
-          "x-isUnordered": true,
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "Builds": [
-          {
-            "BuildId": "67732",
-            "ActiveRegions": [
-              "USCentral",
-              "EUWest"
-            ],
-            "MaxGamesPerHost": 5,
-            "MinFreeGameSlots": 2,
-            "Comment": "Testing new IAP methods",
-            "Timestamp": "2014-03-24T00:00:00",
-            "TitleId": "2074"
-          },
-          {
-            "BuildId": "5.0.2",
-            "ActiveRegions": [
-              "USCentral",
-              "EUWest"
-            ],
-            "MaxGamesPerHost": 5,
-            "MinFreeGameSlots": 2,
-            "Comment": "Fixing new IAP methods",
-            "Timestamp": "2014-03-24T00:00:00",
-            "TitleId": "2074"
-          }
-        ]
       }
     },
     "ListOpenIdConnectionRequest": {
@@ -11072,25 +10830,6 @@
       "type": "object",
       "properties": {}
     },
-    "RemoveServerBuildRequest": {
-      "type": "object",
-      "properties": {
-        "BuildId": {
-          "description": "unique identifier of the previously uploaded build executable to be removed",
-          "type": "string"
-        }
-      },
-      "required": [
-        "BuildId"
-      ],
-      "example": {
-        "BuildId": "5.0.1"
-      }
-    },
-    "RemoveServerBuildResult": {
-      "type": "object",
-      "properties": {}
-    },
     "RemoveVirtualCurrencyTypesRequest": {
       "description": "Virtual currencies to be removed cannot have entries in any catalog nor store for the title. Note that this operation will not remove player balances for the removed currencies; if a deleted currency is recreated at any point, user balances will be in an undefined state.",
       "type": "object",
@@ -12387,7 +12126,7 @@
         "PlayFabId"
       ],
       "example": {
-        "ExpirationTime": "2022-03-05T03:19:26.8483046+00:00",
+        "ExpirationTime": "2022-03-16T20:02:08.8344991+00:00",
         "MembershipId": "ShieldBonusMembership",
         "PlayFabId": "204883457"
       }
@@ -12516,7 +12255,7 @@
       "properties": {}
     },
     "SetTitleDataRequest": {
-      "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API method is designed to store title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "type": "object",
       "properties": {
         "CustomTags": {
@@ -14950,13 +14689,6 @@
         "$ref": "#/definitions/GetSegmentsRequest"
       }
     },
-    "GetServerBuildInfoRequest": {
-      "name": "GetServerBuildInfoRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/GetServerBuildInfoRequest"
-      }
-    },
     "GetStoreItemsRequest": {
       "name": "GetStoreItemsRequest",
       "in": "body",
@@ -15044,13 +14776,6 @@
         "$ref": "#/definitions/IncrementPlayerStatisticVersionRequest"
       }
     },
-    "ListBuildsRequest": {
-      "name": "ListBuildsRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/ListBuildsRequest"
-      }
-    },
     "ListOpenIdConnectionRequest": {
       "name": "ListOpenIdConnectionRequest",
       "in": "body",
@@ -15093,13 +14818,6 @@
       "description": "This API will trigger a player_tag_removed event and remove a tag with the given TagName and PlayFabID from the corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters",
       "schema": {
         "$ref": "#/definitions/RemovePlayerTagRequest"
-      }
-    },
-    "RemoveServerBuildRequest": {
-      "name": "RemoveServerBuildRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/RemoveServerBuildRequest"
       }
     },
     "RemoveVirtualCurrencyTypesRequest": {
@@ -15231,7 +14949,7 @@
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "in": "body",
-      "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API method is designed to store title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "schema": {
         "$ref": "#/definitions/SetTitleDataRequest"
       }
@@ -16836,41 +16554,6 @@
         }
       }
     },
-    "GetServerBuildInfoResult": {
-      "description": "Information about a particular server build",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetServerBuildInfoResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "BuildId": "67732",
-            "ActiveRegions": [
-              "USCentral",
-              "EUWest"
-            ],
-            "MaxGamesPerHost": 5,
-            "MinFreeGameSlots": 2,
-            "Comment": "Testing new IAP methods",
-            "Timestamp": "2014-03-24T00:00:00",
-            "TitleId": "2074"
-          }
-        }
-      }
-    },
     "GetStoreItemsResult": {
       "description": "",
       "schema": {
@@ -17279,57 +16962,6 @@
         }
       }
     },
-    "ListBuildsResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ListBuildsResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "Builds": [
-              {
-                "BuildId": "67732",
-                "ActiveRegions": [
-                  "USCentral",
-                  "EUWest"
-                ],
-                "MaxGamesPerHost": 5,
-                "MinFreeGameSlots": 2,
-                "Comment": "Testing new IAP methods",
-                "Timestamp": "2014-03-24T00:00:00",
-                "TitleId": "2074"
-              },
-              {
-                "BuildId": "5.0.2",
-                "ActiveRegions": [
-                  "USCentral",
-                  "EUWest"
-                ],
-                "MaxGamesPerHost": 5,
-                "MinFreeGameSlots": 2,
-                "Comment": "Fixing new IAP methods",
-                "Timestamp": "2014-03-24T00:00:00",
-                "TitleId": "2074"
-              }
-            ]
-          }
-        }
-      }
-    },
     "ListOpenIdConnectionResponse": {
       "description": "",
       "schema": {
@@ -17576,25 +17208,6 @@
           },
           "data": {
             "$ref": "#/definitions/RemovePlayerTagResult"
-          }
-        }
-      }
-    },
-    "RemoveServerBuildResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/RemoveServerBuildResult"
           }
         }
       }
@@ -21053,6 +20666,22 @@
     "EventSinkRegionInvalid": {
       "id": 15002,
       "name": "EventSinkRegionInvalid"
+    },
+    "EventSinkLimitExceeded": {
+      "id": 15003,
+      "name": "EventSinkLimitExceeded"
+    },
+    "EventSinkSasTokenInvalid": {
+      "id": 15004,
+      "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,
