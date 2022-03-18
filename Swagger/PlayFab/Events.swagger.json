@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220311",
+    "version": "220318",
     "title": "PlayFab Events API",
     "description": "Write custom PlayStream and Telemetry events for any PlayFab entity. Telemetry events can be used for analytic, reporting, or debugging. PlayStream events can do all of that and also trigger custom actions in near real-time.",
     "termsOfService": "https://playfab.com/terms/",
@@ -48,11 +48,11 @@
           "200": {
             "$ref": "#/responses/WriteEventsResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "EncryptionKeyBroken",
           "EventEntityNotAllowed",
           "EventNamespaceNotAllowed",
@@ -85,11 +85,11 @@
           "200": {
             "$ref": "#/responses/WriteEventsResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
-        "x-ms-docs-errors": [
+        "x-pf-docs-errors": [
           "EncryptionKeyBroken",
           "EventEntityNotAllowed",
           "EventNamespaceNotAllowed",
@@ -100,7 +100,7 @@
     }
   },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -156,7 +156,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the event (e.g. build number, external trace identifiers, etc.). Before an event is written, this collection and the base request custom tags will be merged, but not overriden. This enables the caller to specify static tags and per event tags.",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -199,7 +202,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Events": {
           "description": "Collection of events to write to PlayStream.",
@@ -264,10 +270,10 @@
     }
   },
   "responses": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/ApiError"
       }
     },
     "WriteEventsResponse": {
@@ -335,7 +341,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -3038,6 +3044,14 @@
     "EventSinkSasTokenInvalid": {
       "id": 15004,
       "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,

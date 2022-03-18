@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220311",
+    "version": "220318",
     "title": "PlayFab Profiles API",
     "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
     "termsOfService": "https://playfab.com/terms/",
@@ -48,8 +48,8 @@
           "200": {
             "$ref": "#/responses/GetGlobalPolicyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Retrieves the title access policy that is used before the profile's policy is inspected during a request. If never customized this will return the default starter policy built by PlayFab.",
@@ -82,8 +82,8 @@
           "200": {
             "$ref": "#/responses/GetEntityProfileResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Given an entity type and entity identifier will retrieve the profile from the entity store. If the profile being retrieved is the caller's, then the read operation is consistent, if not it is an inconsistent read. An inconsistent read means that we do not guarantee all committed writes have occurred before reading the profile, allowing for a stale read. If consistency is important the Version Number on the result can be used to compare which version of the profile any reader has."
@@ -113,8 +113,8 @@
           "200": {
             "$ref": "#/responses/GetEntityProfilesResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Given a set of entity types and entity identifiers will retrieve all readable profiles properties for the caller. Profiles that the caller is not allowed to read will silently not be included in the results."
@@ -144,8 +144,8 @@
           "200": {
             "$ref": "#/responses/GetTitlePlayersFromMasterPlayerAccountIdsResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Given a master player account id (PlayFab ID), returns all title player accounts associated with it."
@@ -175,8 +175,8 @@
           "200": {
             "$ref": "#/responses/SetGlobalPolicyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Updates the title access policy that is used before the profile's policy is inspected during a request. Policies are compiled and cached for several minutes so an update here may not be reflected in behavior for a short time.",
@@ -209,8 +209,8 @@
           "200": {
             "$ref": "#/responses/SetProfileLanguageResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "Given an entity profile, will update its language to the one passed in if the profile's version is equal to the one passed in."
@@ -240,8 +240,8 @@
           "200": {
             "$ref": "#/responses/SetEntityProfilePolicyResponse"
           },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
+          "default": {
+            "$ref": "#/responses/ApiError"
           }
         },
         "x-requestDetails": "This will set the access policy statements on the given entity profile. This is not additive, any existing statements will be replaced with the statements in this request.",
@@ -252,7 +252,7 @@
     }
   },
   "definitions": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "The basic wrapper around every failed API response",
       "type": "object",
       "properties": {
@@ -288,6 +288,10 @@
     },
     "EffectType": {
       "type": "string",
+      "x-ms-enum": {
+        "name": "EffectType",
+        "modelAsString": false
+      },
       "enum": [
         "Allow",
         "Deny"
@@ -427,9 +431,11 @@
           }
         },
         "Files": {
-          "$ref": "#/definitions/EntityProfileFileMetadata",
           "description": "The files on this profile.",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EntityProfileFileMetadata"
+          },
           "x-isclass": true
         },
         "Language": {
@@ -447,9 +453,11 @@
           "x-isclass": true
         },
         "Objects": {
-          "$ref": "#/definitions/EntityDataObject",
           "description": "The objects on this profile.",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EntityDataObject"
+          },
           "x-isclass": true
         },
         "Permissions": {
@@ -461,15 +469,16 @@
           "x-isclass": true
         },
         "Statistics": {
-          "$ref": "#/definitions/EntityStatisticValue",
           "description": "The statistics on this profile.",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EntityStatisticValue"
+          },
           "x-isclass": true
         },
         "VersionNumber": {
           "description": "The version number of the profile in persistent storage at the time of the read. Used for optional optimistic concurrency during update.",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -503,8 +512,7 @@
         },
         "Size": {
           "description": "Storage service's reported byte count",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -525,8 +533,7 @@
         },
         "Value": {
           "description": "Child statistic value",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -537,9 +544,11 @@
       "type": "object",
       "properties": {
         "ChildStatistics": {
-          "$ref": "#/definitions/EntityStatisticChildValue",
           "description": "Child statistic values",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EntityStatisticChildValue"
+          },
           "x-isclass": true
         },
         "Metadata": {
@@ -552,13 +561,11 @@
         },
         "Value": {
           "description": "Statistic value",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "Version": {
           "description": "Statistic version",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "required": [
@@ -571,7 +578,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "DataAsObject": {
           "description": "Determines whether the objects will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON string.",
@@ -619,7 +629,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "DataAsObject": {
           "description": "Determines whether the objects will be returned as an escaped JSON string or as a un-escaped JSON object. Default is JSON string.",
@@ -683,7 +696,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "example": {}
@@ -721,7 +737,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "MasterPlayerAccountIds": {
           "description": "Master player account ids.",
@@ -753,9 +772,11 @@
           "type": "string"
         },
         "TitlePlayerAccounts": {
-          "$ref": "#/definitions/EntityKey",
           "description": "Dictionary of master player ids mapped to title player entity keys and id pairs",
           "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/EntityKey"
+          },
           "x-isclass": true
         }
       },
@@ -776,6 +797,10 @@
     },
     "OperationTypes": {
       "type": "string",
+      "x-ms-enum": {
+        "name": "OperationTypes",
+        "modelAsString": false
+      },
       "enum": [
         "Created",
         "Updated",
@@ -789,7 +814,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -860,7 +888,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Permissions": {
           "description": "The permissions that govern access to all entities under this title or namespace.",
@@ -897,7 +928,10 @@
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -907,8 +941,7 @@
         },
         "ExpectedVersion": {
           "description": "The expected version of a profile to perform this update on",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         },
         "Language": {
           "description": "The language to set on the given entity. Deletes the profile's language if passed in a null string.",
@@ -936,8 +969,7 @@
         },
         "VersionNumber": {
           "description": "The updated version of the profile after the language update",
-          "type": "number",
-          "x-actualtype": "int32"
+          "type": "integer"
         }
       },
       "example": {
@@ -1005,10 +1037,10 @@
     }
   },
   "responses": {
-    "ApiErrorWrapper": {
+    "ApiError": {
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
-        "$ref": "#/definitions/ApiErrorWrapper"
+        "$ref": "#/definitions/ApiError"
       }
     },
     "GetEntityProfileResponse": {
@@ -1274,7 +1306,7 @@
       "description": "This API requires an Entity Session Token, available from the Entity GetEntityToken method."
     }
   },
-  "x-ms-docs-errors-mapping": {
+  "x-pf-docs-errors-mapping": {
     "Success": {
       "name": "Success"
     },
@@ -3977,6 +4009,14 @@
     "EventSinkSasTokenInvalid": {
       "id": 15004,
       "name": "EventSinkSasTokenInvalid"
+    },
+    "EventSinkNotFound": {
+      "id": 15005,
+      "name": "EventSinkNotFound"
+    },
+    "EventSinkNameInvalid": {
+      "id": 15006,
+      "name": "EventSinkNameInvalid"
     },
     "OperationCanceled": {
       "id": 16000,
