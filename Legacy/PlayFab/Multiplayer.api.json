@@ -4143,6 +4143,13 @@
           "optional": true
         },
         {
+          "name": "ChangeNumber",
+          "description": "Change number used for differentiating older matchmaking status updates from newer ones.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
           "name": "Created",
           "description": "The server date and time at which ticket was created.",
           "jsontype": "String",
@@ -4265,6 +4272,13 @@
       "assembly": "PlayFab.Multiplayer.Models",
       "isResult": true,
       "properties": [
+        {
+          "name": "ArrangementString",
+          "description": "A string that is used by players that are matched together to join an arranged lobby.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
         {
           "name": "MatchId",
           "description": "The Id of a match.",
@@ -8545,6 +8559,82 @@
         }
       ]
     },
+    "SubscribeToMatchResourceRequest": {
+      "name": "SubscribeToMatchResourceRequest",
+      "className": "SubscribeToMatchResourceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "description": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityKey",
+          "description": "The entity performing the subscription. The entity must be authorized to use this connectionHandle.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "PubSubConnectionHandle",
+          "description": "Opaque string, given to a client upon creating a connection with PubSub. Notifications will be sent to the connection associated with this handle.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ResourceId",
+          "description": "The name of the resource to subscribe to.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "SubscriptionVersion",
+          "description": "Version number for the subscription of this resource. Current supported version must be 1.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Type",
+          "description": "Subscription type. MatchInvite subscriptions are per-player. MatchTicketStatusChange subscriptions are per-ticket. Subscribe calls are idempotent. Subscribing on the same resource for the same connection results in success.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SubscribeToMatchResourceResult": {
+      "name": "SubscribeToMatchResourceResult",
+      "className": "SubscribeToMatchResourceResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Topic",
+          "description": "Matchmaking resource",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "SubscriptionType": {
       "name": "SubscriptionType",
       "className": "SubscriptionType",
@@ -8785,6 +8875,74 @@
           "optional": false
         }
       ]
+    },
+    "UnsubscribeFromMatchResourceRequest": {
+      "name": "UnsubscribeFromMatchResourceRequest",
+      "className": "UnsubscribeFromMatchResourceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "description": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityKey",
+          "description": "The entity performing the unsubscription. The entity must be authorized to use this connectionHandle.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "PubSubConnectionHandle",
+          "description": "Opaque string, given to a client upon creating a connection with PubSub.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ResourceId",
+          "description": "The resource to unsubscribe from.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "SubscriptionVersion",
+          "description": "Version number for the unsubscription from this resource.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Type",
+          "description": "Type of the subscription to be canceled.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UnsubscribeFromMatchResourceResult": {
+      "name": "UnsubscribeFromMatchResourceResult",
+      "className": "UnsubscribeFromMatchResourceResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "isResult": true,
+      "properties": []
     },
     "UntagContainerImageRequest": {
       "name": "UntagContainerImageRequest",
@@ -9190,7 +9348,9 @@
         "GetServerBackfillTicket",
         "JoinMatchmakingTicket",
         "ListMatchmakingTicketsForPlayer",
-        "ListServerBackfillTicketsForPlayer"
+        "ListServerBackfillTicketsForPlayer",
+        "SubscribeToMatchmakingResource",
+        "UnsubscribeFromMatchmakingResource"
       ]
     },
     {
@@ -11222,6 +11382,32 @@
       ]
     },
     {
+      "name": "SubscribeToMatchmakingResource",
+      "summary": "Subscribe to match resource notifications.",
+      "requestDetails": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/SubscribeToMatchmakingResource",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "SubscribeToMatchResourceRequest",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"cda52c5c-b112-4ab0-b448-30248b3b0870\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {}\n}",
+      "result": "SubscribeToMatchResourceResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Topic\": \"MatchResourceTopic\"\n  }\n}",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "errors": [
+        "MatchmakingBadRequest",
+        "MatchmakingEntityInvalid",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized",
+        "PubSubConnectionHandleInvalid",
+        "PubSubConnectionNotFoundForEntity",
+        "PubSubSubscriptionLimitExceeded"
+      ]
+    },
+    {
       "name": "UnsubscribeFromLobbyResource",
       "summary": "Unsubscribe from lobby notifications.",
       "requestDetails": "Unsubscribe from lobby notifications. Only players may call this.",
@@ -11238,6 +11424,31 @@
         "LobbyBadRequest",
         "LobbyDoesNotExist",
         "LobbyRateLimitExceeded",
+        "PubSubConnectionHandleInvalid",
+        "PubSubConnectionNotFoundForEntity"
+      ]
+    },
+    {
+      "name": "UnsubscribeFromMatchmakingResource",
+      "summary": "Unsubscribe from match resource notifications.",
+      "requestDetails": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/UnsubscribeFromMatchmakingResource",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UnsubscribeFromMatchResourceRequest",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"4bff320a-fc56-404f-adc2-65dfd399f2fa\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {}\n}",
+      "result": "UnsubscribeFromMatchResourceResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "errors": [
+        "MatchmakingBadRequest",
+        "MatchmakingEntityInvalid",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized",
         "PubSubConnectionHandleInvalid",
         "PubSubConnectionNotFoundForEntity"
       ]
