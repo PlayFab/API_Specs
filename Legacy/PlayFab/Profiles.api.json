@@ -1,11 +1,75 @@
 {
   "name": "Profiles",
   "url": "/Profiles",
-  "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
+  "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles. The Master Player APIs allow you to perform operations on a master player account",
   "apiDescriptionList": [
-    "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles."
+    "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles.",
+    "The Master Player APIs allow you to perform operations on a master player account"
   ],
   "datatypes": {
+    "DeleteMasterPlayerAccountDataRequest": {
+      "name": "DeleteMasterPlayerAccountDataRequest",
+      "className": "DeleteMasterPlayerAccountDataRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetMasterPlayerTitleList, before calling this API.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "MetaData",
+          "description": "Developer created string to identify a user without PlayFab ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "DeleteMasterPlayerAccountDataResponse": {
+      "name": "DeleteMasterPlayerAccountDataResponse",
+      "className": "DeleteMasterPlayerAccountDataResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "JobReceiptId",
+          "description": "A notification email with this job receipt Id will be sent to the title notification email address when deletion is complete.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleIds",
+          "description": "List of titles from which the player's data will be deleted.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "EffectType": {
       "name": "EffectType",
       "className": "EffectType",
@@ -416,6 +480,54 @@
         }
       ]
     },
+    "ExportMasterPlayerAccountDataRequest": {
+      "name": "ExportMasterPlayerAccountDataRequest",
+      "className": "ExportMasterPlayerAccountDataRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "ExportMasterPlayerAccountDataResponse": {
+      "name": "ExportMasterPlayerAccountDataResponse",
+      "className": "ExportMasterPlayerAccountDataResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "JobReceiptId",
+          "description": "An email with this job receipt Id containing the export download link will be sent to the title notification email address when the export is complete.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GetEntityProfileRequest": {
       "name": "GetEntityProfileRequest",
       "className": "GetEntityProfileRequest",
@@ -558,6 +670,55 @@
           "jsontype": "Object",
           "actualtype": "EntityPermissionStatement",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetMasterPlayerTitleListRequest": {
+      "name": "GetMasterPlayerTitleListRequest",
+      "className": "GetMasterPlayerTitleListRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Useful for identifying titles of which the player's data will be deleted by DeleteMasterPlayer.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "GetMasterPlayerTitleListResponse": {
+      "name": "GetMasterPlayerTitleListResponse",
+      "className": "GetMasterPlayerTitleListResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "TitleIds",
+          "description": "List of titles the player has played",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -954,7 +1115,10 @@
     {
       "name": "Account Management",
       "methods": [
+        "DeleteMasterPlayerAccountData",
+        "ExportMasterPlayerAccountData",
         "GetGlobalPolicy",
+        "GetMasterPlayerTitleList",
         "GetProfile",
         "GetProfiles",
         "GetTitlePlayersFromMasterPlayerAccountIds",
@@ -967,6 +1131,46 @@
     }
   ],
   "calls": [
+    {
+      "name": "DeleteMasterPlayerAccountData",
+      "summary": "Removes a master player account entirely from all titles and deletes all associated data",
+      "requestDetails": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetMasterPlayerTitleList, before calling this API.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/MasterPlayer/DeleteMasterPlayerAccountData",
+      "auth": "None",
+      "method": "POST",
+      "request": "DeleteMasterPlayerAccountDataRequest",
+      "requestExample": "{\n  \"MetaData\": \"Identifying info\",\n  \"Entity\": {\n    \"Id\": \"A68C908B66C23C5\",\n    \"Type\": \"master_player_account\",\n    \"TypeString\": \"master_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": true,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "result": "DeleteMasterPlayerAccountDataResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"JobReceiptId\": \"A101202A2CD049A0A93C9531DFB37DE8\",\n    \"TitleIds\": [\n      \"A248\",\n      \"19B0\"\n    ]\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "MasterPlayer/GetMasterPlayerTitleList"
+      ]
+    },
+    {
+      "name": "ExportMasterPlayerAccountData",
+      "summary": "Exports all associated data of a master player account",
+      "requestDetails": "Exports all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list and PlayStream event history. Note, this API queues the player for export and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before the export is available for download. Upon completion of the export, an email containing the URL to download the export dump will be sent to the notification email address configured for the title.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/MasterPlayer/ExportMasterPlayerAccountData",
+      "auth": "None",
+      "method": "POST",
+      "request": "ExportMasterPlayerAccountDataRequest",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"A68C908B66C23C5\",\n    \"Type\": \"master_player_account\",\n    \"TypeString\": \"master_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": true,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "result": "ExportMasterPlayerAccountDataResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"JobReceiptId\": \"A101202A2CD049A0A93C9531DFB37DE8\"\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "EmailAddressNotAvailable"
+      ]
+    },
     {
       "name": "GetGlobalPolicy",
       "summary": "Gets the global title access policy ",
@@ -982,6 +1186,26 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Permissions\": [\n      {\n        \"Resource\": \"pfrn:data--title_player_account!90901000/Profile/SomethingCool\",\n        \"Action\": \"*\",\n        \"Effect\": \"Allow\",\n        \"Principal\": {\n          \"ChildOf\": {\n            \"EntityType\": \"[SELF]\"\n          }\n        },\n        \"Comment\": \"An example policy\"\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Profile/GetProfile"
+      ]
+    },
+    {
+      "name": "GetMasterPlayerTitleList",
+      "summary": "Get the list of titles that the player has played",
+      "requestDetails": "Useful for identifying titles of which the player's data will be deleted by DeleteMasterPlayer.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/MasterPlayer/GetMasterPlayerTitleList",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetMasterPlayerTitleListRequest",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"A68C908B66C23C5\",\n    \"Type\": \"master_player_account\",\n    \"TypeString\": \"master_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": true,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "result": "GetMasterPlayerTitleListResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TitleIds\": [\n      \"A248\",\n      \"19B0\"\n    ]\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "MasterPlayer/DeleteMasterPlayerAccountData"
       ]
     },
     {
@@ -3838,6 +4062,10 @@
       "id": 15006,
       "name": "EventSinkNameInvalid"
     },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -4532,6 +4760,7 @@
     "EventSinkSasTokenInvalid",
     "EventSinkNotFound",
     "EventSinkNameInvalid",
+    "EventSinkSasTokenPermissionInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
