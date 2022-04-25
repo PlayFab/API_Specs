@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220411",
+    "version": "220425",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -669,7 +669,7 @@
         "tags": [
           "Server-Side Cloud Script"
         ],
-        "description": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player.",
+        "description": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player. The PlayFab ID is the entity ID of the player's master_player_account entity.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/server-side-cloud-script/executecloudscript"
         },
@@ -1929,13 +1929,44 @@
         "x-responseDetails": "For Kongregate identifiers which have not been linked to PlayFab accounts, null will be returned."
       }
     },
+    "/Client/GetPlayFabIDsFromNintendoServiceAccountIds": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromNintendoServiceAccountIds",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Service Account identifiers.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromnintendoserviceaccountids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromNintendoServiceAccountIdsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromNintendoServiceAccountIdsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
     "/Client/GetPlayFabIDsFromNintendoSwitchDeviceIds": {
       "post": {
         "operationId": "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "tags": [
           "Account Management"
         ],
-        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Switch identifiers.",
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Switch Device identifiers.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromnintendoswitchdeviceids"
         },
@@ -10524,6 +10555,53 @@
         ]
       }
     },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "type": "object",
+      "properties": {
+        "NintendoAccountIds": {
+          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "NintendoAccountIds"
+      ],
+      "example": {
+        "NintendoAccountIds": [
+          "526f79204261747478",
+          "526f79204261747479"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of Nintendo Switch Service Account identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NintendoServiceAccountPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "NintendoServiceAccountId": "526f79204261747478",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "NintendoServiceAccountId": "526f79204261747479",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest": {
       "type": "object",
       "properties": {
@@ -13263,6 +13341,19 @@
       "example": {
         "Name": "MyTask",
         "Id": "d739e188-22f6-4d13-a4d5-df2e93d4d2f7"
+      }
+    },
+    "NintendoServiceAccountPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "NintendoServiceAccountId": {
+          "description": "Unique Nintendo Switch Service Account identifier for a user.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Service Account identifier.",
+          "type": "string"
+        }
       }
     },
     "NintendoSwitchPlayFabIdPair": {
@@ -17153,6 +17244,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromKongregateIDsRequest"
       }
     },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromNintendoServiceAccountIdsRequest"
+      }
+    },
     "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest": {
       "name": "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest",
       "in": "body",
@@ -19870,6 +19968,41 @@
               },
               {
                 "KongregateId": "759374651209",
+                "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromNintendoServiceAccountIdsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "NintendoServiceAccountId": "526f79204261747478",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "NintendoServiceAccountId": "526f79204261747479",
                 "PlayFabId": "6345cd25a6c7cc"
               }
             ]
