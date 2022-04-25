@@ -6811,6 +6811,42 @@
         }
       ]
     },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "className": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "NintendoAccountIds",
+          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "className": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Nintendo Switch Service Account identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "NintendoServiceAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest": {
       "name": "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest",
       "className": "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest",
@@ -9184,6 +9220,28 @@
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
       "properties": []
+    },
+    "NintendoServiceAccountPlayFabIdPair": {
+      "name": "NintendoServiceAccountPlayFabIdPair",
+      "className": "NintendoServiceAccountPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "NintendoServiceAccountId",
+          "description": "Unique Nintendo Switch Service Account identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Service Account identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "NintendoSwitchPlayFabIdPair": {
       "name": "NintendoSwitchPlayFabIdPair",
@@ -13867,6 +13925,7 @@
         "GetPlayFabIDsFromFacebookIDs",
         "GetPlayFabIDsFromFacebookInstantGamesIds",
         "GetPlayFabIDsFromGenericIDs",
+        "GetPlayFabIDsFromNintendoServiceAccountIds",
         "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromSteamIDs",
@@ -14219,7 +14278,10 @@
       "request": "AwardSteamAchievementRequest",
       "requestExample": "{\n  \"Achievements\": [\n    {\n      \"PlayFabId\": \"234974573892\",\n      \"AchievementName\": \"FinishLevel1\",\n      \"Result\": false\n    },\n    {\n      \"PlayFabId\": \"334353433\",\n      \"AchievementName\": \"FinishLevel1\",\n      \"Result\": false\n    }\n  ]\n}",
       "result": "AwardSteamAchievementResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"AchievementResults\": [\n      {\n        \"PlayFabId\": \"234974573892\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      },\n      {\n        \"PlayFabId\": \"334353433\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      }\n    ]\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"AchievementResults\": [\n      {\n        \"PlayFabId\": \"234974573892\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      },\n      {\n        \"PlayFabId\": \"334353433\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      }\n    ]\n  }\n}",
+      "errors": [
+        "UserisNotValid"
+      ]
     },
     {
       "name": "BanUsers",
@@ -14402,7 +14464,7 @@
     },
     {
       "name": "ExecuteCloudScript",
-      "summary": "Executes a CloudScript function, with the 'currentPlayerId' variable set to the specified PlayFabId parameter value.",
+      "summary": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player. The PlayFab ID is the entity ID of the player's master_player_account entity.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/Server/ExecuteCloudScript",
@@ -14954,6 +15016,20 @@
         "Server/AddGenericID",
         "Server/RemoveGenericID"
       ]
+    },
+    {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIds",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Service Account identifiers.",
+      "resultDetails": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromNintendoServiceAccountIds",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "requestExample": "{\n  \"NintendoAccountIds\": [\n    \"526f79204261747478\",\n    \"526f79204261747479\"\n  ]\n}",
+      "result": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"NintendoServiceAccountId\": \"526f79204261747478\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"NintendoServiceAccountId\": \"526f79204261747479\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromNintendoSwitchDeviceIds",
