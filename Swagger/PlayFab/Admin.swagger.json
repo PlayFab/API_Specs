@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220316",
+    "version": "220425",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -1035,6 +1035,48 @@
         ]
       }
     },
+    "/Admin/ExportPlayersInSegment": {
+      "post": {
+        "operationId": "ExportPlayersInSegment",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Starts an export for the player profiles in a segment. This API creates a snapshot of all the player profiles which match the segment definition at the time of the API call. Profiles which change while an export is in progress will not be reflected in the results.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/playstream/exportplayersinsegment"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ExportPlayersInSegmentRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ExportPlayersInSegmentResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain the Segment ID",
+        "x-seeAlso": [
+          "Admin/GetAllSegments",
+          "Admin/GetSegmentExport"
+        ],
+        "x-ms-docs-errors": [
+          "AsyncExportNotInFlight",
+          "AsyncExportRateLimitExceeded",
+          "ExportUnknownError",
+          "InvalidSegment",
+          "SegmentNotFound"
+        ]
+      }
+    },
     "/Admin/GetActionsOnPlayersInSegmentTaskInstance": {
       "post": {
         "operationId": "GetActionsOnPlayersInSegmentTaskInstance",
@@ -1869,6 +1911,48 @@
         },
         "x-seeAlso": [
           "Admin/UpdateRandomResultTables"
+        ]
+      }
+    },
+    "/Admin/GetSegmentExport": {
+      "post": {
+        "operationId": "GetSegmentExport",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Retrieves the result of an export started by ExportPlayersInSegment API. If the ExportPlayersInSegment is successful and complete, this API returns the IndexUrl from which the index file can be downloaded. The index file has a list of urls from which the files containing the player profile data can be downloaded. Otherwise, it returns the current 'State' of the export",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/playstream/getsegmentexport"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayersInSegmentExportRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayersInSegmentExportResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain the ExportId",
+        "x-seeAlso": [
+          "Admin/ExportPlayersInSegment",
+          "Admin/GetAllSegments"
+        ],
+        "x-ms-docs-errors": [
+          "AsyncExportNotInFlight",
+          "AsyncExportRateLimitExceeded",
+          "ExportNotFound",
+          "ExportUnknownError",
+          "InvalidSegment"
         ]
       }
     },
@@ -6464,6 +6548,39 @@
         "JobReceiptId": "A101202A2CD049A0A93C9531DFB37DE8"
       }
     },
+    "ExportPlayersInSegmentRequest": {
+      "description": "Request must contain the Segment ID",
+      "type": "object",
+      "properties": {
+        "SegmentId": {
+          "description": "Unique identifier of the requested segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SegmentId"
+      ],
+      "example": {
+        "SegmentId": "ABCDEF1234567890"
+      }
+    },
+    "ExportPlayersInSegmentResult": {
+      "type": "object",
+      "properties": {
+        "ExportId": {
+          "description": "Unique identifier of the export for the requested Segment.",
+          "type": "string"
+        },
+        "SegmentId": {
+          "description": "Unique identifier of the requested Segment.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "SegmentId": "ABCDEF1234567890",
+        "ExportId": "abcdef12345"
+      }
+    },
     "FirstLoginDateSegmentFilter": {
       "type": "object",
       "properties": {
@@ -7075,6 +7192,8 @@
         "NoValidIdentityForAad",
         "PlayerIdentityLinkNotFound",
         "PhotonApplicationIdAlreadyInUse",
+        "CloudScriptUnableToDeleteProductionRevision",
+        "CustomIdNotFound",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -7226,6 +7345,7 @@
         "EventSinkSasTokenInvalid",
         "EventSinkNotFound",
         "EventSinkNameInvalid",
+        "EventSinkSasTokenPermissionInvalid",
         "OperationCanceled",
         "InvalidDisplayNameRandomSuffixLength",
         "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
@@ -8113,6 +8233,39 @@
           },
           "x-isclass": true
         }
+      }
+    },
+    "GetPlayersInSegmentExportRequest": {
+      "description": "Request must contain the ExportId",
+      "type": "object",
+      "properties": {
+        "ExportId": {
+          "description": "Unique identifier of the export for the requested Segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExportId"
+      ],
+      "example": {
+        "ExportId": "ABCDEF1234567890"
+      }
+    },
+    "GetPlayersInSegmentExportResponse": {
+      "type": "object",
+      "properties": {
+        "IndexUrl": {
+          "description": "Url from which the index file can be downloaded.",
+          "type": "string"
+        },
+        "State": {
+          "description": "Shows the current status of the export",
+          "type": "string"
+        }
+      },
+      "example": {
+        "IndexUrl": "https://playfabplayerexports.blob.core.windows.net/titleexportabc/index.txt",
+        "State": "Complete"
       }
     },
     "GetPlayersInSegmentRequest": {
@@ -9731,7 +9884,8 @@
             "TitlePlayerAccount": {
               "Id": "174812abf712",
               "Type": "title_player_account",
-              "TypeString": "title_player_account"
+              "TypeString": "title_player_account",
+              "IsTitlePlayer": true
             }
           },
           "FacebookInfo": {
@@ -12126,7 +12280,7 @@
         "PlayFabId"
       ],
       "example": {
-        "ExpirationTime": "2022-03-16T17:20:52.0214907+00:00",
+        "ExpirationTime": "2022-04-25T20:03:48.8350717+00:00",
         "MembershipId": "ShieldBonusMembership",
         "PlayFabId": "204883457"
       }
@@ -12255,7 +12409,7 @@
       "properties": {}
     },
     "SetTitleDataRequest": {
-      "description": "This API method is designed to store title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "type": "object",
       "properties": {
         "CustomTags": {
@@ -13834,7 +13988,8 @@
           "TitlePlayerAccount": {
             "Id": "174812abf712",
             "Type": "title_player_account",
-            "TypeString": "title_player_account"
+            "TypeString": "title_player_account",
+            "IsTitlePlayer": true
           }
         },
         "FacebookInfo": {
@@ -14522,6 +14677,14 @@
         "$ref": "#/definitions/ExportMasterPlayerDataRequest"
       }
     },
+    "ExportPlayersInSegmentRequest": {
+      "name": "ExportPlayersInSegmentRequest",
+      "in": "body",
+      "description": "Request must contain the Segment ID",
+      "schema": {
+        "$ref": "#/definitions/ExportPlayersInSegmentRequest"
+      }
+    },
     "GetAllSegmentsRequest": {
       "name": "GetAllSegmentsRequest",
       "in": "body",
@@ -14618,6 +14781,14 @@
       "description": "Player Shared Secret Keys are used for the call to Client/GetTitlePublicKey, which exchanges the shared secret for an RSA CSP blob to be used to encrypt the payload of account creation requests when that API requires a signature header.",
       "schema": {
         "$ref": "#/definitions/GetPlayerSharedSecretsRequest"
+      }
+    },
+    "GetPlayersInSegmentExportRequest": {
+      "name": "GetPlayersInSegmentExportRequest",
+      "in": "body",
+      "description": "Request must contain the ExportId",
+      "schema": {
+        "$ref": "#/definitions/GetPlayersInSegmentExportRequest"
       }
     },
     "GetPlayersInSegmentRequest": {
@@ -14949,7 +15120,7 @@
     "SetTitleDataRequest": {
       "name": "SetTitleDataRequest",
       "in": "body",
-      "description": "This API method is designed to store title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+      "description": "This API method is designed to store title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
       "schema": {
         "$ref": "#/definitions/SetTitleDataRequest"
       }
@@ -15548,6 +15719,33 @@
           "status": "OK",
           "data": {
             "JobReceiptId": "A101202A2CD049A0A93C9531DFB37DE8"
+          }
+        }
+      }
+    },
+    "ExportPlayersInSegmentResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ExportPlayersInSegmentResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "SegmentId": "ABCDEF1234567890",
+            "ExportId": "abcdef12345"
           }
         }
       }
@@ -16292,6 +16490,33 @@
           },
           "data": {
             "$ref": "#/definitions/GetPlayerSharedSecretsResult"
+          }
+        }
+      }
+    },
+    "GetPlayersInSegmentExportResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayersInSegmentExportResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "IndexUrl": "https://playfabplayerexports.blob.core.windows.net/titleexportabc/index.txt",
+            "State": "Complete"
           }
         }
       }
@@ -17084,7 +17309,8 @@
                 "TitlePlayerAccount": {
                   "Id": "174812abf712",
                   "Type": "title_player_account",
-                  "TypeString": "title_player_account"
+                  "TypeString": "title_player_account",
+                  "IsTitlePlayer": true
                 }
               },
               "FacebookInfo": {
@@ -20079,6 +20305,14 @@
       "id": 1538,
       "name": "PhotonApplicationIdAlreadyInUse"
     },
+    "CloudScriptUnableToDeleteProductionRevision": {
+      "id": 1539,
+      "name": "CloudScriptUnableToDeleteProductionRevision"
+    },
+    "CustomIdNotFound": {
+      "id": 1540,
+      "name": "CustomIdNotFound"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -20682,6 +20916,10 @@
     "EventSinkNameInvalid": {
       "id": 15006,
       "name": "EventSinkNameInvalid"
+    },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
     },
     "OperationCanceled": {
       "id": 16000,

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220316",
+    "version": "220425",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -52,6 +52,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/CancelTrade",
+          "Client/GetPlayerTrades",
+          "Client/GetTradeStatus",
+          "Client/OpenTrade"
+        ],
         "x-ms-docs-errors": [
           "TradeAcceptedCatalogItemInvalid",
           "TradeAcceptedItemsMismatch",
@@ -101,6 +107,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/GetFriendsList",
+          "Client/SetFriendTags"
+        ],
         "x-ms-docs-errors": [
           "UsersAlreadyFriends"
         ]
@@ -279,6 +289,9 @@
           }
         },
         "x-requestDetails": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+        "x-seeAlso": [
+          "Client/SubtractUserVirtualCurrency"
+        ],
         "x-ms-docs-errors": [
           "APINotEnabledForGameClientAccess",
           "InvalidVirtualCurrency",
@@ -383,6 +396,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/AcceptTrade",
+          "Client/GetPlayerTrades",
+          "Client/GetTradeStatus",
+          "Client/OpenTrade"
+        ],
         "x-ms-docs-errors": [
           "TradeAlreadyFilled",
           "TradeCancelled",
@@ -650,7 +669,7 @@
         "tags": [
           "Server-Side Cloud Script"
         ],
-        "description": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player.",
+        "description": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player. The PlayFab ID is the entity ID of the player's master_player_account entity.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/server-side-cloud-script/executecloudscript"
         },
@@ -772,7 +791,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Returns a list of every character that currently belongs to a user."
+        "x-requestDetails": "Returns a list of every character that currently belongs to a user.",
+        "x-seeAlso": [
+          "Client/GetCharacterData"
+        ]
       }
     },
     "/Client/GetCatalogItems": {
@@ -915,7 +937,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-responseDetails": "Note that the Position of the character in the results is for the overall leaderboard."
+        "x-responseDetails": "Note that the Position of the character in the results is for the overall leaderboard.",
+        "x-seeAlso": [
+          "Client/GetCharacterStatistics",
+          "Client/GetLeaderboardAroundCharacter",
+          "Client/UpdateCharacterStatistics"
+        ]
       }
     },
     "/Client/GetCharacterReadOnlyData": {
@@ -987,6 +1014,12 @@
           }
         },
         "x-responseDetails": "In addition to being available for use by the title, the statistics are used for all leaderboard operations in PlayFab.",
+        "x-seeAlso": [
+          "Client/GetCharacterLeaderboard",
+          "Client/GetLeaderboardAroundCharacter",
+          "Client/GetLeaderboardForUserCharacters",
+          "Client/UpdateCharacterStatistics"
+        ],
         "x-ms-docs-errors": [
           "CharacterNotFound"
         ]
@@ -1020,6 +1053,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Admin/DeleteContent",
+          "Server/GetContentDownloadUrl",
+          "Admin/GetContentList",
+          "Admin/GetContentUploadUrl"
+        ],
         "x-ms-docs-errors": [
           "ContentS3OriginBucketNotConfigured"
         ]
@@ -1171,6 +1210,11 @@
           }
         },
         "x-responseDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
+        "x-seeAlso": [
+          "Client/AddFriend",
+          "Client/GetPlayerProfile",
+          "Client/RemoveFriend"
+        ],
         "x-ms-docs-errors": [
           "AccountNotFound",
           "ExpiredXboxLiveToken",
@@ -1387,6 +1431,9 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/GetPurchase"
+        ],
         "x-ms-docs-errors": [
           "InvalidPaymentProvider",
           "NoPartnerEnabled"
@@ -1592,6 +1639,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Admin/CreatePlayerStatisticDefinition",
+          "Client/GetPlayerStatistics",
+          "Admin/UpdatePlayerStatisticDefinition",
+          "Client/UpdatePlayerStatistics"
+        ],
         "x-ms-docs-errors": [
           "StatisticNotFound"
         ]
@@ -1655,7 +1708,13 @@
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
-        }
+        },
+        "x-seeAlso": [
+          "Client/AcceptTrade",
+          "Client/CancelTrade",
+          "Client/GetTradeStatus",
+          "Client/OpenTrade"
+        ]
       }
     },
     "/Client/GetPlayFabIDsFromFacebookIDs": {
@@ -1848,13 +1907,44 @@
         "x-responseDetails": "For Kongregate identifiers which have not been linked to PlayFab accounts, null will be returned."
       }
     },
+    "/Client/GetPlayFabIDsFromNintendoServiceAccountIds": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromNintendoServiceAccountIds",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Service Account identifiers.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromnintendoserviceaccountids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromNintendoServiceAccountIdsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromNintendoServiceAccountIdsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
     "/Client/GetPlayFabIDsFromNintendoSwitchDeviceIds": {
       "post": {
         "operationId": "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "tags": [
           "Account Management"
         ],
-        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Switch identifiers.",
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Switch Device identifiers.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromnintendoswitchdeviceids"
         },
@@ -2303,6 +2393,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/AcceptTrade",
+          "Client/CancelTrade",
+          "Client/GetPlayerTrades",
+          "Client/OpenTrade"
+        ],
         "x-ms-docs-errors": [
           "TradeDoesNotExist"
         ]
@@ -2588,6 +2684,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithApple",
+          "Client/UnlinkApple"
+        ],
         "x-ms-docs-errors": [
           "AppleNotEnabledForTitle",
           "InvalidIdentityProviderId",
@@ -2780,6 +2880,10 @@
           }
         },
         "x-requestDetails": "Google sign-in is accomplished by obtaining a Google OAuth 2.0 credential using the Google sign-in for Android APIs on the device and passing it to this API.",
+        "x-seeAlso": [
+          "Client/LoginWithGoogleAccount",
+          "Client/UnlinkGoogleAccount"
+        ],
         "x-ms-docs-errors": [
           "AccountAlreadyLinked",
           "GoogleOAuthError",
@@ -2818,6 +2922,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithIOSDeviceID",
+          "Client/UnlinkIOSDeviceID"
+        ],
         "x-ms-docs-errors": [
           "LinkedDeviceAlreadyClaimed"
         ]
@@ -2890,6 +2998,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithNintendoServiceAccount",
+          "Client/UnlinkNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "InvalidIdentityProviderId",
           "LinkedIdentifierAlreadyClaimed",
@@ -2925,6 +3037,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithNintendoSwitchDeviceId",
+          "Client/UnlinkNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "LinkedIdentifierAlreadyClaimed"
         ]
@@ -2958,6 +3074,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithOpenIdConnect",
+          "Client/UnlinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "InvalidIdentityProviderId",
           "LinkedIdentifierAlreadyClaimed"
@@ -3076,6 +3196,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LoginWithTwitch",
+          "Client/UnlinkTwitch"
+        ],
         "x-ms-docs-errors": [
           "AccountAlreadyLinked",
           "FeatureNotConfiguredForTitle",
@@ -3199,6 +3323,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkApple",
+          "Client/UnlinkApple"
+        ],
         "x-ms-docs-errors": [
           "AppleNotEnabledForTitle",
           "EncryptionKeyMissing",
@@ -3286,6 +3414,10 @@
           }
         },
         "x-requestDetails": "Email address and password lengths are provided for information purposes. The server will validate that data passed in conforms to the field definition and report errors appropriately. It is recommended that developers not perform this validation locally, so that future updates do not require client updates.",
+        "x-seeAlso": [
+          "Client/LoginWithPlayFab",
+          "Client/RegisterPlayFabUser"
+        ],
         "x-ms-docs-errors": [
           "InvalidEmailOrPassword",
           "RequestViewConstraintParamsNotAllowed"
@@ -3495,6 +3627,10 @@
           }
         },
         "x-requestDetails": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device and CreateAccount is set to true, a new PlayFab account will be created and linked to the vendor-specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Please note that while multiple devices of this type can be linked to a single user account, only the one most recently used to login (or most recently linked) will be reflected in the user's account information. We will be updating to show all linked devices in a future release.",
+        "x-seeAlso": [
+          "Client/LinkIOSDeviceID",
+          "Client/UnlinkIOSDeviceID"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3579,6 +3715,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoServiceAccount",
+          "Client/UnlinkNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3619,6 +3759,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchDeviceId",
+          "Client/UnlinkNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "EvaluationModePlayerCountExceeded",
           "InvalidSignature",
@@ -3657,6 +3801,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkOpenIdConnect",
+          "Client/UnlinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3698,6 +3846,11 @@
           }
         },
         "x-requestDetails": "Username and password lengths are provided for information purposes. The server will validate that data passed in conforms to the field definition and report errors appropriately. It is recommended that developers not perform this validation locally, so that future updates to the username or password do not require client updates.",
+        "x-seeAlso": [
+          "Client/AddUsernamePassword",
+          "Client/LoginWithEmailAddress",
+          "Client/RegisterPlayFabUser"
+        ],
         "x-ms-docs-errors": [
           "InvalidUsernameOrPassword",
           "RequestViewConstraintParamsNotAllowed"
@@ -3778,6 +3931,10 @@
           }
         },
         "x-requestDetails": "Steam sign-in is accomplished with the Steam Session Ticket. More information on the Ticket can be found in the Steamworks SDK, here: https://partner.steamgames.com/documentation/auth (requires sign-in). NOTE: For Steam authentication to work, the title must be configured with the Steam Application ID and Web API Key in the PlayFab Game Manager (under Steam in the Add-ons Marketplace). You can obtain a Web API Key from the Permissions page of any Group associated with your App ID in the Steamworks site. If this is the first time a user has signed in with the Steam account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Steam ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+        "x-seeAlso": [
+          "Client/LinkSteamAccount",
+          "Client/UnlinkSteamAccount"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3819,6 +3976,10 @@
           }
         },
         "x-requestDetails": "More details regarding Twitch and their authentication system can be found at https://github.com/justintv/Twitch-API/blob/master/authentication.md. Developers must provide the Twitch access token that is generated using one of the Twitch authentication flows. PlayFab will use the title's unique Twitch Client ID to authenticate the token and log in to the PlayFab system. If CreateAccount is set to true and there is not already a user matched to the Twitch username that generated the token, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
+        "x-seeAlso": [
+          "Client/LinkTwitch",
+          "Client/UnlinkTwitch"
+        ],
         "x-ms-docs-errors": [
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
@@ -3945,6 +4106,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/AcceptTrade",
+          "Client/CancelTrade",
+          "Client/GetPlayerTrades",
+          "Client/GetTradeStatus"
+        ],
         "x-ms-docs-errors": [
           "TradeAcceptedCatalogItemInvalid",
           "TradeAcceptedCatalogItemIsNotTradable",
@@ -4262,7 +4429,11 @@
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
           }
-        }
+        },
+        "x-seeAlso": [
+          "Client/AddFriend",
+          "Client/SetFriendTags"
+        ]
       }
     },
     "/Client/RemoveGenericID": {
@@ -4576,7 +4747,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error."
+        "x-requestDetails": "This operation is not additive. It will completely replace the tag list for the specified user. Please note that only users in the PlayFab friends list can be assigned tags. Attempting to set a tag on a friend only included in the friends list from a social site integration (such as Facebook or Steam) will return the AccountNotFound error.",
+        "x-seeAlso": [
+          "Client/AddFriend",
+          "Client/RemoveFriend"
+        ]
       }
     },
     "/Client/SetPlayerSecret": {
@@ -4682,6 +4857,9 @@
           }
         },
         "x-requestDetails": "This API must be enabled for use as an option in the game manager website. It is disabled by default.",
+        "x-seeAlso": [
+          "Client/AddUserVirtualCurrency"
+        ],
         "x-ms-docs-errors": [
           "APINotEnabledForGameClientAccess",
           "InvalidVirtualCurrency",
@@ -4755,6 +4933,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkApple",
+          "Client/LoginWithApple"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "AppleNotEnabledForTitle"
@@ -4863,6 +5045,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkFacebookInstantGamesId",
+          "Client/LoginWithFacebookInstantGamesId"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "FacebookInstantGamesIdNotLinked"
@@ -4933,6 +5119,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkGoogleAccount",
+          "Client/LoginWithGoogleAccount"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
         ]
@@ -4966,6 +5156,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkIOSDeviceID",
+          "Client/LoginWithIOSDeviceID"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "DeviceNotLinked"
@@ -5037,6 +5231,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoServiceAccount",
+          "Client/LoginWithNintendoServiceAccount"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "NintendoSwitchNotEnabledForTitle"
@@ -5071,6 +5269,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkNintendoSwitchDeviceId",
+          "Client/LoginWithNintendoSwitchDeviceId"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "NintendoSwitchDeviceIdNotLinked"
@@ -5105,6 +5307,9 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkOpenIdConnect"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
         ]
@@ -5210,6 +5415,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-seeAlso": [
+          "Client/LinkTwitch",
+          "Client/LoginWithTwitch"
+        ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
         ]
@@ -5432,6 +5641,12 @@
           }
         },
         "x-requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive. Character Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged. Character statistics are used by the character-leaderboard apis, and accessible for custom game-logic.",
+        "x-seeAlso": [
+          "Client/GetCharacterLeaderboard",
+          "Client/GetCharacterStatistics",
+          "Client/GetLeaderboardAroundCharacter",
+          "Client/GetLeaderboardForUserCharacters"
+        ],
         "x-ms-docs-errors": [
           "APINotEnabledForGameClientAccess",
           "CharacterNotFound",
@@ -5468,6 +5683,11 @@
           }
         },
         "x-requestDetails": "Enable this option with the 'Allow Client to Post Player Statistics' option in PlayFab GameManager for your title. However, this is not best practice, as this data will no longer be safely controlled by the server. This operation is additive. Statistics not currently defined will be added, while those already defined will be updated with the given values. All other user statistics will remain unchanged. Note that if the statistic is intended to have a reset period, the UpdatePlayerStatisticDefinition API call can be used to define that reset period. Once a statistic has been versioned (reset), the now-previous version can still be written to for up a short, pre-defined period (currently 10 seconds), using the Version parameter in this call.",
+        "x-seeAlso": [
+          "Admin/CreatePlayerStatisticDefinition",
+          "Client/GetPlayerStatistics",
+          "Admin/UpdatePlayerStatisticDefinition"
+        ],
         "x-ms-docs-errors": [
           "APINotEnabledForGameClientAccess",
           "DuplicateStatisticName",
@@ -7685,7 +7905,8 @@
         "Entity": {
           "Id": "174812abf712",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
     },
@@ -8177,7 +8398,8 @@
             "TitlePlayerAccount": {
               "Id": "174812abf712",
               "Type": "title_player_account",
-              "TypeString": "title_player_account"
+              "TypeString": "title_player_account",
+              "IsTitlePlayer": true
             }
           },
           "FacebookInfo": {
@@ -9511,7 +9733,8 @@
               "TitlePlayerAccount": {
                 "Id": "174812abf712",
                 "Type": "title_player_account",
-                "TypeString": "title_player_account"
+                "TypeString": "title_player_account",
+                "IsTitlePlayer": true
               }
             },
             "FacebookInfo": {
@@ -9662,7 +9885,8 @@
             "TitlePlayerAccount": {
               "Id": "174812abf712",
               "Type": "title_player_account",
-              "TypeString": "title_player_account"
+              "TypeString": "title_player_account",
+              "IsTitlePlayer": true
             }
           },
           "FacebookInfo": {
@@ -10304,6 +10528,53 @@
           },
           {
             "KongregateId": "759374651209",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "type": "object",
+      "properties": {
+        "NintendoAccountIds": {
+          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "NintendoAccountIds"
+      ],
+      "example": {
+        "NintendoAccountIds": [
+          "526f79204261747478",
+          "526f79204261747479"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of Nintendo Switch Service Account identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NintendoServiceAccountPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "NintendoServiceAccountId": "526f79204261747478",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "NintendoServiceAccountId": "526f79204261747479",
             "PlayFabId": "6345cd25a6c7cc"
           }
         ]
@@ -13050,6 +13321,19 @@
         "Id": "d739e188-22f6-4d13-a4d5-df2e93d4d2f7"
       }
     },
+    "NintendoServiceAccountPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "NintendoServiceAccountId": {
+          "description": "Unique Nintendo Switch Service Account identifier for a user.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Service Account identifier.",
+          "type": "string"
+        }
+      }
+    },
     "NintendoSwitchPlayFabIdPair": {
       "type": "object",
       "properties": {
@@ -15724,7 +16008,8 @@
           "TitlePlayerAccount": {
             "Id": "174812abf712",
             "Type": "title_player_account",
-            "TypeString": "title_player_account"
+            "TypeString": "title_player_account",
+            "IsTitlePlayer": true
           }
         },
         "FacebookInfo": {
@@ -16935,6 +17220,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetPlayFabIDsFromKongregateIDsRequest"
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromNintendoServiceAccountIdsRequest"
       }
     },
     "GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest": {
@@ -18345,7 +18637,8 @@
                 "TitlePlayerAccount": {
                   "Id": "174812abf712",
                   "Type": "title_player_account",
-                  "TypeString": "title_player_account"
+                  "TypeString": "title_player_account",
+                  "IsTitlePlayer": true
                 }
               },
               "FacebookInfo": {
@@ -19155,7 +19448,8 @@
                   "TitlePlayerAccount": {
                     "Id": "174812abf712",
                     "Type": "title_player_account",
-                    "TypeString": "title_player_account"
+                    "TypeString": "title_player_account",
+                    "IsTitlePlayer": true
                   }
                 },
                 "FacebookInfo": {
@@ -19652,6 +19946,41 @@
               },
               {
                 "KongregateId": "759374651209",
+                "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromNintendoServiceAccountIdsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "NintendoServiceAccountId": "526f79204261747478",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "NintendoServiceAccountId": "526f79204261747479",
                 "PlayFabId": "6345cd25a6c7cc"
               }
             ]
@@ -23971,6 +24300,14 @@
       "id": 1538,
       "name": "PhotonApplicationIdAlreadyInUse"
     },
+    "CloudScriptUnableToDeleteProductionRevision": {
+      "id": 1539,
+      "name": "CloudScriptUnableToDeleteProductionRevision"
+    },
+    "CustomIdNotFound": {
+      "id": 1540,
+      "name": "CustomIdNotFound"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -24574,6 +24911,10 @@
     "EventSinkNameInvalid": {
       "id": 15006,
       "name": "EventSinkNameInvalid"
+    },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
     },
     "OperationCanceled": {
       "id": 16000,

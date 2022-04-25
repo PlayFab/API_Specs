@@ -4143,6 +4143,13 @@
           "optional": true
         },
         {
+          "name": "ChangeNumber",
+          "description": "Change number used for differentiating older matchmaking status updates from newer ones.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
           "name": "Created",
           "description": "The server date and time at which ticket was created.",
           "jsontype": "String",
@@ -4265,6 +4272,13 @@
       "assembly": "PlayFab.Multiplayer.Models",
       "isResult": true,
       "properties": [
+        {
+          "name": "ArrangementString",
+          "description": "A string that is used by players that are matched together to join an arranged lobby.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
         {
           "name": "MatchId",
           "description": "The Id of a match.",
@@ -8545,6 +8559,82 @@
         }
       ]
     },
+    "SubscribeToMatchResourceRequest": {
+      "name": "SubscribeToMatchResourceRequest",
+      "className": "SubscribeToMatchResourceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "description": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityKey",
+          "description": "The entity performing the subscription. The entity must be authorized to use this connectionHandle.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "PubSubConnectionHandle",
+          "description": "Opaque string, given to a client upon creating a connection with PubSub. Notifications will be sent to the connection associated with this handle.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ResourceId",
+          "description": "The name of the resource to subscribe to.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "SubscriptionVersion",
+          "description": "Version number for the subscription of this resource. Current supported version must be 1.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Type",
+          "description": "Subscription type. MatchInvite subscriptions are per-player. MatchTicketStatusChange subscriptions are per-ticket. Subscribe calls are idempotent. Subscribing on the same resource for the same connection results in success.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "SubscribeToMatchResourceResult": {
+      "name": "SubscribeToMatchResourceResult",
+      "className": "SubscribeToMatchResourceResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Topic",
+          "description": "Matchmaking resource",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "SubscriptionType": {
       "name": "SubscriptionType",
       "className": "SubscriptionType",
@@ -8785,6 +8875,74 @@
           "optional": false
         }
       ]
+    },
+    "UnsubscribeFromMatchResourceRequest": {
+      "name": "UnsubscribeFromMatchResourceRequest",
+      "className": "UnsubscribeFromMatchResourceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "description": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityKey",
+          "description": "The entity performing the unsubscription. The entity must be authorized to use this connectionHandle.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "PubSubConnectionHandle",
+          "description": "Opaque string, given to a client upon creating a connection with PubSub.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ResourceId",
+          "description": "The resource to unsubscribe from.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "SubscriptionVersion",
+          "description": "Version number for the unsubscription from this resource.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "Type",
+          "description": "Type of the subscription to be canceled.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "UnsubscribeFromMatchResourceResult": {
+      "name": "UnsubscribeFromMatchResourceResult",
+      "className": "UnsubscribeFromMatchResourceResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "isResult": true,
+      "properties": []
     },
     "UntagContainerImageRequest": {
       "name": "UntagContainerImageRequest",
@@ -9190,7 +9348,9 @@
         "GetServerBackfillTicket",
         "JoinMatchmakingTicket",
         "ListMatchmakingTicketsForPlayer",
-        "ListServerBackfillTicketsForPlayer"
+        "ListServerBackfillTicketsForPlayer",
+        "SubscribeToMatchmakingResource",
+        "UnsubscribeFromMatchmakingResource"
       ]
     },
     {
@@ -9274,7 +9434,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CancelAllMatchmakingTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "CancelAllMatchmakingTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "errors": [
@@ -9293,7 +9453,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CancelAllServerBackfillTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "CancelAllServerBackfillTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "errors": [
@@ -9475,7 +9635,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateLobbyRequest",
-      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"Owner\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"Members\": [\n    {\n      \"MemberEntity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    }\n  ]\n}",
+      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"Owner\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"Members\": [\n    {\n      \"MemberEntity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\",\n        \"IsTitle\": false,\n        \"IsNamespace\": false,\n        \"IsService\": false,\n        \"IsMasterPlayer\": false,\n        \"IsTitlePlayer\": true\n      }\n    }\n  ]\n}",
       "result": "CreateLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10190,7 +10350,7 @@
       "request": "GetMatchmakingTicketRequest",
       "requestExample": "{\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n  \"QueueName\": \"custom123\",\n  \"EscapeObject\": false\n}",
       "result": "GetMatchmakingTicketResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n    \"QueueName\": \"custom123\",\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\n    \"Created\": \"2016-08-23T12:33:14Z\",\n    \"Status\": \"Matched\",\n    \"GiveUpAfterSeconds\": 100,\n    \"MembersToMatchWith\": [\n      {\n        \"Id\": \"456456456\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    ],\n    \"Members\": [],\n    \"Creator\": {\n      \"Id\": \"123123123\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    \"ChangeNumber\": 10\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n    \"QueueName\": \"custom123\",\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\n    \"Created\": \"2016-08-23T12:33:14Z\",\n    \"Status\": \"Matched\",\n    \"GiveUpAfterSeconds\": 100,\n    \"MembersToMatchWith\": [\n      {\n        \"Id\": \"456456456\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\",\n        \"IsTitle\": false,\n        \"IsNamespace\": false,\n        \"IsService\": false,\n        \"IsMasterPlayer\": false,\n        \"IsTitlePlayer\": true\n      }\n    ],\n    \"Members\": [],\n    \"Creator\": {\n      \"Id\": \"123123123\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\",\n      \"IsTitle\": false,\n      \"IsNamespace\": false,\n      \"IsService\": false,\n      \"IsMasterPlayer\": false,\n      \"IsTitlePlayer\": true\n    },\n    \"ChangeNumber\": 10\n  }\n}",
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingQueueNotFound",
@@ -10465,7 +10625,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "InviteToLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"InviteeEntity\": {\n    \"Id\": \"4321\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"InviteeEntity\": {\n    \"Id\": \"4321\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -10484,7 +10644,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "JoinArrangedLobbyRequest",
-      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"ArrangementString\": \"arrangementString\",\n  \"MemberData\": {\n    \"MyMemberKey\": \"MyMemberKey value\"\n  }\n}",
+      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"ArrangementString\": \"arrangementString\",\n  \"MemberData\": {\n    \"MyMemberKey\": \"MyMemberKey value\"\n  }\n}",
       "result": "JoinLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10505,7 +10665,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "JoinLobbyRequest",
-      "requestExample": "{\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"ConnectionString\": \"connString\",\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  }\n}",
+      "requestExample": "{\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"ConnectionString\": \"connString\",\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  }\n}",
       "result": "JoinLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10556,7 +10716,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "LeaveLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -10821,7 +10981,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "ListMatchmakingTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "ListMatchmakingTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketIds\": [\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\n    ]\n  }\n}",
       "errors": [
@@ -10940,7 +11100,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "ListServerBackfillTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "ListServerBackfillTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketIds\": [\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\n    ]\n  }\n}",
       "errors": [
@@ -11028,7 +11188,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "RemoveMemberFromLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"PreventRejoin\": false\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"PreventRejoin\": false\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -11209,13 +11369,39 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "SubscribeToLobbyResourceRequest",
-      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
       "result": "SubscribeToLobbyResourceResult",
       "resultExample": "",
       "errors": [
         "LobbyBadRequest",
         "LobbyDoesNotExist",
         "LobbyRateLimitExceeded",
+        "PubSubConnectionHandleInvalid",
+        "PubSubConnectionNotFoundForEntity",
+        "PubSubSubscriptionLimitExceeded"
+      ]
+    },
+    {
+      "name": "SubscribeToMatchmakingResource",
+      "summary": "Subscribe to match resource notifications.",
+      "requestDetails": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/SubscribeToMatchmakingResource",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "SubscribeToMatchResourceRequest",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"22231f57-aae8-4a70-a2f9-d53a04458767\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "result": "SubscribeToMatchResourceResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Topic\": \"MatchResourceTopic\"\n  }\n}",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "errors": [
+        "MatchmakingBadRequest",
+        "MatchmakingEntityInvalid",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized",
         "PubSubConnectionHandleInvalid",
         "PubSubConnectionNotFoundForEntity",
         "PubSubSubscriptionLimitExceeded"
@@ -11231,13 +11417,38 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UnsubscribeFromLobbyResourceRequest",
-      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
         "LobbyBadRequest",
         "LobbyDoesNotExist",
         "LobbyRateLimitExceeded",
+        "PubSubConnectionHandleInvalid",
+        "PubSubConnectionNotFoundForEntity"
+      ]
+    },
+    {
+      "name": "UnsubscribeFromMatchmakingResource",
+      "summary": "Unsubscribe from match resource notifications.",
+      "requestDetails": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "subgroup": "Matchmaking",
+      "titleTiers": null,
+      "url": "/Match/UnsubscribeFromMatchmakingResource",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UnsubscribeFromMatchResourceRequest",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"4322f33d-a392-4c9a-9d8c-44c371f90f21\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "result": "UnsubscribeFromMatchResourceResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
+      "AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ],
+      "errors": [
+        "MatchmakingBadRequest",
+        "MatchmakingEntityInvalid",
+        "MatchmakingTicketNotFound",
+        "MatchmakingUnauthorized",
         "PubSubConnectionHandleInvalid",
         "PubSubConnectionNotFoundForEntity"
       ]
@@ -11401,7 +11612,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UpdateLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MaxPlayers\": 50,\n  \"AccessPolicy\": \"Friends\",\n  \"MembershipLock\": \"Locked\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey updated value\"\n  },\n  \"SearchDataToDelete\": [\n    \"number_key1\"\n  ],\n  \"LobbyDataToDelete\": [\n    \"MyOldGameKey\"\n  ],\n  \"MemberDataToDelete\": []\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MaxPlayers\": 50,\n  \"AccessPolicy\": \"Friends\",\n  \"MembershipLock\": \"Locked\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey updated value\"\n  },\n  \"SearchDataToDelete\": [\n    \"number_key1\"\n  ],\n  \"LobbyDataToDelete\": [\n    \"MyOldGameKey\"\n  ],\n  \"MemberDataToDelete\": []\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -13554,6 +13765,14 @@
       "id": 1538,
       "name": "PhotonApplicationIdAlreadyInUse"
     },
+    "CloudScriptUnableToDeleteProductionRevision": {
+      "id": 1539,
+      "name": "CloudScriptUnableToDeleteProductionRevision"
+    },
+    "CustomIdNotFound": {
+      "id": 1540,
+      "name": "CustomIdNotFound"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -14158,6 +14377,10 @@
       "id": 15006,
       "name": "EventSinkNameInvalid"
     },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -14699,6 +14922,8 @@
     "NoValidIdentityForAad",
     "PlayerIdentityLinkNotFound",
     "PhotonApplicationIdAlreadyInUse",
+    "CloudScriptUnableToDeleteProductionRevision",
+    "CustomIdNotFound",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -14850,6 +15075,7 @@
     "EventSinkSasTokenInvalid",
     "EventSinkNotFound",
     "EventSinkNameInvalid",
+    "EventSinkSasTokenPermissionInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"

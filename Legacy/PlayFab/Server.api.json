@@ -4639,6 +4639,12 @@
           "name": "PhotonApplicationIdAlreadyInUse"
         },
         {
+          "name": "CloudScriptUnableToDeleteProductionRevision"
+        },
+        {
+          "name": "CustomIdNotFound"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -5090,6 +5096,9 @@
         },
         {
           "name": "EventSinkNameInvalid"
+        },
+        {
+          "name": "EventSinkSasTokenPermissionInvalid"
         },
         {
           "name": "OperationCanceled"
@@ -6797,6 +6806,42 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "GenericPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "className": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "NintendoAccountIds",
+          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromNintendoServiceAccountIdsResult": {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "className": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Nintendo Switch Service Account identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "NintendoServiceAccountPlayFabIdPair",
           "isclass": true,
           "optional": true
         }
@@ -9175,6 +9220,28 @@
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
       "properties": []
+    },
+    "NintendoServiceAccountPlayFabIdPair": {
+      "name": "NintendoServiceAccountPlayFabIdPair",
+      "className": "NintendoServiceAccountPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "NintendoServiceAccountId",
+          "description": "Unique Nintendo Switch Service Account identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Service Account identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
     },
     "NintendoSwitchPlayFabIdPair": {
       "name": "NintendoSwitchPlayFabIdPair",
@@ -13858,6 +13925,7 @@
         "GetPlayFabIDsFromFacebookIDs",
         "GetPlayFabIDsFromFacebookInstantGamesIds",
         "GetPlayFabIDsFromGenericIDs",
+        "GetPlayFabIDsFromNintendoServiceAccountIds",
         "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromSteamIDs",
@@ -14210,7 +14278,10 @@
       "request": "AwardSteamAchievementRequest",
       "requestExample": "{\n  \"Achievements\": [\n    {\n      \"PlayFabId\": \"234974573892\",\n      \"AchievementName\": \"FinishLevel1\",\n      \"Result\": false\n    },\n    {\n      \"PlayFabId\": \"334353433\",\n      \"AchievementName\": \"FinishLevel1\",\n      \"Result\": false\n    }\n  ]\n}",
       "result": "AwardSteamAchievementResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"AchievementResults\": [\n      {\n        \"PlayFabId\": \"234974573892\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      },\n      {\n        \"PlayFabId\": \"334353433\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      }\n    ]\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"AchievementResults\": [\n      {\n        \"PlayFabId\": \"234974573892\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      },\n      {\n        \"PlayFabId\": \"334353433\",\n        \"AchievementName\": \"FinishLevel1\",\n        \"Result\": true\n      }\n    ]\n  }\n}",
+      "errors": [
+        "UserisNotValid"
+      ]
     },
     {
       "name": "BanUsers",
@@ -14393,7 +14464,7 @@
     },
     {
       "name": "ExecuteCloudScript",
-      "summary": "Executes a CloudScript function, with the 'currentPlayerId' variable set to the specified PlayFabId parameter value.",
+      "summary": "Executes a CloudScript function, with the 'currentPlayerId' set to the PlayFab ID of the authenticated player. The PlayFab ID is the entity ID of the player's master_player_account entity.",
       "subgroup": "Server-Side Cloud Script",
       "titleTiers": null,
       "url": "/Server/ExecuteCloudScript",
@@ -14780,7 +14851,7 @@
       "request": "GetPlayerCombinedInfoRequest",
       "requestExample": "{\n  \"PlayFabId\": \"4027527BF22653D1\",\n  \"InfoRequestParameters\": {\n    \"GetUserAccountInfo\": true,\n    \"GetUserInventory\": false,\n    \"GetUserVirtualCurrency\": true,\n    \"GetUserData\": true,\n    \"UserDataKeys\": [\n      \"preferences\",\n      \"progress\"\n    ],\n    \"GetUserReadOnlyData\": false,\n    \"GetCharacterInventories\": false,\n    \"GetCharacterList\": false,\n    \"GetTitleData\": false,\n    \"GetPlayerStatistics\": false,\n    \"GetPlayerProfile\": false\n  }\n}",
       "result": "GetPlayerCombinedInfoResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"4027527BF22653D1\",\n    \"InfoResultPayload\": {\n      \"AccountInfo\": {\n        \"PlayFabId\": \"4027527BF22653D1\",\n        \"Created\": \"2013-04-07T09:04:28Z\",\n        \"Username\": \"my name\",\n        \"TitleInfo\": {\n          \"Origination\": \"IOS\",\n          \"Created\": \"2014-01-08T11:03:18Z\",\n          \"LastLogin\": \"2014-04-07T09:04:28Z\",\n          \"FirstLogin\": \"2014-01-08T11:03:18Z\",\n          \"TitlePlayerAccount\": {\n            \"Id\": \"174812abf712\",\n            \"Type\": \"title_player_account\",\n            \"TypeString\": \"title_player_account\"\n          }\n        },\n        \"FacebookInfo\": {\n          \"FacebookId\": \"23525445454\"\n        },\n        \"SteamInfo\": {\n          \"SteamCountry\": \"US\",\n          \"SteamCurrency\": \"USD\"\n        },\n        \"GameCenterInfo\": {\n          \"GameCenterId\": \"someone\"\n        }\n      },\n      \"UserVirtualCurrency\": {\n        \"GC\": 15\n      },\n      \"UserVirtualCurrencyRechargeTimes\": {\n        \"GC\": {\n          \"SecondsToRecharge\": 3600,\n          \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n          \"RechargeMax\": 50\n        }\n      },\n      \"UserData\": {\n        \"preferences\": {\n          \"Value\": \"alpha\",\n          \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n          \"Permission\": \"Public\"\n        },\n        \"progress\": {\n          \"Value\": \"level_twenty\",\n          \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n          \"Permission\": \"Private\"\n        }\n      },\n      \"UserDataVersion\": 12,\n      \"UserReadOnlyDataVersion\": 0,\n      \"PlayerProfile\": {\n        \"TitleId\": \"TitleName\",\n        \"PlayerId\": \"10931252888739651331\",\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LastLogin\": \"0001-01-01T00:00:00Z\",\n        \"BannedUntil\": \"9999-12-31T23:59:59.999Z\",\n        \"DisplayName\": \"PlayerDisplayName\",\n        \"TotalValueToDateInUSD\": 0\n      }\n    }\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"4027527BF22653D1\",\n    \"InfoResultPayload\": {\n      \"AccountInfo\": {\n        \"PlayFabId\": \"4027527BF22653D1\",\n        \"Created\": \"2013-04-07T09:04:28Z\",\n        \"Username\": \"my name\",\n        \"TitleInfo\": {\n          \"Origination\": \"IOS\",\n          \"Created\": \"2014-01-08T11:03:18Z\",\n          \"LastLogin\": \"2014-04-07T09:04:28Z\",\n          \"FirstLogin\": \"2014-01-08T11:03:18Z\",\n          \"TitlePlayerAccount\": {\n            \"Id\": \"174812abf712\",\n            \"Type\": \"title_player_account\",\n            \"TypeString\": \"title_player_account\",\n            \"IsTitle\": false,\n            \"IsNamespace\": false,\n            \"IsService\": false,\n            \"IsMasterPlayer\": false,\n            \"IsTitlePlayer\": true\n          }\n        },\n        \"FacebookInfo\": {\n          \"FacebookId\": \"23525445454\"\n        },\n        \"SteamInfo\": {\n          \"SteamCountry\": \"US\",\n          \"SteamCurrency\": \"USD\"\n        },\n        \"GameCenterInfo\": {\n          \"GameCenterId\": \"someone\"\n        }\n      },\n      \"UserVirtualCurrency\": {\n        \"GC\": 15\n      },\n      \"UserVirtualCurrencyRechargeTimes\": {\n        \"GC\": {\n          \"SecondsToRecharge\": 3600,\n          \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n          \"RechargeMax\": 50\n        }\n      },\n      \"UserData\": {\n        \"preferences\": {\n          \"Value\": \"alpha\",\n          \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n          \"Permission\": \"Public\"\n        },\n        \"progress\": {\n          \"Value\": \"level_twenty\",\n          \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n          \"Permission\": \"Private\"\n        }\n      },\n      \"UserDataVersion\": 12,\n      \"UserReadOnlyDataVersion\": 0,\n      \"PlayerProfile\": {\n        \"TitleId\": \"TitleName\",\n        \"PlayerId\": \"10931252888739651331\",\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LastLogin\": \"0001-01-01T00:00:00Z\",\n        \"BannedUntil\": \"9999-12-31T23:59:59.999Z\",\n        \"DisplayName\": \"PlayerDisplayName\",\n        \"TotalValueToDateInUSD\": 0\n      }\n    }\n  }\n}"
     },
     {
       "name": "GetPlayerProfile",
@@ -14945,6 +15016,20 @@
         "Server/AddGenericID",
         "Server/RemoveGenericID"
       ]
+    },
+    {
+      "name": "GetPlayFabIDsFromNintendoServiceAccountIds",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Nintendo Service Account identifiers.",
+      "resultDetails": "For Nintendo Service Account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromNintendoServiceAccountIds",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromNintendoServiceAccountIdsRequest",
+      "requestExample": "{\n  \"NintendoAccountIds\": [\n    \"526f79204261747478\",\n    \"526f79204261747479\"\n  ]\n}",
+      "result": "GetPlayFabIDsFromNintendoServiceAccountIdsResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"NintendoServiceAccountId\": \"526f79204261747478\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"NintendoServiceAccountId\": \"526f79204261747479\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromNintendoSwitchDeviceIds",
@@ -18889,6 +18974,14 @@
       "id": 1538,
       "name": "PhotonApplicationIdAlreadyInUse"
     },
+    "CloudScriptUnableToDeleteProductionRevision": {
+      "id": 1539,
+      "name": "CloudScriptUnableToDeleteProductionRevision"
+    },
+    "CustomIdNotFound": {
+      "id": 1540,
+      "name": "CustomIdNotFound"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -19493,6 +19586,10 @@
       "id": 15006,
       "name": "EventSinkNameInvalid"
     },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -20034,6 +20131,8 @@
     "NoValidIdentityForAad",
     "PlayerIdentityLinkNotFound",
     "PhotonApplicationIdAlreadyInUse",
+    "CloudScriptUnableToDeleteProductionRevision",
+    "CustomIdNotFound",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -20185,6 +20284,7 @@
     "EventSinkSasTokenInvalid",
     "EventSinkNotFound",
     "EventSinkNameInvalid",
+    "EventSinkSasTokenPermissionInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"

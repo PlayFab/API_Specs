@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220316",
+    "version": "220425",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1200,6 +1200,91 @@
         "x-ms-docs-errors": [
           "MatchmakingQueueConfigInvalid",
           "MatchmakingQueueLimitExceeded"
+        ]
+      }
+    },
+    "/Match/SubscribeToMatchmakingResource": {
+      "post": {
+        "operationId": "SubscribeToMatchmakingResource",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Subscribe to match resource notifications.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking/subscribetomatchmakingresource"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SubscribeToMatchResourceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SubscribeToMatchResourceResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingBadRequest",
+          "MatchmakingEntityInvalid",
+          "MatchmakingTicketNotFound",
+          "MatchmakingUnauthorized",
+          "PubSubConnectionHandleInvalid",
+          "PubSubConnectionNotFoundForEntity",
+          "PubSubSubscriptionLimitExceeded"
+        ]
+      }
+    },
+    "/Match/UnsubscribeFromMatchmakingResource": {
+      "post": {
+        "operationId": "UnsubscribeFromMatchmakingResource",
+        "tags": [
+          "Matchmaking"
+        ],
+        "description": "Unsubscribe from match resource notifications.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking/unsubscribefrommatchmakingresource"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnsubscribeFromMatchResourceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnsubscribeFromMatchResourceResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+        "x-AnyInclusiveFlags": [
+          "RequiresOptionalValueSupport"
+        ],
+        "x-ms-docs-errors": [
+          "MatchmakingBadRequest",
+          "MatchmakingEntityInvalid",
+          "MatchmakingTicketNotFound",
+          "MatchmakingUnauthorized",
+          "PubSubConnectionHandleInvalid",
+          "PubSubConnectionNotFoundForEntity"
         ]
       }
     },
@@ -3313,6 +3398,43 @@
           "MultiplayerServerUnavailable"
         ]
       }
+    },
+    "/PubSub/Negotiate": {
+      "post": {
+        "operationId": "Negotiate",
+        "tags": [
+          "PubSub"
+        ],
+        "description": "Negotiate a SignalR Connection to the PubSub service, as the first step of establishing the connection. Note: SignalR client implementations expect the Hub URL to omit the `/negotiate` portion of this path (ex: HubConnection should be passed a URL that ends in `...playfabapi.com/pubsub`). When starting the connection, SignalR clients will automatically append `/negotiate` to the end of the URL of the hub. The SignalR client will interpret the response object to establish a persistant connection to PubSub. https://docs.microsoft.com/aspnet/core/signalr/dotnet-client#connect-to-a-hub https://github.com/dotnet/aspnetcore/blob/main/src/SignalR/docs/specs/TransportProtocols.md#post-endpoint-basenegotiate-request",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/pubsub/negotiate"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/PubSubNegotiateRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/PubSubNegotiateResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "SignalR clients make this request to initiate their connection to the PubSubHub SignalR service. Clients will interpret the response and make a persistent websocket connection to the service with the details.",
+        "x-ms-docs-errors": [
+          "InternalServerError",
+          "PubSubFeatureNotEnabledForTitle",
+          "PubSubTooManyRequests",
+          "ServiceUnavailable"
+        ]
+      }
     }
   },
   "definitions": {
@@ -3776,7 +3898,8 @@
         "Entity": {
           "Id": "123123123",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "QueueName": "custom123"
       }
@@ -3813,7 +3936,8 @@
         "Entity": {
           "Id": "123123123",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "QueueName": "custom123"
       }
@@ -5205,7 +5329,8 @@
         "Owner": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "OwnerMigrationPolicy": "Automatic",
         "UseConnections": true,
@@ -5221,7 +5346,8 @@
             "MemberEntity": {
               "Id": "1234",
               "Type": "title_player_account",
-              "TypeString": "title_player_account"
+              "TypeString": "title_player_account",
+              "IsTitlePlayer": true
             }
           }
         ]
@@ -6761,6 +6887,11 @@
           "description": "The reason why the current ticket was canceled. This field is only set if the ticket is in canceled state.",
           "type": "string"
         },
+        "ChangeNumber": {
+          "description": "Change number used for differentiating older matchmaking status updates from newer ones.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
         "Created": {
           "description": "The server date and time at which ticket was created.",
           "type": "string"
@@ -6829,14 +6960,16 @@
           {
             "Id": "456456456",
             "Type": "title_player_account",
-            "TypeString": "title_player_account"
+            "TypeString": "title_player_account",
+            "IsTitlePlayer": true
           }
         ],
         "Members": [],
         "Creator": {
           "Id": "123123123",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "ChangeNumber": 10
       }
@@ -6880,6 +7013,10 @@
     "GetMatchResult": {
       "type": "object",
       "properties": {
+        "ArrangementString": {
+          "description": "A string that is used by players that are matched together to join an arranged lobby.",
+          "type": "string"
+        },
         "MatchId": {
           "description": "The Id of a match.",
           "type": "string"
@@ -7454,12 +7591,14 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "InviteeEntity": {
           "Id": "4321",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
     },
@@ -7521,7 +7660,8 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "ArrangementString": "arrangementString",
         "MemberData": {
@@ -7556,7 +7696,8 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "ConnectionString": "connString",
         "MemberData": {
@@ -7639,7 +7780,8 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
     },
@@ -8166,7 +8308,8 @@
         "Entity": {
           "Id": "123123123",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "QueueName": "custom123"
       }
@@ -8453,7 +8596,8 @@
         "Entity": {
           "Id": "123123123",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "QueueName": "custom123"
       }
@@ -9414,6 +9558,34 @@
         "UDP"
       ]
     },
+    "PubSubNegotiateRequest": {
+      "description": "SignalR clients make this request to initiate their connection to the PubSubHub SignalR service. Clients will interpret the response and make a persistent websocket connection to the service with the details.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        }
+      },
+      "example": {}
+    },
+    "PubSubNegotiateResult": {
+      "type": "object",
+      "properties": {
+        "AccessToken": {
+          "description": "The access token for the PubSub Azure SignalR service.",
+          "type": "string"
+        },
+        "Url": {
+          "description": "The Url of the PubSub Azure SignalR endpoint.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "AccessToken": "WJkGtFNsLOQgoqV",
+        "Url": "https://pubsub-signalr-dev-wu2-001.service.signalr.net/client/?hub=pubsubhub"
+      }
+    },
     "QosServer": {
       "type": "object",
       "properties": {
@@ -9613,7 +9785,8 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
     },
@@ -10368,7 +10541,8 @@
         "EntityKey": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
     },
@@ -10382,6 +10556,74 @@
       },
       "required": [
         "Topic"
+      ]
+    },
+    "SubscribeToMatchResourceRequest": {
+      "description": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity performing the subscription. The entity must be authorized to use this connectionHandle.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, given to a client upon creating a connection with PubSub. Notifications will be sent to the connection associated with this handle.",
+          "type": "string"
+        },
+        "ResourceId": {
+          "description": "The name of the resource to subscribe to.",
+          "type": "string"
+        },
+        "SubscriptionVersion": {
+          "description": "Version number for the subscription of this resource. Current supported version must be 1.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Type": {
+          "description": "Subscription type. MatchInvite subscriptions are per-player. MatchTicketStatusChange subscriptions are per-ticket. Subscribe calls are idempotent. Subscribing on the same resource for the same connection results in success.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "ResourceId",
+        "SubscriptionVersion",
+        "PubSubConnectionHandle",
+        "EntityKey"
+      ],
+      "example": {
+        "Type": "MatchTicketStatusChange",
+        "ResourceId": "fce22286-04f2-4065-9ae8-aa90b63f48e3",
+        "SubscriptionVersion": 1,
+        "PubSubConnectionHandle": "PubSubConnection",
+        "EntityKey": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "SubscribeToMatchResourceResult": {
+      "type": "object",
+      "properties": {
+        "Topic": {
+          "description": "Matchmaking resource",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Topic"
+      ],
+      "example": {
+        "Topic": "MatchResourceTopic"
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
       ]
     },
     "SubscriptionType": {
@@ -10596,9 +10838,68 @@
         "EntityKey": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         }
       }
+    },
+    "UnsubscribeFromMatchResourceRequest": {
+      "description": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EntityKey": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity performing the unsubscription. The entity must be authorized to use this connectionHandle.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, given to a client upon creating a connection with PubSub.",
+          "type": "string"
+        },
+        "ResourceId": {
+          "description": "The resource to unsubscribe from.",
+          "type": "string"
+        },
+        "SubscriptionVersion": {
+          "description": "Version number for the unsubscription from this resource.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "Type": {
+          "description": "Type of the subscription to be canceled.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Type",
+        "ResourceId",
+        "SubscriptionVersion",
+        "PubSubConnectionHandle",
+        "EntityKey"
+      ],
+      "example": {
+        "Type": "MatchTicketStatusChange",
+        "ResourceId": "8e2987e9-01e5-403f-b647-f0407ad4b26d",
+        "SubscriptionVersion": 1,
+        "PubSubConnectionHandle": "PubSubConnection",
+        "EntityKey": {}
+      },
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
+    },
+    "UnsubscribeFromMatchResourceResult": {
+      "type": "object",
+      "properties": {},
+      "example": {},
+      "x-AnyInclusiveFlags": [
+        "RequiresOptionalValueSupport"
+      ]
     },
     "UntagContainerImageRequest": {
       "description": "Removes the specified tag from the image. After this operation, a 'docker pull' will fail for the specified image and tag combination. Morever, ListContainerImageTags will not return the specified tag.",
@@ -10855,7 +11156,8 @@
         "MemberEntity": {
           "Id": "1234",
           "Type": "title_player_account",
-          "TypeString": "title_player_account"
+          "TypeString": "title_player_account",
+          "IsTitlePlayer": true
         },
         "MemberData": {
           "MyDataKey": "MyDataKey updated value"
@@ -11432,6 +11734,14 @@
         "$ref": "#/definitions/ListVirtualMachineSummariesRequest"
       }
     },
+    "PubSubNegotiateRequest": {
+      "name": "PubSubNegotiateRequest",
+      "in": "body",
+      "description": "SignalR clients make this request to initiate their connection to the PubSubHub SignalR service. Clients will interpret the response and make a persistent websocket connection to the service with the details.",
+      "schema": {
+        "$ref": "#/definitions/PubSubNegotiateRequest"
+      }
+    },
     "RemoveMatchmakingQueueRequest": {
       "name": "RemoveMatchmakingQueueRequest",
       "in": "body",
@@ -11488,12 +11798,28 @@
         "$ref": "#/definitions/SubscribeToLobbyResourceRequest"
       }
     },
+    "SubscribeToMatchResourceRequest": {
+      "name": "SubscribeToMatchResourceRequest",
+      "in": "body",
+      "description": "Subscribe to match resource notifications. Match subscriptions have two types; MatchInvite and MatchTicketStatusChange",
+      "schema": {
+        "$ref": "#/definitions/SubscribeToMatchResourceRequest"
+      }
+    },
     "UnsubscribeFromLobbyResourceRequest": {
       "name": "UnsubscribeFromLobbyResourceRequest",
       "in": "body",
       "description": "Request to unsubscribe from lobby notifications. Only a client can unsubscribe from notifications.",
       "schema": {
         "$ref": "#/definitions/UnsubscribeFromLobbyResourceRequest"
+      }
+    },
+    "UnsubscribeFromMatchResourceRequest": {
+      "name": "UnsubscribeFromMatchResourceRequest",
+      "in": "body",
+      "description": "Unsubscribe from a Match resource's notifications. For MatchInvite, players are expected to unsubscribe once they can no longer accept invites. For MatchTicketStatusChange, players are expected to unsusbcribe once the ticket has reached a canceled or matched state.",
+      "schema": {
+        "$ref": "#/definitions/UnsubscribeFromMatchResourceRequest"
       }
     },
     "UntagContainerImageRequest": {
@@ -12427,14 +12753,16 @@
               {
                 "Id": "456456456",
                 "Type": "title_player_account",
-                "TypeString": "title_player_account"
+                "TypeString": "title_player_account",
+                "IsTitlePlayer": true
               }
             ],
             "Members": [],
             "Creator": {
               "Id": "123123123",
               "Type": "title_player_account",
-              "TypeString": "title_player_account"
+              "TypeString": "title_player_account",
+              "IsTitlePlayer": true
             },
             "ChangeNumber": 10
           }
@@ -13300,6 +13628,33 @@
         }
       }
     },
+    "PubSubNegotiateResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/PubSubNegotiateResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "AccessToken": "WJkGtFNsLOQgoqV",
+            "Url": "https://pubsub-signalr-dev-wu2-001.service.signalr.net/client/?hub=pubsubhub"
+          }
+        }
+      }
+    },
     "RemoveMatchmakingQueueResult": {
       "description": "",
       "schema": {
@@ -13431,6 +13786,56 @@
           }
         }
       }
+    },
+    "SubscribeToMatchResourceResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SubscribeToMatchResourceResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Topic": "MatchResourceTopic"
+          }
+        }
+      }
+    },
+    "UnsubscribeFromMatchResourceResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnsubscribeFromMatchResourceResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
+      }
     }
   },
   "tags": [
@@ -13449,6 +13854,10 @@
     {
       "name": "MultiplayerServer",
       "description": "Multiplayer Server APIs"
+    },
+    {
+      "name": "PubSub",
+      "description": "PlayFab PubSub APIs"
     }
   ],
   "securityDefinitions": {
@@ -15585,6 +15994,14 @@
       "id": 1538,
       "name": "PhotonApplicationIdAlreadyInUse"
     },
+    "CloudScriptUnableToDeleteProductionRevision": {
+      "id": 1539,
+      "name": "CloudScriptUnableToDeleteProductionRevision"
+    },
+    "CustomIdNotFound": {
+      "id": 1540,
+      "name": "CustomIdNotFound"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -16188,6 +16605,10 @@
     "EventSinkNameInvalid": {
       "id": 15006,
       "name": "EventSinkNameInvalid"
+    },
+    "EventSinkSasTokenPermissionInvalid": {
+      "id": 15007,
+      "name": "EventSinkSasTokenPermissionInvalid"
     },
     "OperationCanceled": {
       "id": 16000,
