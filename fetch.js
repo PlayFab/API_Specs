@@ -137,7 +137,7 @@ function UpdateApiFilesFromToc(playFabUrl, tocObj) {
     try {
         for (var i = 0; i < tocObj.documents.length; ++i) {
             var apiSection = tocObj.documents[i];
-            if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger") {
+            if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger" || apiSection.format === "LegacyPlayFabApiSpec") {
                 var eachApiOpt = {
                     description: apiSection.relPath,
                     expectJson: true,
@@ -166,10 +166,20 @@ function UpdateSdkManualNotes() {
 }
 
 // Find Api Groups from the TOC or legacy Api list, which don't exist in the other
-function CheckLegacyApiGroupList(playFabUrl, tocObj) {
-    var legacyApiListUrl = playFabUrl + "apispec/";
+function CheckLegacyApiGroupList(playFabUrl, tocObj, isAzure) {
+    var legacyApiListUrl;
+    var description;
+
+    if(isAzure){
+        legacyApiListUrl = playFabUrl + "azure/apispec/";
+        description = "azureLegacyApiList";
+    }else{
+        legacyApiListUrl = playFabUrl + "apispec/";
+        description = "legacyApiList";
+    }
+
     var options = {
-        description: "legacyApiList",
+        description: description,
         expectJson: true,
         jsonTabSpaces: 0
         // TODO: Add a function to compare tocObj with the json result
@@ -178,10 +188,20 @@ function CheckLegacyApiGroupList(playFabUrl, tocObj) {
 }
 
 // Find Api Groups from the TOC or swagger Api list, which don't exist in the other
-function CheckSwaggerApiGroupList(playFabUrl, tocObj) {
-    var swaggerApiListUrl = playFabUrl + "swagger/";
+function CheckSwaggerApiGroupList(playFabUrl, tocObj, isAzure) {
+    var swaggerApiListUrl;
+    var description;
+    
+    if(isAzure){
+        swaggerApiListUrl = playFabUrl + "azure/swagger/";
+        description = "azureLegacySwaggerList";
+    }else{
+        swaggerApiListUrl = playFabUrl + "swagger/";
+        description = "legacySwaggerList";
+    }
+
     var options = {
-        description: "legacyApiList",
+        description: "description",
         expectJson: true,
         jsonTabSpaces: 0
         // TODO: Add a function to compare tocObj with the json result
