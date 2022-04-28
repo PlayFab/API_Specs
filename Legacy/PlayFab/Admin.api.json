@@ -3719,7 +3719,8 @@
           "name": "DestinationType",
           "description": "The type of event sink. Currently only supports AzureBlobStorage.",
           "jsontype": "String",
-          "actualtype": "String",
+          "actualtype": "ExternalDestinationType",
+          "isenum": true,
           "optional": false
         },
         {
@@ -4020,6 +4021,24 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        }
+      ]
+    },
+    "ExternalDestinationType": {
+      "name": "ExternalDestinationType",
+      "className": "ExternalDestinationType",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "AzureBlobStorage"
+        },
+        {
+          "name": "AzureDataExplorer"
         }
       ]
     },
@@ -6210,6 +6229,9 @@
         },
         {
           "name": "EventSinkSasTokenPermissionInvalid"
+        },
+        {
+          "name": "EventSinkSecretInvalid"
         },
         {
           "name": "OperationCanceled"
@@ -13114,6 +13136,14 @@
       "isRequest": true,
       "properties": [
         {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "KeyValues",
           "description": "List of titleData key-value pairs to set/delete. Use an empty value to delete an existing key; use a non-empty value to create/update a key.",
           "collection": "array",
@@ -13125,6 +13155,13 @@
         {
           "name": "OverrideLabel",
           "description": "Name of the override.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TitleId",
+          "description": "Title Id",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -15439,6 +15476,13 @@
         {
           "name": "XboxUserId",
           "description": "XBox user ID",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxUserSandbox",
+          "description": "XBox user sandbox",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -17904,7 +17948,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "SetEventSinkRequest",
-      "requestExample": "{\n  \"Sink\": {\n    \"Name\": \"MyStorage\",\n    \"DestinationType\": \"AzureBlobStorage\",\n    \"IsEnabled\": true,\n    \"SinkSettings\": {\n      \"AccountName\": \"mystorageaccount\",\n      \"ContainerName\": \"mycontainername\",\n      \"Credentials\": {\n        \"SasToken\": \"\"\n      }\n    }\n  }\n}",
+      "requestExample": "{\n  \"Sink\": {\n    \"Name\": \"MyStorage\",\n    \"DestinationType\": \"AzureBlobStorage\",\n    \"IsEnabled\": true,\n    \"SinkSettings\": {\n      \"AccountName\": \"mystorageaccount\",\n      \"ContainerName\": \"mycontainername\",\n      \"Credentials\": {\n        \"Secret\": \"\"\n      }\n    }\n  }\n}",
       "result": "SetEventSinkResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "AnyInclusiveFlags": [
@@ -17918,7 +17962,8 @@
         "EventSinkConnectionUnauthorized",
         "EventSinkLimitExceeded",
         "EventSinkRegionInvalid",
-        "EventSinkSasTokenInvalid"
+        "EventSinkSasTokenInvalid",
+        "EventSinkSasTokenPermissionInvalid"
       ]
     },
     {
@@ -17931,7 +17976,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "SetMembershipOverrideRequest",
-      "requestExample": "{\n  \"ExpirationTime\": \"2022-04-25T20:16:22.665Z\",\n  \"MembershipId\": \"ShieldBonusMembership\",\n  \"PlayFabId\": \"204883457\"\n}",
+      "requestExample": "{\n  \"ExpirationTime\": \"2022-04-28T21:19:37.279Z\",\n  \"MembershipId\": \"ShieldBonusMembership\",\n  \"PlayFabId\": \"204883457\"\n}",
       "result": "SetMembershipOverrideResult",
       "resultExample": "",
       "errors": [
@@ -18044,7 +18089,7 @@
       "auth": "SecretKey",
       "method": "POST",
       "request": "SetTitleDataAndOverridesRequest",
-      "requestExample": "{\n  \"OverrideLabel\": \"Holiday title data\",\n  \"KeyValues\": [\n    {\n      \"Key\": \"Running Speed\",\n      \"Value\": \"1.03\"\n    },\n    {\n      \"Key\": \"Walking Speed\",\n      \"Value\": \"0.05\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"OverrideLabel\": \"Holiday title data\",\n  \"TitleId\": \"8FF3A797\",\n  \"KeyValues\": [\n    {\n      \"Key\": \"Running Speed\",\n      \"Value\": \"1.03\"\n    },\n    {\n      \"Key\": \"Walking Speed\",\n      \"Value\": \"0.05\"\n    }\n  ]\n}",
       "result": "SetTitleDataAndOverridesResult",
       "resultExample": "",
       "seeAlso": [
@@ -21234,6 +21279,10 @@
       "id": 15007,
       "name": "EventSinkSasTokenPermissionInvalid"
     },
+    "EventSinkSecretInvalid": {
+      "id": 15008,
+      "name": "EventSinkSecretInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -21929,6 +21978,7 @@
     "EventSinkNotFound",
     "EventSinkNameInvalid",
     "EventSinkSasTokenPermissionInvalid",
+    "EventSinkSecretInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed"
