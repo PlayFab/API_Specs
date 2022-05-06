@@ -171,10 +171,10 @@ function CheckLegacyApiGroupList(playFabUrl, tocObj, isAzure) {
     var legacyApiListUrl;
     var description;
 
-    if(isAzure){
+    if (isAzure) {
         legacyApiListUrl = playFabUrl + "azure/apispec/";
         description = "azureLegacyApiList";
-    }else{
+    } else {
         legacyApiListUrl = playFabUrl + "apispec/";
         description = "legacyApiList";
     }
@@ -193,10 +193,10 @@ function CheckSwaggerApiGroupList(playFabUrl, tocObj, isAzure) {
     var swaggerApiListUrl;
     var description;
     
-    if(isAzure){
+    if (isAzure) {
         swaggerApiListUrl = playFabUrl + "azure/swagger/";
         description = "azureLegacySwaggerList";
-    }else{
+    } else {
         swaggerApiListUrl = playFabUrl + "swagger/";
         description = "legacySwaggerList";
     }
