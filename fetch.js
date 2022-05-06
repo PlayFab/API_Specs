@@ -137,8 +137,9 @@ function UpdateApiFilesFromToc(playFabUrl, tocObj) {
     try {
         for (var i = 0; i < tocObj.documents.length; ++i) {
             var apiSection = tocObj.documents[i];
-            if (apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger"
-                    || apiSection.format === "AzurePlayFabApiSpec" || apiSection.format === "AzureSwagger" || apiSection.format === "AzurePlayFabModels") {
+            if (//apiSection.format === "LegacyPlayFabApiSpec" || apiSection.format === "Swagger"
+                    //|| 
+                    apiSection.format === "AzurePlayFabApiSpec" || apiSection.format === "AzureSwagger" || apiSection.format === "AzurePlayFabModels") {
                 var eachApiOpt = {
                     description: apiSection.relPath,
                     expectJson: true,
