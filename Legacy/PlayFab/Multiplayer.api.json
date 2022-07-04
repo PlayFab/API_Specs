@@ -3267,14 +3267,14 @@
         },
         {
           "name": "Filter",
-          "description": "OData style string that contains one or more filters. The OR and grouping operators are not allowed.",
+          "description": "OData style string that contains one or more filters. Only the following operators are supported: \"and\" (logical and), \"eq\" (equal), \"ne\" (not equals), \"ge\" (greater than or equal), \"gt\" (greater than), \"le\" (less than or equal), and \"lt\" (less than). The left-hand side of each OData logical expression should be either a search property key (e.g. string_key1, number_key3, etc) or one of the pre-defined search keys: memberCount, membershipLock (must equal 'Unlocked' or 'Locked'), amOwner (required to equal \"true\"), amMember (required to equal \"true\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "OrderBy",
-          "description": "OData style string that contains sorting for this query. To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
+          "description": "OData style string that contains sorting for this query in either ascending (\"asc\") or descending (\"desc\") order. OrderBy clauses are of the form \"number_key1 asc\" or the pre-defined search key \"memberCount desc\". To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3340,14 +3340,14 @@
         },
         {
           "name": "Filter",
-          "description": "OData style string that contains one or more filters. The OR and grouping operators are not allowed.",
+          "description": "OData style string that contains one or more filters. Only the following operators are supported: \"and\" (logical and), \"eq\" (equal), \"ne\" (not equals), \"ge\" (greater than or equal), \"gt\" (greater than), \"le\" (less than or equal), and \"lt\" (less than). The left-hand side of each OData logical expression should be either a search property key (e.g. string_key1, number_key3, etc) or one of the pre-defined search keys: memberCount, membershipLock (must equal 'Unlocked' or 'Locked'), amOwner (required to equal \"true\"), amMember (required to equal \"true\").",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
         },
         {
           "name": "OrderBy",
-          "description": "OData style string that contains sorting for this query. To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
+          "description": "OData style string that contains sorting for this query in either ascending (\"asc\") or descending (\"desc\") order. OrderBy clauses are of the form \"number_key1 asc\" or the pre-defined search key \"memberCount desc\". To sort by closest, a moniker `distance{number_key1 = 5}` can be used to sort by distance from the given number. This field only supports either one sort clause or one distance clause.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -3430,6 +3430,14 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
+        },
+        {
+          "name": "MembershipLock",
+          "description": "A setting indicating whether members are allowed to join this lobby. When Locked new members are prevented from joining.",
+          "jsontype": "String",
+          "actualtype": "MembershipLock",
+          "isenum": true,
+          "optional": true
         },
         {
           "name": "Owner",
@@ -6500,6 +6508,14 @@
           "optional": false
         },
         {
+          "name": "MembershipLock",
+          "description": "A setting indicating whether members are allowed to join this lobby. When Locked new members are prevented from joining.",
+          "jsontype": "String",
+          "actualtype": "MembershipLock",
+          "isenum": true,
+          "optional": true
+        },
+        {
           "name": "Owner",
           "description": "The client or server entity which owns this lobby.",
           "jsontype": "Object",
@@ -9434,7 +9450,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CancelAllMatchmakingTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "CancelAllMatchmakingTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "errors": [
@@ -9453,7 +9469,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CancelAllServerBackfillTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "CancelAllServerBackfillTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "errors": [
@@ -9635,7 +9651,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateLobbyRequest",
-      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"Owner\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"Members\": [\n    {\n      \"MemberEntity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\",\n        \"IsTitle\": false,\n        \"IsNamespace\": false,\n        \"IsService\": false,\n        \"IsMasterPlayer\": false,\n        \"IsTitlePlayer\": true\n      }\n    }\n  ]\n}",
+      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"Owner\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"Members\": [\n    {\n      \"MemberEntity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    }\n  ]\n}",
       "result": "CreateLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10350,7 +10366,7 @@
       "request": "GetMatchmakingTicketRequest",
       "requestExample": "{\n  \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n  \"QueueName\": \"custom123\",\n  \"EscapeObject\": false\n}",
       "result": "GetMatchmakingTicketResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n    \"QueueName\": \"custom123\",\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\n    \"Created\": \"2016-08-23T12:33:14Z\",\n    \"Status\": \"Matched\",\n    \"GiveUpAfterSeconds\": 100,\n    \"MembersToMatchWith\": [\n      {\n        \"Id\": \"456456456\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\",\n        \"IsTitle\": false,\n        \"IsNamespace\": false,\n        \"IsService\": false,\n        \"IsMasterPlayer\": false,\n        \"IsTitlePlayer\": true\n      }\n    ],\n    \"Members\": [],\n    \"Creator\": {\n      \"Id\": \"123123123\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\",\n      \"IsTitle\": false,\n      \"IsNamespace\": false,\n      \"IsService\": false,\n      \"IsMasterPlayer\": false,\n      \"IsTitlePlayer\": true\n    },\n    \"ChangeNumber\": 10\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketId\": \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n    \"QueueName\": \"custom123\",\n    \"MatchId\": \"4e0c5fd7-80e9-4744-b0ce-061a7f067ff5\",\n    \"Created\": \"2016-08-23T12:33:14Z\",\n    \"Status\": \"Matched\",\n    \"GiveUpAfterSeconds\": 100,\n    \"MembersToMatchWith\": [\n      {\n        \"Id\": \"456456456\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    ],\n    \"Members\": [],\n    \"Creator\": {\n      \"Id\": \"123123123\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    \"ChangeNumber\": 10\n  }\n}",
       "errors": [
         "MatchmakingEntityInvalid",
         "MatchmakingQueueNotFound",
@@ -10625,7 +10641,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "InviteToLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"InviteeEntity\": {\n    \"Id\": \"4321\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"InviteeEntity\": {\n    \"Id\": \"4321\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -10644,7 +10660,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "JoinArrangedLobbyRequest",
-      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"ArrangementString\": \"arrangementString\",\n  \"MemberData\": {\n    \"MyMemberKey\": \"MyMemberKey value\"\n  }\n}",
+      "requestExample": "{\n  \"MaxPlayers\": 50,\n  \"OwnerMigrationPolicy\": \"Automatic\",\n  \"UseConnections\": true,\n  \"AccessPolicy\": \"Public\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"ArrangementString\": \"arrangementString\",\n  \"MemberData\": {\n    \"MyMemberKey\": \"MyMemberKey value\"\n  }\n}",
       "result": "JoinLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10665,7 +10681,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "JoinLobbyRequest",
-      "requestExample": "{\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"ConnectionString\": \"connString\",\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  }\n}",
+      "requestExample": "{\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"ConnectionString\": \"connString\",\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  }\n}",
       "result": "JoinLobbyResult",
       "resultExample": "",
       "errors": [
@@ -10716,7 +10732,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "LeaveLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -10981,7 +10997,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "ListMatchmakingTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "ListMatchmakingTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketIds\": [\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\n    ]\n  }\n}",
       "errors": [
@@ -11100,7 +11116,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "ListServerBackfillTicketsForPlayerRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"QueueName\": \"custom123\"\n}",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"123123123\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"QueueName\": \"custom123\"\n}",
       "result": "ListServerBackfillTicketsForPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TicketIds\": [\n      \"1c4b0daa-150e-47ae-9923-d770c0f9b07c\",\n      \"d7cf891d-1dea-4f32-9e7e-277c0a245064\"\n    ]\n  }\n}",
       "errors": [
@@ -11188,7 +11204,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "RemoveMemberFromLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"PreventRejoin\": false\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"PreventRejoin\": false\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -11369,7 +11385,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "SubscribeToLobbyResourceRequest",
-      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "SubscribeToLobbyResourceResult",
       "resultExample": "",
       "errors": [
@@ -11391,7 +11407,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "SubscribeToMatchResourceRequest",
-      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"46a6be12-2ac4-4b93-9a10-97c261ae3b89\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"c2d56b22-4959-40cd-8522-b0b333e43554\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {}\n}",
       "result": "SubscribeToMatchResourceResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Topic\": \"MatchResourceTopic\"\n  }\n}",
       "AnyInclusiveFlags": [
@@ -11417,7 +11433,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UnsubscribeFromLobbyResourceRequest",
-      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"LobbyChange\",\n  \"ResourceId\": \"5c905725-0184-4112-a563-2f4187710d06\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -11438,7 +11454,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UnsubscribeFromMatchResourceRequest",
-      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"029a33c8-674a-4609-9d78-fe505f0e71d4\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": false\n  }\n}",
+      "requestExample": "{\n  \"Type\": \"MatchTicketStatusChange\",\n  \"ResourceId\": \"77ba900a-9524-4608-bffa-dc4d4e3e5f49\",\n  \"SubscriptionVersion\": 1,\n  \"PubSubConnectionHandle\": \"PubSubConnection\",\n  \"EntityKey\": {}\n}",
       "result": "UnsubscribeFromMatchResourceResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
       "AnyInclusiveFlags": [
@@ -11612,7 +11628,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UpdateLobbyRequest",
-      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MaxPlayers\": 50,\n  \"AccessPolicy\": \"Friends\",\n  \"MembershipLock\": \"Locked\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\",\n    \"IsTitle\": false,\n    \"IsNamespace\": false,\n    \"IsService\": false,\n    \"IsMasterPlayer\": false,\n    \"IsTitlePlayer\": true\n  },\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey updated value\"\n  },\n  \"SearchDataToDelete\": [\n    \"number_key1\"\n  ],\n  \"LobbyDataToDelete\": [\n    \"MyOldGameKey\"\n  ],\n  \"MemberDataToDelete\": []\n}",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"MaxPlayers\": 50,\n  \"AccessPolicy\": \"Friends\",\n  \"MembershipLock\": \"Locked\",\n  \"SearchData\": {\n    \"string_key1\": \"searchable value\"\n  },\n  \"LobbyData\": {\n    \"MyGameKey\": \"MyGameKey value\"\n  },\n  \"MemberEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  },\n  \"MemberData\": {\n    \"MyDataKey\": \"MyDataKey updated value\"\n  },\n  \"SearchDataToDelete\": [\n    \"number_key1\"\n  ],\n  \"LobbyDataToDelete\": [\n    \"MyOldGameKey\"\n  ],\n  \"MemberDataToDelete\": []\n}",
       "result": "LobbyEmptyResult",
       "resultExample": "",
       "errors": [
@@ -13785,6 +13801,10 @@
       "id": 1543,
       "name": "AutomationRuleAlreadyExists"
     },
+    "AutomationRuleLimitExceeded": {
+      "id": 1544,
+      "name": "AutomationRuleLimitExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -14959,6 +14979,7 @@
     "AutomationInvalidInput",
     "AutomationInvalidRuleName",
     "AutomationRuleAlreadyExists",
+    "AutomationRuleLimitExceeded",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
