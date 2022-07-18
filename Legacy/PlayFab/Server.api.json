@@ -7003,6 +7003,42 @@
         }
       ]
     },
+    "GetPlayFabIDsFromTwitchIDsRequest": {
+      "name": "GetPlayFabIDsFromTwitchIDsRequest",
+      "className": "GetPlayFabIDsFromTwitchIDsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "TwitchIds",
+          "description": "Array of unique Twitch identifiers (Twitch's _id) for which the title needs to get PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromTwitchIDsResult": {
+      "name": "GetPlayFabIDsFromTwitchIDsResult",
+      "className": "GetPlayFabIDsFromTwitchIDsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "For Twitch identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Twitch identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TwitchPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPlayFabIDsFromXboxLiveIDsRequest": {
       "name": "GetPlayFabIDsFromXboxLiveIDsRequest",
       "className": "GetPlayFabIDsFromXboxLiveIDsRequest",
@@ -12110,6 +12146,28 @@
         }
       ]
     },
+    "TwitchPlayFabIdPair": {
+      "name": "TwitchPlayFabIdPair",
+      "className": "TwitchPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Twitch identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TwitchId",
+          "description": "Unique Twitch identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "UnlinkPSNAccountRequest": {
       "name": "UnlinkPSNAccountRequest",
       "className": "UnlinkPSNAccountRequest",
@@ -13956,6 +14014,7 @@
         "GetPlayFabIDsFromNintendoSwitchDeviceIds",
         "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromSteamIDs",
+        "GetPlayFabIDsFromTwitchIDs",
         "GetPlayFabIDsFromXboxLiveIDs",
         "GetServerCustomIDsFromPlayFabIDs",
         "GetUserAccountInfo",
@@ -15074,7 +15133,7 @@
     },
     {
       "name": "GetPlayFabIDsFromPSNAccountIDs",
-      "summary": "Retrieves the unique PlayFab identifiers for the given set of PlayStation Network identifiers.",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of PlayStation :tm: Network identifiers.",
       "resultDetails": "For PlayStation Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
       "subgroup": "Account Management",
       "titleTiers": null,
@@ -15099,6 +15158,20 @@
       "requestExample": "{\n  \"SteamStringIDs\": [\n    \"857498576495\",\n    \"759374651209\"\n  ]\n}",
       "result": "GetPlayFabIDsFromSteamIDsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"SteamStringId\": \"857498576495\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"SteamStringId\": \"759374651209\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
+    },
+    {
+      "name": "GetPlayFabIDsFromTwitchIDs",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Twitch identifiers. The Twitch identifiers are the IDs for the user accounts, available as \"_id\" from the Twitch API methods (ex: https://github.com/justintv/Twitch-API/blob/master/v3_resources/users.md#get-usersuser).",
+      "resultDetails": "For Twitch identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromTwitchIDs",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromTwitchIDsRequest",
+      "requestExample": "{\n  \"TwitchIds\": [\n    \"127168541\",\n    \"88315720\"\n  ]\n}",
+      "result": "GetPlayFabIDsFromTwitchIDsResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"TwitchId\": \"127168541\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"TwitchId\": \"88315720\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromXboxLiveIDs",
@@ -15563,7 +15636,7 @@
     },
     {
       "name": "LinkPSNAccount",
-      "summary": "Links the PlayStation Network account associated with the provided access code to the user's PlayFab account",
+      "summary": "Links the PlayStation :tm: Network account associated with the provided access code to the user's PlayFab account",
       "subgroup": "Account Management",
       "titleTiers": null,
       "url": "/Server/LinkPSNAccount",
