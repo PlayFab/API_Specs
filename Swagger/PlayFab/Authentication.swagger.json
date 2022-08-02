@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220801",
+    "version": "220802",
     "title": "PlayFab Authentication API",
-    "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity.",
+    "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity. The game_server API is designed to create uniquely identifiable game_server entities. The game_server Entity token can be used to call Matchmaking Lobby and Pubsub for server scenarios.",
     "termsOfService": "https://playfab.com/terms/",
     "contact": {
       "url": "https://community.playfab.com/index.html"
@@ -89,6 +89,37 @@
         },
         "x-requestDetails": "Given an entity token, validates that it hasn't expired or been revoked and will return details of the owner."
       }
+    },
+    "/GameServerIdentity/Delete": {
+      "post": {
+        "operationId": "Delete",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Delete a game_server entity.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/authentication/authentication/delete"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Delete a game_server entity. The caller can be the game_server entity attempting to delete itself. Or a title entity attempting to delete game_server entities for this title."
+      }
     }
   },
   "definitions": {
@@ -125,6 +156,36 @@
         "code",
         "errorCode"
       ]
+    },
+    "DeleteRequest": {
+      "description": "Delete a game_server entity. The caller can be the game_server entity attempting to delete itself. Or a title entity attempting to delete game_server entities for this title.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The game_server entity to be removed.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Entity"
+      ],
+      "example": {
+        "Entity": {
+          "Id": "3D00C64954",
+          "Type": "game_server",
+          "TypeString": "game_server"
+        }
+      }
+    },
+    "EmptyResponse": {
+      "type": "object",
+      "properties": {}
     },
     "EntityKey": {
       "description": "Combined entity type and ID structure which uniquely identifies a single entity.",
@@ -323,6 +384,14 @@
     }
   },
   "parameters": {
+    "DeleteRequest": {
+      "name": "DeleteRequest",
+      "in": "body",
+      "description": "Delete a game_server entity. The caller can be the game_server entity attempting to delete itself. Or a title entity attempting to delete game_server entities for this title.",
+      "schema": {
+        "$ref": "#/definitions/DeleteRequest"
+      }
+    },
     "GetEntityTokenRequest": {
       "name": "GetEntityTokenRequest",
       "in": "body",
@@ -345,6 +414,25 @@
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "EmptyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/EmptyResponse"
+          }
+        }
       }
     },
     "GetEntityTokenResponse": {
