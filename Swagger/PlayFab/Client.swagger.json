@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220802",
+    "version": "220815",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -1898,6 +1898,37 @@
         "x-responseDetails": "For Google identifiers which have not been linked to PlayFab accounts, null will be returned."
       }
     },
+    "/Client/GetPlayFabIDsFromGooglePlayGamesPlayerIDs": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromGooglePlayGamesPlayerIDs",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Google Play Games identifiers. The Google Play Games identifiers are the IDs for the user accounts, available as \"playerId\" in the Google Play Games Services - Players API calls.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromgoogleplaygamesplayerids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromGooglePlayGamesPlayerIDsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromGooglePlayGamesPlayerIDsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For Google Play Games identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
     "/Client/GetPlayFabIDsFromKongregateIDs": {
       "post": {
         "operationId": "GetPlayFabIDsFromKongregateIDs",
@@ -2915,6 +2946,49 @@
           "GoogleOAuthError",
           "GoogleOAuthNoIdTokenIncludedInResponse",
           "GoogleOAuthNotConfiguredForTitle",
+          "InvalidGoogleToken",
+          "LinkedAccountAlreadyClaimed"
+        ]
+      }
+    },
+    "/Client/LinkGooglePlayGamesServicesAccount": {
+      "post": {
+        "operationId": "LinkGooglePlayGamesServicesAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the currently signed-in user account to their Google Play Games account, using their Google Play Games account credentials",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/linkgoogleplaygamesservicesaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkGooglePlayGamesServicesAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LinkGooglePlayGamesServicesAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Google Play Games sign-in is accomplished by obtaining a Google OAuth 2.0 credential using the Google Play Games sign-in for Android APIs on the device and passing it to this API.",
+        "x-seeAlso": [
+          "Client/LoginWithGooglePlayGamesServices",
+          "Client/UnlinkGooglePlayGamesServicesAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountAlreadyLinked",
+          "GoogleOAuthError",
+          "GoogleOAuthNotConfiguredForTitle",
+          "InvalidGooglePlayGamesServerAuthCode",
           "InvalidGoogleToken",
           "LinkedAccountAlreadyClaimed"
         ]
@@ -5203,6 +5277,43 @@
         "x-seeAlso": [
           "Client/LinkGoogleAccount",
           "Client/LoginWithGoogleAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked"
+        ]
+      }
+    },
+    "/Client/UnlinkGooglePlayGamesServicesAccount": {
+      "post": {
+        "operationId": "UnlinkGooglePlayGamesServicesAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Google Play Games account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/unlinkgoogleplaygamesservicesaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkGooglePlayGamesServicesAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkGooglePlayGamesServicesAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkGooglePlayGamesServicesAccount",
+          "Client/LoginWithGooglePlayGamesServices"
         ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
@@ -9559,7 +9670,7 @@
       }
     },
     "GetLeaderboardResult": {
-      "description": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired. If Xbox Live friends are included, make sure the access token from the previous LoginWithXbox call is still valid and not expired. ",
+      "description": "Note: the user's Position is relative to the overall leaderboard.",
       "type": "object",
       "properties": {
         "Leaderboard": {
@@ -10567,6 +10678,53 @@
         ]
       }
     },
+    "GetPlayFabIDsFromGooglePlayGamesPlayerIDsRequest": {
+      "type": "object",
+      "properties": {
+        "GooglePlayGamesPlayerIDs": {
+          "description": "Array of unique Google Play Games identifiers (Google+ user IDs) for which the title needs to get PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "GooglePlayGamesPlayerIDs"
+      ],
+      "example": {
+        "GooglePlayGamesPlayerIDs": [
+          "857498576495",
+          "759374651209"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromGooglePlayGamesPlayerIDsResult": {
+      "description": "For Google Play Games identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of Google Play Games identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/GooglePlayGamesPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "GooglePlayGamesPlayerId": "857498576495",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "GooglePlayGamesPlayerId": "759374651209",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromKongregateIDsRequest": {
       "type": "object",
       "properties": {
@@ -11481,6 +11639,19 @@
         }
       }
     },
+    "GooglePlayGamesPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "GooglePlayGamesPlayerId": {
+          "description": "Unique Google Play Games identifier for a user.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Google Play Games identifier.",
+          "type": "string"
+        }
+      }
+    },
     "GrantCharacterToUserRequest": {
       "description": "Grants a character to the user of the type specified by the item ID. The user must already have an instance of this item in their inventory in order to allow character creation. This item can come from a purchase or grant, which must be done before calling to create the character.",
       "type": "object",
@@ -11897,10 +12068,38 @@
         }
       },
       "example": {
-        "AccessToken": "ExampleSecret"
+        "ServerAuthCode": "4/TPdB1ter7eJ7cQ0lGBa6p1Cn-sSHJEXmPJ7t1-v4_ds#"
       }
     },
     "LinkGoogleAccountResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "LinkGooglePlayGamesServicesAccountRequest": {
+      "description": "Google Play Games sign-in is accomplished by obtaining a Google OAuth 2.0 credential using the Google Play Games sign-in for Android APIs on the device and passing it to this API.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link. If the current user is already linked, link both accounts",
+          "type": "boolean"
+        },
+        "ServerAuthCode": {
+          "description": "OAuth 2.0 server authentication code obtained on the client by calling the requestServerSideAccess() (https://developers.google.com/games/services/android/signin) Google Play Games client API.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ServerAuthCode"
+      ],
+      "example": {
+        "ServerAuthCode": "4/TPdB1ter7eJ7cQ0lGBa6p1Cn-sSHJEXmPJ7t1-v4_ds#"
+      }
+    },
+    "LinkGooglePlayGamesServicesAccountResult": {
       "type": "object",
       "properties": {}
     },
@@ -15461,6 +15660,20 @@
       "type": "object",
       "properties": {}
     },
+    "UnlinkGooglePlayGamesServicesAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        }
+      },
+      "example": {}
+    },
+    "UnlinkGooglePlayGamesServicesAccountResult": {
+      "type": "object",
+      "properties": {}
+    },
     "UnlinkIOSDeviceIDRequest": {
       "type": "object",
       "properties": {
@@ -17368,6 +17581,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromGoogleIDsRequest"
       }
     },
+    "GetPlayFabIDsFromGooglePlayGamesPlayerIDsRequest": {
+      "name": "GetPlayFabIDsFromGooglePlayGamesPlayerIDsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromGooglePlayGamesPlayerIDsRequest"
+      }
+    },
     "GetPlayFabIDsFromKongregateIDsRequest": {
       "name": "GetPlayFabIDsFromKongregateIDsRequest",
       "in": "body",
@@ -17557,6 +17777,14 @@
       "description": "Google sign-in is accomplished by obtaining a Google OAuth 2.0 credential using the Google sign-in for Android APIs on the device and passing it to this API.",
       "schema": {
         "$ref": "#/definitions/LinkGoogleAccountRequest"
+      }
+    },
+    "LinkGooglePlayGamesServicesAccountRequest": {
+      "name": "LinkGooglePlayGamesServicesAccountRequest",
+      "in": "body",
+      "description": "Google Play Games sign-in is accomplished by obtaining a Google OAuth 2.0 credential using the Google Play Games sign-in for Android APIs on the device and passing it to this API.",
+      "schema": {
+        "$ref": "#/definitions/LinkGooglePlayGamesServicesAccountRequest"
       }
     },
     "LinkIOSDeviceIDRequest": {
@@ -17985,6 +18213,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkGoogleAccountRequest"
+      }
+    },
+    "UnlinkGooglePlayGamesServicesAccountRequest": {
+      "name": "UnlinkGooglePlayGamesServicesAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkGooglePlayGamesServicesAccountRequest"
       }
     },
     "UnlinkIOSDeviceIDRequest": {
@@ -19489,7 +19724,7 @@
       }
     },
     "GetLeaderboardResult": {
-      "description": "Note that the Position of the user in the results is for the overall leaderboard. If Facebook friends are included, make sure the access token from previous LoginWithFacebook call is still valid and not expired. If Xbox Live friends are included, make sure the access token from the previous LoginWithXbox call is still valid and not expired. ",
+      "description": "Note: the user's Position is relative to the overall leaderboard.",
       "schema": {
         "type": "object",
         "properties": {
@@ -20070,6 +20305,41 @@
               },
               {
                 "GoogleId": "759374651209",
+                "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromGooglePlayGamesPlayerIDsResult": {
+      "description": "For Google Play Games identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromGooglePlayGamesPlayerIDsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "GooglePlayGamesPlayerId": "857498576495",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "GooglePlayGamesPlayerId": "759374651209",
                 "PlayFabId": "6345cd25a6c7cc"
               }
             ]
@@ -20854,6 +21124,25 @@
           },
           "data": {
             "$ref": "#/definitions/LinkGoogleAccountResult"
+          }
+        }
+      }
+    },
+    "LinkGooglePlayGamesServicesAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LinkGooglePlayGamesServicesAccountResult"
           }
         }
       }
@@ -21748,6 +22037,25 @@
           },
           "data": {
             "$ref": "#/definitions/UnlinkGoogleAccountResult"
+          }
+        }
+      }
+    },
+    "UnlinkGooglePlayGamesServicesAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkGooglePlayGamesServicesAccountResult"
           }
         }
       }
@@ -24486,6 +24794,10 @@
     "InvalidGooglePlayGamesServerAuthCode": {
       "id": 1545,
       "name": "InvalidGooglePlayGamesServerAuthCode"
+    },
+    "StorageAccountNotFound": {
+      "id": 1546,
+      "name": "StorageAccountNotFound"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

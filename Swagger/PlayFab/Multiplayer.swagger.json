@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220802",
+    "version": "220815",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information.",
     "termsOfService": "https://playfab.com/terms/",
@@ -456,7 +456,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Unsubscribe from lobby notifications. Only players may call this.",
+        "x-requestDetails": "Unsubscribe from lobby notifications.",
         "x-ms-docs-errors": [
           "LobbyBadRequest",
           "LobbyDoesNotExist",
@@ -1237,6 +1237,7 @@
           "RequiresOptionalValueSupport"
         ],
         "x-ms-docs-errors": [
+          "MatchmakingAttributeInvalid",
           "MatchmakingBadRequest",
           "MatchmakingEntityInvalid",
           "MatchmakingTicketNotFound",
@@ -1280,6 +1281,7 @@
           "RequiresOptionalValueSupport"
         ],
         "x-ms-docs-errors": [
+          "MatchmakingAttributeInvalid",
           "MatchmakingBadRequest",
           "MatchmakingEntityInvalid",
           "MatchmakingTicketNotFound",
@@ -4250,6 +4252,12 @@
           },
           "x-isclass": true
         },
+        "ServerResourceConstraints": {
+          "$ref": "#/definitions/ServerResourceConstraintParams",
+          "description": "The resource constraints to apply to each server on the VM (EXPERIMENTAL API)",
+          "type": "object",
+          "x-isclass": true
+        },
         "UseStreamingForAssetDownloads": {
           "description": "When true, assets will be downloaded and uncompressed in memory, without the compressedversion being written first to disc.",
           "type": "boolean"
@@ -4281,6 +4289,10 @@
         },
         "LinuxInstrumentationConfiguration": {},
         "ContainerFlavor": "CustomLinux",
+        "ServerResourceConstraints": {
+          "CpuLimit": 0.5,
+          "MemoryLimitGB": 0.5
+        },
         "BuildName": "GameBuildName",
         "Metadata": {
           "MetadataKey": "MetadataValue"
@@ -4441,6 +4453,12 @@
           },
           "x-isclass": true
         },
+        "ServerResourceConstraints": {
+          "$ref": "#/definitions/ServerResourceConstraintParams",
+          "description": "The resource constraints to apply to each server on the VM (EXPERIMENTAL API)",
+          "type": "object",
+          "x-isclass": true
+        },
         "ServerType": {
           "$ref": "#/definitions/ServerType",
           "description": "The type of game server being hosted.",
@@ -4463,6 +4481,10 @@
       "example": {
         "ContainerRunCommand": "/data/Assets -startserver",
         "LinuxInstrumentationConfiguration": {},
+        "ServerResourceConstraints": {
+          "CpuLimit": 0.5,
+          "MemoryLimitGB": 0.5
+        },
         "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
         "BuildName": "GameBuildName",
         "CreationTime": "2014-04-07T09:04:28",
@@ -4622,6 +4644,12 @@
           },
           "x-isclass": true
         },
+        "ServerResourceConstraints": {
+          "$ref": "#/definitions/ServerResourceConstraintParams",
+          "description": "The resource constraints to apply to each server on the VM (EXPERIMENTAL API)",
+          "type": "object",
+          "x-isclass": true
+        },
         "StartMultiplayerServerCommand": {
           "description": "The command to run when the multiplayer server is started, including any arguments.",
           "type": "string"
@@ -4666,6 +4694,10 @@
           "IsEnabled": true
         },
         "GameWorkingDirectory": "C:\\Assets",
+        "ServerResourceConstraints": {
+          "CpuLimit": 0.5,
+          "MemoryLimitGB": 0.5
+        },
         "BuildName": "GameBuildName",
         "Metadata": {
           "MetadataKey": "MetadataValue"
@@ -4818,6 +4850,12 @@
           "items": {
             "$ref": "#/definitions/BuildRegion"
           },
+          "x-isclass": true
+        },
+        "ServerResourceConstraints": {
+          "$ref": "#/definitions/ServerResourceConstraintParams",
+          "description": "The resource constraints to apply to each server on the VM (EXPERIMENTAL API)",
+          "type": "object",
           "x-isclass": true
         },
         "ServerType": {
@@ -6652,6 +6690,12 @@
           "items": {
             "$ref": "#/definitions/BuildRegion"
           },
+          "x-isclass": true
+        },
+        "ServerResourceConstraints": {
+          "$ref": "#/definitions/ServerResourceConstraintParams",
+          "description": "The resource constraints to apply to each server on the VM.",
+          "type": "object",
           "x-isclass": true
         },
         "ServerType": {
@@ -10041,6 +10085,25 @@
         "Fqdn": "vm.azure.cloudapp.net"
       }
     },
+    "ServerResourceConstraintParams": {
+      "type": "object",
+      "properties": {
+        "CpuLimit": {
+          "description": "The maximum number of cores that each server is allowed to use.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
+        "MemoryLimitGB": {
+          "description": "The maximum number of GiB of memory that each server is allowed to use. WARNING: After exceeding this limit, the server will be killed",
+          "type": "number",
+          "x-actualtype": "double"
+        }
+      },
+      "required": [
+        "CpuLimit",
+        "MemoryLimitGB"
+      ]
+    },
     "ServerType": {
       "type": "string",
       "enum": [
@@ -10582,7 +10645,7 @@
       ],
       "example": {
         "Type": "MatchTicketStatusChange",
-        "ResourceId": "c03a3b35-d4fb-4fc9-a789-dd3c1424d9cb",
+        "ResourceId": "5853cca3-19d4-4169-9ef6-4383be1dc369",
         "SubscriptionVersion": 1,
         "PubSubConnectionHandle": "PubSubConnection",
         "EntityKey": {}
@@ -10774,7 +10837,7 @@
       }
     },
     "UnsubscribeFromLobbyResourceRequest": {
-      "description": "Request to unsubscribe from lobby notifications. Only a client can unsubscribe from notifications.",
+      "description": "Request to unsubscribe from lobby notifications.",
       "type": "object",
       "properties": {
         "CustomTags": {
@@ -10866,7 +10929,7 @@
       ],
       "example": {
         "Type": "MatchTicketStatusChange",
-        "ResourceId": "60cda002-34b2-49c2-b4c9-ebd0989a16ae",
+        "ResourceId": "5636f4fb-5d33-4868-80aa-c98c72d667e5",
         "SubscriptionVersion": 1,
         "PubSubConnectionHandle": "PubSubConnection",
         "EntityKey": {}
@@ -11790,7 +11853,7 @@
     "UnsubscribeFromLobbyResourceRequest": {
       "name": "UnsubscribeFromLobbyResourceRequest",
       "in": "body",
-      "description": "Request to unsubscribe from lobby notifications. Only a client can unsubscribe from notifications.",
+      "description": "Request to unsubscribe from lobby notifications.",
       "schema": {
         "$ref": "#/definitions/UnsubscribeFromLobbyResourceRequest"
       }
@@ -12020,6 +12083,10 @@
           "data": {
             "ContainerRunCommand": "/data/Assets -startserver",
             "LinuxInstrumentationConfiguration": {},
+            "ServerResourceConstraints": {
+              "CpuLimit": 0.5,
+              "MemoryLimitGB": 0.5
+            },
             "BuildId": "21781fa8-096d-4d9c-b699-75433d579285",
             "BuildName": "GameBuildName",
             "CreationTime": "2014-04-07T09:04:28",
@@ -16000,6 +16067,10 @@
     "InvalidGooglePlayGamesServerAuthCode": {
       "id": 1545,
       "name": "InvalidGooglePlayGamesServerAuthCode"
+    },
+    "StorageAccountNotFound": {
+      "id": 1546,
+      "name": "StorageAccountNotFound"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
