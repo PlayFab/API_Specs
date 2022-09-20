@@ -54,6 +54,55 @@
       "isResult": true,
       "properties": []
     },
+    "AuthenticateCustomIdRequest": {
+      "name": "AuthenticateCustomIdRequest",
+      "className": "AuthenticateCustomIdRequest",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "description": "Create or return a game_server entity token. Caller must be a title entity.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomId",
+          "description": "The customId used to create and retrieve game_server entity tokens. This is unique at the title level. CustomId must be between 32 and 100 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "AuthenticateCustomIdResult": {
+      "name": "AuthenticateCustomIdResult",
+      "className": "AuthenticateCustomIdResult",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "EntityToken",
+          "description": "The token generated used to set X-EntityToken for game_server calls.",
+          "jsontype": "Object",
+          "actualtype": "EntityTokenResponse",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "NewlyCreated",
+          "description": "True if the account was newly created on this authentication.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
     "CreateAPIKeyDetails": {
       "name": "CreateAPIKeyDetails",
       "className": "CreateAPIKeyDetails",
@@ -357,6 +406,36 @@
           "description": "The Title Player Account Id of the associated entity.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "EntityTokenResponse": {
+      "name": "EntityTokenResponse",
+      "className": "EntityTokenResponse",
+      "classNameSpace": "PlayFab.Authentication.Models",
+      "assembly": "PlayFab.Authentication.Models",
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity id and type.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "EntityToken",
+          "description": "The token used to set X-EntityToken for all entity based API calls.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "TokenExpiration",
+          "description": "The time the token will expire, if it is an expiring token, in UTC.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
           "optional": true
         }
       ]
@@ -688,6 +767,7 @@
     {
       "name": "Authentication",
       "methods": [
+        "AuthenticateGameServerWithCustomId",
         "Delete",
         "GetEntityToken",
         "ValidateEntityToken"
@@ -713,6 +793,20 @@
       "errors": [
         "EntityAPIKeyNotFound"
       ]
+    },
+    {
+      "name": "AuthenticateGameServerWithCustomId",
+      "summary": "Create a game_server entity token and return a new or existing game_server entity.",
+      "requestDetails": "Create or return a game_server entity token. Caller must be a title entity.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/GameServerIdentity/AuthenticateGameServerWithCustomId",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "AuthenticateCustomIdRequest",
+      "requestExample": "{\n  \"CustomId\": \"12345678123412341234123456789abc\"\n}",
+      "result": "AuthenticateCustomIdResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"EntityToken\": {\n      \"EntityToken\": \"Bw3YDMumgfsv45GKWxgUCF7DumqFnbFbVDQTyYcDrCpBavU3YDJJ47D388eyeDfZ\",\n      \"TokenExpiration\": \"2022-01-26T07:24:12Z\",\n      \"Entity\": {\n        \"Id\": \"3D00C64954\",\n        \"Type\": \"game_server\",\n        \"TypeString\": \"game_server\"\n      }\n    },\n    \"NewlyCreated\": true\n  }\n}"
     },
     {
       "name": "CreateKey",
