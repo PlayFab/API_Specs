@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "220922",
+    "version": "220926",
     "title": "PlayFab Authentication API",
     "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. Manage API keys for authenticating any entity. The game_server API is designed to create uniquely identifiable game_server entities. The game_server Entity token can be used to call Matchmaking Lobby and Pubsub for server scenarios.",
     "termsOfService": "https://playfab.com/terms/",
@@ -90,6 +90,37 @@
         "x-requestDetails": "Given an entity token, validates that it hasn't expired or been revoked and will return details of the owner."
       }
     },
+    "/GameServerIdentity/AuthenticateGameServerWithCustomId": {
+      "post": {
+        "operationId": "AuthenticateGameServerWithCustomId",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Create a game_server entity token and return a new or existing game_server entity.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/authentication/authentication/authenticategameserverwithcustomid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/AuthenticateCustomIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AuthenticateCustomIdResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Create or return a game_server entity token. Caller must be a title entity."
+      }
+    },
     "/GameServerIdentity/Delete": {
       "post": {
         "operationId": "Delete",
@@ -156,6 +187,56 @@
         "code",
         "errorCode"
       ]
+    },
+    "AuthenticateCustomIdRequest": {
+      "description": "Create or return a game_server entity token. Caller must be a title entity.",
+      "type": "object",
+      "properties": {
+        "CustomId": {
+          "description": "The customId used to create and retrieve game_server entity tokens. This is unique at the title level. CustomId must be between 32 and 100 characters.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        }
+      },
+      "required": [
+        "CustomId"
+      ],
+      "example": {
+        "CustomId": "12345678123412341234123456789abc"
+      }
+    },
+    "AuthenticateCustomIdResult": {
+      "type": "object",
+      "properties": {
+        "EntityToken": {
+          "$ref": "#/definitions/EntityTokenResponse",
+          "description": "The token generated used to set X-EntityToken for game_server calls.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "NewlyCreated": {
+          "description": "True if the account was newly created on this authentication.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "NewlyCreated"
+      ],
+      "example": {
+        "EntityToken": {
+          "EntityToken": "Bw3YDMumgfsv45GKWxgUCF7DumqFnbFbVDQTyYcDrCpBavU3YDJJ47D388eyeDfZ",
+          "TokenExpiration": "2022-01-26T07:24:12Z",
+          "Entity": {
+            "Id": "3D00C64954",
+            "Type": "game_server",
+            "TypeString": "game_server"
+          }
+        },
+        "NewlyCreated": true
+      }
     },
     "DeleteRequest": {
       "description": "Delete a game_server entity. The caller can be the game_server entity attempting to delete itself. Or a title entity attempting to delete game_server entities for this title.",
@@ -230,6 +311,34 @@
         "TitlePlayerAccountId": {
           "description": "The Title Player Account Id of the associated entity.",
           "type": "string"
+        }
+      }
+    },
+    "EntityTokenResponse": {
+      "type": "object",
+      "properties": {
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity id and type.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "EntityToken": {
+          "description": "The token used to set X-EntityToken for all entity based API calls.",
+          "type": "string"
+        },
+        "TokenExpiration": {
+          "description": "The time the token will expire, if it is an expiring token, in UTC.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "EntityToken": "lS2hbYH1Gls1KbnlyozHSQBrF4zsq6q006ci9ijSNqQUiiO6xyCQtVrLjsXjdBJ",
+        "TokenExpiration": "2022-01-26T07:24:12Z",
+        "Entity": {
+          "Id": "174812abf712",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
         }
       }
     },
@@ -384,6 +493,14 @@
     }
   },
   "parameters": {
+    "AuthenticateCustomIdRequest": {
+      "name": "AuthenticateCustomIdRequest",
+      "in": "body",
+      "description": "Create or return a game_server entity token. Caller must be a title entity.",
+      "schema": {
+        "$ref": "#/definitions/AuthenticateCustomIdRequest"
+      }
+    },
     "DeleteRequest": {
       "name": "DeleteRequest",
       "in": "body",
@@ -414,6 +531,41 @@
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "AuthenticateCustomIdResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/AuthenticateCustomIdResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "EntityToken": {
+              "EntityToken": "Bw3YDMumgfsv45GKWxgUCF7DumqFnbFbVDQTyYcDrCpBavU3YDJJ47D388eyeDfZ",
+              "TokenExpiration": "2022-01-26T07:24:12Z",
+              "Entity": {
+                "Id": "3D00C64954",
+                "Type": "game_server",
+                "TypeString": "game_server"
+              }
+            },
+            "NewlyCreated": true
+          }
+        }
       }
     },
     "EmptyResponse": {
