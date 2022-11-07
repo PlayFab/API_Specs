@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "221024",
+    "version": "221107",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -6784,6 +6784,28 @@
         "GeneratePlayStreamEvent": true
       }
     },
+    "ExternalFriendSources": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Steam",
+        "Facebook",
+        "SteamOrFacebook",
+        "Xbox",
+        "SteamOrXbox",
+        "FacebookOrXbox",
+        "SteamOrFacebookOrXbox",
+        "Psn",
+        "SteamOrPsn",
+        "FacebookOrPsn",
+        "SteamOrFacebookOrPsn",
+        "XboxOrPsn",
+        "SteamOrXboxOrPsn",
+        "FacebookOrXboxOrPsn",
+        "SteamOrFacebookOrXboxOrPsn",
+        "All"
+      ]
+    },
     "FacebookInstantGamesPlayFabIdPair": {
       "type": "object",
       "properties": {
@@ -8242,13 +8264,11 @@
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
         },
-        "IncludeFacebookFriends": {
-          "description": "Indicates whether Facebook friends should be included in the response. Default is true.",
-          "type": "boolean"
-        },
-        "IncludeSteamFriends": {
-          "description": "Indicates whether Steam service friends should be included in the response. Default is true.",
-          "type": "boolean"
+        "ExternalPlatformFriends": {
+          "$ref": "#/definitions/ExternalFriendSources",
+          "description": "Indicates which other platforms' friends should be included in the response.",
+          "type": "string",
+          "x-isenum": true
         },
         "MaxResultsCount": {
           "description": "Maximum number of entries to retrieve.",
@@ -8300,7 +8320,7 @@
         "StatisticName": "Kills",
         "StartPosition": 1258,
         "MaxResultsCount": 20,
-        "IncludeSteamFriends": false
+        "ExternalPlatformFriends": "None"
       }
     },
     "GetFriendsListRequest": {
@@ -8310,13 +8330,11 @@
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
         },
-        "IncludeFacebookFriends": {
-          "description": "Indicates whether Facebook friends should be included in the response. Default is true.",
-          "type": "boolean"
-        },
-        "IncludeSteamFriends": {
-          "description": "Indicates whether Steam service friends should be included in the response. Default is true.",
-          "type": "boolean"
+        "ExternalPlatformFriends": {
+          "$ref": "#/definitions/ExternalFriendSources",
+          "description": "Indicates which other platforms' friends should be included in the response.",
+          "type": "string",
+          "x-isenum": true
         },
         "PlayFabId": {
           "description": "PlayFab identifier of the player whose friend list to get.",
@@ -8338,7 +8356,7 @@
       ],
       "example": {
         "PlayFabId": "93798903892789754",
-        "IncludeSteamFriends": true
+        "ExternalPlatformFriends": "All"
       }
     },
     "GetFriendsListResult": {
@@ -9387,7 +9405,7 @@
       "type": "object",
       "properties": {
         "FacebookIDs": {
-          "description": "Array of unique Facebook identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Facebook identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9434,7 +9452,7 @@
       "type": "object",
       "properties": {
         "FacebookInstantGamesIds": {
-          "description": "Array of unique Facebook Instant Games identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Facebook Instant Games identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 25 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9541,7 +9559,7 @@
       "type": "object",
       "properties": {
         "NintendoAccountIds": {
-          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9588,7 +9606,7 @@
       "type": "object",
       "properties": {
         "NintendoSwitchDeviceIds": {
-          "description": "Array of unique Nintendo Switch Device identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Nintendo Switch Device identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9640,7 +9658,7 @@
           "x-actualtype": "int32"
         },
         "PSNAccountIDs": {
-          "description": "Array of unique PlayStation :tm: Network identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique PlayStation :tm: Network identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9687,7 +9705,7 @@
       "type": "object",
       "properties": {
         "SteamStringIDs": {
-          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Steam identifiers (Steam profile IDs) for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9731,7 +9749,7 @@
       "type": "object",
       "properties": {
         "TwitchIds": {
-          "description": "Array of unique Twitch identifiers (Twitch's _id) for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Twitch identifiers (Twitch's _id) for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
@@ -9782,7 +9800,7 @@
           "type": "string"
         },
         "XboxLiveAccountIDs": {
-          "description": "Array of unique Xbox Live account identifiers for which the title needs to get PlayFab identifiers.",
+          "description": "Array of unique Xbox Live account identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
           "type": "array",
           "items": {
             "type": "string"
