@@ -1129,6 +1129,37 @@
         "x-requestDetails": "Gets the access tokens for Microsoft Store authentication."
       }
     },
+    "/Inventory/GetTransactionHistory": {
+      "post": {
+        "operationId": "GetTransactionHistory",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Get transaction history.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/gettransactionhistory"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetTransactionHistoryRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetTransactionHistoryResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Get transaction history for specified entity and collection."
+      }
+    },
     "/Inventory/PurchaseInventoryItems": {
       "post": {
         "operationId": "PurchaseInventoryItems",
@@ -4315,6 +4346,79 @@
         "CollectionsAccessTokenExpirationDate": "2022-09-07T00:00:00"
       }
     },
+    "GetTransactionHistoryRequest": {
+      "description": "Get transaction history for specified entity and collection.",
+      "type": "object",
+      "properties": {
+        "CollectionId": {
+          "description": "The id of the entity's collection to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available. Should be null on initial request.",
+          "type": "string"
+        },
+        "Count": {
+          "description": "Number of items to retrieve. (Default = 10)",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Filter": {
+          "description": "An OData filter used to refine the query.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Count"
+      ],
+      "example": {
+        "Count": 10,
+        "CollectionId": "default"
+      }
+    },
+    "GetTransactionHistoryResponse": {
+      "type": "object",
+      "properties": {
+        "ContinuationToken": {
+          "description": "An opaque token used to retrieve the next page of items, if any are available. Should be null on initial request.",
+          "type": "string"
+        },
+        "Transactions": {
+          "description": "The requested inventory transactions.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Transaction"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Transactions": [
+          {
+            "TransactionId": "1",
+            "ItemType": "catalogItem",
+            "OperationType": "Add",
+            "ApiName": "AddInventoryItems"
+          },
+          {
+            "TransactionId": "2",
+            "ItemType": "catalogItem",
+            "OperationType": "Add",
+            "ApiName": "AddInventoryItems"
+          }
+        ]
+      }
+    },
     "GooglePlayProductPurchase": {
       "type": "object",
       "properties": {
@@ -5985,6 +6089,141 @@
       "properties": {},
       "example": {}
     },
+    "Transaction": {
+      "type": "object",
+      "properties": {
+        "ApiName": {
+          "description": "The API call that caused this transaction.",
+          "type": "string"
+        },
+        "ItemType": {
+          "description": "The type of item that the the operation occurred on.",
+          "type": "string"
+        },
+        "Operations": {
+          "description": "The operations that occurred.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransactionOperation"
+          },
+          "x-isclass": true
+        },
+        "OperationType": {
+          "description": "The type of operation that was run.",
+          "type": "string"
+        },
+        "PurchaseDetails": {
+          "$ref": "#/definitions/TransactionPurchaseDetails",
+          "description": "Additional details about the transaction. Null if it was not a purchase operation.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "RedeemDetails": {
+          "$ref": "#/definitions/TransactionRedeemDetails",
+          "description": "Additional details about the transaction. Null if it was not a redeem operation.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Timestamp": {
+          "description": "The time this transaction occurred in UTC.",
+          "type": "string"
+        },
+        "TransactionId": {
+          "description": "The id of the transaction. This should be treated like an opaque token.",
+          "type": "string"
+        },
+        "TransferDetails": {
+          "$ref": "#/definitions/TransactionTransferDetails",
+          "description": "Additional details about the transaction. Null if it was not a transfer operation.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Timestamp"
+      ]
+    },
+    "TransactionOperation": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "The amount of items in this transaction.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ItemId": {
+          "description": "The item id of the items in this transaction.",
+          "type": "string"
+        },
+        "ItemType": {
+          "description": "The type of item that the operation occurred on.",
+          "type": "string"
+        },
+        "StackId": {
+          "description": "The stack id of the items in this transaction.",
+          "type": "string"
+        },
+        "Type": {
+          "description": "The type of the operation that occurred.",
+          "type": "string"
+        }
+      }
+    },
+    "TransactionPurchaseDetails": {
+      "type": "object",
+      "properties": {
+        "StoreId": {
+          "description": "The id of the Store the item was purchased from or null.",
+          "type": "string"
+        }
+      }
+    },
+    "TransactionRedeemDetails": {
+      "type": "object",
+      "properties": {
+        "Marketplace": {
+          "description": "The marketplace that the offer is being redeemed from.",
+          "type": "string"
+        },
+        "MarketplaceTransactionId": {
+          "description": "The transaction Id returned from the marketplace.",
+          "type": "string"
+        },
+        "OfferId": {
+          "description": "The offer Id of the item being redeemed.",
+          "type": "string"
+        }
+      }
+    },
+    "TransactionTransferDetails": {
+      "type": "object",
+      "properties": {
+        "GivingCollectionId": {
+          "description": "The collection id the items were transferred from or null if it was the current collection.",
+          "type": "string"
+        },
+        "GivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity the items were transferred from or null if it was the current entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ReceivingCollectionId": {
+          "description": "The collection id the items were transferred to or null if it was the current collection.",
+          "type": "string"
+        },
+        "ReceivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity the items were transferred to or null if it was the current entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TransferId": {
+          "description": "The id of the transfer that occurred.",
+          "type": "string"
+        }
+      }
+    },
     "TransferInventoryItemsOperation": {
       "type": "object",
       "properties": {
@@ -6640,6 +6879,14 @@
       "description": "Gets the access tokens for Microsoft Store authentication.",
       "schema": {
         "$ref": "#/definitions/GetMicrosoftStoreAccessTokensRequest"
+      }
+    },
+    "GetTransactionHistoryRequest": {
+      "name": "GetTransactionHistoryRequest",
+      "in": "body",
+      "description": "Get transaction history for specified entity and collection.",
+      "schema": {
+        "$ref": "#/definitions/GetTransactionHistoryRequest"
       }
     },
     "PublishDraftItemRequest": {
@@ -8227,6 +8474,45 @@
           "data": {
             "CollectionsAccessToken": "collectionsAccessToken",
             "CollectionsAccessTokenExpirationDate": "2022-09-07T00:00:00"
+          }
+        }
+      }
+    },
+    "GetTransactionHistoryResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetTransactionHistoryResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Transactions": [
+              {
+                "TransactionId": "1",
+                "ItemType": "catalogItem",
+                "OperationType": "Add",
+                "ApiName": "AddInventoryItems"
+              },
+              {
+                "TransactionId": "2",
+                "ItemType": "catalogItem",
+                "OperationType": "Add",
+                "ApiName": "AddInventoryItems"
+              }
+            ]
           }
         }
       }
