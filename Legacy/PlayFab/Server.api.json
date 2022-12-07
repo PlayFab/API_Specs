@@ -947,6 +947,27 @@
         }
       ]
     },
+    "ChurnRiskLevel": {
+      "name": "ChurnRiskLevel",
+      "className": "ChurnRiskLevel",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "NoData"
+        },
+        {
+          "name": "LowRisk"
+        },
+        {
+          "name": "MediumRisk"
+        },
+        {
+          "name": "HighRisk"
+        }
+      ]
+    },
     "CloudScriptRevisionOption": {
       "name": "CloudScriptRevisionOption",
       "className": "CloudScriptRevisionOption",
@@ -2916,43 +2937,10 @@
           "name": "Facebook"
         },
         {
-          "name": "SteamOrFacebook"
-        },
-        {
           "name": "Xbox"
         },
         {
-          "name": "SteamOrXbox"
-        },
-        {
-          "name": "FacebookOrXbox"
-        },
-        {
-          "name": "SteamOrFacebookOrXbox"
-        },
-        {
           "name": "Psn"
-        },
-        {
-          "name": "SteamOrPsn"
-        },
-        {
-          "name": "FacebookOrPsn"
-        },
-        {
-          "name": "SteamOrFacebookOrPsn"
-        },
-        {
-          "name": "XboxOrPsn"
-        },
-        {
-          "name": "SteamOrXboxOrPsn"
-        },
-        {
-          "name": "FacebookOrXboxOrPsn"
-        },
-        {
-          "name": "SteamOrFacebookOrXboxOrPsn"
         },
         {
           "name": "All"
@@ -4726,13 +4714,13 @@
           "name": "InvalidGooglePlayGamesServerAuthCode"
         },
         {
-          "name": "StorageAccountNotFound"
-        },
-        {
           "name": "PlayStreamConnectionFailed"
         },
         {
           "name": "InvalidEventContents"
+        },
+        {
+          "name": "InsightsV1Deprecated"
         },
         {
           "name": "MatchmakingEntityInvalid"
@@ -5739,7 +5727,7 @@
         },
         {
           "name": "ExternalPlatformFriends",
-          "description": "Indicates which other platforms' friends should be included in the response.",
+          "description": "Indicates which other platforms' friends should be included in the response. In HTTP, it is represented as a comma-separated list of platforms.",
           "jsontype": "String",
           "actualtype": "ExternalFriendSources",
           "isenum": true,
@@ -5848,7 +5836,7 @@
         },
         {
           "name": "ExternalPlatformFriends",
-          "description": "Indicates which other platforms' friends should be included in the response.",
+          "description": "Indicates which other platforms' friends should be included in the response. In HTTP, it is represented as a comma-separated list of platforms.",
           "jsontype": "String",
           "actualtype": "ExternalFriendSources",
           "isenum": true,
@@ -9777,6 +9765,14 @@
           "description": "Banned until UTC Date. If permanent ban this is set for 20 years after the original ban date.",
           "jsontype": "String",
           "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "ChurnPrediction",
+          "description": "The prediction of the player to churn within the next seven days.",
+          "jsontype": "String",
+          "actualtype": "ChurnRiskLevel",
+          "isenum": true,
           "optional": true
         },
         {
@@ -14580,11 +14576,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"10931252888739651331\",\n  \"FriendPlayFabId\": \"20394883\"\n}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetFriendsList",
-        "Server/RemoveFriend",
-        "Server/SetFriendTags"
-      ],
       "errors": [
         "UsersAlreadyFriends"
       ]
@@ -14623,10 +14614,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"10931252888739651331\",\n  \"TagName\": \"MostKilled\"\n}",
       "result": "AddPlayerTagResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetPlayerTags",
-        "Server/RemovePlayerTag"
-      ],
       "errors": [
         "PlayerTagCountLimitExceeded"
       ]
@@ -15004,12 +14991,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"CharacterId\": \"98342357\",\n  \"Keys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"IfChangedFromDataVersion\": 1\n}",
       "result": "GetCharacterDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DataVersion\": 12,\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    },\n    \"CharacterId\": \"3945734562\"\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserInternalData",
-        "Server/UpdateCharacterData",
-        "Server/UpdateCharacterInternalData",
-        "Server/UpdateCharacterReadOnlyData"
-      ],
       "errors": [
         "CharacterNotFound",
         "UserisNotValid"
@@ -15028,9 +15009,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"204883457\",\n  \"CharacterId\": \"9890723423\",\n  \"CatalogVersion\": \"5\"\n}",
       "result": "GetCharacterInventoryResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"CharacterId\": \"9890723423\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserInventory"
-      ],
       "errors": [
         "CharacterNotFound"
       ]
@@ -15047,12 +15025,7 @@
       "request": "GetCharacterLeaderboardRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 0,\n  \"MaxResultsCount\": 20\n}",
       "result": "GetCharacterLeaderboardResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warriors\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterStatistics",
-        "Server/GetLeaderboardAroundCharacter",
-        "Server/UpdateCharacterStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warriors\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetCharacterReadOnlyData",
@@ -15067,12 +15040,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"CharacterId\": \"98342357\",\n  \"Keys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"IfChangedFromDataVersion\": 1\n}",
       "result": "GetCharacterDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DataVersion\": 12,\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    },\n    \"CharacterId\": \"3945734562\"\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterData",
-        "Server/GetCharacterInternalData",
-        "Server/GetUserReadOnlyData",
-        "Server/UpdateCharacterReadOnlyData"
-      ],
       "errors": [
         "CharacterNotFound",
         "UserisNotValid"
@@ -15132,11 +15099,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"98092347523\",\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 1258,\n  \"MaxResultsCount\": 20,\n  \"ExternalPlatformFriends\": \"None\"\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0,\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 15\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 10\n            }\n          ]\n        }\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/GetLeaderboardAroundCurrentUser",
-        "Server/GetLeaderboardAroundUser",
-        "Server/GetUserStatistics"
-      ],
       "errors": [
         "ExpiredXboxLiveToken",
         "FacebookAPIError",
@@ -15160,12 +15122,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"93798903892789754\",\n  \"ExternalPlatformFriends\": \"All\"\n}",
       "result": "GetFriendsListResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Friends\": [\n      {\n        \"FriendPlayFabId\": \"93798903892789754\",\n        \"Username\": \"accountName\",\n        \"TitleDisplayName\": \"Davros01\",\n        \"Tags\": [\n          \"single blue eye\",\n          \"genius with robotics\"\n        ],\n        \"CurrentMatchmakerLobbyId\": \"2073\",\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile1.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 7\n            },\n            {\n              \"Name\": \"Points\",\n              \"Version\": 1,\n              \"Value\": 40\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 10\n            }\n          ]\n        }\n      },\n      {\n        \"FriendPlayFabId\": \"334907923945f\",\n        \"Username\": \"accountName\",\n        \"TitleDisplayName\": \"CyberLeader1\",\n        \"Tags\": [\n          \"allergic to gold\",\n          \"upgradeable\"\n        ],\n        \"CurrentMatchmakerLobbyId\": \"2073\",\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile2.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 15\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 10\n            }\n          ]\n        }\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/AddFriend",
-        "Server/GetPlayerProfile",
-        "Server/RemoveFriend",
-        "Server/SetFriendTags"
-      ],
       "errors": [
         "AccountNotFound",
         "ExpiredXboxLiveToken",
@@ -15230,11 +15186,6 @@
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"PlayFabId\": \"10931252888739651331\",\n  \"MaxResultsCount\": 20\n}",
       "result": "GetLeaderboardAroundUserResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Server/GetLeaderboard",
-        "Server/GetUserStatistics",
-        "Server/UpdateUserStatistics"
-      ],
       "errors": [
         "LeaderboardVersionNotAvailable"
       ]
@@ -15251,12 +15202,7 @@
       "request": "GetLeaderboardForUsersCharactersRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"PlayFabId\": \"10931252888739651331\"\n}",
       "result": "GetLeaderboardForUsersCharactersResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/GetLeaderboard",
-        "Server/GetLeaderboardAroundCharacter",
-        "Server/UpdateCharacterStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayerCombinedInfo",
@@ -15323,11 +15269,11 @@
       "errors": [
         "ExpiredContinuationToken",
         "GetPlayersInSegmentRateLimitExceeded",
+        "InternalServerError",
         "InvalidContinuationToken",
         "InvalidSearchTerm",
         "InvalidSegment",
-        "SegmentNotFound",
-        "UnknownError"
+        "SegmentNotFound"
       ]
     },
     {
@@ -15384,11 +15330,7 @@
       "request": "GetPlayerTagsRequest",
       "requestExample": "{\n  \"PlayFabId\": \"10931252888739651331\",\n  \"Namespace\": \"title.AAA\"\n}",
       "result": "GetPlayerTagsResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"10931252888739651331\",\n    \"Tags\": [\n      \"title.AAA.MostKilled\",\n      \"title.AAA.MostPlayed\",\n      \"title.AAA.MostBanned\"\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/AddPlayerTag",
-        "Server/RemovePlayerTag"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"10931252888739651331\",\n    \"Tags\": [\n      \"title.AAA.MostKilled\",\n      \"title.AAA.MostPlayed\",\n      \"title.AAA.MostBanned\"\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromFacebookIDs",
@@ -15430,11 +15372,7 @@
       "request": "GetPlayFabIDsFromGenericIDsRequest",
       "requestExample": "{\n  \"GenericIDs\": [\n    {\n      \"ServiceName\": \"BigBizSocial\",\n      \"UserId\": \"1234567890\"\n    },\n    {\n      \"ServiceName\": \"VeeCeeMe\",\n      \"UserId\": \"og5igh85gf43gf\"\n    }\n  ]\n}",
       "result": "GetPlayFabIDsFromGenericIDsResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"BigBizSocial\",\n          \"UserId\": \"1234567890\"\n        },\n        \"PlayFabId\": \"ABCDEF0123456789\"\n      },\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"VeeCeeMe\",\n          \"UserId\": \"og5igh85gf43gf\"\n        },\n        \"PlayFabId\": \"1234567890ABCDEF\"\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/AddGenericID",
-        "Server/RemoveGenericID"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"BigBizSocial\",\n          \"UserId\": \"1234567890\"\n        },\n        \"PlayFabId\": \"ABCDEF0123456789\"\n      },\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"VeeCeeMe\",\n          \"UserId\": \"og5igh85gf43gf\"\n        },\n        \"PlayFabId\": \"1234567890ABCDEF\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromNintendoServiceAccountIds",
@@ -15533,9 +15471,6 @@
       "requestExample": "{\n  \"Keys\": [\n    \"color\",\n    \"propertyA\"\n  ]\n}",
       "result": "GetPublisherDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/SetPublisherData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -15604,9 +15539,6 @@
       "requestExample": "{\n  \"StoreId\": \"BonusStore\",\n  \"PlayFabId\": \"20394883\"\n}",
       "result": "GetStoreItemsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Store\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 180,\n          \"GV\": 20\n        },\n        \"RealCurrencyPrices\": {\n          \"GBP\": 100\n        }\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 250,\n          \"GV\": 30\n        }\n      },\n      {\n        \"ItemId\": \"starterpack_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 399\n        }\n      }\n    ],\n    \"Source\": \"Admin\",\n    \"CatalogVersion\": \"1\",\n    \"StoreId\": \"BonusStore\",\n    \"MarketingData\": {\n      \"DisplayName\": \"Amazing Bonus Store\",\n      \"Description\": \"Elite tier bonuses available here\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetCatalogItems"
-      ],
       "errors": [
         "CatalogNotConfigured",
         "StoreNotFound"
@@ -15642,10 +15574,7 @@
       "request": "GetTitleDataRequest",
       "requestExample": "{\n  \"Keys\": [\n    \"color\",\n    \"propertyA\"\n  ]\n}",
       "result": "GetTitleDataResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/SetTitleData"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}"
     },
     {
       "name": "GetTitleInternalData",
@@ -15659,10 +15588,7 @@
       "request": "GetTitleDataRequest",
       "requestExample": "{\n  \"Keys\": [\n    \"color\",\n    \"propertyA\"\n  ]\n}",
       "result": "GetTitleDataResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/SetTitleInternalData"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}"
     },
     {
       "name": "GetTitleNews",
@@ -15689,10 +15615,7 @@
       "request": "GetUserAccountInfoRequest",
       "requestExample": "{\n  \"PlayFabId\": \"10931252888739651331\"\n}",
       "result": "GetUserAccountInfoResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"UserInfo\": {\n      \"PlayFabId\": \"621EF20237534A44\",\n      \"Created\": \"0001-01-01T00:00:00Z\",\n      \"Username\": \"accountname\",\n      \"FacebookInfo\": {\n        \"FacebookId\": \"1236849390256\",\n        \"FullName\": \"Jane Doe\"\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserInventory"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"UserInfo\": {\n      \"PlayFabId\": \"621EF20237534A44\",\n      \"Created\": \"0001-01-01T00:00:00Z\",\n      \"Username\": \"accountname\",\n      \"FacebookInfo\": {\n        \"FacebookId\": \"1236849390256\",\n        \"FullName\": \"Jane Doe\"\n      }\n    }\n  }\n}"
     },
     {
       "name": "GetUserBans",
@@ -15707,12 +15630,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "GetUserBansResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/BanUsers",
-        "Server/RevokeAllBansForUser",
-        "Server/RevokeBans",
-        "Server/UpdateBans"
-      ],
       "errors": [
         "UserisNotValid"
       ]
@@ -15771,10 +15688,7 @@
       "request": "GetUserInventoryRequest",
       "requestExample": "{\n  \"PlayFabId\": \"204883457\"\n}",
       "result": "GetUserInventoryResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserAccountInfo"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}"
     },
     {
       "name": "GetUserPublisherData",
@@ -15979,9 +15893,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\",\n  \"IdentityToken\": \"eyJraWQi...\"\n}",
       "result": "EmptyResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/UnlinkNintendoServiceAccount"
-      ],
       "errors": [
         "InvalidIdentityProviderId",
         "LinkedIdentifierAlreadyClaimed",
@@ -16019,9 +15930,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\",\n  \"AuthCode\": \"LKJDG7DDE\",\n  \"RedirectUri\": \"orbis://games\"\n}",
       "result": "LinkPSNAccountResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/UnlinkPSNAccount"
-      ],
       "errors": [
         "AccountAlreadyLinked",
         "InvalidPSNAuthCode",
@@ -16146,10 +16054,6 @@
       "requestExample": "{\n  \"XboxToken\": \"XBL3.0 x=1981989841;akljdlkafdknad\",\n  \"CreateAccount\": false\n}",
       "result": "ServerLoginResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkXboxAccount",
-        "Server/UnlinkXboxAccount"
-      ],
       "errors": [
         "EvaluationModePlayerCountExceeded",
         "ExpiredXboxLiveToken",
@@ -16212,11 +16116,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"GivingCharacterId\": \"98092347523\",\n  \"ReceivingCharacterId\": \"6323489712\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToCharacterFromCharacterResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToCharacterFromUser",
-        "Server/MoveItemToUserFromCharacter"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -16235,10 +16134,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"CharacterId\": \"98092347523\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToCharacterFromUserResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToUserFromCharacter"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -16257,10 +16152,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"CharacterId\": \"98092347523\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToUserFromCharacterResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToCharacterFromUser"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -16349,10 +16240,7 @@
       "request": "RegisterGameRequest",
       "requestExample": "{\n  \"ServerHost\": \"118.129.31.244\",\n  \"ServerPort\": \"9984\",\n  \"Build\": \"11_034234.13\",\n  \"Region\": \"USEast\",\n  \"GameMode\": \"FreeForAll\",\n  \"Tags\": {\n    \"level_cap\": \"high\",\n    \"no_smoking\": \"1\"\n  }\n}",
       "result": "RegisterGameResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LobbyId\": \"8285313\"\n  }\n}",
-      "seeAlso": [
-        "Server/DeregisterGame"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LobbyId\": \"8285313\"\n  }\n}"
     },
     {
       "name": "RemoveFriend",
@@ -16366,10 +16254,6 @@
       "requestExample": "{\n  \"FriendPlayFabId\": \"29837799\",\n  \"PlayFabId\": \"1a46086aed40f142\"\n}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Server/AddFriend",
-        "Server/SetFriendTags"
-      ],
       "errors": [
         "AccountNotFound"
       ]
@@ -16407,11 +16291,7 @@
       "request": "RemovePlayerTagRequest",
       "requestExample": "{\n  \"PlayFabId\": \"10931252888739651331\",\n  \"TagName\": \"MostKilled\"\n}",
       "result": "RemovePlayerTagResult",
-      "resultExample": "",
-      "seeAlso": [
-        "Server/AddPlayerTag",
-        "Server/GetPlayerTags"
-      ]
+      "resultExample": ""
     },
     {
       "name": "RemoveSharedGroupMembers",
@@ -16456,12 +16336,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "RevokeAllBansForUserResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/BanUsers",
-        "Server/GetUserBans",
-        "Server/RevokeBans",
-        "Server/UpdateBans"
-      ],
       "errors": [
         "UserisNotValid"
       ]
@@ -16499,9 +16373,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"203945882\",\n  \"ItemInstanceId\": \"2048583045\"\n}",
       "result": "RevokeInventoryResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetUserInventory"
-      ],
       "errors": [
         "ItemNotFound"
       ]
@@ -16645,12 +16516,7 @@
       "request": "SetFriendTagsRequest",
       "requestExample": "{\n  \"PlayFabId\": \"ABCDEF123456\",\n  \"FriendPlayFabId\": \"298ABC37799\",\n  \"Tags\": [\n    \"sniper\",\n    \"melee\"\n  ]\n}",
       "result": "EmptyResponse",
-      "resultExample": "",
-      "seeAlso": [
-        "Server/AddFriend",
-        "Server/GetFriendsList",
-        "Server/RemoveFriend"
-      ]
+      "resultExample": ""
     },
     {
       "name": "SetGameServerInstanceData",
@@ -16730,9 +16596,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetPublisherDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetPublisherData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -16750,9 +16613,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetTitleDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetTitleData"
-      ],
       "errors": [
         "DataLengthExceeded",
         "TooManyKeys"
@@ -16771,9 +16631,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetTitleDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetTitleInternalData"
-      ],
       "errors": [
         "DataLengthExceeded",
         "TooManyKeys"
@@ -16791,10 +16648,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"20394883\",\n  \"CharacterId\": \"23424524523\",\n  \"VirtualCurrency\": \"GC\",\n  \"Amount\": 100\n}",
       "result": "ModifyCharacterVirtualCurrencyResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"VirtualCurrency\": \"GC\",\n    \"Balance\": 1500\n  }\n}",
-      "seeAlso": [
-        "Server/AddCharacterVirtualCurrency",
-        "Server/SubtractUserVirtualCurrency"
-      ],
       "errors": [
         "InvalidVirtualCurrency"
       ]
@@ -16831,9 +16684,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\"\n}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkNintendoServiceAccount"
-      ],
       "errors": [
         "AccountNotLinked",
         "NintendoSwitchNotEnabledForTitle"
@@ -16851,9 +16701,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\",\n  \"NintendoSwitchDeviceId\": \"526f79204261747479\"\n}",
       "result": "UnlinkNintendoSwitchDeviceIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkNintendoSwitchDeviceId"
-      ],
       "errors": [
         "AccountNotLinked",
         "NintendoSwitchDeviceIdNotLinked"
@@ -16871,9 +16718,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\"\n}",
       "result": "UnlinkPSNAccountResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkPSNAccount"
-      ],
       "errors": [
         "AccountNotLinked"
       ]
@@ -17012,12 +16856,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"CharacterId\": \"98342357\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  },\n  \"Permission\": \"Public\"\n}",
       "result": "UpdateCharacterDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 13\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterData",
-        "Server/UpdateCharacterInternalData",
-        "Server/UpdateCharacterReadOnlyData",
-        "Server/UpdateUserData"
-      ],
       "errors": [
         "CharacterNotFound",
         "UserisNotValid"
@@ -17036,12 +16874,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"CharacterId\": \"98342357\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  },\n  \"Permission\": \"Public\"\n}",
       "result": "UpdateCharacterDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 13\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterInternalData",
-        "Server/UpdateCharacterData",
-        "Server/UpdateCharacterReadOnlyData",
-        "Server/UpdateUserInternalData"
-      ],
       "errors": [
         "CharacterNotFound",
         "UserisNotValid"
@@ -17060,12 +16892,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"CharacterId\": \"98342357\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  },\n  \"Permission\": \"Public\"\n}",
       "result": "UpdateCharacterDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 13\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterData",
-        "Server/GetCharacterInternalData",
-        "Server/GetCharacterReadOnlyData",
-        "Server/GetUserReadOnlyData"
-      ],
       "errors": [
         "CharacterNotFound",
         "UserisNotValid"
@@ -19515,10 +19341,6 @@
       "id": 1545,
       "name": "InvalidGooglePlayGamesServerAuthCode"
     },
-    "StorageAccountNotFound": {
-      "id": 1546,
-      "name": "StorageAccountNotFound"
-    },
     "PlayStreamConnectionFailed": {
       "id": 1547,
       "name": "PlayStreamConnectionFailed"
@@ -19526,6 +19348,10 @@
     "InvalidEventContents": {
       "id": 1548,
       "name": "InvalidEventContents"
+    },
+    "InsightsV1Deprecated": {
+      "id": 1549,
+      "name": "InsightsV1Deprecated"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -20707,9 +20533,9 @@
     "AutomationRuleAlreadyExists",
     "AutomationRuleLimitExceeded",
     "InvalidGooglePlayGamesServerAuthCode",
-    "StorageAccountNotFound",
     "PlayStreamConnectionFailed",
     "InvalidEventContents",
+    "InsightsV1Deprecated",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
