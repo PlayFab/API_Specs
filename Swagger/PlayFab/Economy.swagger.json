@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230220",
+    "version": "230306",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1472,6 +1472,7 @@
         "x-requestDetails": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
         "x-ms-docs-errors": [
           "DatabaseThroughputExceeded",
+          "InsufficientFunds",
           "ItemNotFound"
         ]
       }
@@ -1585,6 +1586,11 @@
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
+        },
+        "DurationInSeconds": {
+          "description": "The duration to add to the current item expiration date.",
+          "type": "number",
+          "x-actualtype": "double"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -1789,6 +1795,10 @@
           },
           "x-isclass": true
         },
+        "DefaultStackId": {
+          "description": "The Stack Id that will be used as default for this item in Inventory when an explicit one is not provided. This DefaultStackId can be a static stack id or '{guid}', which will generate a unique stack id for the item. If null, Inventory's default stack id will be used.",
+          "type": "string"
+        },
         "Description": {
           "description": "A dictionary of localized descriptions. Key is language code and localized string is the value. The neutral locale is required.",
           "type": "object"
@@ -1925,6 +1935,11 @@
             "$ref": "#/definitions/CatalogPriceAmount"
           },
           "x-isclass": true
+        },
+        "UnitDurationInSeconds": {
+          "description": "The per-unit duration this price can be used to purchase.",
+          "type": "number",
+          "x-actualtype": "double"
         }
       }
     },
@@ -2403,7 +2418,8 @@
               "maxPlayers": 16
             },
             "averageMatchLengthInSeconds": 947
-          }
+          },
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -2474,7 +2490,8 @@
             },
             "averageMatchLengthInSeconds": 947
           },
-          "ETag": "opaqueString"
+          "ETag": "opaqueString",
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -3037,7 +3054,8 @@
             },
             "averageMatchLengthInSeconds": 947
           },
-          "ETag": "opaqueString"
+          "ETag": "opaqueString",
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -3151,7 +3169,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           },
           {
             "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -3209,7 +3228,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           }
         ],
         "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
@@ -3328,7 +3348,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           },
           {
             "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -3386,7 +3407,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           }
         ],
         "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
@@ -3706,7 +3728,8 @@
                 "maxPlayers": 16
               },
               "averageMatchLengthInSeconds": 947
-            }
+            },
+            "DefaultStackId": "Static_Default_Stack_Id"
           },
           {
             "Id": "22222222-2222-2222-2222-222222222222",
@@ -3771,7 +3794,8 @@
                 "maxPlayers": 16
               },
               "averageMatchLengthInSeconds": 947
-            }
+            },
+            "DefaultStackId": "Static_Default_Stack_Id"
           }
         ]
       }
@@ -3958,7 +3982,8 @@
             },
             "averageMatchLengthInSeconds": 947
           },
-          "ETag": "opaqueString"
+          "ETag": "opaqueString",
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -4270,7 +4295,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           },
           {
             "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -4328,7 +4354,8 @@
               },
               "averageMatchLengthInSeconds": 947
             },
-            "ETag": "opaqueString"
+            "ETag": "opaqueString",
+            "DefaultStackId": "Static_Default_Stack_Id"
           }
         ]
       }
@@ -4512,6 +4539,10 @@
           "description": "Game specific properties for display purposes. This is an arbitrary JSON blob.",
           "type": "object"
         },
+        "ExpirationDate": {
+          "description": "Only used for subscriptions. The date of when the item will expire in UTC. If not provided then the product will be available indefinitely.",
+          "type": "string"
+        },
         "Id": {
           "description": "The id of the item. This should correspond to the item id in the catalog.",
           "type": "string"
@@ -4690,6 +4721,11 @@
           "description": "Indicates whether stacks reduced to an amount of 0 during the operation should be deleted from the inventory. (Default = false)",
           "type": "boolean"
         },
+        "DurationInSeconds": {
+          "description": "The duration to purchase.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
         "Item": {
           "$ref": "#/definitions/InventoryItemReference",
           "description": "The inventory item the operation applies to.",
@@ -4739,6 +4775,11 @@
         "DeleteEmptyStacks": {
           "description": "Indicates whether stacks reduced to an amount of 0 during the request should be deleted from the inventory. (Default=false)",
           "type": "boolean"
+        },
+        "DurationInSeconds": {
+          "description": "The duration to purchase.",
+          "type": "number",
+          "x-actualtype": "double"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -5773,7 +5814,8 @@
                 "maxPlayers": 16
               },
               "averageMatchLengthInSeconds": 947
-            }
+            },
+            "DefaultStackId": "Static_Default_Stack_Id"
           },
           {
             "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -5832,7 +5874,8 @@
                 "maxPlayers": 16
               },
               "averageMatchLengthInSeconds": 947
-            }
+            },
+            "DefaultStackId": "Static_Default_Stack_Id"
           }
         ],
         "ContinuationToken": "def=#"
@@ -5979,6 +6022,11 @@
           "description": "Indicates whether stacks reduced to an amount of 0 during the request should be deleted from the inventory. (Default = false).",
           "type": "boolean"
         },
+        "DurationInSeconds": {
+          "description": "The duration to subtract from the current item expiration date.",
+          "type": "number",
+          "x-actualtype": "double"
+        },
         "Item": {
           "$ref": "#/definitions/InventoryItemReference",
           "description": "The inventory item the operation applies to.",
@@ -6010,6 +6058,11 @@
         "DeleteEmptyStacks": {
           "description": "Indicates whether stacks reduced to an amount of 0 during the request should be deleted from the inventory. (Default=false)",
           "type": "boolean"
+        },
+        "DurationInSeconds": {
+          "description": "The duration to subtract from the current item expiration date.",
+          "type": "number",
+          "x-actualtype": "double"
         },
         "Entity": {
           "$ref": "#/definitions/EntityKey",
@@ -6161,6 +6214,11 @@
           "description": "The amount of items in this transaction.",
           "type": "number",
           "x-actualtype": "int32"
+        },
+        "DurationInSeconds": {
+          "description": "The duration modified in this transaction.",
+          "type": "number",
+          "x-actualtype": "double"
         },
         "ItemId": {
           "description": "The item id of the items in this transaction.",
@@ -6519,7 +6577,8 @@
               "maxPlayers": 16
             },
             "averageMatchLengthInSeconds": 947
-          }
+          },
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -6590,7 +6649,8 @@
             },
             "averageMatchLengthInSeconds": 947
           },
-          "ETag": "opaqueString"
+          "ETag": "opaqueString",
+          "DefaultStackId": "Static_Default_Stack_Id"
         }
       }
     },
@@ -7166,7 +7226,8 @@
                 },
                 "averageMatchLengthInSeconds": 947
               },
-              "ETag": "opaqueString"
+              "ETag": "opaqueString",
+              "DefaultStackId": "Static_Default_Stack_Id"
             }
           }
         }
@@ -7477,7 +7538,8 @@
                 },
                 "averageMatchLengthInSeconds": 947
               },
-              "ETag": "opaqueString"
+              "ETag": "opaqueString",
+              "DefaultStackId": "Static_Default_Stack_Id"
             }
           }
         }
@@ -7561,7 +7623,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               },
               {
                 "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -7619,7 +7682,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               }
             ],
             "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
@@ -7705,7 +7769,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               },
               {
                 "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -7763,7 +7828,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               }
             ],
             "ContinuationToken": "+RID:IQkbAIvkRQD9oQIAAAAAAA==#RT:1#TRC:10#FPC:AgEKHAoKAPEhAOAhQP8DWIAMAgB8rRACAJeAHAIA0r0="
@@ -7968,7 +8034,8 @@
                     "maxPlayers": 16
                   },
                   "averageMatchLengthInSeconds": 947
-                }
+                },
+                "DefaultStackId": "Static_Default_Stack_Id"
               },
               {
                 "Id": "22222222-2222-2222-2222-222222222222",
@@ -8033,7 +8100,8 @@
                     "maxPlayers": 16
                   },
                   "averageMatchLengthInSeconds": 947
-                }
+                },
+                "DefaultStackId": "Static_Default_Stack_Id"
               }
             ]
           }
@@ -8173,7 +8241,8 @@
                 },
                 "averageMatchLengthInSeconds": 947
               },
-              "ETag": "opaqueString"
+              "ETag": "opaqueString",
+              "DefaultStackId": "Static_Default_Stack_Id"
             }
           }
         }
@@ -8395,7 +8464,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               },
               {
                 "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -8453,7 +8523,8 @@
                   },
                   "averageMatchLengthInSeconds": 947
                 },
-                "ETag": "opaqueString"
+                "ETag": "opaqueString",
+                "DefaultStackId": "Static_Default_Stack_Id"
               }
             ]
           }
@@ -8995,7 +9066,8 @@
                     "maxPlayers": 16
                   },
                   "averageMatchLengthInSeconds": 947
-                }
+                },
+                "DefaultStackId": "Static_Default_Stack_Id"
               },
               {
                 "Id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
@@ -9054,7 +9126,8 @@
                     "maxPlayers": 16
                   },
                   "averageMatchLengthInSeconds": 947
-                }
+                },
+                "DefaultStackId": "Static_Default_Stack_Id"
               }
             ],
             "ContinuationToken": "def=#"
@@ -9299,7 +9372,8 @@
                 },
                 "averageMatchLengthInSeconds": 947
               },
-              "ETag": "opaqueString"
+              "ETag": "opaqueString",
+              "DefaultStackId": "Static_Default_Stack_Id"
             }
           }
         }
@@ -11544,6 +11618,30 @@
       "id": 1555,
       "name": "InvalidNintendoSwitchAccountId"
     },
+    "EntityAPIKeysNotSupported": {
+      "id": 1556,
+      "name": "EntityAPIKeysNotSupported"
+    },
+    "IpAddressBanned": {
+      "id": 1557,
+      "name": "IpAddressBanned"
+    },
+    "EntityLineageBanned": {
+      "id": 1558,
+      "name": "EntityLineageBanned"
+    },
+    "NamespaceMismatch": {
+      "id": 1559,
+      "name": "NamespaceMismatch"
+    },
+    "InvalidServiceConfiguration": {
+      "id": 1560,
+      "name": "InvalidServiceConfiguration"
+    },
+    "InvalidNamespaceMismatch": {
+      "id": 1561,
+      "name": "InvalidNamespaceMismatch"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -12127,6 +12225,26 @@
     "EventSamplingRatioNotFound": {
       "id": 14003,
       "name": "EventSamplingRatioNotFound"
+    },
+    "TelemetryKeyNotFound": {
+      "id": 14200,
+      "name": "TelemetryKeyNotFound"
+    },
+    "TelemetryKeyInvalidName": {
+      "id": 14201,
+      "name": "TelemetryKeyInvalidName"
+    },
+    "TelemetryKeyAlreadyExists": {
+      "id": 14202,
+      "name": "TelemetryKeyAlreadyExists"
+    },
+    "TelemetryKeyInvalid": {
+      "id": 14203,
+      "name": "TelemetryKeyInvalid"
+    },
+    "TelemetryKeyCountOverLimit": {
+      "id": 14204,
+      "name": "TelemetryKeyCountOverLimit"
     },
     "EventSinkConnectionInvalid": {
       "id": 15000,
