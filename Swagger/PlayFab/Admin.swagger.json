@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230306",
+    "version": "230316",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -1406,78 +1406,6 @@
         ]
       }
     },
-    "/Admin/GetMatchmakerGameInfo": {
-      "post": {
-        "operationId": "GetMatchmakerGameInfo",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Retrieves the details for a specific completed session, including links to standard out and standard error logs",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/matchmaking/getmatchmakergameinfo"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetMatchmakerGameInfoRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetMatchmakerGameInfoResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/GetMatchmakerGameModes",
-          "Admin/ModifyMatchmakerGameModes"
-        ],
-        "x-ms-docs-errors": [
-          "GameNotFound"
-        ]
-      }
-    },
-    "/Admin/GetMatchmakerGameModes": {
-      "post": {
-        "operationId": "GetMatchmakerGameModes",
-        "tags": [
-          "Matchmaking"
-        ],
-        "description": "Retrieves the details of defined game modes for the specified game server executable",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/matchmaking/getmatchmakergamemodes"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetMatchmakerGameModesRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetMatchmakerGameModesResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts.",
-        "x-seeAlso": [
-          "Admin/GetMatchmakerGameInfo",
-          "Admin/ModifyMatchmakerGameModes"
-        ]
-      }
-    },
     "/Admin/GetPlayedTitleList": {
       "post": {
         "operationId": "GetPlayedTitleList",
@@ -2703,47 +2631,6 @@
         "x-seeAlso": [
           "Admin/AddVirtualCurrencyTypes",
           "Admin/RemoveVirtualCurrencyTypes"
-        ]
-      }
-    },
-    "/Admin/ModifyServerBuild": {
-      "post": {
-        "operationId": "ModifyServerBuild",
-        "tags": [
-          "Custom Server Management"
-        ],
-        "description": "Updates the build details for the specified game server executable",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/admin/custom-server-management/modifyserverbuild"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/ModifyServerBuildRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/ModifyServerBuildResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-seeAlso": [
-          "Admin/AddServerBuild",
-          "Admin/GetServerBuildInfo",
-          "Admin/ListServerBuilds",
-          "Admin/RemoveServerBuild"
-        ],
-        "x-ms-docs-errors": [
-          "BuildNotAvailable",
-          "BuildNotFound",
-          "GameServerHostCountLimitExceeded"
         ]
       }
     },
@@ -6633,50 +6520,6 @@
         "DurationInMinutes"
       ]
     },
-    "GameBuildStatus": {
-      "type": "string",
-      "enum": [
-        "Available",
-        "Validating",
-        "InvalidBuildPackage",
-        "Processing",
-        "FailedToProcess"
-      ]
-    },
-    "GameModeInfo": {
-      "type": "object",
-      "properties": {
-        "Gamemode": {
-          "description": "specific game mode type",
-          "type": "string"
-        },
-        "MaxPlayerCount": {
-          "description": "maximum user count a specific Game Server Instance can support",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "MinPlayerCount": {
-          "description": "minimum user count required for this Game Server Instance to continue (usually 1)",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "StartOpen": {
-          "description": "whether to start as an open session, meaning that players can matchmake into it (defaults to true)",
-          "type": "boolean"
-        }
-      },
-      "required": [
-        "Gamemode",
-        "MinPlayerCount",
-        "MaxPlayerCount"
-      ],
-      "example": {
-        "Gamemode": "FreeForall",
-        "MinPlayerCount": 20,
-        "MaxPlayerCount": 10,
-        "StartOpen": false
-      }
-    },
     "GenericErrorCodes": {
       "type": "string",
       "enum": [
@@ -7380,6 +7223,7 @@
         "TelemetryKeyAlreadyExists",
         "TelemetryKeyInvalid",
         "TelemetryKeyCountOverLimit",
+        "TelemetryKeyDeactivated",
         "EventSinkConnectionInvalid",
         "EventSinkConnectionUnauthorized",
         "EventSinkRegionInvalid",
@@ -7989,139 +7833,6 @@
       },
       "example": {
         "DownloadUrl": "https://data-reports-dev.s3-us-west-1.amazonaws.com/2730/PurchaseDataReport/2014/12/5/data.json?AWSAccessKeyId=AKIAJB5VEITH4PHABPAA&Expires=1418151409&Signature=1cF0Xre4FETLW%2BIu5BCW0TL8ShQ%3D"
-      }
-    },
-    "GetMatchmakerGameInfoRequest": {
-      "type": "object",
-      "properties": {
-        "LobbyId": {
-          "description": "unique identifier of the lobby for which info is being requested",
-          "type": "string"
-        }
-      },
-      "required": [
-        "LobbyId"
-      ],
-      "example": {
-        "LobbyId": "2938488"
-      }
-    },
-    "GetMatchmakerGameInfoResult": {
-      "type": "object",
-      "properties": {
-        "BuildVersion": {
-          "description": "version identifier of the game server executable binary being run",
-          "type": "string"
-        },
-        "EndTime": {
-          "description": "time when Game Server Instance is currently scheduled to end",
-          "type": "string"
-        },
-        "LobbyId": {
-          "description": "unique identifier of the lobby ",
-          "type": "string"
-        },
-        "Mode": {
-          "description": "game mode for this Game Server Instance",
-          "type": "string"
-        },
-        "Players": {
-          "description": "array of unique PlayFab identifiers for users currently connected to this Game Server Instance",
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "x-isUnordered": true
-        },
-        "Region": {
-          "$ref": "#/definitions/Region",
-          "description": "region in which the Game Server Instance is running",
-          "type": "string",
-          "x-isenum": true
-        },
-        "ServerIPV4Address": {
-          "description": "IPV4 address of the server",
-          "type": "string"
-        },
-        "ServerIPV6Address": {
-          "description": "IPV6 address of the server",
-          "type": "string"
-        },
-        "ServerPort": {
-          "description": "communication port for this Game Server Instance",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "ServerPublicDNSName": {
-          "description": "Public DNS name (if any) of the server",
-          "type": "string"
-        },
-        "StartTime": {
-          "description": "time when the Game Server Instance was created",
-          "type": "string"
-        },
-        "TitleId": {
-          "description": "unique identifier of the Game Server Instance for this lobby",
-          "type": "string"
-        }
-      },
-      "required": [
-        "StartTime",
-        "ServerPort"
-      ],
-      "example": {
-        "LobbyId": "2938488",
-        "TitleId": "2084",
-        "StartTime": "2016-04-20T10:32:58",
-        "EndTime": "2016-04-20T21:08:14",
-        "Mode": "0",
-        "BuildVersion": "5.0.1",
-        "ServerAddress": "10.250.24.54",
-        "ServerPort": 1243
-      }
-    },
-    "GetMatchmakerGameModesRequest": {
-      "description": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts.",
-      "type": "object",
-      "properties": {
-        "BuildVersion": {
-          "description": "previously uploaded build version for which game modes are being requested",
-          "type": "string"
-        }
-      },
-      "required": [
-        "BuildVersion"
-      ],
-      "example": {
-        "BuildVersion": "5.0.1"
-      }
-    },
-    "GetMatchmakerGameModesResult": {
-      "type": "object",
-      "properties": {
-        "GameModes": {
-          "description": "array of game modes available for the specified build",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/GameModeInfo"
-          },
-          "x-isclass": true
-        }
-      },
-      "example": {
-        "GameModes": [
-          {
-            "Gamemode": "0",
-            "MinPlayerCount": 2,
-            "MaxPlayerCount": 25
-          },
-          {
-            "Gamemode": "1",
-            "MinPlayerCount": 4,
-            "MaxPlayerCount": 35,
-            "StartOpen": false
-          }
-        ]
       }
     },
     "GetPlayedTitleListRequest": {
@@ -9989,141 +9700,6 @@
         "IsActive"
       ]
     },
-    "ModifyServerBuildRequest": {
-      "type": "object",
-      "properties": {
-        "ActiveRegions": {
-          "description": "array of regions where this build can used, when it is active",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Region"
-          },
-          "x-isenum": true
-        },
-        "BuildId": {
-          "description": "unique identifier of the previously uploaded build executable to be updated",
-          "type": "string"
-        },
-        "CommandLineTemplate": {
-          "description": "appended to the end of the command line when starting game servers",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "developer comment(s) for this build",
-          "type": "string"
-        },
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        },
-        "ExecutablePath": {
-          "description": "path to the game server executable. Defaults to gameserver.exe",
-          "type": "string"
-        },
-        "MaxGamesPerHost": {
-          "description": "maximum number of game server instances that can run on a single host machine",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "MinFreeGameSlots": {
-          "description": "minimum capacity of additional game server instances that can be started before the autoscaling service starts new host machines (given the number of current running host machines and game server instances)",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "Timestamp": {
-          "description": "new timestamp",
-          "type": "string"
-        }
-      },
-      "required": [
-        "BuildId",
-        "MaxGamesPerHost",
-        "MinFreeGameSlots"
-      ],
-      "example": {
-        "BuildId": "5.0.1",
-        "Timestamp": "2014-03-24T00:00:00",
-        "ActiveRegions": [
-          "USCentral",
-          "EUWest"
-        ],
-        "MaxGamesPerHost": 5,
-        "MinFreeGameSlots": 2,
-        "ExecutablePath": "\\ShooterGame\\Binaries\\Win64\\ShooterGameServer.exe",
-        "Comment": "Testing new IAP methods"
-      }
-    },
-    "ModifyServerBuildResult": {
-      "type": "object",
-      "properties": {
-        "ActiveRegions": {
-          "description": "array of regions where this build can used, when it is active",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Region"
-          },
-          "x-isenum": true
-        },
-        "BuildId": {
-          "description": "unique identifier for this build executable",
-          "type": "string"
-        },
-        "CommandLineTemplate": {
-          "description": "appended to the end of the command line when starting game servers",
-          "type": "string"
-        },
-        "Comment": {
-          "description": "developer comment(s) for this build",
-          "type": "string"
-        },
-        "ExecutablePath": {
-          "description": "path to the game server executable. Defaults to gameserver.exe",
-          "type": "string"
-        },
-        "MaxGamesPerHost": {
-          "description": "maximum number of game server instances that can run on a single host machine",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "MinFreeGameSlots": {
-          "description": "minimum capacity of additional game server instances that can be started before the autoscaling service starts new host machines (given the number of current running host machines and game server instances)",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "Status": {
-          "$ref": "#/definitions/GameBuildStatus",
-          "description": "the current status of the build validation and processing steps",
-          "type": "string",
-          "x-isenum": true
-        },
-        "Timestamp": {
-          "description": "time this build was last modified (or uploaded, if this build has never been modified)",
-          "type": "string"
-        },
-        "TitleId": {
-          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "MaxGamesPerHost",
-        "MinFreeGameSlots",
-        "Timestamp"
-      ],
-      "example": {
-        "BuildId": "5.0.1",
-        "ActiveRegions": [
-          "USCentral",
-          "EUWest"
-        ],
-        "MaxGamesPerHost": 5,
-        "MinFreeGameSlots": 2,
-        "ExecutablePath": "gameserver.exe",
-        "Comment": "Testing new IAP methods",
-        "Timestamp": "2014-03-24T00:00:00",
-        "TitleId": "2074"
-      }
-    },
     "ModifyUserVirtualCurrencyResult": {
       "type": "object",
       "properties": {
@@ -10997,18 +10573,6 @@
       "example": {
         "PurchaseStatus": "Refunded"
       }
-    },
-    "Region": {
-      "type": "string",
-      "enum": [
-        "USCentral",
-        "USEast",
-        "EUWest",
-        "Singapore",
-        "Japan",
-        "Brazil",
-        "Australia"
-      ]
     },
     "RemovePlayerTagRequest": {
       "description": "This API will trigger a player_tag_removed event and remove a tag with the given TagName and PlayFabID from the corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters",
@@ -14814,21 +14378,6 @@
         "$ref": "#/definitions/GetDataReportRequest"
       }
     },
-    "GetMatchmakerGameInfoRequest": {
-      "name": "GetMatchmakerGameInfoRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/GetMatchmakerGameInfoRequest"
-      }
-    },
-    "GetMatchmakerGameModesRequest": {
-      "name": "GetMatchmakerGameModesRequest",
-      "in": "body",
-      "description": "These details are used by the PlayFab matchmaking service to determine if an existing Game Server Instance has room for additional users, and by the PlayFab game server management service to determine when a new Game Server Host should be created in order to prevent excess load on existing Hosts.",
-      "schema": {
-        "$ref": "#/definitions/GetMatchmakerGameModesRequest"
-      }
-    },
     "GetPlayedTitleListRequest": {
       "name": "GetPlayedTitleListRequest",
       "in": "body",
@@ -15045,13 +14594,6 @@
       "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/LookupUserAccountInfoRequest"
-      }
-    },
-    "ModifyServerBuildRequest": {
-      "name": "ModifyServerBuildRequest",
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/ModifyServerBuildRequest"
       }
     },
     "RefundPurchaseRequest": {
@@ -16362,77 +15904,6 @@
         }
       }
     },
-    "GetMatchmakerGameInfoResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetMatchmakerGameInfoResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "LobbyId": "2938488",
-            "TitleId": "2084",
-            "StartTime": "2016-04-20T10:32:58",
-            "EndTime": "2016-04-20T21:08:14",
-            "Mode": "0",
-            "BuildVersion": "5.0.1",
-            "ServerAddress": "10.250.24.54",
-            "ServerPort": 1243
-          }
-        }
-      }
-    },
-    "GetMatchmakerGameModesResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetMatchmakerGameModesResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "GameModes": [
-              {
-                "Gamemode": "0",
-                "MinPlayerCount": 2,
-                "MaxPlayerCount": 25
-              },
-              {
-                "Gamemode": "1",
-                "MinPlayerCount": 4,
-                "MaxPlayerCount": 35,
-                "StartOpen": false
-              }
-            ]
-          }
-        }
-      }
-    },
     "GetPlayedTitleListResult": {
       "description": "",
       "schema": {
@@ -17401,42 +16872,6 @@
                 "GameCenterId": "someone"
               }
             }
-          }
-        }
-      }
-    },
-    "ModifyServerBuildResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/ModifyServerBuildResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "BuildId": "5.0.1",
-            "ActiveRegions": [
-              "USCentral",
-              "EUWest"
-            ],
-            "MaxGamesPerHost": 5,
-            "MinFreeGameSlots": 2,
-            "ExecutablePath": "gameserver.exe",
-            "Comment": "Testing new IAP methods",
-            "Timestamp": "2014-03-24T00:00:00",
-            "TitleId": "2074"
           }
         }
       }
@@ -21073,6 +20508,10 @@
     "TelemetryKeyCountOverLimit": {
       "id": 14204,
       "name": "TelemetryKeyCountOverLimit"
+    },
+    "TelemetryKeyDeactivated": {
+      "id": 14205,
+      "name": "TelemetryKeyDeactivated"
     },
     "EventSinkConnectionInvalid": {
       "id": 15000,
