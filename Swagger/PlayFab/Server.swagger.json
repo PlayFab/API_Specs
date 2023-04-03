@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230316",
+    "version": "230403",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2718,6 +2718,47 @@
         ]
       }
     },
+    "/Server/LinkSteamId": {
+      "post": {
+        "operationId": "LinkSteamId",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Steam account associated with the provided Steam ID to the user's PlayFab account ",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linksteamid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkSteamIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LinkSteamIdResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LoginWithSteamId",
+          "Server/UnlinkSteamId"
+        ],
+        "x-ms-docs-errors": [
+          "AccountAlreadyLinked",
+          "InvalidSteamTicket",
+          "LinkedAccountAlreadyClaimed",
+          "SteamNotEnabledForTitle",
+          "SteamUserNotFound"
+        ]
+      }
+    },
     "/Server/LinkXboxAccount": {
       "post": {
         "operationId": "LinkXboxAccount",
@@ -4022,6 +4063,43 @@
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "IdentifierNotLinked"
+        ]
+      }
+    },
+    "/Server/UnlinkSteamId": {
+      "post": {
+        "operationId": "UnlinkSteamId",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the Steam account associated with the provided Steam ID to the user's PlayFab account ",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinksteamid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkSteamIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkSteamIdResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkSteamId",
+          "Server/LoginWithSteamId"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked"
         ]
       }
     },
@@ -7310,6 +7388,7 @@
         "AsyncExportNotInFlight",
         "AsyncExportNotFound",
         "AsyncExportRateLimitExceeded",
+        "AnalyticsSegmentCountOverLimit",
         "SnapshotNotFound",
         "InventoryApiNotImplemented",
         "LobbyDoesNotExist",
@@ -10928,6 +11007,39 @@
       "type": "object",
       "properties": {}
     },
+    "LinkSteamIdRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "type": "string"
+        },
+        "SteamId": {
+          "description": "Unique Steam identifier for a user.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SteamId",
+        "PlayFabId"
+      ],
+      "example": {
+        "SteamId": "22223333",
+        "PlayFabId": "5a446c83645201"
+      }
+    },
+    "LinkSteamIdResult": {
+      "type": "object",
+      "properties": {}
+    },
     "LinkXboxAccountRequest": {
       "type": "object",
       "properties": {
@@ -11124,7 +11236,7 @@
           "x-isclass": true
         },
         "SteamId": {
-          "description": "Unique Steam identifier for a user",
+          "description": "Unique Steam identifier for a user.",
           "type": "string"
         }
       },
@@ -11159,7 +11271,7 @@
           "type": "string"
         },
         "XboxId": {
-          "description": "Unique Xbox identifier for a user",
+          "description": "Unique Xbox identifier for a user.",
           "type": "string"
         }
       },
@@ -13474,6 +13586,29 @@
       "type": "object",
       "properties": {}
     },
+    "UnlinkSteamIdRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam account.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "5a446c83645201"
+      }
+    },
+    "UnlinkSteamIdResult": {
+      "type": "object",
+      "properties": {}
+    },
     "UnlinkXboxAccountRequest": {
       "type": "object",
       "properties": {
@@ -15314,6 +15449,13 @@
         "$ref": "#/definitions/LinkServerCustomIdRequest"
       }
     },
+    "LinkSteamIdRequest": {
+      "name": "LinkSteamIdRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkSteamIdRequest"
+      }
+    },
     "LinkXboxAccountRequest": {
       "name": "LinkXboxAccountRequest",
       "in": "body",
@@ -15579,6 +15721,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkServerCustomIdRequest"
+      }
+    },
+    "UnlinkSteamIdRequest": {
+      "name": "UnlinkSteamIdRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkSteamIdRequest"
       }
     },
     "UnlinkXboxAccountRequest": {
@@ -18056,6 +18205,25 @@
         }
       }
     },
+    "LinkSteamIdResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LinkSteamIdResult"
+          }
+        }
+      }
+    },
     "LinkXboxAccountResult": {
       "description": "",
       "schema": {
@@ -18695,6 +18863,25 @@
           },
           "data": {
             "$ref": "#/definitions/UnlinkServerCustomIdResult"
+          }
+        }
+      }
+    },
+    "UnlinkSteamIdResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkSteamIdResult"
           }
         }
       }
@@ -21733,6 +21920,10 @@
     "AsyncExportRateLimitExceeded": {
       "id": 10013,
       "name": "AsyncExportRateLimitExceeded"
+    },
+    "AnalyticsSegmentCountOverLimit": {
+      "id": 10014,
+      "name": "AnalyticsSegmentCountOverLimit"
     },
     "SnapshotNotFound": {
       "id": 11000,
