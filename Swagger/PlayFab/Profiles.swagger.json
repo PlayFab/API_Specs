@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230319",
+    "version": "230403",
     "title": "PlayFab Profiles API",
     "description": "All PlayFab entities have profiles, which hold top-level properties about the entity. These APIs give you the tools needed to manage entity profiles. The Master Player APIs allow you to perform operations on a master player account",
     "termsOfService": "https://playfab.com/terms/",
@@ -149,6 +149,37 @@
           }
         },
         "x-requestDetails": "Given a master player account id (PlayFab ID), returns all title player accounts associated with it."
+      }
+    },
+    "/Profile/GetTitlePlayersFromXboxLiveIDs": {
+      "post": {
+        "operationId": "GetTitlePlayersFromXboxLiveIDs",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the title player accounts associated with the given XUIDs.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/profiles/account-management/gettitleplayersfromxboxliveids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetTitlePlayersFromXboxLiveIDsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetTitlePlayersFromProviderIDsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Given a collection of Xbox IDs (XUIDs), returns all title player accounts."
       }
     },
     "/Profile/SetGlobalPolicy": {
@@ -780,6 +811,62 @@
         }
       }
     },
+    "GetTitlePlayersFromProviderIDsResponse": {
+      "type": "object",
+      "properties": {
+        "TitlePlayerAccounts": {
+          "$ref": "#/definitions/EntityLineage",
+          "description": "Dictionary of provider identifiers mapped to title_player_account lineage. Missing lineage indicates the player either doesn't exist or doesn't play the requested title.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "TitlePlayerAccounts": {
+          "1233455677": {
+            "NamespaceId": "9528716980912",
+            "TitleId": "12342",
+            "MasterPlayerAccountId": "23458716980912",
+            "TitlePlayerAccountId": "81258716980352"
+          }
+        }
+      }
+    },
+    "GetTitlePlayersFromXboxLiveIDsRequest": {
+      "description": "Given a collection of Xbox IDs (XUIDs), returns all title player accounts.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Sandbox": {
+          "description": "Xbox Sandbox the players had on their Xbox tokens.",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "Optional ID of title to get players from, required if calling using a master_player_account.",
+          "type": "string"
+        },
+        "XboxLiveIds": {
+          "description": "List of Xbox Live XUIDs",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "XboxLiveIds",
+        "Sandbox"
+      ],
+      "example": {
+        "XboxLiveIds": [
+          "1233455677"
+        ],
+        "Sandbox": "RETAIL"
+      }
+    },
     "OperationTypes": {
       "type": "string",
       "enum": [
@@ -986,6 +1073,14 @@
         "$ref": "#/definitions/GetTitlePlayersFromMasterPlayerAccountIdsRequest"
       }
     },
+    "GetTitlePlayersFromXboxLiveIDsRequest": {
+      "name": "GetTitlePlayersFromXboxLiveIDsRequest",
+      "in": "body",
+      "description": "Given a collection of Xbox IDs (XUIDs), returns all title player accounts.",
+      "schema": {
+        "$ref": "#/definitions/GetTitlePlayersFromXboxLiveIDsRequest"
+      }
+    },
     "SetEntityProfilePolicyRequest": {
       "name": "SetEntityProfilePolicyRequest",
       "in": "body",
@@ -1154,6 +1249,39 @@
                 "Id": "23458716980912",
                 "Type": "title_player_account",
                 "TypeString": "title_player_account"
+              }
+            }
+          }
+        }
+      }
+    },
+    "GetTitlePlayersFromProviderIDsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetTitlePlayersFromProviderIDsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "TitlePlayerAccounts": {
+              "1233455677": {
+                "NamespaceId": "9528716980912",
+                "TitleId": "12342",
+                "MasterPlayerAccountId": "23458716980912",
+                "TitlePlayerAccountId": "81258716980352"
               }
             }
           }
@@ -3988,6 +4116,10 @@
     "AsyncExportRateLimitExceeded": {
       "id": 10013,
       "name": "AsyncExportRateLimitExceeded"
+    },
+    "AnalyticsSegmentCountOverLimit": {
+      "id": 10014,
+      "name": "AnalyticsSegmentCountOverLimit"
     },
     "SnapshotNotFound": {
       "id": 11000,

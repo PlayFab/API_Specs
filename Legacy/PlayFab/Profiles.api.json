@@ -788,6 +788,64 @@
         }
       ]
     },
+    "GetTitlePlayersFromProviderIDsResponse": {
+      "name": "GetTitlePlayersFromProviderIDsResponse",
+      "className": "GetTitlePlayersFromProviderIDsResponse",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "TitlePlayerAccounts",
+          "description": "Dictionary of provider identifiers mapped to title_player_account lineage. Missing lineage indicates the player either doesn't exist or doesn't play the requested title.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "EntityLineage",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetTitlePlayersFromXboxLiveIDsRequest": {
+      "name": "GetTitlePlayersFromXboxLiveIDsRequest",
+      "className": "GetTitlePlayersFromXboxLiveIDsRequest",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "description": "Given a collection of Xbox IDs (XUIDs), returns all title player accounts.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Sandbox",
+          "description": "Xbox Sandbox the players had on their Xbox tokens.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "TitleId",
+          "description": "Optional ID of title to get players from, required if calling using a master_player_account.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "XboxLiveIds",
+          "description": "List of Xbox Live XUIDs",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "OperationTypes": {
       "name": "OperationTypes",
       "className": "OperationTypes",
@@ -1129,6 +1187,7 @@
         "GetProfile",
         "GetProfiles",
         "GetTitlePlayersFromMasterPlayerAccountIds",
+        "GetTitlePlayersFromXboxLiveIDs",
         "SetAvatarUrl",
         "SetDisplayName",
         "SetGlobalPolicy",
@@ -1256,6 +1315,20 @@
       "requestExample": "{\n  \"MasterPlayerAccountIds\": [\n    \"1233455677\"\n  ],\n  \"TitleId\": \"abc123\"\n}",
       "result": "GetTitlePlayersFromMasterPlayerAccountIdsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TitlePlayerAccounts\": {\n      \"1233455677\": {\n        \"Id\": \"1234567787392\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"2123345568\": {\n        \"Id\": \"23458716980912\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    }\n  }\n}"
+    },
+    {
+      "name": "GetTitlePlayersFromXboxLiveIDs",
+      "summary": "Retrieves the title player accounts associated with the given XUIDs.",
+      "requestDetails": "Given a collection of Xbox IDs (XUIDs), returns all title player accounts.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Profile/GetTitlePlayersFromXboxLiveIDs",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetTitlePlayersFromXboxLiveIDsRequest",
+      "requestExample": "{\n  \"XboxLiveIds\": [\n    \"1233455677\"\n  ],\n  \"Sandbox\": \"RETAIL\"\n}",
+      "result": "GetTitlePlayersFromProviderIDsResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TitlePlayerAccounts\": {\n      \"1233455677\": {\n        \"NamespaceId\": \"9528716980912\",\n        \"TitleId\": \"12342\",\n        \"MasterPlayerAccountId\": \"23458716980912\",\n        \"TitlePlayerAccountId\": \"81258716980352\"\n      }\n    }\n  }\n}"
     },
     {
       "name": "SetAvatarUrl",
@@ -4057,6 +4130,10 @@
       "id": 10013,
       "name": "AsyncExportRateLimitExceeded"
     },
+    "AnalyticsSegmentCountOverLimit": {
+      "id": 10014,
+      "name": "AnalyticsSegmentCountOverLimit"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -4892,6 +4969,7 @@
     "AsyncExportNotInFlight",
     "AsyncExportNotFound",
     "AsyncExportRateLimitExceeded",
+    "AnalyticsSegmentCountOverLimit",
     "SnapshotNotFound",
     "InventoryApiNotImplemented",
     "LobbyDoesNotExist",
