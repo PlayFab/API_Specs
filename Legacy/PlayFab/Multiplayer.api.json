@@ -8228,6 +8228,83 @@
         }
       ]
     },
+    "RequestPartyServiceRequest": {
+      "name": "RequestPartyServiceRequest",
+      "className": "RequestPartyServiceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "NetworkConfiguration",
+          "description": "The network configuration for this request.",
+          "jsontype": null,
+          "actualtype": null,
+          "optional": false
+        },
+        {
+          "name": "PartyId",
+          "description": "A guid string party ID created track the party session over its life.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PreferredRegions",
+          "description": "The preferred regions to request a party session from. The party service will iterate through the regions in the specified order and allocate a party session from the first one that is available.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "isenum": false,
+          "optional": false
+        }
+      ]
+    },
+    "RequestPartyServiceResponse": {
+      "name": "RequestPartyServiceResponse",
+      "className": "RequestPartyServiceResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "InvitationId",
+          "description": "The invitation identifier supplied in the PartyInvitationConfiguration, or the PlayFab-generated guid if none was supplied.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PartyId",
+          "description": "The guid string party ID of the party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SerializedNetworkDescriptor",
+          "description": "A base-64 encoded string containing the serialized network descriptor for this party.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "RolloverContainerRegistryCredentialsRequest": {
       "name": "RolloverContainerRegistryCredentialsRequest",
       "className": "RolloverContainerRegistryCredentialsRequest",
@@ -9781,6 +9858,7 @@
         "RequestMultiplayerServer",
         "RequestMultiplayerServerAndToken",
         "RequestParty",
+        "RequestPartyService",
         "RolloverContainerRegistryCredentials",
         "ShutdownMultiplayerServer",
         "UntagContainerImage",
@@ -11646,6 +11724,32 @@
       "requestExample": "{\n  \"PartyId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\n  \"PreferredRegions\": [\n    \"EastUs\",\n    \"WestUs\"\n  ],\n  \"SessionCookie\": \"FooBarCookie\",\n  \"Version\": \"0.1\"\n}",
       "result": "RequestPartyResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PartyId\": \"12baef1e-e31e-2b59-2fef-ff1f38c03a8d\",\n    \"ServerId\": \"APartySession\",\n    \"VmId\": \"90c12b03-b882-2367-9a41-5a04b41f37d9\",\n    \"IPV4Address\": \"10.250.24.54\",\n    \"FQDN\": \"vm.azure.cloudapp.net\",\n    \"Ports\": [\n      {\n        \"Name\": \"PortName\",\n        \"Num\": 1243,\n        \"Protocol\": \"TCP\"\n      }\n    ],\n    \"Region\": \"WestUs\",\n    \"State\": \"Active\",\n    \"ConnectedPlayers\": [\n      {\n        \"PlayerId\": \"52E4402DDE1E4C95\"\n      },\n      {\n        \"PlayerId\": \"7B82CAA355362FE8\"\n      }\n    ],\n    \"DTLSCertificateSHA2Thumbprint\": \"1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF1234567890ABCDEF\",\n    \"BuildId\": \"23cbfe2f-f42f-3c6a-3efe-ee2e49d14b9e\"\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "PartyBadRequest",
+        "PartyInternalServerError",
+        "PartyNotFound",
+        "PartyRequestsThrottledFromRateLimiter",
+        "PartyTooManyRequests",
+        "PartyUnauthorized",
+        "PartyUnavailable"
+      ]
+    },
+    {
+      "name": "RequestPartyService",
+      "summary": "Request a party session.",
+      "requestDetails": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/Party/RequestPartyService",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "RequestPartyServiceRequest",
+      "requestExample": "{\n  \"TitleId\": \"12345\",\n  \"PartyId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\n  \"PreferredRegions\": [\n    \"EastUs\",\n    \"WestUs\"\n  ],\n  \"NetworkConfiguration\": {\n    \"MaxUsers\": 256,\n    \"MaxDevices\": 32,\n    \"MaxUsersPerDevice\": 8,\n    \"MaxDevicesPerUser\": 32,\n    \"MaxEndpointsPerDevice\": 32,\n    \"DirectPeerConnectivityOptions\": 0,\n    \"PartyInvitationConfiguration\": {\n      \"Identifier\": \"f8b73a15-6ec2-48f8-b5fb-6c5946dc10be\",\n      \"Revocability\": 1,\n      \"EntityKeys\": []\n    }\n  }\n}",
+      "result": "RequestPartyServiceResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PartyId\": \"12baef1e-e31e-2b59-2fef-ff1f38c03a8d\",\n    \"SerializedNetworkDescriptor\": \"AwCzm+YyPYt1XCGGCkeIv588A1Gon1VTV0VTVAAAAAAAAAAAAAAAAAAAt3qFc4+Pmn8bBLUynFkOvLnkJZJcbQmECJxDoCLeTxnCgRBmYWtlaG9zdG5hbWUuYml6\",\n    \"InvitationId\": \"01234567-89ab-cdef-0123-456789abcdef\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -14587,6 +14691,10 @@
       "id": 6004,
       "name": "MultiplayerServerBuildAliasReferencedByMatchmakingQueue"
     },
+    "PartySerializationError": {
+      "id": 6005,
+      "name": "PartySerializationError"
+    },
     "ExperimentationExperimentStopped": {
       "id": 7000,
       "name": "ExperimentationExperimentStopped"
@@ -15587,6 +15695,7 @@
     "MultiplayerServerBuildReferencedByMatchmakingQueue",
     "MultiplayerServerBuildReferencedByBuildAlias",
     "MultiplayerServerBuildAliasReferencedByMatchmakingQueue",
+    "PartySerializationError",
     "ExperimentationExperimentStopped",
     "ExperimentationExperimentRunning",
     "ExperimentationExperimentNotFound",
