@@ -236,13 +236,6 @@
           "optional": true
         },
         {
-          "name": "EntityLeaderboardMetadata",
-          "description": "Custom entity metadata as set during the last UpdateStatistic API call.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "EntityLineage",
           "description": "Lineage for this entity.",
           "jsontype": "Object",
@@ -252,7 +245,7 @@
         },
         {
           "name": "Metadata",
-          "description": "Statistic or statistic child metadata as set during the UpdateStatistic API call.",
+          "description": "Statistic or statistic attribute metadata as set during the UpdateStatistic API call.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -270,6 +263,14 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        },
+        {
+          "name": "Scores",
+          "description": "Scores for the statistic",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         }
       ]
     },
@@ -371,6 +372,12 @@
           "name": "ChildStatistics",
           "description": "Child statistic values",
           "collection": "map",
+          "deprecation": {
+            "ProposedAfter": "6/15/2023",
+            "DeprecatedAfter": "7/15/2023",
+            "ObsoleteAfter": "8/15/2023",
+            "ReplacedBy": "AttributeStatistics"
+          },
           "jsontype": "Object",
           "actualtype": "EntityStatisticChildValue",
           "isclass": true,
@@ -418,8 +425,8 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "ChildName",
-          "description": "Optional child statistic name to filter the leaderboard to.",
+          "name": "AttributeName",
+          "description": "Optional attribute statistic name to filter the leaderboard to.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -441,14 +448,14 @@
         },
         {
           "name": "MaxResults",
-          "description": "maximum number of results to return from the leaderboard. Minimum 1, maximum 1,000.",
+          "description": "Maximum number of results to return from the leaderboard. Minimum 1, maximum 1,000.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
         },
         {
           "name": "StartingPosition",
-          "description": "Index position to start from. 0 is beginning of leaderboard. ",
+          "description": "Index position to start from. 1 is beginning of leaderboard. ",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": true
@@ -510,8 +517,8 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "ChildName",
-          "description": "Optional statistic child to filter the leaderboard by.",
+          "name": "AttributeName",
+          "description": "Optional attribute to filter the leaderboard by.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -567,8 +574,8 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "ChildName",
-          "description": "Optional statistic child name to filter the leaderboard by.",
+          "name": "AttributeName",
+          "description": "Optional statistic attribute name to filter the leaderboard by.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -799,34 +806,20 @@
       ],
       "properties": [
         {
-          "name": "ChildLeaderboardNames",
-          "description": "For non-dynamic child leaderboards the statistic child name must be defined to prevent leaderboard length restrictions.",
+          "name": "ColumnSortDirections",
+          "description": "Sort direction of the leaderboard columns, cannot be changed after creation. Default is Descending",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "DynamicChildLeaderboardMaxSize",
-          "description": "Number of entities to rank in a leaderboard when the child is dynamically defined, new entities will not be ranked unless they beat an existing score on a leaderboard. Default 0, Maximum 100.",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": true
-        },
-        {
-          "name": "ProvisionLeaderboard",
-          "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
-          "jsontype": "Boolean",
-          "actualtype": "Boolean",
-          "optional": false
-        },
-        {
-          "name": "SortDirection",
-          "description": "Sort direction of the leaderboard, cannot be changed after creation. Default is Descending",
           "jsontype": "String",
           "actualtype": "LeaderboardSortDirection",
           "isenum": true,
           "optional": true
+        },
+        {
+          "name": "ShouldProvisionLeaderboard",
+          "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
         }
       ]
     },
@@ -937,8 +930,8 @@
       ],
       "properties": [
         {
-          "name": "ChildName",
-          "description": "Optionally delete only the child statistic from this entity.",
+          "name": "AttributeName",
+          "description": "Optionally delete only the attribute statistic from this entity.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -969,15 +962,8 @@
       ],
       "properties": [
         {
-          "name": "ChildName",
-          "description": "Arbitrary statistic child name, using child statistics will cause entity to be ranked on only the child leaderboard. See documentation for full details. Must be less than 50 UTF8 encoded characters.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "Metadata",
-          "description": "Arbitrary metadata to store along side the statistic or child statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
+          "description": "Arbitrary metadata to store along side the statistic or attribute statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1029,13 +1015,6 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "EntityLeaderboardMetadata",
-          "description": "Arbitrary metadata to store on the entity that will be returned on all leaderboard APIs. Max length 50 characters.",
-          "jsontype": "String",
-          "actualtype": "String",
           "optional": true
         },
         {
@@ -1127,7 +1106,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateStatisticDefinitionRequest",
-      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Max\",\n  \"LeaderboardDefinition\": {\n    \"ProvisionLeaderboard\": true,\n    \"DynamicChildLeaderboardMaxSize\": 50\n  }\n}",
+      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Max\",\n  \"LeaderboardDefinition\": {\n    \"ShouldProvisionLeaderboard\": true,\n    \"ColumnSortDirections\": [\n      \"Descending\",\n      \"Ascending\"\n    ]\n  }\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1167,14 +1146,14 @@
     },
     {
       "name": "DeleteStatistics",
-      "summary": "Delete statistics on an entity profile, will remove all rankings from associated leaderboards.",
+      "summary": "Delete statistics on an entity profile. This will remove all rankings from associated leaderboards.",
       "subgroup": "Statistics and Leaderboards",
       "titleTiers": null,
       "url": "/Statistic/DeleteStatistics",
       "auth": "EntityToken",
       "method": "POST",
       "request": "DeleteStatisticsRequest",
-      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"TotalCarTime\"\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"ChildName\": \"map:silver_surf\",\n      \"Version\": 15\n    }\n  ]\n}",
+      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"TotalCarTime\"\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Version\": 15\n    }\n  ]\n}",
       "result": "DeleteStatisticsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 56,\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Value\": 89,\n        \"Version\": 0,\n        \"ChildStatistics\": {\n          \"map1\": {\n            \"ChildName\": \"map1\",\n            \"Value\": 56\n          },\n          \"map2\": {\n            \"ChildName\": \"map2\",\n            \"Value\": 87\n          }\n        }\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
@@ -1195,13 +1174,12 @@
       "request": "GetEntityLeaderboardRequest",
       "requestExample": "{\n  \"EntityType\": \"character\",\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"MaxResults\": 0\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 4503,\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 4502,\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
         "NoLeaderboardForStatistic",
-        "StatisticChildNameInvalid",
         "StatisticNotFound"
       ]
     },
@@ -1216,13 +1194,12 @@
       "request": "GetLeaderboardAroundEntityRequest",
       "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"Offset\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 4503,\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 4502,\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
         "NoLeaderboardForStatistic",
-        "StatisticChildNameInvalid",
         "StatisticNotFound"
       ]
     },
@@ -1237,13 +1214,12 @@
       "request": "GetLeaderboardForEntitiesRequest",
       "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"EntityType\": \"title_player_account\",\n  \"Entities\": [\n    \"12802710371\",\n    \"01849174301\"\n  ]\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 4503,\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 4502,\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
         "NoLeaderboardForStatistic",
-        "StatisticChildNameInvalid",
         "StatisticNotFound"
       ]
     },
@@ -1258,7 +1234,7 @@
       "request": "GetStatisticDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"Points\"\n}",
       "result": "GetStatisticDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"LeaderboardDefinition\": {\n      \"ProvisionLeaderboard\": true,\n      \"SortDirection\": \"Descending\",\n      \"ChildLeaderboardNames\": [\n        \"gold\",\n        \"silver\"\n      ]\n    }\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"LeaderboardDefinition\": {\n      \"ShouldProvisionLeaderboard\": true,\n      \"ColumnSortDirections\": [\n        \"Descending\",\n        \"Ascending\"\n      ]\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1283,7 +1259,7 @@
       "request": "GetStatisticDefinitionsRequest",
       "requestExample": "{}",
       "result": "GetStatisticDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LeaderboardDefinition\": {\n          \"ProvisionLeaderboard\": true,\n          \"SortDirection\": \"Descending\",\n          \"ChildLeaderboardNames\": [\n            \"gold\",\n            \"silver\"\n          ]\n        }\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LeaderboardDefinition\": {\n          \"ShouldProvisionLeaderboard\": true,\n          \"ColumnSortDirections\": [\n            \"Descending\",\n            \"Ascending\"\n          ]\n        }\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1321,16 +1297,16 @@
     },
     {
       "name": "UpdateStatistics",
-      "summary": "Update statistics on an entity profile, depending on the statistic definition may cause entity to be ranked on various leaderboards.",
+      "summary": "Update statistics on an entity profile. Depending on the statistic definition, this may result in entity being ranked on various leaderboards.",
       "subgroup": "Statistics and Leaderboards",
       "titleTiers": null,
       "url": "/Statistic/UpdateStatistics",
       "auth": "EntityToken",
       "method": "POST",
       "request": "UpdateStatisticsRequest",
-      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"RoundsWon\",\n      \"Value\": 1,\n      \"Metadata\": \"BestRun:34.13,Car:13452\",\n      \"ChildName\": \"Map:SilverFlow\",\n      \"StatId\": 0\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Value\": 3413,\n      \"Metadata\": \"Car:13452\",\n      \"ChildName\": \"Map:SilverFlow\",\n      \"StatId\": 0\n    },\n    {\n      \"Name\": \"TotalCarTime\",\n      \"Value\": 3413,\n      \"ChildName\": \"Car:13452\",\n      \"StatId\": 0\n    }\n  ],\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"RoundsWon\",\n      \"Value\": 0,\n      \"Metadata\": \"BestRun:34.13,Car:13452\",\n      \"AttributeName\": \"Map:SilverFlow\",\n      \"Scores\": [\n        100,\n        200\n      ]\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Value\": 0,\n      \"Metadata\": \"Car:13452\",\n      \"AttributeName\": \"Map:SilverFlow\",\n      \"Scores\": [\n        200,\n        300\n      ]\n    },\n    {\n      \"Name\": \"TotalCarTime\",\n      \"Value\": 0,\n      \"AttributeName\": \"Car:13452\",\n      \"Scores\": [\n        300,\n        400\n      ]\n    }\n  ],\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "UpdateStatisticsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 56,\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Value\": 89,\n        \"Version\": 0,\n        \"ChildStatistics\": {\n          \"map1\": {\n            \"ChildName\": \"map1\",\n            \"Value\": 56\n          },\n          \"map2\": {\n            \"ChildName\": \"map2\",\n            \"Value\": 87\n          }\n        }\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 56,\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Value\": 89,\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -4259,6 +4235,14 @@
     "PlayerCustomPropertiesPropertyDoesNotExist": {
       "id": 19007,
       "name": "PlayerCustomPropertiesPropertyDoesNotExist"
+    },
+    "AddonAlreadyExists": {
+      "id": 19008,
+      "name": "AddonAlreadyExists"
+    },
+    "AddonDoesntExist": {
+      "id": 19009,
+      "name": "AddonDoesntExist"
     }
   },
   "errorList": [
@@ -4990,6 +4974,8 @@
     "PlayerCustomPropertiesVersionMismatch",
     "PlayerCustomPropertiesPropertyCountTooHigh",
     "PlayerCustomPropertiesDuplicatePropertyName",
-    "PlayerCustomPropertiesPropertyDoesNotExist"
+    "PlayerCustomPropertiesPropertyDoesNotExist",
+    "AddonAlreadyExists",
+    "AddonDoesntExist"
   ]
 }
