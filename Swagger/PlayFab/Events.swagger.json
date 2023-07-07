@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230623",
+    "version": "230707",
     "title": "PlayFab Events API",
     "description": "Write custom PlayStream and Telemetry events for any PlayFab entity. Telemetry events can be used for analytic, reporting, or debugging. PlayStream events can do all of that and also trigger custom actions in near real-time.",
     "termsOfService": "https://playfab.com/terms/",
@@ -24,6 +24,167 @@
     "application/json"
   ],
   "paths": {
+    "/Event/CreateTelemetryKey": {
+      "post": {
+        "operationId": "CreateTelemetryKey",
+        "tags": [
+          "PlayStream Events"
+        ],
+        "description": "Creates a new telemetry key for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/events/playstream-events/createtelemetrykey"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateTelemetryKeyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateTelemetryKeyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "TelemetryKeyAlreadyExists",
+          "TelemetryKeyInvalidName",
+          "TelemetryKeyLongInsightsRetentionNotAllowed"
+        ]
+      }
+    },
+    "/Event/DeleteTelemetryKey": {
+      "post": {
+        "operationId": "DeleteTelemetryKey",
+        "tags": [
+          "PlayStream Events"
+        ],
+        "description": "Deletes a telemetry key configured for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/events/playstream-events/deletetelemetrykey"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteTelemetryKeyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteTelemetryKeyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        }
+      }
+    },
+    "/Event/GetTelemetryKey": {
+      "post": {
+        "operationId": "GetTelemetryKey",
+        "tags": [
+          "PlayStream Events"
+        ],
+        "description": "Gets information about a telemetry key configured for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/events/playstream-events/gettelemetrykey"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetTelemetryKeyRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetTelemetryKeyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "TelemetryKeyNotFound"
+        ]
+      }
+    },
+    "/Event/ListTelemetryKeys": {
+      "post": {
+        "operationId": "ListTelemetryKeys",
+        "tags": [
+          "PlayStream Events"
+        ],
+        "description": "Lists all telemetry keys configured for the title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/events/playstream-events/listtelemetrykeys"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ListTelemetryKeysRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ListTelemetryKeysResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        }
+      }
+    },
+    "/Event/SetTelemetryKeyActive": {
+      "post": {
+        "operationId": "SetTelemetryKeyActive",
+        "tags": [
+          "PlayStream Events"
+        ],
+        "description": "Sets a telemetry key to the active or deactivated state.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/events/playstream-events/settelemetrykeyactive"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/SetTelemetryKeyActiveRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/SetTelemetryKeyActiveResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "TelemetryKeyNotFound"
+        ]
+      }
+    },
     "/Event/WriteEvents": {
       "post": {
         "operationId": "WriteEvents",
@@ -90,6 +251,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
+        "x-requestDetails": "This API must be called with either X-EntityToken or X-TelemetryKey headers. If sending X-EntityToken the value must be a valid EntityToken for your title. If using X-TelemetryKey the value must be a Telemetry Key configured for your title set to 'Active'. If both are provided, X-TelemetryKey will be ignored.",
         "x-ms-docs-errors": [
           "EncryptionKeyBroken",
           "EventEntityNotAllowed",
@@ -135,6 +297,88 @@
       "required": [
         "code",
         "errorCode"
+      ]
+    },
+    "CreateTelemetryKeyRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "KeyName": {
+          "description": "The name of the new key. Telemetry key names must be unique within the scope of the title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "KeyName"
+      ],
+      "example": {
+        "KeyName": "MyTelemetryKey"
+      }
+    },
+    "CreateTelemetryKeyResponse": {
+      "type": "object",
+      "properties": {
+        "NewKeyDetails": {
+          "$ref": "#/definitions/TelemetryKeyDetails",
+          "description": "Details about the newly created telemetry key.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "NewKeyDetails": {
+          "Name": "MyTelemetryKey",
+          "KeyValue": "PLACEHOLDER",
+          "IsActive": true,
+          "CreateTime": "2023-02-14T12:00:00Z",
+          "LastUpdateTime": "2023-02-14T12:00:00Z"
+        }
+      }
+    },
+    "DeleteTelemetryKeyRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "KeyName": {
+          "description": "The name of the key to delete.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "KeyName"
+      ],
+      "example": {
+        "KeyName": "MyTelemetryKey"
+      }
+    },
+    "DeleteTelemetryKeyResponse": {
+      "type": "object",
+      "properties": {
+        "WasKeyDeleted": {
+          "description": "Indicates whether or not the key was deleted. If false, no key with that name existed.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "WasKeyDeleted"
       ]
     },
     "EntityKey": {
@@ -197,6 +441,177 @@
         "Name"
       ]
     },
+    "GetTelemetryKeyRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "KeyName": {
+          "description": "The name of the key to retrieve.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "KeyName"
+      ],
+      "example": {
+        "KeyName": "MyTelemetryKey"
+      }
+    },
+    "GetTelemetryKeyResponse": {
+      "type": "object",
+      "properties": {
+        "KeyDetails": {
+          "$ref": "#/definitions/TelemetryKeyDetails",
+          "description": "Details about the requested telemetry key.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "KeyDetails": {
+          "Name": "MyTelemetryKey",
+          "KeyValue": "PLACEHOLDER",
+          "IsActive": true,
+          "CreateTime": "2023-02-14T12:00:00Z",
+          "LastUpdateTime": "2023-02-15T12:00:00Z"
+        }
+      }
+    },
+    "ListTelemetryKeysRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {}
+    },
+    "ListTelemetryKeysResponse": {
+      "type": "object",
+      "properties": {
+        "KeyDetails": {
+          "description": "The telemetry keys configured for the title.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TelemetryKeyDetails"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "KeyDetails": [
+          {
+            "Name": "MyXboxClientTelemetryKey",
+            "KeyValue": "PLACEHOLDER",
+            "IsActive": true,
+            "CreateTime": "2023-02-14T12:00:00Z",
+            "LastUpdateTime": "2023-02-15T12:00:00Z"
+          },
+          {
+            "Name": "MyAndroidClientTelemetryKey",
+            "KeyValue": "PLACEHOLDER",
+            "IsActive": true,
+            "CreateTime": "2023-02-14T12:00:00Z",
+            "LastUpdateTime": "2023-02-15T12:00:00Z"
+          }
+        ]
+      }
+    },
+    "SetTelemetryKeyActiveRequest": {
+      "type": "object",
+      "properties": {
+        "Active": {
+          "description": "Whether to set the key to active (true) or deactivated (false).",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "KeyName": {
+          "description": "The name of the key to update.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "KeyName",
+        "Active"
+      ],
+      "example": {
+        "KeyName": "MyTelemetryKey",
+        "Active": false
+      }
+    },
+    "SetTelemetryKeyActiveResponse": {
+      "type": "object",
+      "properties": {
+        "KeyDetails": {
+          "$ref": "#/definitions/TelemetryKeyDetails",
+          "description": "The most current details about the telemetry key that was to be updated.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "WasKeyUpdated": {
+          "description": "Indicates whether or not the key was updated. If false, the key was already in the desired state.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "WasKeyUpdated"
+      ]
+    },
+    "TelemetryKeyDetails": {
+      "type": "object",
+      "properties": {
+        "CreateTime": {
+          "description": "When the key was created.",
+          "type": "string"
+        },
+        "IsActive": {
+          "description": "Whether or not the key is currently active. Deactivated keys cannot be used for telemetry ingestion.",
+          "type": "boolean"
+        },
+        "KeyValue": {
+          "description": "The key that can be distributed to clients for use during telemetry ingestion.",
+          "type": "string"
+        },
+        "LastUpdateTime": {
+          "description": "When the key was last updated.",
+          "type": "string"
+        },
+        "Name": {
+          "description": "The name of the key. Telemetry key names are unique within the scope of the title.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IsActive",
+        "CreateTime",
+        "LastUpdateTime"
+      ]
+    },
     "WriteEventsRequest": {
       "type": "object",
       "properties": {
@@ -257,6 +672,41 @@
     }
   },
   "parameters": {
+    "CreateTelemetryKeyRequest": {
+      "name": "CreateTelemetryKeyRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/CreateTelemetryKeyRequest"
+      }
+    },
+    "DeleteTelemetryKeyRequest": {
+      "name": "DeleteTelemetryKeyRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeleteTelemetryKeyRequest"
+      }
+    },
+    "GetTelemetryKeyRequest": {
+      "name": "GetTelemetryKeyRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetTelemetryKeyRequest"
+      }
+    },
+    "ListTelemetryKeysRequest": {
+      "name": "ListTelemetryKeysRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ListTelemetryKeysRequest"
+      }
+    },
+    "SetTelemetryKeyActiveRequest": {
+      "name": "SetTelemetryKeyActiveRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/SetTelemetryKeyActiveRequest"
+      }
+    },
     "WriteEventsRequest": {
       "name": "WriteEventsRequest",
       "in": "body",
@@ -271,6 +721,149 @@
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "CreateTelemetryKeyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateTelemetryKeyResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "NewKeyDetails": {
+              "Name": "MyTelemetryKey",
+              "KeyValue": "PLACEHOLDER",
+              "IsActive": true,
+              "CreateTime": "2023-02-14T12:00:00Z",
+              "LastUpdateTime": "2023-02-14T12:00:00Z"
+            }
+          }
+        }
+      }
+    },
+    "DeleteTelemetryKeyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteTelemetryKeyResponse"
+          }
+        }
+      }
+    },
+    "GetTelemetryKeyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetTelemetryKeyResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "KeyDetails": {
+              "Name": "MyTelemetryKey",
+              "KeyValue": "PLACEHOLDER",
+              "IsActive": true,
+              "CreateTime": "2023-02-14T12:00:00Z",
+              "LastUpdateTime": "2023-02-15T12:00:00Z"
+            }
+          }
+        }
+      }
+    },
+    "ListTelemetryKeysResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ListTelemetryKeysResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "KeyDetails": [
+              {
+                "Name": "MyXboxClientTelemetryKey",
+                "KeyValue": "PLACEHOLDER",
+                "IsActive": true,
+                "CreateTime": "2023-02-14T12:00:00Z",
+                "LastUpdateTime": "2023-02-15T12:00:00Z"
+              },
+              {
+                "Name": "MyAndroidClientTelemetryKey",
+                "KeyValue": "PLACEHOLDER",
+                "IsActive": true,
+                "CreateTime": "2023-02-14T12:00:00Z",
+                "LastUpdateTime": "2023-02-15T12:00:00Z"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "SetTelemetryKeyActiveResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/SetTelemetryKeyActiveResponse"
+          }
+        }
       }
     },
     "WriteEventsResponse": {

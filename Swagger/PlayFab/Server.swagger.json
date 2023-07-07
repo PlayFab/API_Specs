@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230623",
+    "version": "230707",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2677,11 +2677,56 @@
         },
         "x-ms-docs-errors": [
           "AccountAlreadyLinked",
+          "AccountNotFound",
+          "InvalidNamespaceMismatch",
           "InvalidPSNAuthCode",
           "InvalidPSNIssuerId",
           "LinkedAccountAlreadyClaimed",
           "PSNInaccessible",
           "RequestViewConstraintParamsNotAllowed"
+        ]
+      }
+    },
+    "/Server/LinkPSNId": {
+      "post": {
+        "operationId": "LinkPSNId",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the PlayStation :tm: Network account associated with the provided user id to the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linkpsnid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkPSNIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LinkPSNIdResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-trademark": {
+          "description": "\"PlayStation\" is a registered trademark or trademark of Sony Interactive Entertainment Inc.",
+          "type": "string"
+        },
+        "x-ms-docs-errors": [
+          "AccountAlreadyLinked",
+          "AccountNotFound",
+          "InvalidNamespaceMismatch",
+          "InvalidPSNAuthCode",
+          "InvalidPSNIssuerId",
+          "LinkedAccountAlreadyClaimed",
+          "PSNInaccessible"
         ]
       }
     },
@@ -10989,6 +11034,44 @@
       "type": "object",
       "properties": {}
     },
+    "LinkPSNIdRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IssuerId": {
+          "description": "Id of the PlayStation :tm: Network issuer environment. If null, defaults to production environment.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        },
+        "PSNUserId": {
+          "description": "Id of the PlayStation :tm: Network user.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "PSNUserId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "PSNUserId": "LKJDG7DDE"
+      }
+    },
+    "LinkPSNIdResponse": {
+      "type": "object",
+      "properties": {}
+    },
     "LinkServerCustomIdRequest": {
       "type": "object",
       "properties": {
@@ -15457,6 +15540,13 @@
         "$ref": "#/definitions/LinkPSNAccountRequest"
       }
     },
+    "LinkPSNIdRequest": {
+      "name": "LinkPSNIdRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkPSNIdRequest"
+      }
+    },
     "LinkServerCustomIdRequest": {
       "name": "LinkServerCustomIdRequest",
       "in": "body",
@@ -18197,6 +18287,25 @@
           },
           "data": {
             "$ref": "#/definitions/LinkPSNAccountResult"
+          }
+        }
+      }
+    },
+    "LinkPSNIdResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/LinkPSNIdResponse"
           }
         }
       }
