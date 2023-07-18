@@ -366,6 +366,36 @@
         }
       ]
     },
+    "ExternalFriendSources": {
+      "name": "ExternalFriendSources",
+      "className": "ExternalFriendSources",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "None"
+        },
+        {
+          "name": "Steam"
+        },
+        {
+          "name": "Facebook"
+        },
+        {
+          "name": "Xbox"
+        },
+        {
+          "name": "Psn"
+        },
+        {
+          "name": "All"
+        }
+      ]
+    },
     "GetEntityLeaderboardRequest": {
       "name": "GetEntityLeaderboardRequest",
       "className": "GetEntityLeaderboardRequest",
@@ -400,7 +430,7 @@
           "optional": false
         },
         {
-          "name": "MaxResults",
+          "name": "PageSize",
           "description": "Maximum number of results to return from the leaderboard. Minimum 1, maximum 1,000.",
           "jsontype": "Number",
           "actualtype": "uint32",
@@ -458,6 +488,77 @@
         }
       ]
     },
+    "GetFriendLeaderboardForEntityRequest": {
+      "name": "GetFriendLeaderboardForEntityRequest",
+      "className": "GetFriendLeaderboardForEntityRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AttributeName",
+          "description": "Optional attribute statistic name to filter the leaderboard to.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ExternalFriendSources",
+          "description": "Indicates which other platforms' friends should be included in the response. In HTTP, it is represented as a comma-separated list of platforms.",
+          "jsontype": "String",
+          "actualtype": "ExternalFriendSources",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "StartingPosition",
+          "description": "Index position to start from. 1 is beginning of leaderboard. ",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "StatisticName",
+          "description": "Name of the leaderboard statistic.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "StatisticVersion",
+          "description": "Optional version of the leaderboard statistic, defaults to current version.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": true
+        },
+        {
+          "name": "XboxToken",
+          "description": "Xbox token if Xbox friends should be included. Requires Xbox be configured on PlayFab.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "GetLeaderboardAroundEntityRequest": {
       "name": "GetLeaderboardAroundEntityRequest",
       "className": "GetLeaderboardAroundEntityRequest",
@@ -493,7 +594,7 @@
           "optional": true
         },
         {
-          "name": "Offset",
+          "name": "Span",
           "description": "Number of ranks above and below the entity to return. If 5 then at most 11 results will be returned, 5 above, the entity, then 5 below. If the entity is at the top then only 6 will be returned, the entity and 5 below.",
           "jsontype": "Number",
           "actualtype": "uint32",
@@ -1039,6 +1140,7 @@
         "CreateStatisticDefinition",
         "DeleteStatisticDefinition",
         "DeleteStatistics",
+        "GetFriendLeaderboardForEntity",
         "GetLeaderboard",
         "GetLeaderboardAroundEntity",
         "GetLeaderboardForEntities",
@@ -1117,6 +1219,27 @@
       ]
     },
     {
+      "name": "GetFriendLeaderboardForEntity",
+      "summary": "Get the friend leaderboard for the specified entity. A maximum of 100 friend entries are listed in the leaderboard.",
+      "subgroup": "Statistics and Leaderboards",
+      "titleTiers": null,
+      "url": "/Leaderboard/GetFriendLeaderboardForEntity",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetFriendLeaderboardForEntityRequest",
+      "requestExample": "",
+      "result": "GetEntityLeaderboardResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InvalidEntityType",
+        "NoLeaderboardForStatistic",
+        "StatisticNotFound"
+      ]
+    },
+    {
       "name": "GetLeaderboard",
       "summary": "Get the leaderboard for a specific entity type and statistic.",
       "subgroup": "Statistics and Leaderboards",
@@ -1125,7 +1248,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetEntityLeaderboardRequest",
-      "requestExample": "{\n  \"EntityType\": \"character\",\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"MaxResults\": 0\n}",
+      "requestExample": "{\n  \"EntityType\": \"character\",\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"PageSize\": 0\n}",
       "result": "GetEntityLeaderboardResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
@@ -1145,7 +1268,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetLeaderboardAroundEntityRequest",
-      "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"Offset\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"Span\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetEntityLeaderboardResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
