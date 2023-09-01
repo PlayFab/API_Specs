@@ -2772,6 +2772,61 @@
         }
       ]
     },
+    "EvaluateDropTableRequest": {
+      "name": "EvaluateDropTableRequest",
+      "className": "EvaluateDropTableRequest",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Given an entity token and id, evaluate a drop table and return the evaluated pool.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AlternateId",
+          "description": "An alternate ID associated with this item.",
+          "jsontype": "Object",
+          "actualtype": "CatalogAlternateId",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The entity to perform this action on.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Id",
+          "description": "The unique ID of the item.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "EvaluateDropTableResponse": {
+      "name": "EvaluateDropTableResponse",
+      "className": "EvaluateDropTableResponse",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": []
+    },
     "ExecuteInventoryOperationsRequest": {
       "name": "ExecuteInventoryOperationsRequest",
       "className": "ExecuteInventoryOperationsRequest",
@@ -5295,6 +5350,17 @@
           "optional": true
         },
         {
+          "name": "PurchaseOverrides",
+          "description": "Details the overrides used in a purchase operation.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "Object",
+          "actualtype": "PurchaseOverridesInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "StoreId",
           "description": "The id of the Store to purchase the item from.",
           "jsontype": "String",
@@ -5747,6 +5813,13 @@
     "PurchaseOverride": {
       "name": "PurchaseOverride",
       "className": "PurchaseOverride",
+      "classNameSpace": "PlayFab.Economy.Models",
+      "assembly": "PlayFab.Economy.Models",
+      "properties": []
+    },
+    "PurchaseOverridesInfo": {
+      "name": "PurchaseOverridesInfo",
+      "className": "PurchaseOverridesInfo",
       "classNameSpace": "PlayFab.Economy.Models",
       "assembly": "PlayFab.Economy.Models",
       "properties": []
@@ -8513,6 +8586,13 @@
           "optional": true
         },
         {
+          "name": "OperationStatus",
+          "description": "The transfer operation status. Possible values are 'InProgress' or 'Completed'. If the operation has completed, the response code will be 200. Otherwise, it will be 202.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "ReceivingTransactionIds",
           "description": "The ids of transactions that occurred as a result of the request's receiving action.",
           "collection": "array",
@@ -8904,6 +8984,7 @@
         "CreateUploadUrls",
         "DeleteEntityItemReviews",
         "DeleteItem",
+        "EvaluateDropTable",
         "GetCatalogConfig",
         "GetDraftItem",
         "GetDraftItems",
@@ -9098,7 +9179,11 @@
       "request": "DeleteInventoryItemsRequest",
       "requestExample": "{\n  \"Item\": {\n    \"Id\": \"11111111-1111-1111-1111-111111111111\"\n  }\n}",
       "result": "DeleteInventoryItemsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IdempotencyId\": \"idempotencyId\",\n    \"TransactionIds\": [\n      \"transactionId1\",\n      \"transactionId2\"\n    ]\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IdempotencyId\": \"idempotencyId\",\n    \"TransactionIds\": [\n      \"transactionId1\",\n      \"transactionId2\"\n    ]\n  }\n}",
+      "errors": [
+        "DatabaseThroughputExceeded",
+        "ItemNotFound"
+      ]
     },
     {
       "name": "DeleteItem",
@@ -9115,6 +9200,23 @@
       "errors": [
         "DatabaseThroughputExceeded",
         "ItemNotFound"
+      ]
+    },
+    {
+      "name": "EvaluateDropTable",
+      "summary": "Evaluate a drop table and returns a randomly selected pool. The random selection is based on the weights of the pools in the drop table.",
+      "requestDetails": "Given an entity token and id, evaluate a drop table and return the evaluated pool.",
+      "subgroup": "Catalog",
+      "titleTiers": null,
+      "url": "/Catalog/EvaluateDropTable",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "EvaluateDropTableRequest",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"ABC123\",\n    \"Type\": \"title\",\n    \"TypeString\": \"title\"\n  },\n  \"Id\": \"dddddddd-dddd-dddd-dddd-dddddddddddd\"\n}",
+      "result": "EvaluateDropTableResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
       ]
     },
     {
@@ -9912,7 +10014,7 @@
     },
     {
       "name": "TransferInventoryItems",
-      "summary": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer is in progress and will complete soon. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
+      "summary": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 30 days of the request by passing the TransactionToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
       "requestDetails": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
       "subgroup": "Inventory",
       "titleTiers": null,
@@ -12197,6 +12299,10 @@
       "id": 1561,
       "name": "InvalidNamespaceMismatch"
     },
+    "LeaderboardColumnLengthMismatch": {
+      "id": 1562,
+      "name": "LeaderboardColumnLengthMismatch"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -13496,6 +13602,7 @@
     "NamespaceMismatch",
     "InvalidServiceConfiguration",
     "InvalidNamespaceMismatch",
+    "LeaderboardColumnLengthMismatch",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",

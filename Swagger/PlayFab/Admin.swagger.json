@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230818",
+    "version": "230901",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -678,6 +678,37 @@
         "x-seeAlso": [
           "Admin/GetPlayedTitleList"
         ]
+      }
+    },
+    "/Admin/DeleteMasterPlayerEventData": {
+      "post": {
+        "operationId": "DeleteMasterPlayerEventData",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Deletes PlayStream and telemetry event data associated with the master player account from PlayFab storage",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/account-management/deletemasterplayereventdata"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteMasterPlayerEventDataRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteMasterPlayerEventDataResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Deletes any PlayStream or telemetry event associated with the player from PlayFab. Note, this API queues the data for asynchronous deletion. It may take some time before the data is deleted."
       }
     },
     "/Admin/DeleteMembershipSubscription": {
@@ -3835,6 +3866,7 @@
           "NameNotAvailable",
           "SegmentManagementInvalidInput",
           "SegmentManagementInvalidSegmentId",
+          "SegmentManagementInvalidSegmentName",
           "SegmentManagementNoExpressionTree",
           "SegmentManagementSegmentCountOverLimit",
           "SegmentManagementTriggerActionCountOverLimit",
@@ -6038,6 +6070,27 @@
         ]
       }
     },
+    "DeleteMasterPlayerEventDataRequest": {
+      "description": "Deletes any PlayStream or telemetry event associated with the player from PlayFab. Note, this API queues the data for asynchronous deletion. It may take some time before the data is deleted.",
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "A68C908B66C23C5"
+      }
+    },
+    "DeleteMasterPlayerEventDataResult": {
+      "type": "object",
+      "properties": {},
+      "example": {}
+    },
     "DeleteMembershipSubscriptionRequest": {
       "description": "This API lets developers delete a membership subscription.",
       "type": "object",
@@ -7075,6 +7128,7 @@
         "NamespaceMismatch",
         "InvalidServiceConfiguration",
         "InvalidNamespaceMismatch",
+        "LeaderboardColumnLengthMismatch",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -11737,7 +11791,8 @@
         "FacebookInstantGames",
         "OpenIdConnect",
         "Apple",
-        "NintendoSwitchAccount"
+        "NintendoSwitchAccount",
+        "GooglePlayGames"
       ]
     },
     "SegmentModel": {
@@ -14278,6 +14333,14 @@
         "$ref": "#/definitions/DeleteMasterPlayerAccountRequest"
       }
     },
+    "DeleteMasterPlayerEventDataRequest": {
+      "name": "DeleteMasterPlayerEventDataRequest",
+      "in": "body",
+      "description": "Deletes any PlayStream or telemetry event associated with the player from PlayFab. Note, this API queues the data for asynchronous deletion. It may take some time before the data is deleted.",
+      "schema": {
+        "$ref": "#/definitions/DeleteMasterPlayerEventDataRequest"
+      }
+    },
     "DeleteMembershipSubscriptionRequest": {
       "name": "DeleteMembershipSubscriptionRequest",
       "in": "body",
@@ -15200,6 +15263,30 @@
               "19B0"
             ]
           }
+        }
+      }
+    },
+    "DeleteMasterPlayerEventDataResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteMasterPlayerEventDataResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
         }
       }
     },
@@ -19942,6 +20029,10 @@
     "InvalidNamespaceMismatch": {
       "id": 1561,
       "name": "InvalidNamespaceMismatch"
+    },
+    "LeaderboardColumnLengthMismatch": {
+      "id": 1562,
+      "name": "LeaderboardColumnLengthMismatch"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

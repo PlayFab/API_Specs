@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230818",
+    "version": "230901",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1004,7 +1004,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Given an entity type, entity identifier and container details, will delete the entity's inventory items"
+        "x-requestDetails": "Given an entity type, entity identifier and container details, will delete the entity's inventory items",
+        "x-ms-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "ItemNotFound"
+        ]
       }
     },
     "/Inventory/ExecuteInventoryOperations": {
@@ -1456,7 +1460,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer is in progress and will complete soon. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
+        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 30 days of the request by passing the TransactionToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/transferinventoryitems"
         },
@@ -4885,6 +4889,10 @@
       "type": "object",
       "properties": {}
     },
+    "PurchaseOverridesInfo": {
+      "type": "object",
+      "properties": {}
+    },
     "PurchasePriceAmount": {
       "type": "object",
       "properties": {
@@ -6450,6 +6458,10 @@
         },
         "IdempotencyId": {
           "description": "The idempotency id for the request.",
+          "type": "string"
+        },
+        "OperationStatus": {
+          "description": "The transfer operation status. Possible values are 'InProgress' or 'Completed'. If the operation has completed, the response code will be 200. Otherwise, it will be 202.",
           "type": "string"
         },
         "ReceivingTransactionIds": {
@@ -11668,6 +11680,10 @@
     "InvalidNamespaceMismatch": {
       "id": 1561,
       "name": "InvalidNamespaceMismatch"
+    },
+    "LeaderboardColumnLengthMismatch": {
+      "id": 1562,
+      "name": "LeaderboardColumnLengthMismatch"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
