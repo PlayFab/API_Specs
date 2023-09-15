@@ -327,9 +327,9 @@
         }
       ]
     },
-    "EntityStatisticValue": {
-      "name": "EntityStatisticValue",
-      "className": "EntityStatisticValue",
+    "EntityStatisticAttributeValue": {
+      "name": "EntityStatisticAttributeValue",
+      "className": "EntityStatisticAttributeValue",
       "classNameSpace": "PlayFab.Leaderboards.Models",
       "assembly": "PlayFab.Leaderboards.Models",
       "AnyInclusiveFlags": [
@@ -345,9 +345,59 @@
         },
         {
           "name": "Name",
+          "description": "Attribute name.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Scores",
+          "description": "Attribute Statistic scores.",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
+    "EntityStatisticValue": {
+      "name": "EntityStatisticValue",
+      "className": "EntityStatisticValue",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "AttributeStatistics",
+          "description": "Attribute Statistic values.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "EntityStatisticAttributeValue",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Metadata",
+          "description": "Metadata associated with the Statistic.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Name",
           "description": "Statistic name",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Scores",
+          "description": "Statistic scores",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -594,8 +644,8 @@
           "optional": true
         },
         {
-          "name": "Span",
-          "description": "Number of ranks above and below the entity to return. If 5 then at most 11 results will be returned, 5 above, the entity, then 5 below. If the entity is at the top then only 6 will be returned, the entity and 5 below.",
+          "name": "MaxSurroundingEntries",
+          "description": "Number of surrounding entries to return (in addition to specified entity). In general, the number of ranks above and below will be split into half. For example, if the specified value is 10, 5 ranks above and 5 ranks below will be retrieved. However, the numbers will get skewed in either direction when the specified entity is towards the top or bottom of the leaderboard. Also, the number of entries returned can be lower than the value specified for entries at the bottom of the leaderboard.",
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
@@ -1016,6 +1066,12 @@
       ],
       "properties": [
         {
+          "name": "AttributeName",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Metadata",
           "description": "Arbitrary metadata to store along side the statistic or attribute statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
           "jsontype": "String",
@@ -1028,6 +1084,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "Scores",
+          "description": "Statistic scores for the entity. This will be used in accordance with the aggregation method configured for the statistics.",
+          "collection": "array",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
         },
         {
           "name": "Value",
@@ -1269,7 +1333,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetLeaderboardAroundEntityRequest",
-      "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"Span\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"StatisticName\": \"Points\",\n  \"StatisticVersion\": 2,\n  \"MaxSurroundingEntries\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetEntityLeaderboardResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticVersion\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          4503\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          4502\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
