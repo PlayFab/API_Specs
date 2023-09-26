@@ -2434,6 +2434,31 @@
         }
       ]
     },
+    "CustomPropertyDetails": {
+      "name": "CustomPropertyDetails",
+      "className": "CustomPropertyDetails",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Name",
+          "description": "The custom property's name.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Value",
+          "description": "The custom property's value.",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": true
+        }
+      ]
+    },
     "DeleteCharacterFromUserRequest": {
       "name": "DeleteCharacterFromUserRequest",
       "className": "DeleteCharacterFromUserRequest",
@@ -2480,6 +2505,108 @@
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
       "properties": []
+    },
+    "DeletedPropertyDetails": {
+      "name": "DeletedPropertyDetails",
+      "className": "DeletedPropertyDetails",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Name",
+          "description": "The name of the property which was requested to be deleted.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "WasDeleted",
+          "description": "Indicates whether or not the property was deleted. If false, no property with that name existed.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": false
+        }
+      ]
+    },
+    "DeletePlayerCustomPropertiesRequest": {
+      "name": "DeletePlayerCustomPropertiesRequest",
+      "className": "DeletePlayerCustomPropertiesRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Deletes custom properties for the specified player. The list of provided property names must be non-empty.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExpectedPropertiesVersion",
+          "description": "Optional field used for concurrency control. One can ensure that the delete operation will only be performed if the player's properties have not been updated by any other clients since the last version.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PropertyNames",
+          "description": "A list of property names denoting which properties should be deleted.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "DeletePlayerCustomPropertiesResult": {
+      "name": "DeletePlayerCustomPropertiesResult",
+      "className": "DeletePlayerCustomPropertiesResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "DeletedProperties",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "DeletedPropertyDetails",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose properties were deleted.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PropertiesVersion",
+          "description": "Indicates the current version of a player's properties that have been set. This is incremented after updates and deletes. This version can be provided in update and delete calls for concurrency control.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
     },
     "DeletePlayerRequest": {
       "name": "DeletePlayerRequest",
@@ -4786,6 +4913,9 @@
           "name": "LeaderboardColumnLengthMismatch"
         },
         {
+          "name": "InvalidStatisticScore"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -6651,6 +6781,66 @@
           "collection": "map",
           "jsontype": "Object",
           "actualtype": "VirtualCurrencyRechargeTime",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerCustomPropertyRequest": {
+      "name": "GetPlayerCustomPropertyRequest",
+      "className": "GetPlayerCustomPropertyRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "PropertyName",
+          "description": "Specific property name to search for in the player's properties.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayerCustomPropertyResult": {
+      "name": "GetPlayerCustomPropertyResult",
+      "className": "GetPlayerCustomPropertyResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose properties are being returned.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PropertiesVersion",
+          "description": "Indicates the current version of a player's properties that have been set. This is incremented after updates and deletes. This version can be provided in update and delete calls for concurrency control.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Property",
+          "description": "Player specific property and its corresponding value.",
+          "jsontype": "Object",
+          "actualtype": "CustomPropertyDetails",
           "isclass": true,
           "optional": true
         }
@@ -8966,6 +9156,60 @@
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
       "properties": []
+    },
+    "ListPlayerCustomPropertiesRequest": {
+      "name": "ListPlayerCustomPropertiesRequest",
+      "className": "ListPlayerCustomPropertiesRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "ListPlayerCustomPropertiesResult": {
+      "name": "ListPlayerCustomPropertiesResult",
+      "className": "ListPlayerCustomPropertiesResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose properties are being returned.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Properties",
+          "description": "Player specific properties and their corresponding values for this title.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "CustomPropertyDetails",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PropertiesVersion",
+          "description": "Indicates the current version of a player's properties that have been set. This is incremented after updates and deletes. This version can be provided in update and delete calls for concurrency control.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
     },
     "ListUsersCharactersRequest": {
       "name": "ListUsersCharactersRequest",
@@ -13352,6 +13596,76 @@
       "isResult": true,
       "properties": []
     },
+    "UpdatePlayerCustomPropertiesRequest": {
+      "name": "UpdatePlayerCustomPropertiesRequest",
+      "className": "UpdatePlayerCustomPropertiesRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Performs an additive update of the custom properties for the specified player. In updating the player's custom properties, properties which already exist will have their values overwritten. No other properties will be changed apart from those specified in the call.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ExpectedPropertiesVersion",
+          "description": "Optional field used for concurrency control. One can ensure that the update operation will only be performed if the player's properties have not been updated by any other clients since last the version.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Properties",
+          "description": "Collection of properties to be set for a player.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "UpdateProperty",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "UpdatePlayerCustomPropertiesResult": {
+      "name": "UpdatePlayerCustomPropertiesResult",
+      "className": "UpdatePlayerCustomPropertiesResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "PlayFab unique identifier of the user whose properties were updated.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PropertiesVersion",
+          "description": "Indicates the current version of a player's properties that have been set. This is incremented after updates and deletes. This version can be provided in update and delete calls for concurrency control.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        }
+      ]
+    },
     "UpdatePlayerStatisticsRequest": {
       "name": "UpdatePlayerStatisticsRequest",
       "className": "UpdatePlayerStatisticsRequest",
@@ -13400,6 +13714,31 @@
       "assembly": "PlayFab.Server.Models",
       "isResult": true,
       "properties": []
+    },
+    "UpdateProperty": {
+      "name": "UpdateProperty",
+      "className": "UpdateProperty",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Name",
+          "description": "Name of the custom property. Can contain Unicode letters and digits. They are limited in size.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Value",
+          "description": "Value of the custom property. Limited to booleans, numbers, and strings.",
+          "jsontype": "Object",
+          "actualtype": "object",
+          "optional": false
+        }
+      ]
     },
     "UpdateSharedGroupDataRequest": {
       "name": "UpdateSharedGroupDataRequest",
@@ -14879,11 +15218,13 @@
     {
       "name": "Player Data Management",
       "methods": [
+        "DeletePlayerCustomProperties",
         "DeleteUsers",
         "GetFriendLeaderboard",
         "GetLeaderboard",
         "GetLeaderboardAroundUser",
         "GetPlayerCombinedInfo",
+        "GetPlayerCustomProperty",
         "GetPlayerStatistics",
         "GetPlayerStatisticVersions",
         "GetUserData",
@@ -14893,6 +15234,8 @@
         "GetUserPublisherReadOnlyData",
         "GetUserReadOnlyData",
         "GetUserStatistics",
+        "ListPlayerCustomProperties",
+        "UpdatePlayerCustomProperties",
         "UpdatePlayerStatistics",
         "UpdateUserData",
         "UpdateUserInternalData",
@@ -15218,6 +15561,31 @@
       "resultExample": "",
       "errors": [
         "APINotEnabledForGameServerAccess"
+      ]
+    },
+    {
+      "name": "DeletePlayerCustomProperties",
+      "summary": "Deletes title-specific custom properties for a player",
+      "requestDetails": "Deletes custom properties for the specified player. The list of provided property names must be non-empty.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/DeletePlayerCustomProperties",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "DeletePlayerCustomPropertiesRequest",
+      "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"PropertyNames\": [\n    \"level\",\n    \"created\"\n  ],\n  \"ExpectedPropertiesVersion\": 12\n}",
+      "result": "DeletePlayerCustomPropertiesResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DeletedProperties\": [\n      {\n        \"Name\": \"level\",\n        \"WasDeleted\": true\n      },\n      {\n        \"Name\": \"class\",\n        \"WasDeleted\": false\n      }\n    ],\n    \"PropertiesVersion\": 13\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/GetPlayerCustomProperty",
+        "Server/ListPlayerCustomProperties",
+        "Server/UpdatePlayerCustomProperties"
+      ],
+      "errors": [
+        "PlayerCustomPropertiesVersionMismatch"
       ]
     },
     {
@@ -15706,6 +16074,30 @@
       "requestExample": "{\n  \"PlayFabId\": \"4027527BF22653D1\",\n  \"InfoRequestParameters\": {\n    \"GetUserAccountInfo\": true,\n    \"GetUserInventory\": false,\n    \"GetUserVirtualCurrency\": true,\n    \"GetUserData\": true,\n    \"UserDataKeys\": [\n      \"preferences\",\n      \"progress\"\n    ],\n    \"GetUserReadOnlyData\": false,\n    \"GetCharacterInventories\": false,\n    \"GetCharacterList\": false,\n    \"GetTitleData\": false,\n    \"GetPlayerStatistics\": false,\n    \"GetPlayerProfile\": false\n  }\n}",
       "result": "GetPlayerCombinedInfoResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"4027527BF22653D1\",\n    \"InfoResultPayload\": {\n      \"AccountInfo\": {\n        \"PlayFabId\": \"4027527BF22653D1\",\n        \"Created\": \"2013-04-07T09:04:28Z\",\n        \"Username\": \"my name\",\n        \"TitleInfo\": {\n          \"Origination\": \"IOS\",\n          \"Created\": \"2014-01-08T11:03:18Z\",\n          \"LastLogin\": \"2014-04-07T09:04:28Z\",\n          \"FirstLogin\": \"2014-01-08T11:03:18Z\",\n          \"TitlePlayerAccount\": {\n            \"Id\": \"174812abf712\",\n            \"Type\": \"title_player_account\",\n            \"TypeString\": \"title_player_account\"\n          }\n        },\n        \"FacebookInfo\": {\n          \"FacebookId\": \"23525445454\"\n        },\n        \"SteamInfo\": {\n          \"SteamCountry\": \"US\",\n          \"SteamCurrency\": \"USD\"\n        },\n        \"GameCenterInfo\": {\n          \"GameCenterId\": \"someone\"\n        }\n      },\n      \"UserVirtualCurrency\": {\n        \"GC\": 15\n      },\n      \"UserVirtualCurrencyRechargeTimes\": {\n        \"GC\": {\n          \"SecondsToRecharge\": 3600,\n          \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n          \"RechargeMax\": 50\n        }\n      },\n      \"UserData\": {\n        \"preferences\": {\n          \"Value\": \"alpha\",\n          \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n          \"Permission\": \"Public\"\n        },\n        \"progress\": {\n          \"Value\": \"level_twenty\",\n          \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n          \"Permission\": \"Private\"\n        }\n      },\n      \"UserDataVersion\": 12,\n      \"UserReadOnlyDataVersion\": 0,\n      \"PlayerProfile\": {\n        \"TitleId\": \"TitleName\",\n        \"PlayerId\": \"10931252888739651331\",\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LastLogin\": \"0001-01-01T00:00:00Z\",\n        \"BannedUntil\": \"9999-12-31T23:59:59.999Z\",\n        \"DisplayName\": \"PlayerDisplayName\",\n        \"TotalValueToDateInUSD\": 0\n      }\n    }\n  }\n}"
+    },
+    {
+      "name": "GetPlayerCustomProperty",
+      "summary": "Retrieves a title-specific custom property value for a player.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayerCustomProperty",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayerCustomPropertyRequest",
+      "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"PropertyName\": \"level\"\n}",
+      "result": "GetPlayerCustomPropertyResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"Property\": {\n      \"Name\": \"level\",\n      \"Value\": 5\n    },\n    \"PropertiesVersion\": 12\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/DeletePlayerCustomProperties",
+        "Server/ListPlayerCustomProperties",
+        "Server/UpdatePlayerCustomProperties"
+      ],
+      "errors": [
+        "PlayerCustomPropertiesPropertyDoesNotExist"
+      ]
     },
     {
       "name": "GetPlayerProfile",
@@ -16577,6 +16969,27 @@
         "AccountAlreadyLinked",
         "InvalidXboxLiveToken",
         "LinkedAccountAlreadyClaimed"
+      ]
+    },
+    {
+      "name": "ListPlayerCustomProperties",
+      "summary": "Retrieves title-specific custom property values for a player.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/ListPlayerCustomProperties",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ListPlayerCustomPropertiesRequest",
+      "requestExample": "",
+      "result": "ListPlayerCustomPropertiesResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"Properties\": [\n      {\n        \"Name\": \"level\",\n        \"Value\": 5\n      },\n      {\n        \"Name\": \"created\",\n        \"Value\": true\n      }\n    ],\n    \"PropertiesVersion\": 12\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/DeletePlayerCustomProperties",
+        "Server/GetPlayerCustomProperty",
+        "Server/UpdatePlayerCustomProperties"
       ]
     },
     {
@@ -17659,6 +18072,37 @@
       "errors": [
         "CharacterNotFound",
         "InvalidCharacterStatistics"
+      ]
+    },
+    {
+      "name": "UpdatePlayerCustomProperties",
+      "summary": "Updates the title-specific custom property values for a player",
+      "requestDetails": "Performs an additive update of the custom properties for the specified player. In updating the player's custom properties, properties which already exist will have their values overwritten. No other properties will be changed apart from those specified in the call.",
+      "subgroup": "Player Data Management",
+      "titleTiers": null,
+      "url": "/Server/UpdatePlayerCustomProperties",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdatePlayerCustomPropertiesRequest",
+      "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Properties\": [\n    {\n      \"Name\": \"level\",\n      \"Value\": 5\n    },\n    {\n      \"Name\": \"created\",\n      \"Value\": false\n    }\n  ],\n  \"ExpectedPropertiesVersion\": 12\n}",
+      "result": "UpdatePlayerCustomPropertiesResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"PropertiesVersion\": 8\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Server/DeletePlayerCustomProperties",
+        "Server/GetPlayerCustomProperty",
+        "Server/ListPlayerCustomProperties"
+      ],
+      "errors": [
+        "PlayerCustomPropertiesDuplicatePropertyName",
+        "PlayerCustomPropertiesPropertyCountTooHigh",
+        "PlayerCustomPropertiesPropertyNameIsInvalid",
+        "PlayerCustomPropertiesPropertyNameTooLong",
+        "PlayerCustomPropertiesStringPropertyValueTooLong",
+        "PlayerCustomPropertiesValueIsInvalidType",
+        "PlayerCustomPropertiesVersionMismatch"
       ]
     },
     {
@@ -20151,6 +20595,10 @@
       "id": 1562,
       "name": "LeaderboardColumnLengthMismatch"
     },
+    "InvalidStatisticScore": {
+      "id": 1563,
+      "name": "InvalidStatisticScore"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -21451,6 +21899,7 @@
     "InvalidServiceConfiguration",
     "InvalidNamespaceMismatch",
     "LeaderboardColumnLengthMismatch",
+    "InvalidStatisticScore",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",

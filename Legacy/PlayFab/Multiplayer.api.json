@@ -3195,6 +3195,39 @@
         }
       ]
     },
+    "DirectPeerConnectivityOptions": {
+      "name": "DirectPeerConnectivityOptions",
+      "className": "DirectPeerConnectivityOptions",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "None"
+        },
+        {
+          "name": "SamePlatformType"
+        },
+        {
+          "name": "DifferentPlatformType"
+        },
+        {
+          "name": "AnyPlatformType"
+        },
+        {
+          "name": "SameEntityLoginProvider"
+        },
+        {
+          "name": "DifferentEntityLoginProvider"
+        },
+        {
+          "name": "AnyEntityLoginProvider"
+        },
+        {
+          "name": "AnyPlatformTypeAndEntityLoginProvider"
+        }
+      ]
+    },
     "DynamicStandbySettings": {
       "name": "DynamicStandbySettings",
       "className": "DynamicStandbySettings",
@@ -7396,6 +7429,112 @@
         }
       ]
     },
+    "PartyInvitationConfiguration": {
+      "name": "PartyInvitationConfiguration",
+      "className": "PartyInvitationConfiguration",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "EntityKeys",
+          "description": "The list of PlayFab EntityKeys that the invitation allows to authenticate into the network. If this list is empty, all users are allowed to authenticate using the invitation's identifier. This list may contain no more than 1024 items.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Identifier",
+          "description": "The invite identifier for this party. If this value is specified, it must be no longer than 127 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Revocability",
+          "description": "Controls which participants can revoke this invite.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "isenum": false,
+          "optional": true
+        }
+      ]
+    },
+    "PartyInvitationRevocability": {
+      "name": "PartyInvitationRevocability",
+      "className": "PartyInvitationRevocability",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Creator"
+        },
+        {
+          "name": "Anyone"
+        }
+      ]
+    },
+    "PartyNetworkConfiguration": {
+      "name": "PartyNetworkConfiguration",
+      "className": "PartyNetworkConfiguration",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "properties": [
+        {
+          "name": "DirectPeerConnectivityOptions",
+          "description": "Controls whether and how to support direct peer-to-peer connection attempts among devices in the network.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "isenum": false,
+          "optional": true
+        },
+        {
+          "name": "MaxDevices",
+          "description": "The maximum number of devices allowed to connect to the network. Must be between 1 and 32, inclusive.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "MaxDevicesPerUser",
+          "description": "The maximum number of devices allowed per user. Must be greater than 0.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "MaxEndpointsPerDevice",
+          "description": "The maximum number of endpoints allowed per device. Must be between 0 and 32, inclusive.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "MaxUsers",
+          "description": "The maximum number of unique users allowed in the network. Must be greater than 0.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "MaxUsersPerDevice",
+          "description": "The maximum number of users allowed per device. Must be between 1 and 8, inclusive.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
+        },
+        {
+          "name": "PartyInvitationConfiguration",
+          "description": "An optionally-specified configuration for the initial invitation for this party. If not provided, default configuration values will be used: a title-unique invitation identifier will be generated, the revocability will be Anyone, and the EntityID list will be empty.",
+          "jsontype": "Object",
+          "actualtype": "PartyInvitationConfiguration",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "PlayerToken": {
       "name": "PlayerToken",
       "className": "PlayerToken",
@@ -8250,6 +8389,78 @@
         {
           "name": "VmId",
           "description": "The virtual machine ID that the party session is located on.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "RequestPartyServiceRequest": {
+      "name": "RequestPartyServiceRequest",
+      "className": "RequestPartyServiceRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "description": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "NetworkConfiguration",
+          "description": "The network configuration for this request.",
+          "jsontype": "Object",
+          "actualtype": "PartyNetworkConfiguration",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "PartyId",
+          "description": "A guid string party ID created track the party session over its life.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PreferredRegions",
+          "description": "The preferred regions to request a party session from. The party service will iterate through the regions in the specified order and allocate a party session from the first one that is available.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "isenum": false,
+          "optional": false
+        }
+      ]
+    },
+    "RequestPartyServiceResponse": {
+      "name": "RequestPartyServiceResponse",
+      "className": "RequestPartyServiceResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "InvitationId",
+          "description": "The invitation identifier supplied in the PartyInvitationConfiguration, or the PlayFab-generated guid if none was supplied.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PartyId",
+          "description": "The guid string party ID of the party session.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SerializedNetworkDescriptor",
+          "description": "A base-64 encoded string containing the serialized network descriptor for this party.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -9546,6 +9757,13 @@
           "optional": true
         },
         {
+          "name": "ForceUpdate",
+          "description": "Forces the certificate renewal if the certificate already exists. Default is false",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
           "name": "GameCertificate",
           "description": "The game certificate to upload.",
           "jsontype": "Object",
@@ -9809,6 +10027,7 @@
         "RequestMultiplayerServer",
         "RequestMultiplayerServerAndToken",
         "RequestParty",
+        "RequestPartyService",
         "RolloverContainerRegistryCredentials",
         "ShutdownMultiplayerServer",
         "UntagContainerImage",
@@ -11688,6 +11907,29 @@
       ]
     },
     {
+      "name": "RequestPartyService",
+      "summary": "Request a party session.",
+      "requestDetails": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "subgroup": "MultiplayerServer",
+      "titleTiers": null,
+      "url": "/Party/RequestPartyService",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "RequestPartyServiceRequest",
+      "requestExample": "{\n  \"TitleId\": \"12345\",\n  \"PartyId\": \"23781fa9-e01e-4b29-4f0b-dd9f37a06a1e\",\n  \"PreferredRegions\": [\n    \"EastUs\",\n    \"WestUs\"\n  ],\n  \"NetworkConfiguration\": {\n    \"MaxUsers\": 256,\n    \"MaxDevices\": 32,\n    \"MaxUsersPerDevice\": 8,\n    \"MaxDevicesPerUser\": 32,\n    \"MaxEndpointsPerDevice\": 32,\n    \"DirectPeerConnectivityOptions\": \"None\",\n    \"PartyInvitationConfiguration\": {\n      \"Identifier\": \"f8b73a15-6ec2-48f8-b5fb-6c5946dc10be\",\n      \"Revocability\": \"Anyone\",\n      \"EntityKeys\": []\n    }\n  }\n}",
+      "result": "RequestPartyServiceResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PartyId\": \"12baef1e-e31e-2b59-2fef-ff1f38c03a8d\",\n    \"SerializedNetworkDescriptor\": \"AwCzm+YyPYt1XCGGCkeIv588A1Gon1VTV0VTVAAAAAAAAAAAAAAAAAAAt3qFc4+Pmn8bBLUynFkOvLnkJZJcbQmECJxDoCLeTxnCgRBmYWtlaG9zdG5hbWUuYml6\",\n    \"InvitationId\": \"01234567-89ab-cdef-0123-456789abcdef\"\n  }\n}",
+      "errors": [
+        "PartyBadRequest",
+        "PartyInternalServerError",
+        "PartyNotFound",
+        "PartyRequestsThrottledFromRateLimiter",
+        "PartyTooManyRequests",
+        "PartyUnauthorized",
+        "PartyUnavailable"
+      ]
+    },
+    {
       "name": "RolloverContainerRegistryCredentials",
       "summary": "Rolls over the credentials to the container registry.",
       "requestDetails": "Gets new credentials to the container registry where game developers can upload custom container images to before creating a new build.",
@@ -12041,7 +12283,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UploadCertificateRequest",
-      "requestExample": "{\n  \"GameCertificate\": {\n    \"Name\": \"GameCertificate1\",\n    \"Base64EncodedValue\": \"UGxheUZhYlJvY2tzISEhTGV0J3NtYWtlYWxvdG9mZ2FtZXMh\",\n    \"Password\": \"PasswordForPFXCertificate\"\n  }\n}",
+      "requestExample": "{\n  \"GameCertificate\": {\n    \"Name\": \"GameCertificate1\",\n    \"Base64EncodedValue\": \"UGxheUZhYlJvY2tzISEhTGV0J3NtYWtlYWxvdG9mZ2FtZXMh\",\n    \"Password\": \"PasswordForPFXCertificate\"\n  },\n  \"ForceUpdate\": false\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "seeAlso": [
@@ -14263,6 +14505,10 @@
       "id": 1562,
       "name": "LeaderboardColumnLengthMismatch"
     },
+    "InvalidStatisticScore": {
+      "id": 1563,
+      "name": "InvalidStatisticScore"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -15563,6 +15809,7 @@
     "InvalidServiceConfiguration",
     "InvalidNamespaceMismatch",
     "LeaderboardColumnLengthMismatch",
+    "InvalidStatisticScore",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
