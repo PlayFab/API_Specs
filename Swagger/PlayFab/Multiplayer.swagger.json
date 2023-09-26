@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "230915",
+    "version": "230926",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information.",
     "termsOfService": "https://playfab.com/terms/",
@@ -3396,6 +3396,46 @@
         ]
       }
     },
+    "/Party/RequestPartyService": {
+      "post": {
+        "operationId": "RequestPartyService",
+        "tags": [
+          "MultiplayerServer"
+        ],
+        "description": "Request a party session.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/multiplayerserver/requestpartyservice"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RequestPartyServiceRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RequestPartyServiceResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+        "x-ms-docs-errors": [
+          "PartyBadRequest",
+          "PartyInternalServerError",
+          "PartyNotFound",
+          "PartyRequestsThrottledFromRateLimiter",
+          "PartyTooManyRequests",
+          "PartyUnauthorized",
+          "PartyUnavailable"
+        ]
+      }
+    },
     "/PubSub/Negotiate": {
       "post": {
         "operationId": "Negotiate",
@@ -6217,6 +6257,19 @@
       },
       "x-AnyInclusiveFlags": [
         "RequiresOptionalValueSupport"
+      ]
+    },
+    "DirectPeerConnectivityOptions": {
+      "type": "string",
+      "enum": [
+        "None",
+        "SamePlatformType",
+        "DifferentPlatformType",
+        "AnyPlatformType",
+        "SameEntityLoginProvider",
+        "DifferentEntityLoginProvider",
+        "AnyEntityLoginProvider",
+        "AnyPlatformTypeAndEntityLoginProvider"
       ]
     },
     "DynamicStandbySettings": {
@@ -9627,6 +9680,83 @@
         }
       }
     },
+    "PartyInvitationConfiguration": {
+      "type": "object",
+      "properties": {
+        "EntityKeys": {
+          "description": "The list of PlayFab EntityKeys that the invitation allows to authenticate into the network. If this list is empty, all users are allowed to authenticate using the invitation's identifier. This list may contain no more than 1024 items.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EntityKey"
+          },
+          "x-isclass": true
+        },
+        "Identifier": {
+          "description": "The invite identifier for this party. If this value is specified, it must be no longer than 127 characters.",
+          "type": "string"
+        },
+        "Revocability": {
+          "$ref": "#/definitions/PartyInvitationRevocability",
+          "description": "Controls which participants can revoke this invite.",
+          "type": "string"
+        }
+      }
+    },
+    "PartyInvitationRevocability": {
+      "type": "string",
+      "enum": [
+        "Creator",
+        "Anyone"
+      ]
+    },
+    "PartyNetworkConfiguration": {
+      "type": "object",
+      "properties": {
+        "DirectPeerConnectivityOptions": {
+          "$ref": "#/definitions/DirectPeerConnectivityOptions",
+          "description": "Controls whether and how to support direct peer-to-peer connection attempts among devices in the network.",
+          "type": "string"
+        },
+        "MaxDevices": {
+          "description": "The maximum number of devices allowed to connect to the network. Must be between 1 and 32, inclusive.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MaxDevicesPerUser": {
+          "description": "The maximum number of devices allowed per user. Must be greater than 0.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MaxEndpointsPerDevice": {
+          "description": "The maximum number of endpoints allowed per device. Must be between 0 and 32, inclusive.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MaxUsers": {
+          "description": "The maximum number of unique users allowed in the network. Must be greater than 0.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "MaxUsersPerDevice": {
+          "description": "The maximum number of users allowed per device. Must be between 1 and 8, inclusive.",
+          "type": "number",
+          "x-actualtype": "uint32"
+        },
+        "PartyInvitationConfiguration": {
+          "$ref": "#/definitions/PartyInvitationConfiguration",
+          "description": "An optionally-specified configuration for the initial invitation for this party. If not provided, default configuration values will be used: a title-unique invitation identifier will be generated, the revocability will be Anyone, and the EntityID list will be empty.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "MaxUsers",
+        "MaxDevices",
+        "MaxUsersPerDevice",
+        "MaxDevicesPerUser",
+        "MaxEndpointsPerDevice"
+      ]
+    },
     "Port": {
       "type": "object",
       "properties": {
@@ -10060,6 +10190,80 @@
           }
         ],
         "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
+      }
+    },
+    "RequestPartyServiceRequest": {
+      "description": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "NetworkConfiguration": {
+          "$ref": "#/definitions/PartyNetworkConfiguration",
+          "description": "The network configuration for this request.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PartyId": {
+          "description": "A guid string party ID created track the party session over its life.",
+          "type": "string"
+        },
+        "PreferredRegions": {
+          "description": "The preferred regions to request a party session from. The party service will iterate through the regions in the specified order and allocate a party session from the first one that is available.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/AzureRegion"
+          }
+        }
+      },
+      "required": [
+        "PreferredRegions",
+        "NetworkConfiguration"
+      ],
+      "example": {
+        "TitleId": "12345",
+        "PartyId": "23781fa9-e01e-4b29-4f0b-dd9f37a06a1e",
+        "PreferredRegions": [
+          "EastUs",
+          "WestUs"
+        ],
+        "NetworkConfiguration": {
+          "MaxUsers": 256,
+          "MaxDevices": 32,
+          "MaxUsersPerDevice": 8,
+          "MaxDevicesPerUser": 32,
+          "MaxEndpointsPerDevice": 32,
+          "DirectPeerConnectivityOptions": "None",
+          "PartyInvitationConfiguration": {
+            "Identifier": "f8b73a15-6ec2-48f8-b5fb-6c5946dc10be",
+            "Revocability": "Anyone",
+            "EntityKeys": []
+          }
+        }
+      }
+    },
+    "RequestPartyServiceResponse": {
+      "type": "object",
+      "properties": {
+        "InvitationId": {
+          "description": "The invitation identifier supplied in the PartyInvitationConfiguration, or the PlayFab-generated guid if none was supplied.",
+          "type": "string"
+        },
+        "PartyId": {
+          "description": "The guid string party ID of the party session.",
+          "type": "string"
+        },
+        "SerializedNetworkDescriptor": {
+          "description": "A base-64 encoded string containing the serialized network descriptor for this party.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "PartyId": "12baef1e-e31e-2b59-2fef-ff1f38c03a8d",
+        "SerializedNetworkDescriptor": "AwCzm+YyPYt1XCGGCkeIv588A1Gon1VTV0VTVAAAAAAAAAAAAAAAAAAAt3qFc4+Pmn8bBLUynFkOvLnkJZJcbQmECJxDoCLeTxnCgRBmYWtlaG9zdG5hbWUuYml6",
+        "InvitationId": "01234567-89ab-cdef-0123-456789abcdef"
       }
     },
     "RolloverContainerRegistryCredentialsRequest": {
@@ -11333,6 +11537,10 @@
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
         },
+        "ForceUpdate": {
+          "description": "Forces the certificate renewal if the certificate already exists. Default is false",
+          "type": "boolean"
+        },
         "GameCertificate": {
           "$ref": "#/definitions/Certificate",
           "description": "The game certificate to upload.",
@@ -11348,7 +11556,8 @@
           "Name": "GameCertificate1",
           "Base64EncodedValue": "UGxheUZhYlJvY2tzISEhTGV0J3NtYWtlYWxvdG9mZ2FtZXMh",
           "Password": "PasswordForPFXCertificate"
-        }
+        },
+        "ForceUpdate": false
       }
     },
     "VirtualMachineSummary": {
@@ -12000,6 +12209,14 @@
       "description": "Requests a multiplayer server session from a particular build in any of the given preferred regions.",
       "schema": {
         "$ref": "#/definitions/RequestMultiplayerServerRequest"
+      }
+    },
+    "RequestPartyServiceRequest": {
+      "name": "RequestPartyServiceRequest",
+      "in": "body",
+      "description": "Requests a party session from a particular set of builds if build alias params is provided, in any of the given preferred regions.",
+      "schema": {
+        "$ref": "#/definitions/RequestPartyServiceRequest"
       }
     },
     "RolloverContainerRegistryCredentialsRequest": {
@@ -13956,6 +14173,34 @@
               }
             ],
             "BuildId": "4da1a0f6-7e36-430c-a264-723ff6a605de"
+          }
+        }
+      }
+    },
+    "RequestPartyServiceResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RequestPartyServiceResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "PartyId": "12baef1e-e31e-2b59-2fef-ff1f38c03a8d",
+            "SerializedNetworkDescriptor": "AwCzm+YyPYt1XCGGCkeIv588A1Gon1VTV0VTVAAAAAAAAAAAAAAAAAAAt3qFc4+Pmn8bBLUynFkOvLnkJZJcbQmECJxDoCLeTxnCgRBmYWtlaG9zdG5hbWUuYml6",
+            "InvitationId": "01234567-89ab-cdef-0123-456789abcdef"
           }
         }
       }
@@ -16324,6 +16569,10 @@
     "LeaderboardColumnLengthMismatch": {
       "id": 1562,
       "name": "LeaderboardColumnLengthMismatch"
+    },
+    "InvalidStatisticScore": {
+      "id": 1563,
+      "name": "InvalidStatisticScore"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
