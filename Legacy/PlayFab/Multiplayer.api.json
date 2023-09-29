@@ -93,6 +93,95 @@
         }
       ]
     },
+    "AssociatedServerDataStatus": {
+      "name": "AssociatedServerDataStatus",
+      "className": "AssociatedServerDataStatus",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Initialized"
+        },
+        {
+          "name": "Ignored"
+        }
+      ]
+    },
+    "AssociateServerRequest": {
+      "name": "AssociateServerRequest",
+      "className": "AssociateServerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Request to associate a server entity with a lobby. Only a game_server entity can associate and this is restricted to client owned lobbies which are using connections.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AssociatedServerData",
+          "description": "The private key-value pairs which are only visible to members of the lobby but can only be modified by the AssociatedServer.At most 30 key - value pairs may be stored here, keys are limited to 30 characters and values to 1000.The total size of all associatedServerData values may not exceed 4096 bytes.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ConnectionString",
+          "description": "A field which indicates which lobby the game_server will be associating with. This field is opaque to everyone except the Lobby service.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ServerEntity",
+          "description": "The game_server entity which is becoming associated to the Lobby. If a different game_server entity is already associated the request will fail unless the associated entity is disconnected, in which case the incoming game_server entity will replace the disconnected entity.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "AssociateServerResult": {
+      "name": "AssociateServerResult",
+      "className": "AssociateServerResult",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "AssociatedServerDataStatus",
+          "description": "A setting that describes the state of the AssociatedServerData after AssociateServer call is completed. It is \"Initialized\", the first time a server associates with the lobby. It is \"Ignored\" in any subsequent AssociateServer calls after it has been initialized. Any new server taking over association should call UpdateAssociatedServer to update AssociatedServerData fields.",
+          "jsontype": "String",
+          "actualtype": "AssociatedServerDataStatus",
+          "isenum": true,
+          "optional": false
+        },
+        {
+          "name": "LobbyId",
+          "description": "Successfully associated lobby's id.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "AttributeMergeFunction": {
       "name": "AttributeMergeFunction",
       "className": "AttributeMergeFunction",
@@ -3225,6 +3314,42 @@
         },
         {
           "name": "AnyPlatformTypeAndEntityLoginProvider"
+        }
+      ]
+    },
+    "DisassociateServerRequest": {
+      "name": "DisassociateServerRequest",
+      "className": "DisassociateServerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Request to disassociate a server entity from a lobby. Only a game_server entity can disassociate and this is restricted to client owned lobbies which are using connections.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LobbyId",
+          "description": "The id of the lobby.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "ServerEntity",
+          "description": "The game_server entity which is to be disassociated from a lobby. If the game_server was subscribed to notifications, it will be unsubscribed. If a the given game_server entity is not associated to the lobby, it will fail.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
         }
       ]
     },
@@ -9488,6 +9613,58 @@
         }
       ]
     },
+    "UpdateAssociatedServerRequest": {
+      "name": "UpdateAssociatedServerRequest",
+      "className": "UpdateAssociatedServerRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Request to update the associate server information within a lobby. Only a game_server entity can update this information and this is restricted to client owned lobbies which are using connections.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AssociatedServer",
+          "description": "The lobby associated server. Optional. Set a different server as the associated server of the lobby (there can only be 1 associated server). When changing the associated server the previous associated server will automatically be unsubscribed.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "AssociatedServerData",
+          "description": "The private key-value pairs which are only visible to members of the lobby and modifiable by an associated server. Optional. Sets or updates key-value pairs on the lobby. Only the current lobby lobby associated server can set associatedServerData. Keys may be an arbitrary string of at most 30 characters. The total size of all associatedServerData values may not exceed 4096 bytes. Values are not individually limited. There can be up to 30 key-value pairs stored here. Keys are case sensitive.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AssociatedServerDataToDelete",
+          "description": "The keys to delete from the lobby AssociatedServerData. Optional. Optional. Deletes key-value pairs on the lobby. Only the current lobby associated server can delete associatedServerData. All the specified keys will be removed from the associatedServerData. Keys that do not exist in the lobby are a no-op. If the key to delete exists in the associatedServerData (same request) it will result in a bad request.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LobbyId",
+          "description": "The id of the lobby.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "UpdateBuildAliasRequest": {
       "name": "UpdateBuildAliasRequest",
       "className": "UpdateBuildAliasRequest",
@@ -9932,8 +10109,10 @@
     {
       "name": "Lobby",
       "methods": [
+        "AssociateServer",
         "CreateLobby",
         "DeleteLobby",
+        "DisassociateServer",
         "FindFriendLobbies",
         "FindLobbies",
         "GetLobby",
@@ -9944,6 +10123,7 @@
         "RemoveMember",
         "SubscribeToLobbyResource",
         "UnsubscribeFromLobbyResource",
+        "UpdateAssociatedServer",
         "UpdateLobby"
       ]
     },
@@ -10040,6 +10220,32 @@
     }
   ],
   "calls": [
+    {
+      "name": "AssociateServer",
+      "summary": "Associate a server entity with a lobby. This is restricted to client lobbies which are using connections.",
+      "requestDetails": "Associate a server entity with a lobby.",
+      "subgroup": "Lobby",
+      "titleTiers": null,
+      "url": "/Lobby/AssociateServer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "AssociateServerRequest",
+      "requestExample": "{\n  \"ServerEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"game_server\",\n    \"TypeString\": \"game_server\"\n  },\n  \"ConnectionString\": \"connString\",\n  \"AssociatedServerData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  }\n}",
+      "result": "AssociateServerResult",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "LobbyAssociatedToDifferentServer",
+        "LobbyBadRequest",
+        "LobbyDoesNotExist",
+        "LobbyDoesNotUseConnections",
+        "LobbyIsNotClientOwned",
+        "LobbyRateLimitExceeded",
+        "LobbyServerAlreadyAssociated"
+      ]
+    },
     {
       "name": "CancelAllMatchmakingTicketsForPlayer",
       "summary": "Cancel all active tickets the player is a member of in a given queue.",
@@ -10616,6 +10822,32 @@
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized",
         "MultiplayerServerUnavailable"
+      ]
+    },
+    {
+      "name": "DisassociateServer",
+      "summary": "Disassociate a server entity from a lobby. This is restricted to client lobbies which are using connections.",
+      "requestDetails": "Disassociate a server entity from a lobby.",
+      "subgroup": "Lobby",
+      "titleTiers": null,
+      "url": "/Lobby/DisassociateServer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "DisassociateServerRequest",
+      "requestExample": "{\n  \"ServerEntity\": {\n    \"Id\": \"1234\",\n    \"Type\": \"game_server\",\n    \"TypeString\": \"game_server\"\n  },\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\"\n}",
+      "result": "LobbyEmptyResult",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "LobbyAssociatedServerMismatch",
+        "LobbyAssociatedServerNotFound",
+        "LobbyBadRequest",
+        "LobbyDoesNotExist",
+        "LobbyDoesNotUseConnections",
+        "LobbyIsNotClientOwned",
+        "LobbyRateLimitExceeded"
       ]
     },
     {
@@ -12125,6 +12357,30 @@
         "MultiplayerServerTooManyRequests",
         "MultiplayerServerUnauthorized",
         "MultiplayerServerUnavailable"
+      ]
+    },
+    {
+      "name": "UpdateAssociatedServer",
+      "summary": "Update fields related to associated server in the lobby the server is in. Associated servers can keep a lobby from expiring by being the one to \"update\" the lobby in some way. Associated servers have no impact on last member leave/last member disconnect behavior.",
+      "requestDetails": "Updates associated server information in lobby.",
+      "subgroup": "Lobby",
+      "titleTiers": null,
+      "url": "/Lobby/UpdateAssociatedServer",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UpdateAssociatedServerRequest",
+      "requestExample": "{\n  \"LobbyId\": \"12345678-1234-1234-1234-123456789ABC\",\n  \"AssociatedServer\": {\n    \"Id\": \"1234\",\n    \"Type\": \"game_server\",\n    \"TypeString\": \"game_server\"\n  },\n  \"AssociatedServerData\": {\n    \"MyDataKey\": \"MyDataKey value\"\n  },\n  \"AssociatedServerDataToDelete\": [\n    \"MyOldGameKey\"\n  ]\n}",
+      "result": "LobbyEmptyResult",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "LobbyAssociatedServerMismatch",
+        "LobbyAssociatedServerNotFound",
+        "LobbyBadRequest",
+        "LobbyDoesNotExist",
+        "LobbyRateLimitExceeded"
       ]
     },
     {
@@ -15085,6 +15341,30 @@
       "id": 13011,
       "name": "LobbyMemberIsNotOwner"
     },
+    "LobbyAssociatedServerMismatch": {
+      "id": 13012,
+      "name": "LobbyAssociatedServerMismatch"
+    },
+    "LobbyAssociatedServerNotFound": {
+      "id": 13013,
+      "name": "LobbyAssociatedServerNotFound"
+    },
+    "LobbyAssociatedToDifferentServer": {
+      "id": 13014,
+      "name": "LobbyAssociatedToDifferentServer"
+    },
+    "LobbyServerAlreadyAssociated": {
+      "id": 13015,
+      "name": "LobbyServerAlreadyAssociated"
+    },
+    "LobbyIsNotClientOwned": {
+      "id": 13016,
+      "name": "LobbyIsNotClientOwned"
+    },
+    "LobbyDoesNotUseConnections": {
+      "id": 13017,
+      "name": "LobbyDoesNotUseConnections"
+    },
     "EventSamplingInvalidRatio": {
       "id": 14000,
       "name": "EventSamplingInvalidRatio"
@@ -15954,6 +16234,12 @@
     "LobbyNewOwnerMustBeConnected",
     "LobbyCurrentOwnerStillConnected",
     "LobbyMemberIsNotOwner",
+    "LobbyAssociatedServerMismatch",
+    "LobbyAssociatedServerNotFound",
+    "LobbyAssociatedToDifferentServer",
+    "LobbyServerAlreadyAssociated",
+    "LobbyIsNotClientOwned",
+    "LobbyDoesNotUseConnections",
     "EventSamplingInvalidRatio",
     "EventSamplingInvalidEventNamespace",
     "EventSamplingInvalidEventName",
