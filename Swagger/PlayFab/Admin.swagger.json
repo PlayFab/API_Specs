@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "231101",
+    "version": "231108",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -2107,7 +2107,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API method is designed to return title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. If an override label is specified in the request, the overrides are applied automatically and returned with the title data. Note that due to caching, there may up to a minute delay in between updating title data and a query returning the newest value."
+        "x-requestDetails": "This API method is designed to return title specific values which can be read by the client. For example, a developer could choose to store values which modify the user experience, such as enemy spawn rates, weapon strengths, movement speeds, etc. This allows a developer to update the title without the need to create, test, and ship a new build. If an override label is specified in the request, the overrides are applied automatically and returned with the title data. Note that due to caching, there may up to a minute delay in between updating title data and a query returning the newest value.",
+        "x-seeAlso": [
+          "Admin/SetTitleData"
+        ]
       }
     },
     "/Admin/GetTitleInternalData": {
@@ -2138,7 +2141,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API method is designed to return title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. Note that due to caching, there may up to a minute delay in between updating title data and this query returning the newest value."
+        "x-requestDetails": "This API method is designed to return title specific values which are accessible only by the server. These values can be used to tweak settings used by game servers and Cloud Scripts without the need to update and re-deploy. Note that due to caching, there may up to a minute delay in between updating title data and this query returning the newest value.",
+        "x-seeAlso": [
+          "Admin/SetTitleInternalData"
+        ]
       }
     },
     "/Admin/GetUserAccountInfo": {
@@ -3379,6 +3385,9 @@
           }
         },
         "x-requestDetails": "This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+        "x-seeAlso": [
+          "Admin/GetTitleData"
+        ],
         "x-ms-docs-errors": [
           "DataLengthExceeded",
           "TooManyKeys"
@@ -3414,6 +3423,9 @@
           }
         },
         "x-requestDetails": "This API method is designed to set and delete key-value pairs in a title data override instance. If the key exists and the new value is empty, the method will delete the key; otherwise, the method will update the current value with the new value. Keys are trimmed and cannot start with '!'.",
+        "x-seeAlso": [
+          "Admin/GetTitleData"
+        ],
         "x-ms-docs-errors": [
           "DataLengthExceeded",
           "DuplicateKeys",
@@ -3451,6 +3463,9 @@
           }
         },
         "x-requestDetails": "This operation is additive. If a Key does not exist in the current dataset, it will be added with the specified Value. If it already exists, the Value for that key will be overwritten with the new Value.",
+        "x-seeAlso": [
+          "Admin/GetTitleInternalData"
+        ],
         "x-ms-docs-errors": [
           "DataLengthExceeded",
           "TooManyKeys"
@@ -4297,9 +4312,21 @@
       "description": "The work to be performed on each entity which can only be of one type.",
       "type": "object",
       "properties": {
+        "AddInventoryItemV2Content": {
+          "$ref": "#/definitions/AddInventoryItemV2Content",
+          "description": "Action content to Add Inventory item v2",
+          "type": "object",
+          "x-isclass": true
+        },
         "BanPlayerContent": {
           "$ref": "#/definitions/BanPlayerContent",
           "description": "Action content to ban player",
+          "type": "object",
+          "x-isclass": true
+        },
+        "DeleteInventoryItemV2Content": {
+          "$ref": "#/definitions/DeleteInventoryItemV2Content",
+          "description": "Action content to delete inventory item v2",
           "type": "object",
           "x-isclass": true
         },
@@ -4348,6 +4375,12 @@
         "SendEmailContent": {
           "$ref": "#/definitions/SendEmailContent",
           "description": "Action content to send email",
+          "type": "object",
+          "x-isclass": true
+        },
+        "SubtractInventoryItemV2Content": {
+          "$ref": "#/definitions/SubtractInventoryItemV2Content",
+          "description": "Action content to Subtract Inventory item v2",
           "type": "object",
           "x-isclass": true
         }
@@ -4514,6 +4547,33 @@
           "description": "Campaign comparison.",
           "type": "string",
           "x-isenum": true
+        }
+      }
+    },
+    "AddInventoryItemV2Content": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Amount of the item to be granted to a player",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CollectionId": {
+          "description": "The collection id for where the item will be granted in the player inventory",
+          "type": "string"
+        },
+        "DurationInSeconds": {
+          "description": "The duration in seconds of the subscription to be granted to a player",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ItemId": {
+          "description": "The id of item to be granted to the player",
+          "type": "string"
+        },
+        "StackId": {
+          "description": "The stack id for where the item will be granted in the player inventory",
+          "type": "string"
         }
       }
     },
@@ -6127,6 +6187,23 @@
         "Key": "images/sword_icon.png"
       }
     },
+    "DeleteInventoryItemV2Content": {
+      "type": "object",
+      "properties": {
+        "CollectionId": {
+          "description": "The collection id for where the item will be removed from the player inventory",
+          "type": "string"
+        },
+        "ItemId": {
+          "description": "The id of item to be removed from the player",
+          "type": "string"
+        },
+        "StackId": {
+          "description": "The stack id for where the item will be removed from the player inventory",
+          "type": "string"
+        }
+      }
+    },
     "DeleteMasterPlayerAccountRequest": {
       "description": "Deletes all data associated with the master player account, including data from all titles the player has played, such as statistics, custom data, inventory, purchases, virtual currency balances, characters, group memberships, publisher data, credential data, account linkages, friends list, PlayStream event data, and telemetry event data. Removes the player from all leaderboards and player search indexes. Note, this API queues the player for deletion and returns a receipt immediately. Record the receipt ID for future reference. It may take some time before all player data is fully deleted. Upon completion of the deletion, an email will be sent to the notification email address configured for the title confirming the deletion. Until the player data is fully deleted, attempts to recreate the player with the same user account in the same title will fail with the 'AccountDeleted' error. It is highly recommended to know the impact of the deletion by calling GetPlayedTitleList, before calling this API.",
       "type": "object",
@@ -7279,6 +7356,7 @@
         "InvalidNamespaceMismatch",
         "LeaderboardColumnLengthMismatch",
         "InvalidStatisticScore",
+        "LeaderboardColumnsNotSpecified",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -9226,15 +9304,15 @@
       "type": "object",
       "properties": {
         "CatalogVersion": {
-          "description": "Publish cloudscript results as playstream event",
+          "description": "The catalog version of the item to be granted to the player",
           "type": "string"
         },
         "ItemId": {
-          "description": "Publish cloudscript results as playstream event",
+          "description": "The id of item to be granted to the player",
           "type": "string"
         },
         "ItemQuantity": {
-          "description": "Publish cloudscript results as playstream event",
+          "description": "Quantity of the item to be granted to a player",
           "type": "number",
           "x-actualtype": "int32"
         }
@@ -12679,6 +12757,33 @@
         "FreeTrial",
         "PaymentPending"
       ]
+    },
+    "SubtractInventoryItemV2Content": {
+      "type": "object",
+      "properties": {
+        "Amount": {
+          "description": "Amount of the item to removed from the player",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "CollectionId": {
+          "description": "The collection id for where the item will be removed from the player inventory",
+          "type": "string"
+        },
+        "DurationInSeconds": {
+          "description": "The duration in seconds to be removed from the subscription in the players inventory",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ItemId": {
+          "description": "The id of item to be removed from the player",
+          "type": "string"
+        },
+        "StackId": {
+          "description": "The stack id for where the item will be removed from the player inventory",
+          "type": "string"
+        }
+      }
     },
     "SubtractUserVirtualCurrencyRequest": {
       "type": "object",
@@ -20334,6 +20439,10 @@
     "InvalidStatisticScore": {
       "id": 1563,
       "name": "InvalidStatisticScore"
+    },
+    "LeaderboardColumnsNotSpecified": {
+      "id": 1564,
+      "name": "LeaderboardColumnsNotSpecified"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
