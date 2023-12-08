@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "231124",
+    "version": "231208",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information. The TrueSkill service helps titles to estimate a player's skill based on their match results. The player skill values from this service are commonly used by a matchmaking service to provide players with balanced matches.",
     "termsOfService": "https://playfab.com/terms/",
@@ -315,6 +315,46 @@
         ]
       }
     },
+    "/Lobby/JoinLobbyAsServer": {
+      "post": {
+        "operationId": "JoinLobbyAsServer",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Preview: Join a lobby as a server entity. This is restricted to client lobbies which are using connections.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/joinlobbyasserver"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/JoinLobbyAsServerRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/JoinLobbyAsServerResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Preview: Join a lobby as a server entity.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDifferentServerAlreadyJoined",
+          "LobbyDoesNotExist",
+          "LobbyDoesNotUseConnections",
+          "LobbyIsNotClientOwned",
+          "LobbyRateLimitExceeded",
+          "LobbyServerAlreadyJoined"
+        ]
+      }
+    },
     "/Lobby/LeaveLobby": {
       "post": {
         "operationId": "LeaveLobby",
@@ -349,6 +389,46 @@
           "LobbyDoesNotExist",
           "LobbyPlayerNotPresent",
           "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/LeaveLobbyAsServer": {
+      "post": {
+        "operationId": "LeaveLobbyAsServer",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Preview: Request for server to leave a lobby. This is restricted to client owned lobbies which are using connections.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/leavelobbyasserver"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LeaveLobbyAsServerRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Preview: Request for server to leave a lobby.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyDoesNotUseConnections",
+          "LobbyIsNotClientOwned",
+          "LobbyRateLimitExceeded",
+          "LobbyServerMismatch",
+          "LobbyServerNotFound"
         ]
       }
     },
@@ -502,6 +582,44 @@
           "LobbyMemberIsNotOwner",
           "LobbyNewOwnerMustBeConnected",
           "LobbyRateLimitExceeded"
+        ]
+      }
+    },
+    "/Lobby/UpdateLobbyAsServer": {
+      "post": {
+        "operationId": "UpdateLobbyAsServer",
+        "tags": [
+          "Lobby"
+        ],
+        "description": "Preview: Update fields related to a joined server in the lobby the server is in. Servers can keep a lobby from expiring by being the one to \"update\" the lobby in some way. Servers have no impact on last member leave/last member disconnect behavior.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/lobby/updatelobbyasserver"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateLobbyAsServerRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LobbyEmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Preview: Updates joined server information in lobby.",
+        "x-ms-docs-errors": [
+          "LobbyBadRequest",
+          "LobbyDoesNotExist",
+          "LobbyRateLimitExceeded",
+          "LobbyServerMismatch",
+          "LobbyServerNotFound"
         ]
       }
     },
@@ -7793,6 +7911,64 @@
         }
       }
     },
+    "JoinLobbyAsServerRequest": {
+      "description": "Preview: Request to join a lobby as a server. Only callable by a game_server entity and this is restricted to client owned lobbies which are using connections.",
+      "type": "object",
+      "properties": {
+        "ConnectionString": {
+          "description": "A field which indicates which lobby the game_server will be joining. This field is opaque to everyone except the Lobby service.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ServerData": {
+          "description": "The private key-value pairs which are visible to all entities in the lobby but can only be modified by the joined server.At most 30 key - value pairs may be stored here, keys are limited to 30 characters and values to 1000.The total size of all serverData values may not exceed 4096 bytes.",
+          "type": "object"
+        },
+        "ServerEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The game_server entity which is joining the Lobby. If a different game_server entity has already joined the request will fail unless the joined entity is disconnected, in which case the incoming game_server entity will replace the disconnected entity.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ServerEntity",
+        "ConnectionString"
+      ],
+      "example": {
+        "ServerEntity": {
+          "Id": "1234",
+          "Type": "game_server",
+          "TypeString": "game_server"
+        },
+        "ConnectionString": "connString",
+        "ServerData": {
+          "MyDataKey": "MyDataKey value"
+        }
+      }
+    },
+    "JoinLobbyAsServerResult": {
+      "type": "object",
+      "properties": {
+        "LobbyId": {
+          "description": "Successfully joined lobby's id.",
+          "type": "string"
+        },
+        "ServerDataStatus": {
+          "$ref": "#/definitions/ServerDataStatus",
+          "description": "A setting that describes the state of the ServerData after JoinLobbyAsServer call is completed. It is \"Initialized\", the first time a server joins the lobby. It is \"Ignored\" in any subsequent JoinLobbyAsServer calls after it has been initialized. Any new server taking over should call UpdateLobbyAsServer to update ServerData fields.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "LobbyId",
+        "ServerDataStatus"
+      ]
+    },
     "JoinLobbyRequest": {
       "description": "Request to join a lobby. Only a client can join a lobby.",
       "type": "object",
@@ -7878,6 +8054,38 @@
       "type": "object",
       "properties": {},
       "example": {}
+    },
+    "LeaveLobbyAsServerRequest": {
+      "description": "Preview: Request for server to leave a lobby. Only a game_server entity can leave and this is restricted to client owned lobbies which are using connections.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "ServerEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The game_server entity leaving the lobby. If the game_server was subscribed to notifications, it will be unsubscribed. If a the given game_server entity is not in the lobby, it will fail.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "ServerEntity",
+        "LobbyId"
+      ],
+      "example": {
+        "ServerEntity": {
+          "Id": "1234",
+          "Type": "game_server",
+          "TypeString": "game_server"
+        },
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC"
+      }
     },
     "LeaveLobbyRequest": {
       "description": "Request to leave a lobby. Only a client can leave a lobby.",
@@ -10364,6 +10572,13 @@
         "IsEnabled"
       ]
     },
+    "ServerDataStatus": {
+      "type": "string",
+      "enum": [
+        "Initialized",
+        "Ignored"
+      ]
+    },
     "ServerDetails": {
       "type": "object",
       "properties": {
@@ -11427,6 +11642,54 @@
         ]
       }
     },
+    "UpdateLobbyAsServerRequest": {
+      "description": "Preview: Request to update the serverData and serverEntity in case of migration. Only a game_server entity can update this information and this is restricted to client owned lobbies which are using connections.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "LobbyId": {
+          "description": "The id of the lobby.",
+          "type": "string"
+        },
+        "Server": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The lobby server. Optional. Set a different server as the joined server of the lobby (there can only be 1 joined server). When changing the server the previous server will automatically be unsubscribed.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ServerData": {
+          "description": "The private key-value pairs which are visible to all entities in the lobby and modifiable by the joined server. Optional. Sets or updates key-value pairs on the lobby. Only the current lobby lobby server can set serverData. Keys may be an arbitrary string of at most 30 characters. The total size of all serverData values may not exceed 4096 bytes. Values are not individually limited. There can be up to 30 key-value pairs stored here. Keys are case sensitive.",
+          "type": "object"
+        },
+        "ServerDataToDelete": {
+          "description": "The keys to delete from the lobby serverData. Optional. Optional. Deletes key-value pairs on the lobby. Only the current joined lobby server can delete serverData. All the specified keys will be removed from the serverData. Keys that do not exist in the lobby are a no-op. If the key to delete exists in the serverData (same request) it will result in a bad request.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "LobbyId"
+      ],
+      "example": {
+        "LobbyId": "12345678-1234-1234-1234-123456789ABC",
+        "Server": {
+          "Id": "1234",
+          "Type": "game_server",
+          "TypeString": "game_server"
+        },
+        "ServerData": {
+          "MyDataKey": "MyDataKey value"
+        },
+        "ServerDataToDelete": [
+          "MyOldGameKey"
+        ]
+      }
+    },
     "UpdateLobbyRequest": {
       "description": "Request to update a lobby.",
       "type": "object",
@@ -12044,6 +12307,14 @@
         "$ref": "#/definitions/JoinArrangedLobbyRequest"
       }
     },
+    "JoinLobbyAsServerRequest": {
+      "name": "JoinLobbyAsServerRequest",
+      "in": "body",
+      "description": "Preview: Request to join a lobby as a server. Only callable by a game_server entity and this is restricted to client owned lobbies which are using connections.",
+      "schema": {
+        "$ref": "#/definitions/JoinLobbyAsServerRequest"
+      }
+    },
     "JoinLobbyRequest": {
       "name": "JoinLobbyRequest",
       "in": "body",
@@ -12058,6 +12329,14 @@
       "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
       "schema": {
         "$ref": "#/definitions/JoinMatchmakingTicketRequest"
+      }
+    },
+    "LeaveLobbyAsServerRequest": {
+      "name": "LeaveLobbyAsServerRequest",
+      "in": "body",
+      "description": "Preview: Request for server to leave a lobby. Only a game_server entity can leave and this is restricted to client owned lobbies which are using connections.",
+      "schema": {
+        "$ref": "#/definitions/LeaveLobbyAsServerRequest"
       }
     },
     "LeaveLobbyRequest": {
@@ -12314,6 +12593,14 @@
       "description": "Updates a multiplayer server build's regions.",
       "schema": {
         "$ref": "#/definitions/UpdateBuildRegionsRequest"
+      }
+    },
+    "UpdateLobbyAsServerRequest": {
+      "name": "UpdateLobbyAsServerRequest",
+      "in": "body",
+      "description": "Preview: Request to update the serverData and serverEntity in case of migration. Only a game_server entity can update this information and this is restricted to client owned lobbies which are using connections.",
+      "schema": {
+        "$ref": "#/definitions/UpdateLobbyAsServerRequest"
       }
     },
     "UpdateLobbyRequest": {
@@ -13536,6 +13823,25 @@
                 }
               ]
             }
+          }
+        }
+      }
+    },
+    "JoinLobbyAsServerResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/JoinLobbyAsServerResult"
           }
         }
       }
@@ -16583,6 +16889,10 @@
       "id": 1564,
       "name": "LeaderboardColumnsNotSpecified"
     },
+    "LeaderboardMaxSizeTooLarge": {
+      "id": 1565,
+      "name": "LeaderboardMaxSizeTooLarge"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -16754,6 +17064,10 @@
     "CatalogTooManyRequests": {
       "id": 4014,
       "name": "CatalogTooManyRequests"
+    },
+    "InvalidCatalogItemConfiguration": {
+      "id": 4015,
+      "name": "InvalidCatalogItemConfiguration"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
