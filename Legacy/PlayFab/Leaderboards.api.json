@@ -29,6 +29,14 @@
           "optional": true
         },
         {
+          "name": "AttributeAllowList",
+          "description": "Allow list of valid attribute values. Use '*' to allow any set of values.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
@@ -769,6 +777,14 @@
           "optional": true
         },
         {
+          "name": "AttributeAllowList",
+          "description": "Allow list of valid attribute values. Use '*' to allow any set of values",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Created",
           "description": "Created time, in UTC",
           "jsontype": "String",
@@ -919,6 +935,13 @@
           "optional": true
         },
         {
+          "name": "LeaderboardSizeLimit",
+          "description": "Maximum number of entries on this leaderboard",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
           "name": "ShouldProvisionLeaderboard",
           "description": "Flag to indicate that leaderboards should be created/updated when this statistic is updated on an entity. Default is false.",
           "jsontype": "Boolean",
@@ -984,6 +1007,14 @@
           "jsontype": "String",
           "actualtype": "StatisticAggregationMethod",
           "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "AttributeAllowList",
+          "description": "Allow list of valid attribute values. Use '*' to allow any set of values",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         },
         {
@@ -1225,7 +1256,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateStatisticDefinitionRequest",
-      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Max\",\n  \"LeaderboardDefinition\": {\n    \"ShouldProvisionLeaderboard\": true,\n    \"ColumnSortDirections\": [\n      \"Descending\",\n      \"Ascending\"\n    ]\n  }\n}",
+      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Max\",\n  \"LeaderboardDefinition\": {\n    \"ShouldProvisionLeaderboard\": true,\n    \"ColumnSortDirections\": [\n      \"Descending\",\n      \"Ascending\"\n    ],\n    \"LeaderboardSizeLimit\": 1000\n  },\n  \"AttributeAllowList\": []\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1375,7 +1406,7 @@
       "request": "GetStatisticDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"Points\"\n}",
       "result": "GetStatisticDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"LeaderboardDefinition\": {\n      \"ShouldProvisionLeaderboard\": true,\n      \"ColumnSortDirections\": [\n        \"Descending\",\n        \"Ascending\"\n      ]\n    }\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"LeaderboardDefinition\": {\n      \"ShouldProvisionLeaderboard\": true,\n      \"ColumnSortDirections\": [\n        \"Descending\",\n        \"Ascending\"\n      ],\n      \"LeaderboardSizeLimit\": 10000\n    },\n    \"AttributeAllowList\": []\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1400,7 +1431,7 @@
       "request": "GetStatisticDefinitionsRequest",
       "requestExample": "{}",
       "result": "GetStatisticDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LeaderboardDefinition\": {\n          \"ShouldProvisionLeaderboard\": true,\n          \"ColumnSortDirections\": [\n            \"Descending\",\n            \"Ascending\"\n          ]\n        }\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"LeaderboardDefinition\": {\n          \"ShouldProvisionLeaderboard\": true,\n          \"ColumnSortDirections\": [\n            \"Descending\",\n            \"Ascending\"\n          ],\n          \"LeaderboardSizeLimit\": 0\n        }\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -3669,6 +3700,10 @@
       "id": 1564,
       "name": "LeaderboardColumnsNotSpecified"
     },
+    "LeaderboardMaxSizeTooLarge": {
+      "id": 1565,
+      "name": "LeaderboardMaxSizeTooLarge"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -3840,6 +3875,10 @@
     "CatalogTooManyRequests": {
       "id": 4014,
       "name": "CatalogTooManyRequests"
+    },
+    "InvalidCatalogItemConfiguration": {
+      "id": 4015,
+      "name": "InvalidCatalogItemConfiguration"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
@@ -5011,6 +5050,7 @@
     "LeaderboardColumnLengthMismatch",
     "InvalidStatisticScore",
     "LeaderboardColumnsNotSpecified",
+    "LeaderboardMaxSizeTooLarge",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -5054,6 +5094,7 @@
     "CatalogItemTypeInvalid",
     "CatalogBadRequest",
     "CatalogTooManyRequests",
+    "InvalidCatalogItemConfiguration",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",
