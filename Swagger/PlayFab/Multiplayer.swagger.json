@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240105",
+    "version": "240111",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information. The TrueSkill service helps titles to estimate a player's skill based on their match results. The player skill values from this service are commonly used by a matchmaking service to provide players with balanced matches.",
     "termsOfService": "https://playfab.com/terms/",
@@ -9155,6 +9155,12 @@
           "description": "Search data.",
           "type": "object"
         },
+        "Server": {
+          "$ref": "#/definitions/LobbyServer",
+          "description": "Preview: Lobby joined server. This is not the server owner, rather the server that has joined a client owned lobby.",
+          "type": "object",
+          "x-isclass": true
+        },
         "UseConnections": {
           "description": "A flag which determines if connections are used. Defaults to true. Only set on create.",
           "type": "boolean"
@@ -9173,6 +9179,25 @@
     "LobbyEmptyResult": {
       "type": "object",
       "properties": {}
+    },
+    "LobbyServer": {
+      "type": "object",
+      "properties": {
+        "PubSubConnectionHandle": {
+          "description": "Opaque string, stored on a Subscribe call, which indicates the connection a joined server has with PubSub.",
+          "type": "string"
+        },
+        "ServerData": {
+          "description": "Key-value pairs specific to the joined server.",
+          "type": "object"
+        },
+        "ServerEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The server entity key.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
     },
     "LobbySummary": {
       "type": "object",
@@ -11654,12 +11679,6 @@
           "description": "The id of the lobby.",
           "type": "string"
         },
-        "Server": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The lobby server. Optional. Set a different server as the joined server of the lobby (there can only be 1 joined server). When changing the server the previous server will automatically be unsubscribed.",
-          "type": "object",
-          "x-isclass": true
-        },
         "ServerData": {
           "description": "The private key-value pairs which are visible to all entities in the lobby and modifiable by the joined server. Optional. Sets or updates key-value pairs on the lobby. Only the current lobby lobby server can set serverData. Keys may be an arbitrary string of at most 30 characters. The total size of all serverData values may not exceed 4096 bytes. Values are not individually limited. There can be up to 30 key-value pairs stored here. Keys are case sensitive.",
           "type": "object"
@@ -11670,6 +11689,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "ServerEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The lobby server. Optional. Set a different server as the joined server of the lobby (there can only be 1 joined server). When changing the server the previous server will automatically be unsubscribed.",
+          "type": "object",
+          "x-isclass": true
         }
       },
       "required": [
@@ -11677,7 +11702,7 @@
       ],
       "example": {
         "LobbyId": "12345678-1234-1234-1234-123456789ABC",
-        "Server": {
+        "ServerEntity": {
           "Id": "1234",
           "Type": "game_server",
           "TypeString": "game_server"
