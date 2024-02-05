@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240119",
+    "version": "240202",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -1987,6 +1987,44 @@
         ]
       }
     },
+    "/Client/GetPlayFabIDsFromPSNOnlineIDs": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromPSNOnlineIDs",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of PlayStation :tm: Network identifiers.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfrompsnonlineids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromPSNOnlineIDsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromPSNOnlineIDsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For PlayStation :tm: Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+        "x-ms-trademark": {
+          "description": "\"PlayStation\" is a registered trademark or trademark of Sony Interactive Entertainment Inc.",
+          "type": "string"
+        },
+        "x-ms-docs-errors": [
+          "InvalidPSNAuthCode"
+        ]
+      }
+    },
     "/Client/GetPlayFabIDsFromSteamIDs": {
       "post": {
         "operationId": "GetPlayFabIDsFromSteamIDs",
@@ -2675,7 +2713,8 @@
         "x-ms-docs-errors": [
           "AppleNotEnabledForTitle",
           "InvalidIdentityProviderId",
-          "LinkedIdentifierAlreadyClaimed"
+          "LinkedIdentifierAlreadyClaimed",
+          "TokenSigningKeyNotFound"
         ]
       }
     },
@@ -10529,6 +10568,58 @@
         ]
       }
     },
+    "GetPlayFabIDsFromPSNOnlineIDsRequest": {
+      "type": "object",
+      "properties": {
+        "IssuerId": {
+          "description": "Id of the PlayStation :tm: Network issuer environment. If null, defaults to production environment.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "PSNOnlineIDs": {
+          "description": "Array of unique PlayStation :tm: Network identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "PSNOnlineIDs"
+      ],
+      "example": {
+        "PSNOnlineIDs": [
+          "857555576495",
+          "759345551209"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromPSNOnlineIDsResult": {
+      "description": "For PlayStation :tm: Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of PlayStation :tm: Network identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PSNOnlinePlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "PSNOnlineId": "857498576495",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "PSNOnlineId": "759374651209",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "type": "object",
       "properties": {
@@ -13677,6 +13768,19 @@
           "type": "string"
         },
         "PSNAccountId": {
+          "description": "Unique PlayStation :tm: Network identifier for a user.",
+          "type": "string"
+        }
+      }
+    },
+    "PSNOnlinePlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the PlayStation :tm: Network identifier.",
+          "type": "string"
+        },
+        "PSNOnlineId": {
           "description": "Unique PlayStation :tm: Network identifier for a user.",
           "type": "string"
         }
@@ -17070,6 +17174,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromPSNAccountIDsRequest"
       }
     },
+    "GetPlayFabIDsFromPSNOnlineIDsRequest": {
+      "name": "GetPlayFabIDsFromPSNOnlineIDsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromPSNOnlineIDsRequest"
+      }
+    },
     "GetPlayFabIDsFromSteamIDsRequest": {
       "name": "GetPlayFabIDsFromSteamIDsRequest",
       "in": "body",
@@ -19852,6 +19963,41 @@
               },
               {
                 "PSNAccountId": "759374651209",
+                "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromPSNOnlineIDsResult": {
+      "description": "For PlayStation :tm: Network identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromPSNOnlineIDsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "PSNOnlineId": "857498576495",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "PSNOnlineId": "759374651209",
                 "PlayFabId": "6345cd25a6c7cc"
               }
             ]
