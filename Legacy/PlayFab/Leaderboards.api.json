@@ -21,19 +21,12 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AttributeAllowList",
+          "name": "Columns",
+          "description": "Leaderboard columns describing the sort directions, cannot be changed after creation.",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "ColumnSortDirections",
-          "description": "Sort direction of the leaderboard columns, cannot be changed after creation.",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "LeaderboardSortDirection",
-          "isenum": true,
+          "jsontype": "Object",
+          "actualtype": "LeaderboardColumn",
+          "isclass": true,
           "optional": true
         },
         {
@@ -46,10 +39,17 @@
         },
         {
           "name": "EntityType",
-          "description": "The PlayFab entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'custom' as the type.",
+          "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "LinkedStatisticName",
+          "description": "The name of the statistic to link this leaderboard to. Do not provide to create an indepent leaderboard.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "Name",
@@ -78,25 +78,25 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AggregationMethod",
-          "description": "Aggregation method for this statistic. Default is Last.",
-          "jsontype": "String",
-          "actualtype": "StatisticAggregationMethod",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "AttributeAllowList",
-          "description": "Allow list of valid attribute values. Use '*' to allow any set of values.",
+          "name": "Columns",
+          "description": "The columns for the statistic defining the aggregation method for each column.",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumn",
+          "isclass": true,
           "optional": true
         },
         {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "EntityType",
+          "description": "The entity type allowed to have score(s) for this statistic.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -148,13 +148,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AttributeName",
-          "description": "The name of the attribute if this is an attribute leaderboard.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
@@ -163,7 +156,7 @@
           "optional": true
         },
         {
-          "name": "Ids",
+          "name": "EntityIds",
           "description": "The unique Ids of the entries to delete from the leaderboard.",
           "collection": "array",
           "jsontype": "String",
@@ -233,13 +226,6 @@
           "optional": true
         },
         {
-          "name": "ExpectedProfileVersion",
-          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the object set will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
           "name": "Statistics",
           "description": "Collection of statistics to remove from this entity.",
           "collection": "array",
@@ -265,22 +251,6 @@
           "description": "The entity id and type.",
           "jsontype": "Object",
           "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
-          "name": "Statistics",
-          "description": "Updated entity profile statistics.",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "EntityStatisticValue",
           "isclass": true,
           "optional": true
         }
@@ -362,14 +332,6 @@
           "optional": true
         },
         {
-          "name": "EntityLineage",
-          "description": "Lineage for this entity.",
-          "jsontype": "Object",
-          "actualtype": "EntityLineage",
-          "isclass": true,
-          "optional": true
-        },
-        {
           "name": "Metadata",
           "description": "An opaque blob of data stored on the leaderboard entry. Note that the metadata is not used for ranking purposes.",
           "jsontype": "String",
@@ -384,101 +346,8 @@
           "optional": false
         },
         {
-          "name": "Score",
-          "description": "Statistic value.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
           "name": "Scores",
-          "description": "Scores for the statistic",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "EntityLineage": {
-      "name": "EntityLineage",
-      "className": "EntityLineage",
-      "classNameSpace": "PlayFab.Leaderboards.Models",
-      "assembly": "PlayFab.Leaderboards.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "properties": [
-        {
-          "name": "CharacterId",
-          "description": "The Character Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "GroupId",
-          "description": "The Group Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "MasterPlayerAccountId",
-          "description": "The Master Player Account Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "NamespaceId",
-          "description": "The Namespace Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TitleId",
-          "description": "The Title Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "TitlePlayerAccountId",
-          "description": "The Title Player Account Id of the associated entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "EntityStatisticAttributeValue": {
-      "name": "EntityStatisticAttributeValue",
-      "className": "EntityStatisticAttributeValue",
-      "classNameSpace": "PlayFab.Leaderboards.Models",
-      "assembly": "PlayFab.Leaderboards.Models",
-      "AnyInclusiveFlags": [
-        "Beta"
-      ],
-      "properties": [
-        {
-          "name": "Metadata",
-          "description": "Metadata associated with the Statistic.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Name",
-          "description": "Attribute name.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Scores",
-          "description": "Attribute Statistic scores.",
+          "description": "Scores for the entry.",
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
@@ -495,15 +364,6 @@
         "Beta"
       ],
       "properties": [
-        {
-          "name": "AttributeStatistics",
-          "description": "Attribute Statistic values.",
-          "collection": "map",
-          "jsontype": "Object",
-          "actualtype": "EntityStatisticAttributeValue",
-          "isclass": true,
-          "optional": true
-        },
         {
           "name": "Metadata",
           "description": "Metadata associated with the Statistic.",
@@ -524,13 +384,6 @@
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "Value",
-          "description": "Statistic value",
-          "jsontype": "Number",
-          "actualtype": "int32",
           "optional": true
         },
         {
@@ -584,26 +437,12 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AttributeName",
-          "description": "Optional attribute name to filter the leaderboard to.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
-        },
-        {
-          "name": "EntityType",
-          "description": "Type of entity to get a leaderboard for.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
         },
         {
           "name": "LeaderboardName",
@@ -675,13 +514,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AttributeName",
-          "description": "Optional attribute name to filter the leaderboard to.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
@@ -713,13 +545,6 @@
           "optional": false
         },
         {
-          "name": "StartingPosition",
-          "description": "Index position to start from. 1 is beginning of leaderboard. ",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": true
-        },
-        {
           "name": "Version",
           "description": "Optional version of the leaderboard, defaults to current version.",
           "jsontype": "Number",
@@ -746,13 +571,6 @@
       "description": "Request to load a section of a leaderboard centered on a specific entity.",
       "isRequest": true,
       "properties": [
-        {
-          "name": "AttributeName",
-          "description": "Optional attribute to filter the leaderboard by.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
         {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
@@ -830,30 +648,24 @@
       "isResult": true,
       "properties": [
         {
-          "name": "AttributeAllowList",
+          "name": "Columns",
+          "description": "Sort direction of the leaderboard columns, cannot be changed after creation.",
+          "collection": "array",
           "jsontype": "Object",
-          "actualtype": "IList_String",
+          "actualtype": "LeaderboardColumn",
           "isclass": true,
           "optional": true
         },
         {
-          "name": "ColumnSortDirections",
-          "description": "Sort direction of the leaderboard columns, cannot be changed after creation.",
-          "collection": "array",
+          "name": "EntityType",
+          "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "jsontype": "String",
-          "actualtype": "LeaderboardSortDirection",
-          "isenum": true,
+          "actualtype": "String",
           "optional": true
         },
         {
-          "name": "CurrentVersion",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
-        },
-        {
-          "name": "EntityType",
-          "description": "The PlayFab entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'custom' as the type.",
+          "name": "LinkedStatisticName",
+          "description": "Associated statistic name.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -870,6 +682,13 @@
           "description": "Maximum number of entries on this leaderboard",
           "jsontype": "Number",
           "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "Version",
+          "description": "Leaderboard version.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
           "optional": false
         }
       ]
@@ -927,13 +746,6 @@
       "isRequest": true,
       "properties": [
         {
-          "name": "AttributeName",
-          "description": "Optional attribute name to filter the leaderboard by.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "collection": "map",
@@ -942,16 +754,9 @@
           "optional": true
         },
         {
-          "name": "Entities",
+          "name": "EntityIds",
           "description": "Collection of Entity IDs to include in the leaderboard.",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
-          "name": "EntityType",
-          "description": "Entity type of all Entity IDs.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1010,19 +815,12 @@
       "isResult": true,
       "properties": [
         {
-          "name": "AggregationMethod",
-          "description": "Aggregation method of the statistic.",
-          "jsontype": "String",
-          "actualtype": "StatisticAggregationMethod",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "AttributeAllowList",
-          "description": "Allow list of valid attribute values. Use '*' to allow any set of values",
+          "name": "Columns",
+          "description": "The columns for the statistic defining the aggregation method for each column.",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumn",
+          "isclass": true,
           "optional": true
         },
         {
@@ -1040,11 +838,10 @@
           "optional": true
         },
         {
-          "name": "LeaderboardDefinition",
-          "description": "Statistic leaderboard definition.",
-          "jsontype": "Object",
-          "actualtype": "LeaderboardDefinition",
-          "isclass": true,
+          "name": "LinkedLeaderboardName",
+          "description": "Associated leaderboard name.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         },
         {
@@ -1104,19 +901,59 @@
         }
       ]
     },
-    "IList_String": {
-      "name": "IList_String",
-      "className": "IList_String",
+    "GetStatisticsRequest": {
+      "name": "GetStatisticsRequest",
+      "className": "GetStatisticsRequest",
       "classNameSpace": "PlayFab.Leaderboards.Models",
       "assembly": "PlayFab.Leaderboards.Models",
       "AnyInclusiveFlags": [
         "Beta"
       ],
+      "isRequest": true,
       "properties": [
         {
-          "name": "Item",
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetStatisticsResponse": {
+      "name": "GetStatisticsResponse",
+      "className": "GetStatisticsResponse",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "The entity id and type.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Statistics",
+          "description": "List of statistics keyed by Name. Only the latest version of a statistic is returned.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "EntityStatisticValue",
+          "isclass": true,
           "optional": true
         }
       ]
@@ -1164,12 +1001,29 @@
           "jsontype": "Number",
           "actualtype": "uint32",
           "optional": false
+        }
+      ]
+    },
+    "LeaderboardColumn": {
+      "name": "LeaderboardColumn",
+      "className": "LeaderboardColumn",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
-          "name": "VersionToBeDeleted",
-          "description": "Statistic versions and leaderboards to be removed.",
-          "jsontype": "Number",
-          "actualtype": "uint32",
+          "name": "SortDirection",
+          "jsontype": "String",
+          "actualtype": "LeaderboardSortDirection",
+          "isenum": true,
           "optional": true
         }
       ]
@@ -1184,30 +1038,24 @@
       ],
       "properties": [
         {
-          "name": "AttributeAllowList",
+          "name": "Columns",
+          "description": "Sort direction of the leaderboard columns, cannot be changed after creation.",
+          "collection": "array",
           "jsontype": "Object",
-          "actualtype": "IList_String",
+          "actualtype": "LeaderboardColumn",
           "isclass": true,
           "optional": true
         },
         {
-          "name": "ColumnSortDirections",
-          "description": "Sort direction of the leaderboard columns, cannot be changed after creation.",
-          "collection": "array",
+          "name": "EntityType",
+          "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "jsontype": "String",
-          "actualtype": "LeaderboardSortDirection",
-          "isenum": true,
+          "actualtype": "String",
           "optional": true
         },
         {
-          "name": "CurrentVersion",
-          "jsontype": "Number",
-          "actualtype": "uint32",
-          "optional": false
-        },
-        {
-          "name": "EntityType",
-          "description": "The PlayFab entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'custom' as the type.",
+          "name": "LinkedStatisticName",
+          "description": "Associated statistic name.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1225,6 +1073,13 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        },
+        {
+          "name": "Version",
+          "description": "Leaderboard version.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -1238,8 +1093,8 @@
       ],
       "properties": [
         {
-          "name": "Id",
-          "description": "The unique Id for the entry. If using PlayFab Entities, this would be the entityId of the entityb.",
+          "name": "EntityId",
+          "description": "The unique Id for the entry. If using PlayFab Entities, this would be the entityId of the entity.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1279,6 +1134,55 @@
         }
       ]
     },
+    "ListStatisticDefinitionsRequest": {
+      "name": "ListStatisticDefinitionsRequest",
+      "className": "ListStatisticDefinitionsRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ListStatisticDefinitionsResponse": {
+      "name": "ListStatisticDefinitionsResponse",
+      "className": "ListStatisticDefinitionsResponse",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "StatisticDefinitions",
+          "description": "List of statistic definitions for the title.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticDefinition",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "StatisticAggregationMethod": {
       "name": "StatisticAggregationMethod",
       "className": "StatisticAggregationMethod",
@@ -1303,6 +1207,30 @@
         }
       ]
     },
+    "StatisticColumn": {
+      "name": "StatisticColumn",
+      "className": "StatisticColumn",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "AggregationMethod",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
+          "isenum": true,
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "StatisticDefinition": {
       "name": "StatisticDefinition",
       "className": "StatisticDefinition",
@@ -1313,19 +1241,12 @@
       ],
       "properties": [
         {
-          "name": "AggregationMethod",
-          "description": "Aggregation method of the statistic.",
-          "jsontype": "String",
-          "actualtype": "StatisticAggregationMethod",
-          "isenum": true,
-          "optional": true
-        },
-        {
-          "name": "AttributeAllowList",
-          "description": "Allow list of valid attribute values. Use '*' to allow any set of values",
+          "name": "Columns",
+          "description": "The columns for the statistic defining the aggregation method for each column.",
           "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumn",
+          "isclass": true,
           "optional": true
         },
         {
@@ -1343,11 +1264,10 @@
           "optional": true
         },
         {
-          "name": "LeaderboardDefinition",
-          "description": "Statistic leaderboard definition.",
-          "jsontype": "Object",
-          "actualtype": "LeaderboardDefinition",
-          "isclass": true,
+          "name": "LinkedLeaderboardName",
+          "description": "Associated leaderboard name.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         },
         {
@@ -1376,13 +1296,6 @@
       ],
       "properties": [
         {
-          "name": "AttributeName",
-          "description": "Optionally delete only the attribute statistic from this entity.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "Name",
           "description": "Name of the statistic, as originally configured.",
           "jsontype": "String",
@@ -1408,14 +1321,8 @@
       ],
       "properties": [
         {
-          "name": "AttributeName",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
           "name": "Metadata",
-          "description": "Arbitrary metadata to store along side the statistic or attribute statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
+          "description": "Arbitrary metadata to store along side the statistic, will be returned by all Leaderboard APIs. Must be less than 50 UTF8 encoded characters.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1436,17 +1343,37 @@
           "optional": true
         },
         {
-          "name": "Value",
-          "description": "Statistic value for the entity. This will be used in accordance with the aggregation method configured for the statistics.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
           "name": "Version",
           "description": "Optional field to indicate the version of the statistic to set. When empty defaults to the statistic's current version.",
           "jsontype": "Number",
           "actualtype": "uint32",
+          "optional": true
+        }
+      ]
+    },
+    "UnlinkLeaderboardFromStatisticRequest": {
+      "name": "UnlinkLeaderboardFromStatisticRequest",
+      "className": "UnlinkLeaderboardFromStatisticRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "description": "The name of the leaderboard definition to unlink.",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -1461,13 +1388,6 @@
       ],
       "isRequest": true,
       "properties": [
-        {
-          "name": "AttributeName",
-          "description": "The name of the attribute if this is an attribute leaderboard.",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
         {
           "name": "CustomTags",
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
@@ -1521,13 +1441,6 @@
           "optional": true
         },
         {
-          "name": "ExpectedProfileVersion",
-          "description": "Optional field used for concurrency control. By specifying the previously returned value of ProfileVersion from GetProfile API, you can ensure that the statistic updates will only be performed if the profile has not been updated by any other clients since the version you last loaded.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": true
-        },
-        {
           "name": "ForceUpdate",
           "description": "Flag to force the values in the request to bypass the aggregation method and be the new value for the statistic. When empty defaults to false.",
           "jsontype": "Boolean",
@@ -1564,13 +1477,6 @@
           "optional": true
         },
         {
-          "name": "ProfileVersion",
-          "description": "The current version of the profile, can be used for concurrency control during updates.",
-          "jsontype": "Number",
-          "actualtype": "int32",
-          "optional": false
-        },
-        {
           "name": "Statistics",
           "description": "Updated entity profile statistics.",
           "collection": "map",
@@ -1591,6 +1497,7 @@
         "DeleteLeaderboardEntries",
         "GetLeaderboardDefinition",
         "GetLeaderboardDefinitions",
+        "UnlinkLeaderboardFromStatistic",
         "UpdateLeaderboardEntries"
       ]
     },
@@ -1606,7 +1513,9 @@
         "GetLeaderboardForEntities",
         "GetStatisticDefinition",
         "GetStatisticDefinitions",
+        "GetStatistics",
         "IncrementStatisticVersion",
+        "ListStatisticDefinitions",
         "UpdateStatistics"
       ]
     }
@@ -1621,7 +1530,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateLeaderboardDefinitionRequest",
-      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"EntityType\": \"custom\",\n  \"ColumnSortDirections\": [\n    \"Descending\"\n  ],\n  \"SizeLimit\": 1000,\n  \"AttributeAllowList\": [\n    \"Level1\"\n  ]\n}",
+      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"EntityType\": \"external\",\n  \"Columns\": [\n    {\n      \"Name\": \"Hits\",\n      \"SortDirection\": \"Descending\"\n    }\n  ],\n  \"SizeLimit\": 1000\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1631,7 +1540,10 @@
         "Leaderboard/DeleteLeaderboardDefinition"
       ],
       "errors": [
-        "ApiNotEnabledForTitle"
+        "ApiNotEnabledForTitle",
+        "LeaderboardNameConflict",
+        "LinkedStatisticColumnMismatch",
+        "StatisticNotFound"
       ]
     },
     {
@@ -1643,7 +1555,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateStatisticDefinitionRequest",
-      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Max\",\n  \"AttributeAllowList\": [\n    \"Level1\"\n  ]\n}",
+      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\",\n  \"AggregationMethod\": \"Last\",\n  \"Columns\": [\n    {\n      \"AggregationMethod\": \"Min\"\n    }\n  ]\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1678,7 +1590,7 @@
         "Leaderboard/CreateLeaderboardDefinition"
       ],
       "errors": [
-        "ApiNotEnabledForTitle"
+        "LeaderboardNotFound"
       ]
     },
     {
@@ -1690,7 +1602,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "DeleteLeaderboardEntriesRequest",
-      "requestExample": "{\n  \"Name\": \"Points\",\n  \"Ids\": [\n    \"12802710371\",\n    \"01849174301\"\n  ],\n  \"AttributeName\": \"Level1\"\n}",
+      "requestExample": "{\n  \"Name\": \"Points\",\n  \"EntityIds\": [\n    \"12802710371\",\n    \"01849174301\"\n  ]\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1700,7 +1612,8 @@
         "Leaderboard/UpdateLeaderboardEntries"
       ],
       "errors": [
-        "ApiNotEnabledForTitle"
+        "ApiNotEnabledForTitle",
+        "LeaderboardNotFound"
       ]
     },
     {
@@ -1737,7 +1650,7 @@
       "request": "DeleteStatisticsRequest",
       "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"TotalCarTime\"\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Version\": 15\n    }\n  ]\n}",
       "result": "DeleteStatisticsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 56,\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Value\": 89,\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Version\": 0,\n        \"AttributeStatistics\": {\n          \"map1\": {\n            \"Name\": \"attributeMap1\",\n            \"Scores\": [\n              \"56\"\n            ]\n          },\n          \"map2\": {\n            \"Name\": \"attributeMap2\",\n            \"Scores\": [\n              \"87\"\n            ]\n          }\n        }\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 0,\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1761,6 +1674,7 @@
         "Beta"
       ],
       "errors": [
+        "ApiNotEnabledForTitle",
         "InvalidEntityType",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
@@ -1775,13 +1689,14 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetEntityLeaderboardRequest",
-      "requestExample": "{\n  \"EntityType\": \"character\",\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"PageSize\": 0\n}",
+      "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"StartingPosition\": 100,\n  \"PageSize\": 20\n}",
       "result": "GetEntityLeaderboardResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
       ]
@@ -1802,6 +1717,7 @@
         "Beta"
       ],
       "errors": [
+        "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
       ]
@@ -1817,7 +1733,7 @@
       "request": "GetLeaderboardDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\"\n}",
       "result": "GetLeaderboardDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"HighestScoresByLevel\",\n    \"ColumnSortDirections\": [\n      \"Descending\"\n    ],\n    \"SizeLimit\": 1000,\n    \"AttributeAllowList\": [\n      \"Level1\"\n    ],\n    \"CurrentVersion\": 0\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"HighestScoresByLevel\",\n    \"EntityType\": \"title_player_account\",\n    \"Columns\": [\n      {\n        \"Name\": \"Hits\",\n        \"SortDirection\": \"Descending\"\n      }\n    ],\n    \"SizeLimit\": 1000,\n    \"Version\": 89\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1840,7 +1756,7 @@
       "request": "GetLeaderboardDefinitionsRequest",
       "requestExample": "{}",
       "result": "GetLeaderboardDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LeaderboardDefinitions\": [\n      {\n        \"Name\": \"HighestScoresByLevel\",\n        \"ColumnSortDirections\": [\n          \"Descending\"\n        ],\n        \"SizeLimit\": 1000,\n        \"AttributeAllowList\": [\n          \"Level1\"\n        ],\n        \"CurrentVersion\": 0\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LeaderboardDefinitions\": [\n      {\n        \"Name\": \"HighestScoresByLevel\",\n        \"EntityType\": \"title_player_account\",\n        \"Columns\": [\n          {\n            \"Name\": \"Hits\",\n            \"SortDirection\": \"Descending\"\n          }\n        ],\n        \"SizeLimit\": 1000,\n        \"Version\": 89\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1848,7 +1764,7 @@
         "Leaderboard/DeleteLeaderboardDefinition"
       ],
       "errors": [
-        "ApiNotEnabledForTitle"
+        "LeaderboardNotFound"
       ]
     },
     {
@@ -1860,13 +1776,14 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetLeaderboardForEntitiesRequest",
-      "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"EntityType\": \"title_player_account\",\n  \"Entities\": [\n    \"12802710371\",\n    \"01849174301\"\n  ]\n}",
+      "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"EntityIds\": [\n    \"12802710371\",\n    \"01849174301\"\n  ]\n}",
       "result": "GetEntityLeaderboardResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "ApiNotEnabledForTitle",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
       ]
@@ -1882,7 +1799,7 @@
       "request": "GetStatisticDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"Points\"\n}",
       "result": "GetStatisticDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"AttributeAllowList\": [\n      \"Level1\"\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Columns\": [\n      {\n        \"AggregationMethod\": \"Min\"\n      }\n    ],\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1920,6 +1837,32 @@
       ]
     },
     {
+      "name": "GetStatistics",
+      "summary": "Gets statistics for the specified entity.",
+      "subgroup": "Statistics and Leaderboards",
+      "titleTiers": null,
+      "url": "/Statistic/GetStatistics",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetStatisticsRequest",
+      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "result": "GetStatisticsResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Scores\": [\n          \"89\"\n        ],\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Statistic/DeleteStatistics"
+      ],
+      "errors": [
+        "APINotEnabledForGameClientAccess",
+        "InvalidAttributeStatisticsSpecified",
+        "InvalidEntityType",
+        "NotAuthorized",
+        "StatisticNotFound"
+      ]
+    },
+    {
       "name": "IncrementStatisticVersion",
       "summary": "Increment an entity statistic definition version.",
       "subgroup": "Statistics and Leaderboards",
@@ -1944,6 +1887,52 @@
       ]
     },
     {
+      "name": "ListStatisticDefinitions",
+      "summary": "Get all current statistic definitions information",
+      "subgroup": "Statistics and Leaderboards",
+      "titleTiers": null,
+      "url": "/Statistic/ListStatisticDefinitions",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ListStatisticDefinitionsRequest",
+      "requestExample": "{}",
+      "result": "ListStatisticDefinitionsResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Statistic/CreateStatisticDefinition",
+        "Statistic/DeleteStatisticDefinition"
+      ],
+      "errors": [
+        "StatisticCountLimitExceeded"
+      ]
+    },
+    {
+      "name": "UnlinkLeaderboardFromStatistic",
+      "summary": "Unlinks a leaderboard definition from it's linked statistic definition.",
+      "subgroup": "Leaderboards",
+      "titleTiers": null,
+      "url": "/Leaderboard/UnlinkLeaderboardFromStatistic",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "UnlinkLeaderboardFromStatisticRequest",
+      "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\"\n}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Leaderboard/CreateLeaderboardDefinition"
+      ],
+      "errors": [
+        "LeaderboardNotFound",
+        "NoLinkedStatisticToLeaderboard"
+      ]
+    },
+    {
       "name": "UpdateLeaderboardEntries",
       "summary": "Adds or updates entries on the specified leaderboard.",
       "subgroup": "Leaderboards",
@@ -1952,7 +1941,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UpdateLeaderboardEntriesRequest",
-      "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Entries\": [\n    {\n      \"Scores\": [\n        \"100\",\n        \"200\"\n      ],\n      \"Id\": \"12802710371\"\n    },\n    {\n      \"Scores\": [\n        \"120\",\n        \"200\"\n      ],\n      \"Id\": \"01849174301\"\n    }\n  ],\n  \"AttributeName\": \"Level1\"\n}",
+      "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Entries\": [\n    {\n      \"Scores\": [\n        \"100\",\n        \"200\"\n      ],\n      \"EntityId\": \"12802710371\"\n    },\n    {\n      \"Scores\": [\n        \"120\",\n        \"200\"\n      ],\n      \"EntityId\": \"01849174301\"\n    }\n  ]\n}",
       "result": "EmptyResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
@@ -1962,7 +1951,7 @@
         "Leaderboard/DeleteLeaderboardEntries"
       ],
       "errors": [
-        "ApiNotEnabledForTitle"
+        "LeaderboardNotFound"
       ]
     },
     {
@@ -1974,7 +1963,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UpdateStatisticsRequest",
-      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"RoundsWon\",\n      \"Value\": 0,\n      \"Metadata\": \"BestRun:34.13,Car:13452\",\n      \"AttributeName\": \"Map:SilverFlow\",\n      \"Scores\": [\n        \"100\",\n        \"200\"\n      ]\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Value\": 0,\n      \"Metadata\": \"Car:13452\",\n      \"AttributeName\": \"Map:SilverFlow\",\n      \"Scores\": [\n        \"200\",\n        \"300\"\n      ]\n    },\n    {\n      \"Name\": \"TotalCarTime\",\n      \"Value\": 0,\n      \"AttributeName\": \"Car:13452\",\n      \"Scores\": [\n        \"300\",\n        \"400\"\n      ]\n    }\n  ],\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"Statistics\": [\n    {\n      \"Name\": \"RoundsWon\",\n      \"Value\": 0,\n      \"Metadata\": \"BestRun:34.13,Car:13452\",\n      \"Scores\": [\n        \"100\",\n        \"200\"\n      ]\n    },\n    {\n      \"Name\": \"FastestTimesByMap\",\n      \"Value\": 0,\n      \"Metadata\": \"Car:13452\",\n      \"Scores\": [\n        \"200\",\n        \"300\"\n      ]\n    },\n    {\n      \"Name\": \"TotalCarTime\",\n      \"Value\": 0,\n      \"Scores\": [\n        \"300\",\n        \"400\"\n      ]\n    }\n  ],\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "UpdateStatisticsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 56,\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Value\": 89,\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
@@ -1984,7 +1973,10 @@
         "Statistic/DeleteStatistics"
       ],
       "errors": [
+        "APINotEnabledForGameClientAccess",
+        "InvalidAttributeStatisticsSpecified",
         "InvalidEntityType",
+        "NotAuthorized",
         "StatisticNotFound"
       ]
     }
@@ -4214,6 +4206,18 @@
       "id": 1568,
       "name": "TokenSigningKeyNotFound"
     },
+    "LeaderboardNameConflict": {
+      "id": 1569,
+      "name": "LeaderboardNameConflict"
+    },
+    "LinkedStatisticColumnMismatch": {
+      "id": 1570,
+      "name": "LinkedStatisticColumnMismatch"
+    },
+    "NoLinkedStatisticToLeaderboard": {
+      "id": 1571,
+      "name": "NoLinkedStatisticToLeaderboard"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -5636,6 +5640,9 @@
     "InvalidAttributeStatisticsSpecified",
     "LeaderboardNotFound",
     "TokenSigningKeyNotFound",
+    "LeaderboardNameConflict",
+    "LinkedStatisticColumnMismatch",
+    "NoLinkedStatisticToLeaderboard",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
