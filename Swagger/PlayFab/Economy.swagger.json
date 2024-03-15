@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240301",
+    "version": "240315",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1463,7 +1463,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 30 days of the request by passing the TransactionToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
+        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/transferinventoryitems"
         },
@@ -4446,6 +4446,10 @@
         "Filter": {
           "description": "An OData filter used to refine the TransactionHistory. Transaction properties 'timestamp', 'transactionid', 'apiname' and 'operationtype' can be used in the filter. Properties 'transactionid', 'apiname', and 'operationtype' cannot be used together in a single request. The 'timestamp' property can be combined with 'apiname' or 'operationtype' in a single request. For example: \"timestamp ge 2023-06-20T23:30Z\" or \"transactionid eq '10'\" or \"(timestamp ge 2023-06-20T23:30Z) and (apiname eq 'AddInventoryItems')\". By default, a 6 month timespan from the current date is used.",
           "type": "string"
+        },
+        "OrderBy": {
+          "description": "An OData orderby to order TransactionHistory results. The only supported values are 'timestamp asc' or 'timestamp desc'. Default orderby is 'timestamp asc'",
+          "type": "string"
         }
       },
       "required": [
@@ -4685,6 +4689,18 @@
     "PayoutDetails": {
       "type": "object",
       "properties": {}
+    },
+    "Permissions": {
+      "type": "object",
+      "properties": {
+        "SegmentIds": {
+          "description": "The list of ids of Segments that the a player can be in to purchase from the store. When a value is provided, the player must be in at least one of the segments listed for the purchase to be allowed.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
     },
     "PublishDraftItemRequest": {
       "description": "The call kicks off a workflow to publish the item to the public catalog. The Publish Status API should be used to monitor the publish job.",
@@ -5968,6 +5984,12 @@
         "FilterOptions": {
           "$ref": "#/definitions/FilterOptions",
           "description": "The options for the filter in filter-based stores. These options are mutually exclusive with item references.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "Permissions": {
+          "$ref": "#/definitions/Permissions",
+          "description": "The permissions that control which players can purchase from the store.",
           "type": "object",
           "x-isclass": true
         },
@@ -11727,6 +11749,14 @@
     "NoLinkedStatisticToLeaderboard": {
       "id": 1571,
       "name": "NoLinkedStatisticToLeaderboard"
+    },
+    "StatDefinitionAlreadyLinkedToLeaderboard": {
+      "id": 1572,
+      "name": "StatDefinitionAlreadyLinkedToLeaderboard"
+    },
+    "LinkingStatsNotAllowedForEntityType": {
+      "id": 1573,
+      "name": "LinkingStatsNotAllowedForEntityType"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
