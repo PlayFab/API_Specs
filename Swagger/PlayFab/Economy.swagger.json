@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240315",
+    "version": "240401",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1049,6 +1049,42 @@
         ]
       }
     },
+    "/Inventory/ExecuteTransferOperations": {
+      "post": {
+        "operationId": "ExecuteTransferOperations",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Transfer a list of inventory items. A maximum list of 50 operations can be performed by a single request. When the response code is 202, one or more operations did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the GetInventoryOperationStatus API.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/executetransferoperations"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ExecuteTransferOperationsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ExecuteTransferOperationsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Transfer the specified list of inventory items of an entity's container Id to another entity's container Id.",
+        "x-ms-docs-errors": [
+          "DatabaseThroughputExceeded",
+          "InsufficientFunds",
+          "ItemNotFound"
+        ]
+      }
+    },
     "/Inventory/GetInventoryCollectionIds": {
       "post": {
         "operationId": "GetInventoryCollectionIds",
@@ -1113,6 +1149,37 @@
           "AccountDeleted",
           "DatabaseThroughputExceeded"
         ]
+      }
+    },
+    "/Inventory/GetInventoryOperationStatus": {
+      "post": {
+        "operationId": "GetInventoryOperationStatus",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Get the status of an inventory operation using an OperationToken. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the this API.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/getinventoryoperationstatus"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetInventoryOperationStatusRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetInventoryOperationStatusResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Get the status of an Inventory Operation using an OperationToken."
       }
     },
     "/Inventory/GetMicrosoftStoreAccessTokens": {
@@ -1463,7 +1530,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
+        "description": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/transferinventoryitems"
         },
@@ -2897,6 +2964,118 @@
         ]
       }
     },
+    "ExecuteTransferOperationsRequest": {
+      "description": "Transfer the specified list of inventory items of an entity's container Id to another entity's container Id.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "GivingCollectionId": {
+          "description": "The inventory collection id the request is transferring from. (Default=\"default\")",
+          "type": "string"
+        },
+        "GivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity the request is transferring from. Set to the caller by default.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "GivingETag": {
+          "description": "ETags are used for concurrency checking when updating resources. More information about using ETags can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/catalog/etags",
+          "type": "string"
+        },
+        "IdempotencyId": {
+          "description": "The idempotency id for the request.",
+          "type": "string"
+        },
+        "Operations": {
+          "description": "The transfer operations to run transactionally. The operations will be executed in-order sequentially and will succeed or fail as a batch. Up to 50 operations can be added.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TransferInventoryItemsOperation"
+          },
+          "x-isclass": true
+        },
+        "ReceivingCollectionId": {
+          "description": "The inventory collection id the request is transferring to. (Default=\"default\")",
+          "type": "string"
+        },
+        "ReceivingEntity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity the request is transferring to. Set to the caller by default.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Operations": [
+          {
+            "GivingItem": {
+              "Id": "11111111-1111-1111-1111-111111111111",
+              "StackId": "default"
+            },
+            "ReceivingItem": {
+              "Id": "11111111-1111-1111-1111-111111111111",
+              "StackId": "default"
+            },
+            "Amount": 1
+          }
+        ],
+        "GivingEntity": {
+          "Id": "someId1",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "ReceivingEntity": {
+          "Id": "someId2",
+          "Type": "title_player_account",
+          "TypeString": "title_player_account"
+        },
+        "GivingCollectionId": "default",
+        "ReceivingCollectionId": "backpack"
+      }
+    },
+    "ExecuteTransferOperationsResponse": {
+      "type": "object",
+      "properties": {
+        "GivingETag": {
+          "description": "ETags are used for concurrency checking when updating resources (before transferring from). This value will be empty if the operation has not completed yet. More information about using ETags can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/catalog/etags",
+          "type": "string"
+        },
+        "GivingTransactionIds": {
+          "description": "The ids of transactions that occurred as a result of the request's giving action.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "IdempotencyId": {
+          "description": "The Idempotency ID for this request.",
+          "type": "string"
+        },
+        "OperationStatus": {
+          "description": "The transfer operation status. Possible values are 'InProgress' or 'Completed'. If the operation has completed, the response code will be 200. Otherwise, it will be 202.",
+          "type": "string"
+        },
+        "OperationToken": {
+          "description": "The token that can be used to get the status of the transfer operation. This will only have a value if OperationStatus is 'InProgress'.",
+          "type": "string"
+        },
+        "ReceivingETag": {
+          "description": "ETags are used for concurrency checking when updating resources (before transferring to). This value will be empty if the operation has not completed yet.",
+          "type": "string"
+        },
+        "ReceivingTransactionIds": {
+          "description": "The ids of transactions that occurred as a result of the request's receiving action.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
     "FileConfig": {
       "type": "object",
       "properties": {
@@ -3628,6 +3807,38 @@
             "Type": "catalogItem"
           }
         ]
+      }
+    },
+    "GetInventoryOperationStatusRequest": {
+      "description": "Get the status of an Inventory Operation using an OperationToken.",
+      "type": "object",
+      "properties": {
+        "CollectionId": {
+          "description": "The id of the entity's collection to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "OperationToken": "token"
+      }
+    },
+    "GetInventoryOperationStatusResponse": {
+      "type": "object",
+      "properties": {
+        "OperationStatus": {
+          "description": "The inventory operation status.",
+          "type": "string"
+        }
       }
     },
     "GetItemContainersRequest": {
@@ -6493,6 +6704,10 @@
           "description": "The transfer operation status. Possible values are 'InProgress' or 'Completed'. If the operation has completed, the response code will be 200. Otherwise, it will be 202.",
           "type": "string"
         },
+        "OperationToken": {
+          "description": "The token that can be used to get the status of the transfer operation. This will only have a value if OperationStatus is 'InProgress'.",
+          "type": "string"
+        },
         "ReceivingTransactionIds": {
           "description": "The ids of transactions that occurred as a result of the request's receiving action.",
           "type": "array",
@@ -6909,6 +7124,14 @@
         "$ref": "#/definitions/ExecuteInventoryOperationsRequest"
       }
     },
+    "ExecuteTransferOperationsRequest": {
+      "name": "ExecuteTransferOperationsRequest",
+      "in": "body",
+      "description": "Transfer the specified list of inventory items of an entity's container Id to another entity's container Id.",
+      "schema": {
+        "$ref": "#/definitions/ExecuteTransferOperationsRequest"
+      }
+    },
     "GetCatalogConfigRequest": {
       "name": "GetCatalogConfigRequest",
       "in": "body",
@@ -6958,6 +7181,14 @@
       "description": "Given an entity type, entity identifier and container details, will get the entity's inventory items. ",
       "schema": {
         "$ref": "#/definitions/GetInventoryItemsRequest"
+      }
+    },
+    "GetInventoryOperationStatusRequest": {
+      "name": "GetInventoryOperationStatusRequest",
+      "in": "body",
+      "description": "Get the status of an Inventory Operation using an OperationToken.",
+      "schema": {
+        "$ref": "#/definitions/GetInventoryOperationStatusRequest"
       }
     },
     "GetItemContainersRequest": {
@@ -7466,6 +7697,25 @@
               "transactionId1",
               "transactionId2"
             ]
+          }
+        }
+      }
+    },
+    "ExecuteTransferOperationsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ExecuteTransferOperationsResponse"
           }
         }
       }
@@ -8013,6 +8263,25 @@
                 "Type": "catalogItem"
               }
             ]
+          }
+        }
+      }
+    },
+    "GetInventoryOperationStatusResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetInventoryOperationStatusResponse"
           }
         }
       }
