@@ -7365,7 +7365,7 @@
           "name": "BotId",
           "description": "ID of the Bot. This field should be empty if player isn't a bot.",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": true
         },
         {
@@ -7396,7 +7396,7 @@
           "description": "A map from event name to the count of events of this player in the given match.",
           "collection": "map",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": false
         },
         {
@@ -7410,7 +7410,7 @@
           "name": "SecondsPlayed",
           "description": "Duration that the given player stayed in the match.",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": false
         }
       ]
@@ -7437,7 +7437,7 @@
           "name": "Rank",
           "description": "Rank of the given team in the match. Rank starts from 0 and increment based on the team placing, the winning team being 0. Teams can have the same rank to denote draws.",
           "jsontype": "Number",
-          "actualtype": "uint32",
+          "actualtype": "int32",
           "optional": false
         }
       ]
@@ -7978,8 +7978,8 @@
           "optional": true
         },
         {
-          "name": "LastUpdatedDateTimeUtc",
-          "description": "Time when the player's skill was last updated.",
+          "name": "LastProcessedMatchUploadTimeUtc",
+          "description": "Time when the last match to update the player's skill was uploaded.",
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": false
@@ -10325,6 +10325,13 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        },
+        {
+          "name": "UploadTimeUtc",
+          "description": "Time that the MatchResult was uploaded. Null if the upload of the given MatchResult failed.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": false
         }
       ]
     },
@@ -10730,7 +10737,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBuildWithCustomContainerRequest",
-      "requestExample": "{\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\n  \"GameAssetReferences\": [\n    {\n      \"FileName\": \"gameserver.zip\",\n      \"MountPath\": \"/data/Assets\"\n    }\n  ],\n  \"ContainerImageReference\": {\n    \"ImageName\": \"ContainerImageName\",\n    \"Tag\": \"ContainerTag\"\n  },\n  \"LinuxInstrumentationConfiguration\": {\n    \"IsEnabled\": false\n  },\n  \"ContainerFlavor\": \"CustomLinux\",\n  \"ServerResourceConstraints\": {\n    \"CpuLimit\": 0.5,\n    \"MemoryLimitGB\": 0.5\n  },\n  \"BuildName\": \"GameBuildName\",\n  \"Metadata\": {\n    \"MetadataKey\": \"MetadataValue\"\n  },\n  \"VmSize\": \"Standard_D2_v2\",\n  \"MultiplayerServerCountPerVm\": 10,\n  \"Ports\": [\n    {\n      \"Name\": \"PortName\",\n      \"Num\": 1243,\n      \"Protocol\": \"TCP\"\n    }\n  ],\n  \"RegionConfigurations\": [\n    {\n      \"Region\": \"EastUs\",\n      \"MaxServers\": 10,\n      \"StandbyServers\": 5,\n      \"ScheduledStandbySettings\": {\n        \"IsEnabled\": true,\n        \"ScheduleList\": [\n          {\n            \"StartTime\": \"2020-08-21T17:00:00Z\",\n            \"EndTime\": \"2020-08-24T09:00:00Z\",\n            \"IsRecurringWeekly\": true,\n            \"IsDisabled\": false,\n            \"Description\": \"Weekend Schedule\",\n            \"TargetStandby\": 8\n          },\n          {\n            \"StartTime\": \"2020-08-24T09:00:00Z\",\n            \"EndTime\": \"2020-08-28T17:00:00Z\",\n            \"IsRecurringWeekly\": true,\n            \"IsDisabled\": false,\n            \"Description\": \"Weekday Schedule\",\n            \"TargetStandby\": 3\n          }\n        ]\n      },\n      \"MultiIPInfo\": {\n        \"NumberOfMicrosoftRoutingIPs\": 1,\n        \"NumberOfInternetRoutingIPs\": 1,\n        \"DefaultRoutingType\": 0\n      }\n    },\n    {\n      \"Region\": \"WestUs\",\n      \"MaxServers\": 50,\n      \"StandbyServers\": 8,\n      \"ScheduledStandbySettings\": {\n        \"IsEnabled\": true,\n        \"ScheduleList\": [\n          {\n            \"StartTime\": \"2020-08-21T09:00:00Z\",\n            \"EndTime\": \"2020-08-21T23:00:00Z\",\n            \"IsRecurringWeekly\": false,\n            \"IsDisabled\": false,\n            \"Description\": \"Game Launch\",\n            \"TargetStandby\": 30\n          }\n        ]\n      }\n    },\n    {\n      \"Region\": \"NorthEurope\",\n      \"MaxServers\": 7,\n      \"StandbyServers\": 3\n    }\n  ],\n  \"GameCertificateReferences\": [\n    {\n      \"Name\": \"CertName\",\n      \"GsdkAlias\": \"CertGsdkAlias\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"ContainerRunCommand\": \"/data/Assets -startserver\",\n  \"GameAssetReferences\": [\n    {\n      \"FileName\": \"gameserver.zip\",\n      \"MountPath\": \"/data/Assets\"\n    }\n  ],\n  \"ContainerImageReference\": {\n    \"ImageName\": \"ContainerImageName\",\n    \"Tag\": \"ContainerTag\"\n  },\n  \"LinuxInstrumentationConfiguration\": {\n    \"IsEnabled\": false\n  },\n  \"ContainerFlavor\": \"CustomLinux\",\n  \"ServerResourceConstraints\": {\n    \"CpuLimit\": 0.5,\n    \"MemoryLimitGB\": 0.5\n  },\n  \"BuildName\": \"GameBuildName\",\n  \"Metadata\": {\n    \"MetadataKey\": \"MetadataValue\"\n  },\n  \"VmSize\": \"Standard_D2_v2\",\n  \"MultiplayerServerCountPerVm\": 10,\n  \"Ports\": [\n    {\n      \"Name\": \"PortName\",\n      \"Num\": 1243,\n      \"Protocol\": \"TCP\"\n    }\n  ],\n  \"RegionConfigurations\": [\n    {\n      \"Region\": \"EastUs\",\n      \"MaxServers\": 10,\n      \"StandbyServers\": 5,\n      \"ScheduledStandbySettings\": {\n        \"IsEnabled\": true,\n        \"ScheduleList\": [\n          {\n            \"StartTime\": \"2020-08-21T17:00:00Z\",\n            \"EndTime\": \"2020-08-24T09:00:00Z\",\n            \"IsRecurringWeekly\": true,\n            \"IsDisabled\": false,\n            \"Description\": \"Weekend Schedule\",\n            \"TargetStandby\": 8\n          },\n          {\n            \"StartTime\": \"2020-08-24T09:00:00Z\",\n            \"EndTime\": \"2020-08-28T17:00:00Z\",\n            \"IsRecurringWeekly\": true,\n            \"IsDisabled\": false,\n            \"Description\": \"Weekday Schedule\",\n            \"TargetStandby\": 3\n          }\n        ]\n      },\n      \"RoutingSettings\": {\n        \"NumberOfMicrosoftRoutingIPs\": 1,\n        \"NumberOfInternetRoutingIPs\": 1,\n        \"DefaultRoutingType\": 1\n      }\n    },\n    {\n      \"Region\": \"WestUs\",\n      \"MaxServers\": 50,\n      \"StandbyServers\": 8,\n      \"ScheduledStandbySettings\": {\n        \"IsEnabled\": true,\n        \"ScheduleList\": [\n          {\n            \"StartTime\": \"2020-08-21T09:00:00Z\",\n            \"EndTime\": \"2020-08-21T23:00:00Z\",\n            \"IsRecurringWeekly\": false,\n            \"IsDisabled\": false,\n            \"Description\": \"Game Launch\",\n            \"TargetStandby\": 30\n          }\n        ]\n      }\n    },\n    {\n      \"Region\": \"NorthEurope\",\n      \"MaxServers\": 7,\n      \"StandbyServers\": 3\n    }\n  ],\n  \"GameCertificateReferences\": [\n    {\n      \"Name\": \"CertName\",\n      \"GsdkAlias\": \"CertGsdkAlias\"\n    }\n  ],\n  \"RoutingSettings\": {\n    \"NumberOfMicrosoftRoutingIPs\": 1,\n    \"NumberOfInternetRoutingIPs\": 0,\n    \"DefaultRoutingType\": 0\n  }\n}",
       "result": "CreateBuildWithCustomContainerResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ContainerRunCommand\": \"/data/Assets -startserver\",\n    \"LinuxInstrumentationConfiguration\": {\n      \"IsEnabled\": false\n    },\n    \"ServerResourceConstraints\": {\n      \"CpuLimit\": 0.5,\n      \"MemoryLimitGB\": 0.5\n    },\n    \"BuildId\": \"21781fa8-096d-4d9c-b699-75433d579285\",\n    \"BuildName\": \"GameBuildName\",\n    \"CreationTime\": \"2014-04-07T09:04:28Z\",\n    \"Metadata\": {\n      \"MetadataKey\": \"MetadataValue\"\n    },\n    \"VmSize\": \"Standard_D2_v2\",\n    \"OsPlatform\": \"Linux\",\n    \"ServerType\": \"Container\",\n    \"ContainerFlavor\": \"CustomLinux\",\n    \"Ports\": [\n      {\n        \"Name\": \"PortName\",\n        \"Num\": 1243,\n        \"Protocol\": \"TCP\"\n      }\n    ],\n    \"RegionConfigurations\": [\n      {\n        \"Region\": \"EastUs\",\n        \"Status\": \"Initialized\",\n        \"MaxServers\": 10,\n        \"StandbyServers\": 5,\n        \"ScheduledStandbySettings\": {\n          \"IsEnabled\": true,\n          \"ScheduleList\": [\n            {\n              \"StartTime\": \"2020-08-21T17:00:00Z\",\n              \"EndTime\": \"2020-08-24T09:00:00Z\",\n              \"IsRecurringWeekly\": true,\n              \"IsDisabled\": false,\n              \"Description\": \"Weekend Schedule\",\n              \"TargetStandby\": 8\n            },\n            {\n              \"StartTime\": \"2020-08-24T09:00:00Z\",\n              \"EndTime\": \"2020-08-28T17:00:00Z\",\n              \"IsRecurringWeekly\": true,\n              \"IsDisabled\": false,\n              \"Description\": \"Weekday Schedule\",\n              \"TargetStandby\": 3\n            }\n          ]\n        },\n        \"IsAssetReplicationComplete\": false\n      },\n      {\n        \"Region\": \"WestUs\",\n        \"Status\": \"Deployed\",\n        \"MaxServers\": 50,\n        \"StandbyServers\": 8,\n        \"ScheduledStandbySettings\": {\n          \"IsEnabled\": true,\n          \"ScheduleList\": [\n            {\n              \"StartTime\": \"2020-08-21T09:00:00Z\",\n              \"EndTime\": \"2020-08-21T23:00:00Z\",\n              \"IsRecurringWeekly\": false,\n              \"IsDisabled\": false,\n              \"Description\": \"Game Launch\",\n              \"TargetStandby\": 30\n            }\n          ]\n        },\n        \"IsAssetReplicationComplete\": false\n      },\n      {\n        \"Region\": \"NorthEurope\",\n        \"Status\": \"Unhealthy\",\n        \"MaxServers\": 7,\n        \"StandbyServers\": 3,\n        \"IsAssetReplicationComplete\": false\n      }\n    ],\n    \"GameAssetReferences\": [\n      {\n        \"FileName\": \"gameserver.zip\",\n        \"MountPath\": \"/data/Assets\"\n      }\n    ],\n    \"GameCertificateReferences\": [\n      {\n        \"Name\": \"CertName\",\n        \"GsdkAlias\": \"CertGsdkAlias\"\n      }\n    ],\n    \"MultiplayerServerCountPerVm\": 10\n  }\n}",
       "seeAlso": [
@@ -11673,17 +11680,20 @@
       "request": "GetPlayerSkillRequest",
       "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"1234\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"5678\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
       "result": "GetPlayerSkillResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastUpdatedDateTimeUtc\": \"2024-04-01T18:09:13.042Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastUpdatedDateTimeUtc\": \"2024-04-01T18:09:13.042Z\"\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-04-12T15:46:53.003Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-04-12T15:46:53.003Z\"\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "InternalServerError",
+        "ServiceUnavailable",
         "TrueSkillBadRequest",
-        "TrueSkillNoActiveModelInScenario",
+        "TrueSkillNoModelInScenario",
+        "TrueSkillScenarioConfigDoesNotExist",
         "TrueSkillUnauthorized",
-        "TrueSkillUnknownConditionName",
-        "TrueSkillUnknownConditionValue",
-        "TrueSkillUnknownScenarioId"
+        "TrueSkillUnauthorizedToQueryOtherPlayerSkills",
+        "TrueSkillUnknownConditionKey",
+        "TrueSkillUnknownConditionValue"
       ]
     },
     {
@@ -11698,17 +11708,21 @@
       "request": "GetPlayerSkillFromModelRequest",
       "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Entities\": [\n    {\n      \"Id\": \"1234\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"5678\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
       "result": "GetPlayerSkillFromModelResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastUpdatedDateTimeUtc\": \"2024-04-01T18:09:13.046Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastUpdatedDateTimeUtc\": \"2024-04-01T18:09:13.046Z\"\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-04-12T15:46:53.006Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-04-12T15:46:53.006Z\"\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "InternalServerError",
+        "ServiceUnavailable",
         "TrueSkillBadRequest",
+        "TrueSkillModelIsNotActive",
+        "TrueSkillScenarioConfigDoesNotExist",
         "TrueSkillUnauthorized",
-        "TrueSkillUnknownConditionName",
+        "TrueSkillUnauthorizedToQueryOtherPlayerSkills",
+        "TrueSkillUnknownConditionKey",
         "TrueSkillUnknownConditionValue",
-        "TrueSkillUnknownModelId",
-        "TrueSkillUnknownScenarioId"
+        "TrueSkillUnknownModelId"
       ]
     },
     {
@@ -12996,25 +13010,34 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UploadMatchResultRequest",
-      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2024-04-01T17:39:13.05Z\",\n    \"EndDateTimeUtc\": \"2024-04-01T18:09:13.05Z\"\n  }\n}",
+      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2024-04-12T15:16:53.009Z\",\n    \"EndDateTimeUtc\": \"2024-04-12T15:46:53.009Z\"\n  }\n}",
       "result": "UploadMatchResultResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\",\n    \"UploadTimeUtc\": \"2024-04-12T15:46:53.012Z\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
       "errors": [
+        "InternalServerError",
+        "ServiceUnavailable",
         "TrueSkillBadRequest",
         "TrueSkillDuplicatePlayerInMatchResult",
+        "TrueSkillInvalidPlayerSecondsPlayedInMatchResult",
+        "TrueSkillInvalidPreMatchPartyInMatchResult",
         "TrueSkillInvalidRanksInMatchResult",
+        "TrueSkillInvalidTimestampInMatchResult",
         "TrueSkillMatchResultAlreadySubmitted",
-        "TrueSkillMissingRequiredConditionInMatchResult",
-        "TrueSkillMissingRequiredEventInMatchResult",
+        "TrueSkillMissingRequiredCondition",
+        "TrueSkillMissingRequiredEvent",
+        "TrueSkillNoPlayerInMatchResultTeam",
+        "TrueSkillNoTeamInMatchResult",
+        "TrueSkillNotEnoughTeamsInMatchResult",
         "TrueSkillNoWinnerInMatchResult",
+        "TrueSkillPlayersInMatchResultExceedingLimit",
+        "TrueSkillScenarioConfigDoesNotExist",
         "TrueSkillUnauthorized",
-        "TrueSkillUnknownConditionName",
+        "TrueSkillUnknownConditionKey",
         "TrueSkillUnknownConditionValue",
-        "TrueSkillUnknownEventInMatchResult",
-        "TrueSkillUnknownScenarioId"
+        "TrueSkillUnknownEventName"
       ]
     }
   ],
@@ -16083,37 +16106,77 @@
       "id": 20005,
       "name": "TrueSkillNoWinnerInMatchResult"
     },
-    "TrueSkillMissingRequiredConditionInMatchResult": {
+    "TrueSkillMissingRequiredCondition": {
       "id": 20006,
-      "name": "TrueSkillMissingRequiredConditionInMatchResult"
+      "name": "TrueSkillMissingRequiredCondition"
     },
-    "TrueSkillMissingRequiredEventInMatchResult": {
+    "TrueSkillMissingRequiredEvent": {
       "id": 20007,
-      "name": "TrueSkillMissingRequiredEventInMatchResult"
+      "name": "TrueSkillMissingRequiredEvent"
     },
-    "TrueSkillUnknownEventInMatchResult": {
+    "TrueSkillUnknownEventName": {
       "id": 20008,
-      "name": "TrueSkillUnknownEventInMatchResult"
+      "name": "TrueSkillUnknownEventName"
     },
-    "TrueSkillUnknownConditionName": {
+    "TrueSkillUnknownConditionKey": {
       "id": 20009,
-      "name": "TrueSkillUnknownConditionName"
+      "name": "TrueSkillUnknownConditionKey"
     },
     "TrueSkillUnknownConditionValue": {
       "id": 20010,
       "name": "TrueSkillUnknownConditionValue"
     },
-    "TrueSkillUnknownScenarioId": {
-      "id": 20011,
-      "name": "TrueSkillUnknownScenarioId"
-    },
     "TrueSkillUnknownModelId": {
-      "id": 20012,
+      "id": 20011,
       "name": "TrueSkillUnknownModelId"
     },
-    "TrueSkillNoActiveModelInScenario": {
+    "TrueSkillNoPlayerInMatchResultTeam": {
+      "id": 20012,
+      "name": "TrueSkillNoPlayerInMatchResultTeam"
+    },
+    "TrueSkillPlayersInMatchResultExceedingLimit": {
       "id": 20013,
-      "name": "TrueSkillNoActiveModelInScenario"
+      "name": "TrueSkillPlayersInMatchResultExceedingLimit"
+    },
+    "TrueSkillInvalidPreMatchPartyInMatchResult": {
+      "id": 20014,
+      "name": "TrueSkillInvalidPreMatchPartyInMatchResult"
+    },
+    "TrueSkillInvalidTimestampInMatchResult": {
+      "id": 20015,
+      "name": "TrueSkillInvalidTimestampInMatchResult"
+    },
+    "TrueSkillInvalidPlayerSecondsPlayedInMatchResult": {
+      "id": 20016,
+      "name": "TrueSkillInvalidPlayerSecondsPlayedInMatchResult"
+    },
+    "TrueSkillNoTeamInMatchResult": {
+      "id": 20017,
+      "name": "TrueSkillNoTeamInMatchResult"
+    },
+    "TrueSkillNotEnoughTeamsInMatchResult": {
+      "id": 20018,
+      "name": "TrueSkillNotEnoughTeamsInMatchResult"
+    },
+    "TrueSkillScenarioConfigDoesNotExist": {
+      "id": 20019,
+      "name": "TrueSkillScenarioConfigDoesNotExist"
+    },
+    "TrueSkillNoModelInScenario": {
+      "id": 20020,
+      "name": "TrueSkillNoModelInScenario"
+    },
+    "TrueSkillNotSupportedForTitle": {
+      "id": 20021,
+      "name": "TrueSkillNotSupportedForTitle"
+    },
+    "TrueSkillModelIsNotActive": {
+      "id": 20022,
+      "name": "TrueSkillModelIsNotActive"
+    },
+    "TrueSkillUnauthorizedToQueryOtherPlayerSkills": {
+      "id": 20023,
+      "name": "TrueSkillUnauthorizedToQueryOtherPlayerSkills"
     },
     "StateShareUnauthorized": {
       "id": 21000,
@@ -16895,14 +16958,24 @@
     "TrueSkillDuplicatePlayerInMatchResult",
     "TrueSkillInvalidRanksInMatchResult",
     "TrueSkillNoWinnerInMatchResult",
-    "TrueSkillMissingRequiredConditionInMatchResult",
-    "TrueSkillMissingRequiredEventInMatchResult",
-    "TrueSkillUnknownEventInMatchResult",
-    "TrueSkillUnknownConditionName",
+    "TrueSkillMissingRequiredCondition",
+    "TrueSkillMissingRequiredEvent",
+    "TrueSkillUnknownEventName",
+    "TrueSkillUnknownConditionKey",
     "TrueSkillUnknownConditionValue",
-    "TrueSkillUnknownScenarioId",
     "TrueSkillUnknownModelId",
-    "TrueSkillNoActiveModelInScenario",
+    "TrueSkillNoPlayerInMatchResultTeam",
+    "TrueSkillPlayersInMatchResultExceedingLimit",
+    "TrueSkillInvalidPreMatchPartyInMatchResult",
+    "TrueSkillInvalidTimestampInMatchResult",
+    "TrueSkillInvalidPlayerSecondsPlayedInMatchResult",
+    "TrueSkillNoTeamInMatchResult",
+    "TrueSkillNotEnoughTeamsInMatchResult",
+    "TrueSkillScenarioConfigDoesNotExist",
+    "TrueSkillNoModelInScenario",
+    "TrueSkillNotSupportedForTitle",
+    "TrueSkillModelIsNotActive",
+    "TrueSkillUnauthorizedToQueryOtherPlayerSkills",
     "StateShareUnauthorized",
     "StateShareStateNotFound",
     "StateShareLinkNotFound"
