@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240426",
+    "version": "240514",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2922,6 +2922,55 @@
           "AccountAlreadyLinked",
           "InvalidXboxLiveToken",
           "LinkedAccountAlreadyClaimed"
+        ]
+      }
+    },
+    "/Server/LoginWithPSN": {
+      "post": {
+        "operationId": "LoginWithPSN",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs the user in using a PlayStation :tm: Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/authentication/loginwithpsn"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithPSNRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+        "x-seeAlso": [
+          "Server/LinkPSNAccount",
+          "Server/UnlinkPSNAccount"
+        ],
+        "x-ms-trademark": {
+          "description": "\"PlayStation\" is a registered trademark or trademark of Sony Interactive Entertainment Inc.",
+          "type": "string"
+        },
+        "x-ms-docs-errors": [
+          "EncryptionKeyMissing",
+          "EvaluationModePlayerCountExceeded",
+          "InvalidPSNAuthCode",
+          "InvalidPSNIssuerId",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured",
+          "PSNInaccessible",
+          "RequestViewConstraintParamsNotAllowed"
         ]
       }
     },
@@ -11541,6 +11590,48 @@
         "GooglePlayGames"
       ]
     },
+    "LoginWithPSNRequest": {
+      "description": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "type": "object",
+      "properties": {
+        "AuthCode": {
+          "description": "Auth code provided by the PlayStation :tm: Network OAuth provider.",
+          "type": "string"
+        },
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IssuerId": {
+          "description": "Id of the PlayStation :tm: Network issuer environment. If null, defaults to production environment.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "RedirectUri": {
+          "description": "Redirect URI supplied to PlayStation :tm: Network when requesting an auth code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "AuthCode",
+        "RedirectUri"
+      ],
+      "example": {
+        "AuthCode": "LKJ6D896D",
+        "RedirectUri": "orbis://games",
+        "CreateAccount": false
+      }
+    },
     "LoginWithServerCustomIdRequest": {
       "type": "object",
       "properties": {
@@ -15890,6 +15981,14 @@
       "description": "Returns a list of every character that currently belongs to a user.",
       "schema": {
         "$ref": "#/definitions/ListUsersCharactersRequest"
+      }
+    },
+    "LoginWithPSNRequest": {
+      "name": "LoginWithPSNRequest",
+      "in": "body",
+      "description": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithPSNRequest"
       }
     },
     "LoginWithServerCustomIdRequest": {

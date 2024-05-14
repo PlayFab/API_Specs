@@ -9787,6 +9787,73 @@
         }
       ]
     },
+    "LoginWithPSNRequest": {
+      "name": "LoginWithPSNRequest",
+      "className": "LoginWithPSNRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AuthCode",
+          "description": "Auth code provided by the PlayStation :tm: Network OAuth provider.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "IssuerId",
+          "description": "Id of the PlayStation :tm: Network issuer environment. If null, defaults to production environment.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "RedirectUri",
+          "description": "Redirect URI supplied to PlayStation :tm: Network when requesting an auth code",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "LoginWithServerCustomIdRequest": {
       "name": "LoginWithServerCustomIdRequest",
       "className": "LoginWithServerCustomIdRequest",
@@ -15530,6 +15597,7 @@
       "name": "Authentication",
       "methods": [
         "AuthenticateSessionTicket",
+        "LoginWithPSN",
         "LoginWithServerCustomId",
         "LoginWithSteamId",
         "LoginWithXbox",
@@ -17417,6 +17485,34 @@
         "InvalidTypeInBody",
         "ReservedEventName",
         "ReservedWordInBody"
+      ]
+    },
+    {
+      "name": "LoginWithPSN",
+      "summary": "Signs the user in using a PlayStation :tm: Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "titleTiers": null,
+      "url": "/Server/LoginWithPSN",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithPSNRequest",
+      "requestExample": "{\n  \"AuthCode\": \"LKJ6D896D\",\n  \"RedirectUri\": \"orbis://games\",\n  \"CreateAccount\": false\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/LinkPSNAccount",
+        "Server/UnlinkPSNAccount"
+      ],
+      "errors": [
+        "EncryptionKeyMissing",
+        "EvaluationModePlayerCountExceeded",
+        "InvalidPSNAuthCode",
+        "InvalidPSNIssuerId",
+        "PlayerSecretAlreadyConfigured",
+        "PlayerSecretNotConfigured",
+        "PSNInaccessible",
+        "RequestViewConstraintParamsNotAllowed"
       ]
     },
     {
