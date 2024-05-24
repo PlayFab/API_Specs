@@ -355,6 +355,34 @@
         }
       ]
     },
+    "EntityStatistics": {
+      "name": "EntityStatistics",
+      "className": "EntityStatistics",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "EntityKey",
+          "description": "Entity key",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "Statistics",
+          "description": "All statistics for the given entitykey",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityStatisticValue",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "EntityStatisticValue": {
       "name": "EntityStatisticValue",
       "className": "EntityStatisticValue",
@@ -876,6 +904,56 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "StatisticDefinition",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetStatisticsForEntitiesRequest": {
+      "name": "GetStatisticsForEntitiesRequest",
+      "className": "GetStatisticsForEntitiesRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entities",
+          "description": "Collection of Entity IDs to retrieve statistics for.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        }
+      ]
+    },
+    "GetStatisticsForEntitiesResponse": {
+      "name": "GetStatisticsForEntitiesResponse",
+      "className": "GetStatisticsForEntitiesResponse",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "EntitiesStatistics",
+          "description": "List of entities mapped to their statistics. Only the latest version of a statistic is returned.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "EntityStatistics",
           "isclass": true,
           "optional": true
         }
@@ -1563,6 +1641,7 @@
         "GetStatisticDefinition",
         "GetStatisticDefinitions",
         "GetStatistics",
+        "GetStatisticsForEntities",
         "IncrementStatisticVersion",
         "ListStatisticDefinitions",
         "UpdateStatistics"
@@ -1880,6 +1959,31 @@
       "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetStatisticsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Scores\": [\n          \"89\"\n        ],\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Statistic/DeleteStatistics"
+      ],
+      "errors": [
+        "APINotEnabledForGameClientAccess",
+        "InvalidEntityType",
+        "NotAuthorized",
+        "StatisticNotFound"
+      ]
+    },
+    {
+      "name": "GetStatisticsForEntities",
+      "summary": "Gets statistics for the specified collection of entities.",
+      "subgroup": "Statistics and Leaderboards",
+      "titleTiers": null,
+      "url": "/Statistic/GetStatisticsForEntities",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetStatisticsForEntitiesRequest",
+      "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"A197412JDA\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"B197412JDB\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ]\n}",
+      "result": "GetStatisticsForEntitiesResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"EntitiesStatistics\": [\n      {\n        \"EntityKey\": {\n          \"Id\": \"A197412JDA\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"89\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"3\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      },\n      {\n        \"EntityKey\": {\n          \"Id\": \"B197412JDB\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"50\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"1\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
