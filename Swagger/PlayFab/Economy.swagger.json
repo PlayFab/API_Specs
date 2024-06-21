@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240524",
+    "version": "240621",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity.",
     "termsOfService": "https://playfab.com/terms/",
@@ -916,7 +916,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Add inventory items. Up to 3500 stacks of items can be added to a single inventory collection. Stack size is uncapped.",
+        "description": "Add inventory items. Up to 10,000 stacks of items can be added to a single inventory collection. Stack size is uncapped.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/addinventoryitems"
         },
@@ -1018,7 +1018,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Execute a list of Inventory Operations. A maximum list of 10 operations can be performed by a single request. There is also a limit to 250 items that can be modified/added in a single request. For example, adding a bundle with 50 items counts as 50 items modified. All operations must be done within a single inventory collection. This API has a reduced RPS compared to an individual inventory operation with Player Entities limited to 15 requests in 90 seconds and Title Entities limited to 500 requests in 10 seconds.",
+        "description": "Execute a list of Inventory Operations. A maximum list of 250 operations can be performed by a single request. There is also a limit to 300 items that can be modified/added in a single request. For example, adding a bundle with 50 items counts as 50 items modified. All operations must be done within a single inventory collection. This API has a reduced RPS compared to an individual inventory operation with Player Entities limited to 60 requests in 90 seconds.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/executeinventoryoperations"
         },
@@ -1091,7 +1091,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Get Inventory Collection Ids. Up to 50 Ids can be returned at once. You can use continuation tokens to paginate through results that return greater than the limit. It can take a few seconds for new collection Ids to show up.",
+        "description": "Get Inventory Collection Ids. Up to 50 Ids can be returned at once (or 250 with response compression enabled). You can use continuation tokens to paginate through results that return greater than the limit. It can take a few seconds for new collection Ids to show up.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/getinventorycollectionids"
         },
@@ -1222,7 +1222,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Get transaction history for a player. Up to 50 Events can be returned at once. You can use continuation tokens to paginate through results that return greater than the limit. Getting transaction history has a lower RPS limit than getting a Player's inventory with Player Entities having a limit of 30 requests in 300 seconds and Title Entities having a limit of 100 requests in 10 seconds.",
+        "description": "Get transaction history for a player. Up to 250 Events can be returned at once. You can use continuation tokens to paginate through results that return greater than the limit. Getting transaction history has a lower RPS limit than getting a Player's inventory with Player Entities having a limit of 30 requests in 300 seconds.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/gettransactionhistory"
         },
@@ -1253,7 +1253,7 @@
         "tags": [
           "Inventory"
         ],
-        "description": "Purchase an item or bundle. Up to 3500 stacks of items can be added to a single inventory collection. Stack size is uncapped.",
+        "description": "Purchase an item or bundle. Up to 10,000 stacks of items can be added to a single inventory collection. Stack size is uncapped.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/purchaseinventoryitems"
         },
@@ -1312,7 +1312,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Redeem items from the Apple App Store."
+        "x-requestDetails": "Redeem items from the Apple App Store.",
+        "x-ms-docs-errors": [
+          "InvalidCatalogItemConfiguration"
+        ]
       }
     },
     "/Inventory/RedeemGooglePlayInventoryItems": {
@@ -1343,7 +1346,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Redeem items from the Google Play Store."
+        "x-requestDetails": "Redeem items from the Google Play Store.",
+        "x-ms-docs-errors": [
+          "InvalidCatalogItemConfiguration"
+        ]
       }
     },
     "/Inventory/RedeemMicrosoftStoreInventoryItems": {
@@ -1377,6 +1383,7 @@
         "x-requestDetails": "Redeem items from the Microsoft Store.",
         "x-ms-docs-errors": [
           "AccountNotLinked",
+          "InvalidCatalogItemConfiguration",
           "InvalidXboxLiveToken",
           "XboxInaccessible",
           "XboxXASSExchangeFailure"
@@ -1414,6 +1421,7 @@
         "x-requestDetails": "Redeem items from the Nintendo EShop.",
         "x-ms-docs-errors": [
           "AccountNotLinked",
+          "InvalidCatalogItemConfiguration",
           "InvalidNintendoSwitchAccountId"
         ]
       }
@@ -1449,6 +1457,7 @@
         "x-requestDetails": "Redeem items from the PlayStation Store.",
         "x-ms-docs-errors": [
           "AccountNotLinked",
+          "InvalidCatalogItemConfiguration",
           "InvalidPSNAuthCode",
           "NotAuthorized"
         ]
@@ -1484,7 +1493,8 @@
         },
         "x-requestDetails": "Redeem inventory items from Steam.",
         "x-ms-docs-errors": [
-          "AccountNotLinked"
+          "AccountNotLinked",
+          "InvalidCatalogItemConfiguration"
         ]
       }
     },
@@ -2923,7 +2933,7 @@
           "type": "string"
         },
         "Operations": {
-          "description": "The operations to run transactionally. The operations will be executed in-order sequentially and will succeed or fail as a batch. Up to 10 operations can be added.",
+          "description": "The operations to run transactionally. The operations will be executed in-order sequentially and will succeed or fail as a batch. Up to 50 operations can be added.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/InventoryOperation"
@@ -12092,6 +12102,14 @@
       "id": 1579,
       "name": "CloudScriptAzureFunctionsEventHubRequestError"
     },
+    "LeaderboardRateLimitExceeded": {
+      "id": 1580,
+      "name": "LeaderboardRateLimitExceeded"
+    },
+    "ExternalEntityNotAllowedForTier": {
+      "id": 1581,
+      "name": "ExternalEntityNotAllowedForTier"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -13076,17 +13094,89 @@
       "id": 20046,
       "name": "TrueSkillOperationCanceled"
     },
-    "StateShareUnauthorized": {
+    "TrueSkillActiveModelLimitExceeded": {
+      "id": 20047,
+      "name": "TrueSkillActiveModelLimitExceeded"
+    },
+    "TrueSkillTotalModelLimitExceeded": {
+      "id": 20048,
+      "name": "TrueSkillTotalModelLimitExceeded"
+    },
+    "TrueSkillUnknownInitialModelId": {
+      "id": 20049,
+      "name": "TrueSkillUnknownInitialModelId"
+    },
+    "TrueSkillUnauthorizedForJob": {
+      "id": 20050,
+      "name": "TrueSkillUnauthorizedForJob"
+    },
+    "TrueSkillInvalidScenarioName": {
+      "id": 20051,
+      "name": "TrueSkillInvalidScenarioName"
+    },
+    "TrueSkillConditionStateIsRequired": {
+      "id": 20052,
+      "name": "TrueSkillConditionStateIsRequired"
+    },
+    "TrueSkillEventStateIsRequired": {
+      "id": 20053,
+      "name": "TrueSkillEventStateIsRequired"
+    },
+    "TrueSkillDuplicateEvent": {
+      "id": 20054,
+      "name": "TrueSkillDuplicateEvent"
+    },
+    "TrueSkillDuplicateCondition": {
+      "id": 20055,
+      "name": "TrueSkillDuplicateCondition"
+    },
+    "TrueSkillInvalidAnomalyThreshold": {
+      "id": 20056,
+      "name": "TrueSkillInvalidAnomalyThreshold"
+    },
+    "TrueSkillConditionKeyLimitExceeded": {
+      "id": 20057,
+      "name": "TrueSkillConditionKeyLimitExceeded"
+    },
+    "TrueSkillConditionValuePerKeyLimitExceeded": {
+      "id": 20058,
+      "name": "TrueSkillConditionValuePerKeyLimitExceeded"
+    },
+    "TrueSkillEventLimitExceeded": {
+      "id": 20059,
+      "name": "TrueSkillEventLimitExceeded"
+    },
+    "StateShareForbidden": {
       "id": 21000,
-      "name": "StateShareUnauthorized"
+      "name": "StateShareForbidden"
+    },
+    "StateShareTitleNotInFlight": {
+      "id": 21001,
+      "name": "StateShareTitleNotInFlight"
     },
     "StateShareStateNotFound": {
-      "id": 21001,
+      "id": 21002,
       "name": "StateShareStateNotFound"
     },
     "StateShareLinkNotFound": {
-      "id": 21002,
+      "id": 21003,
       "name": "StateShareLinkNotFound"
+    },
+    "StateShareStateRedemptionLimitExceeded": {
+      "id": 21004,
+      "name": "StateShareStateRedemptionLimitExceeded"
+    },
+    "StateShareStateRedemptionLimitNotUpdated": {
+      "id": 21005,
+      "name": "StateShareStateRedemptionLimitNotUpdated"
+    },
+    "StateShareCreatedStatesLimitExceeded": {
+      "id": 21006,
+      "name": "StateShareCreatedStatesLimitExceeded"
+    },
+    "StateShareIdMissingOrMalformed": {
+      "id": 21007,
+      "name": "StateShareIdMissingOrMalformed"
     }
   }
 }
