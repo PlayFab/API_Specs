@@ -27,7 +27,7 @@
           "jsontype": "Object",
           "actualtype": "LeaderboardColumn",
           "isclass": true,
-          "optional": true
+          "optional": false
         },
         {
           "name": "CustomTags",
@@ -514,6 +514,15 @@
       "isResult": true,
       "properties": [
         {
+          "name": "Columns",
+          "description": "Leaderboard columns describing the sort directions,",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "LeaderboardColumn",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Rankings",
           "description": "Individual entity rankings in the leaderboard, in sorted order by rank.",
           "collection": "array",
@@ -949,6 +958,15 @@
       "isResult": true,
       "properties": [
         {
+          "name": "ColumnDetails",
+          "description": "A mapping of statistic name to the columns defined in the corresponding definition.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumnCollection",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "EntitiesStatistics",
           "description": "List of entities mapped to their statistics. Only the latest version of a statistic is returned.",
           "collection": "array",
@@ -998,6 +1016,15 @@
       "isResult": true,
       "properties": [
         {
+          "name": "ColumnDetails",
+          "description": "A mapping of statistic name to the columns defined in the corresponding definition.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumnCollection",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Entity",
           "description": "The entity id and type.",
           "jsontype": "Object",
@@ -1013,6 +1040,52 @@
           "actualtype": "EntityStatisticValue",
           "isclass": true,
           "optional": true
+        }
+      ]
+    },
+    "IncrementLeaderboardVersionRequest": {
+      "name": "IncrementLeaderboardVersionRequest",
+      "className": "IncrementLeaderboardVersionRequest",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Name",
+          "description": "The name of the leaderboard to increment the version for.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "IncrementLeaderboardVersionResponse": {
+      "name": "IncrementLeaderboardVersionResponse",
+      "className": "IncrementLeaderboardVersionResponse",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Version",
+          "description": "New Leaderboard version.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         }
       ]
     },
@@ -1344,6 +1417,26 @@
         }
       ]
     },
+    "StatisticColumnCollection": {
+      "name": "StatisticColumnCollection",
+      "className": "StatisticColumnCollection",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Columns",
+          "description": "Columns for the statistic defining the aggregation method for each column.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumn",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "StatisticDefinition": {
       "name": "StatisticDefinition",
       "className": "StatisticDefinition",
@@ -1596,6 +1689,15 @@
       "isResult": true,
       "properties": [
         {
+          "name": "ColumnDetails",
+          "description": "A mapping of statistic name to the columns defined in the corresponding definition.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumnCollection",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Entity",
           "description": "The entity id and type.",
           "jsontype": "Object",
@@ -1623,6 +1725,7 @@
         "DeleteLeaderboardDefinition",
         "DeleteLeaderboardEntries",
         "GetLeaderboardDefinition",
+        "IncrementLeaderboardVersion",
         "ListLeaderboardDefinitions",
         "UnlinkLeaderboardFromStatistic",
         "UpdateLeaderboardEntries"
@@ -1866,7 +1969,7 @@
       "request": "GetLeaderboardDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"HighestScoresByLevel\"\n}",
       "result": "GetLeaderboardDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"HighestScoresByLevel\",\n    \"EntityType\": \"title_player_account\",\n    \"Columns\": [\n      {\n        \"Name\": \"Hits\",\n        \"SortDirection\": \"Descending\"\n      }\n    ],\n    \"SizeLimit\": 1000,\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"HighestScoresByLevel\",\n    \"EntityType\": \"title_player_account\",\n    \"Columns\": [\n      {\n        \"Name\": \"Hits\",\n        \"SortDirection\": \"Descending\"\n      }\n    ],\n    \"SizeLimit\": 1000,\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"ResetInterval\": \"Manual\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1910,7 +2013,7 @@
       "request": "GetStatisticDefinitionRequest",
       "requestExample": "{\n  \"Name\": \"Points\"\n}",
       "result": "GetStatisticDefinitionResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Columns\": [\n      {\n        \"AggregationMethod\": \"Min\"\n      }\n    ],\n    \"EntityType\": \"title_player_account\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Points\",\n    \"AggregationMethod\": \"Last\",\n    \"Columns\": [\n      {\n        \"AggregationMethod\": \"Min\"\n      }\n    ],\n    \"EntityType\": \"title_player_account\",\n    \"Version\": 89,\n    \"Created\": \"0001-01-01T00:00:00Z\",\n    \"ResetInterval\": \"Manual\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1935,7 +2038,7 @@
       "request": "GetStatisticDefinitionsRequest",
       "requestExample": "{}",
       "result": "GetStatisticDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"ResetInterval\": \"Manual\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -1997,6 +2100,29 @@
       ]
     },
     {
+      "name": "IncrementLeaderboardVersion",
+      "summary": "Increment a leaderboard version.",
+      "subgroup": "Leaderboards",
+      "titleTiers": null,
+      "url": "/Leaderboard/IncrementLeaderboardVersion",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "IncrementLeaderboardVersionRequest",
+      "requestExample": "",
+      "result": "IncrementLeaderboardVersionResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 89\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "seeAlso": [
+        "Leaderboard/CreateLeaderboardDefinition"
+      ],
+      "errors": [
+        "ConcurrentEditError",
+        "LeaderboardNotFound"
+      ]
+    },
+    {
       "name": "IncrementStatisticVersion",
       "summary": "Increment an entity statistic definition version.",
       "subgroup": "Statistics and Leaderboards",
@@ -2031,7 +2157,7 @@
       "request": "ListLeaderboardDefinitionsRequest",
       "requestExample": "{}",
       "result": "ListLeaderboardDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LeaderboardDefinitions\": [\n      {\n        \"Name\": \"HighestScoresByLevel\",\n        \"EntityType\": \"title_player_account\",\n        \"Columns\": [\n          {\n            \"Name\": \"Hits\",\n            \"SortDirection\": \"Descending\"\n          }\n        ],\n        \"SizeLimit\": 1000,\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LeaderboardDefinitions\": [\n      {\n        \"Name\": \"HighestScoresByLevel\",\n        \"EntityType\": \"title_player_account\",\n        \"Columns\": [\n          {\n            \"Name\": \"Hits\",\n            \"SortDirection\": \"Descending\"\n          }\n        ],\n        \"SizeLimit\": 1000,\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"ResetInterval\": \"Manual\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -2050,7 +2176,7 @@
       "request": "ListStatisticDefinitionsRequest",
       "requestExample": "{}",
       "result": "ListStatisticDefinitionsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"ResetInterval\": \"Manual\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -4404,6 +4530,14 @@
       "id": 1579,
       "name": "CloudScriptAzureFunctionsEventHubRequestError"
     },
+    "LeaderboardRateLimitExceeded": {
+      "id": 1580,
+      "name": "LeaderboardRateLimitExceeded"
+    },
+    "ExternalEntityNotAllowedForTier": {
+      "id": 1581,
+      "name": "ExternalEntityNotAllowedForTier"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -5388,17 +5522,89 @@
       "id": 20046,
       "name": "TrueSkillOperationCanceled"
     },
-    "StateShareUnauthorized": {
+    "TrueSkillActiveModelLimitExceeded": {
+      "id": 20047,
+      "name": "TrueSkillActiveModelLimitExceeded"
+    },
+    "TrueSkillTotalModelLimitExceeded": {
+      "id": 20048,
+      "name": "TrueSkillTotalModelLimitExceeded"
+    },
+    "TrueSkillUnknownInitialModelId": {
+      "id": 20049,
+      "name": "TrueSkillUnknownInitialModelId"
+    },
+    "TrueSkillUnauthorizedForJob": {
+      "id": 20050,
+      "name": "TrueSkillUnauthorizedForJob"
+    },
+    "TrueSkillInvalidScenarioName": {
+      "id": 20051,
+      "name": "TrueSkillInvalidScenarioName"
+    },
+    "TrueSkillConditionStateIsRequired": {
+      "id": 20052,
+      "name": "TrueSkillConditionStateIsRequired"
+    },
+    "TrueSkillEventStateIsRequired": {
+      "id": 20053,
+      "name": "TrueSkillEventStateIsRequired"
+    },
+    "TrueSkillDuplicateEvent": {
+      "id": 20054,
+      "name": "TrueSkillDuplicateEvent"
+    },
+    "TrueSkillDuplicateCondition": {
+      "id": 20055,
+      "name": "TrueSkillDuplicateCondition"
+    },
+    "TrueSkillInvalidAnomalyThreshold": {
+      "id": 20056,
+      "name": "TrueSkillInvalidAnomalyThreshold"
+    },
+    "TrueSkillConditionKeyLimitExceeded": {
+      "id": 20057,
+      "name": "TrueSkillConditionKeyLimitExceeded"
+    },
+    "TrueSkillConditionValuePerKeyLimitExceeded": {
+      "id": 20058,
+      "name": "TrueSkillConditionValuePerKeyLimitExceeded"
+    },
+    "TrueSkillEventLimitExceeded": {
+      "id": 20059,
+      "name": "TrueSkillEventLimitExceeded"
+    },
+    "StateShareForbidden": {
       "id": 21000,
-      "name": "StateShareUnauthorized"
+      "name": "StateShareForbidden"
+    },
+    "StateShareTitleNotInFlight": {
+      "id": 21001,
+      "name": "StateShareTitleNotInFlight"
     },
     "StateShareStateNotFound": {
-      "id": 21001,
+      "id": 21002,
       "name": "StateShareStateNotFound"
     },
     "StateShareLinkNotFound": {
-      "id": 21002,
+      "id": 21003,
       "name": "StateShareLinkNotFound"
+    },
+    "StateShareStateRedemptionLimitExceeded": {
+      "id": 21004,
+      "name": "StateShareStateRedemptionLimitExceeded"
+    },
+    "StateShareStateRedemptionLimitNotUpdated": {
+      "id": 21005,
+      "name": "StateShareStateRedemptionLimitNotUpdated"
+    },
+    "StateShareCreatedStatesLimitExceeded": {
+      "id": 21006,
+      "name": "StateShareCreatedStatesLimitExceeded"
+    },
+    "StateShareIdMissingOrMalformed": {
+      "id": 21007,
+      "name": "StateShareIdMissingOrMalformed"
     }
   },
   "errorList": [
@@ -5969,6 +6175,8 @@
     "StatisticDefinitionModificationNotAllowedWhileLinked",
     "LeaderboardUpdateNotAllowedWhileLinked",
     "CloudScriptAzureFunctionsEventHubRequestError",
+    "LeaderboardRateLimitExceeded",
+    "ExternalEntityNotAllowedForTier",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -6215,8 +6423,26 @@
     "TrueSkillJobAlreadyExists",
     "TrueSkillJobNotFound",
     "TrueSkillOperationCanceled",
-    "StateShareUnauthorized",
+    "TrueSkillActiveModelLimitExceeded",
+    "TrueSkillTotalModelLimitExceeded",
+    "TrueSkillUnknownInitialModelId",
+    "TrueSkillUnauthorizedForJob",
+    "TrueSkillInvalidScenarioName",
+    "TrueSkillConditionStateIsRequired",
+    "TrueSkillEventStateIsRequired",
+    "TrueSkillDuplicateEvent",
+    "TrueSkillDuplicateCondition",
+    "TrueSkillInvalidAnomalyThreshold",
+    "TrueSkillConditionKeyLimitExceeded",
+    "TrueSkillConditionValuePerKeyLimitExceeded",
+    "TrueSkillEventLimitExceeded",
+    "StateShareForbidden",
+    "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
-    "StateShareLinkNotFound"
+    "StateShareLinkNotFound",
+    "StateShareStateRedemptionLimitExceeded",
+    "StateShareStateRedemptionLimitNotUpdated",
+    "StateShareCreatedStatesLimitExceeded",
+    "StateShareIdMissingOrMalformed"
   ]
 }
