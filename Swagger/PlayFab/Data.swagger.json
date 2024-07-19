@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240621",
+    "version": "240719",
     "title": "PlayFab Data API",
     "description": "Store arbitrary data associated with an entity. Objects are small (~1KB) JSON-compatible objects which are stored directly on the entity profile. Objects are made available for use in other PlayFab contexts, such as PlayStream events and CloudScript functions. Files can efficiently store data of any size or format. Both objects and files support a flexible permissions system to control read and write access by other entities.",
     "termsOfService": "https://playfab.com/terms/",
@@ -53,6 +53,12 @@
           }
         },
         "x-requestDetails": "Aborts the pending upload of the requested files.",
+        "x-seeAlso": [
+          "File/DeleteFiles",
+          "File/FinalizeFileUploads",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
+        ],
         "x-ms-docs-errors": [
           "FileNotFound",
           "NoEntityFileOperationPending"
@@ -88,6 +94,12 @@
           }
         },
         "x-requestDetails": "Deletes the requested files from the entity's profile.",
+        "x-seeAlso": [
+          "File/AbortFileUploads",
+          "File/FinalizeFileUploads",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
+        ],
         "x-ms-docs-errors": [
           "EntityFileOperationPending",
           "FileNotFound"
@@ -123,6 +135,12 @@
           }
         },
         "x-requestDetails": "Finalizes the upload of the requested files. Verifies that the files have been successfully uploaded and moves the file pointers from pending to live.",
+        "x-seeAlso": [
+          "File/AbortFileUploads",
+          "File/DeleteFiles",
+          "File/GetFiles",
+          "File/InitiateFileUploads"
+        ],
         "x-ms-docs-errors": [
           "FileNotFound",
           "NoEntityFileOperationPending"
@@ -157,7 +175,13 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing."
+        "x-requestDetails": "Returns URLs that may be used to download the files for a profile for a limited length of time. Only returns files that have been successfully uploaded, files that are still pending will either return the old value, if it exists, or nothing.",
+        "x-seeAlso": [
+          "File/AbortFileUploads",
+          "File/DeleteFiles",
+          "File/FinalizeFileUploads",
+          "File/InitiateFileUploads"
+        ]
       }
     },
     "/File/InitiateFileUploads": {
@@ -228,7 +252,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Gets JSON objects from an entity profile and returns it. "
+        "x-requestDetails": "Gets JSON objects from an entity profile and returns it. ",
+        "x-seeAlso": [
+          "Object/SetObjects"
+        ]
       }
     },
     "/Object/SetObjects": {
@@ -260,6 +287,9 @@
           }
         },
         "x-requestDetails": "Sets JSON objects on the requested entity profile. May include a version number to be used to perform optimistic concurrency operations during update. If the current version differs from the version in the request the request will be ignored. If no version is set on the request then the value will always be updated if the values differ. Using the version value does not guarantee a write though, ConcurrentEditError may still occur if multiple clients are attempting to update the same profile. ",
+        "x-seeAlso": [
+          "Object/GetObjects"
+        ],
         "x-ms-docs-errors": [
           "InvalidJSONContent"
         ]
@@ -3567,13 +3597,45 @@
       "id": 1579,
       "name": "CloudScriptAzureFunctionsEventHubRequestError"
     },
-    "LeaderboardRateLimitExceeded": {
-      "id": 1580,
-      "name": "LeaderboardRateLimitExceeded"
-    },
     "ExternalEntityNotAllowedForTier": {
-      "id": 1581,
+      "id": 1580,
       "name": "ExternalEntityNotAllowedForTier"
+    },
+    "InvalidBaseTimeForInterval": {
+      "id": 1581,
+      "name": "InvalidBaseTimeForInterval"
+    },
+    "EntityTypeMismatchWithStatDefinition": {
+      "id": 1582,
+      "name": "EntityTypeMismatchWithStatDefinition"
+    },
+    "SpecifiedVersionLeaderboardNotFound": {
+      "id": 1583,
+      "name": "SpecifiedVersionLeaderboardNotFound"
+    },
+    "LeaderboardColumnLengthMismatchWithStatDefinition": {
+      "id": 1584,
+      "name": "LeaderboardColumnLengthMismatchWithStatDefinition"
+    },
+    "DuplicateColumnNameFound": {
+      "id": 1585,
+      "name": "DuplicateColumnNameFound"
+    },
+    "LinkedStatisticColumnNotFound": {
+      "id": 1586,
+      "name": "LinkedStatisticColumnNotFound"
+    },
+    "LinkedStatisticColumnRequired": {
+      "id": 1587,
+      "name": "LinkedStatisticColumnRequired"
+    },
+    "MultipleLinkedStatisticsNotAllowed": {
+      "id": 1588,
+      "name": "MultipleLinkedStatisticsNotAllowed"
+    },
+    "MaxQueryableVerionsValueNotAllowedForTier": {
+      "id": 1589,
+      "name": "MaxQueryableVerionsValueNotAllowedForTier"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -4283,6 +4345,10 @@
       "id": 15014,
       "name": "EventSinkContainerNotFound"
     },
+    "EventSinkTenantIdInvalid": {
+      "id": 15015,
+      "name": "EventSinkTenantIdInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -4607,9 +4673,45 @@
       "id": 20058,
       "name": "TrueSkillConditionValuePerKeyLimitExceeded"
     },
-    "TrueSkillEventLimitExceeded": {
+    "TrueSkillInvalidTimestamp": {
       "id": 20059,
+      "name": "TrueSkillInvalidTimestamp"
+    },
+    "TrueSkillEventLimitExceeded": {
+      "id": 20060,
       "name": "TrueSkillEventLimitExceeded"
+    },
+    "TrueSkillInvalidPlayers": {
+      "id": 20061,
+      "name": "TrueSkillInvalidPlayers"
+    },
+    "TrueSkillTrueSkillPlayerNull": {
+      "id": 20062,
+      "name": "TrueSkillTrueSkillPlayerNull"
+    },
+    "TrueSkillInvalidPlayerId": {
+      "id": 20063,
+      "name": "TrueSkillInvalidPlayerId"
+    },
+    "TrueSkillInvalidSquadSize": {
+      "id": 20064,
+      "name": "TrueSkillInvalidSquadSize"
+    },
+    "TrueSkillConditionSetNotInModel": {
+      "id": 20065,
+      "name": "TrueSkillConditionSetNotInModel"
+    },
+    "GameSaveManifestNotFound": {
+      "id": 20300,
+      "name": "GameSaveManifestNotFound"
+    },
+    "GameSaveManifestVersionAlreadyExists": {
+      "id": 20301,
+      "name": "GameSaveManifestVersionAlreadyExists"
+    },
+    "GameSaveConflictUpdatingManifest": {
+      "id": 20302,
+      "name": "GameSaveConflictUpdatingManifest"
     },
     "StateShareForbidden": {
       "id": 21000,
