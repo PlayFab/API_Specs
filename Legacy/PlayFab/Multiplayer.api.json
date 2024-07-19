@@ -1279,14 +1279,6 @@
           "optional": true
         },
         {
-          "name": "Events",
-          "description": "A list of events used in this model.",
-          "collection": "array",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": false
-        },
-        {
           "name": "ModelName",
           "description": "The name of the model that will be created.",
           "jsontype": "String",
@@ -2811,15 +2803,15 @@
         }
       ]
     },
-    "CreateScenarioConfigurationRequest": {
-      "name": "CreateScenarioConfigurationRequest",
-      "className": "CreateScenarioConfigurationRequest",
+    "CreateScenarioRequest": {
+      "name": "CreateScenarioRequest",
+      "className": "CreateScenarioRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "description": "Request to create a scenario configuration. A Title can make this request.",
+      "description": "Request to create a scenario. A Title can make this request.",
       "isRequest": true,
       "properties": [
         {
@@ -2856,9 +2848,9 @@
         }
       ]
     },
-    "CreateScenarioConfigurationResponse": {
-      "name": "CreateScenarioConfigurationResponse",
-      "className": "CreateScenarioConfigurationResponse",
+    "CreateScenarioResponse": {
+      "name": "CreateScenarioResponse",
+      "className": "CreateScenarioResponse",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
       "AnyInclusiveFlags": [
@@ -3552,9 +3544,9 @@
         }
       ]
     },
-    "DeleteScenarioConfigurationRequest": {
-      "name": "DeleteScenarioConfigurationRequest",
-      "className": "DeleteScenarioConfigurationRequest",
+    "DeleteScenarioRequest": {
+      "name": "DeleteScenarioRequest",
+      "className": "DeleteScenarioRequest",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
       "AnyInclusiveFlags": [
@@ -3580,9 +3572,9 @@
         }
       ]
     },
-    "DeleteScenarioConfigurationResponse": {
-      "name": "DeleteScenarioConfigurationResponse",
-      "className": "DeleteScenarioConfigurationResponse",
+    "DeleteScenarioResponse": {
+      "name": "DeleteScenarioResponse",
+      "className": "DeleteScenarioResponse",
       "classNameSpace": "PlayFab.Multiplayer.Models",
       "assembly": "PlayFab.Multiplayer.Models",
       "AnyInclusiveFlags": [
@@ -3732,6 +3724,9 @@
         },
         {
           "name": "AnyPlatformTypeAndEntityLoginProvider"
+        },
+        {
+          "name": "OnlyServers"
         }
       ]
     },
@@ -5497,19 +5492,19 @@
           "optional": true
         },
         {
-          "name": "Entities",
-          "description": "List of entities of the players to retrieve skill values for.",
-          "collection": "array",
-          "jsontype": "Object",
-          "actualtype": "EntityKey",
-          "isclass": true,
-          "optional": false
-        },
-        {
           "name": "ModelId",
           "description": "ID of the model to get the players' skill from.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "Players",
+          "description": "List of players to retrieve skill values for.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TrueSkillPlayer",
+          "isclass": true,
           "optional": false
         },
         {
@@ -5577,11 +5572,11 @@
           "optional": true
         },
         {
-          "name": "Entities",
-          "description": "List of entities of the players to retrieve skill values for.",
+          "name": "Players",
+          "description": "List of players to retrieve skill values for.",
           "collection": "array",
           "jsontype": "Object",
-          "actualtype": "EntityKey",
+          "actualtype": "TrueSkillPlayer",
           "isclass": true,
           "optional": false
         },
@@ -5793,6 +5788,13 @@
         {
           "name": "Name",
           "description": "The friendly name for the returned scenario.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PrimaryModelId",
+          "description": "The ID of the primary model of the scenario.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -8777,8 +8779,15 @@
           "optional": false
         },
         {
+          "name": "MatchmakingSkillValue",
+          "description": "The given player's skill value to be used for Matchmaking computed by TrueSkill. This takes into account the player's squad size, as well as other modifiers related to the skills in this condition as a whole",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": false
+        },
+        {
           "name": "SkillValue",
-          "description": "The given player's skill value computed by TrueSkill.",
+          "description": "The given player's individual skill computed by TrueSkill.",
           "jsontype": "Number",
           "actualtype": "double",
           "optional": false
@@ -10732,6 +10741,32 @@
         }
       ]
     },
+    "TrueSkillPlayer": {
+      "name": "TrueSkillPlayer",
+      "className": "TrueSkillPlayer",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "Entity of the player to retrieve skill values for.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": false
+        },
+        {
+          "name": "SquadSize",
+          "description": "Size of the squad that the player is currently on. If this value is not specified, we consider the player to not be in a squad.",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": true
+        }
+      ]
+    },
     "UnsubscribeFromLobbyResourceRequest": {
       "name": "UnsubscribeFromLobbyResourceRequest",
       "className": "UnsubscribeFromLobbyResourceRequest",
@@ -11718,10 +11753,10 @@
       "methods": [
         "CreateBaseModel",
         "CreateBatchModel",
-        "CreateScenarioConfiguration",
+        "CreateScenario",
         "DeactivateModel",
         "DeleteModel",
-        "DeleteScenarioConfiguration",
+        "DeleteScenario",
         "GetModelsByScenario",
         "GetScenarioConfiguration",
         "UpdatePrimaryModel",
@@ -11825,7 +11860,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBaseModelRequest",
-      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"ConditionAffinityWeight\": 1\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"ConditionAffinityWeight\": 2\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ]\n}",
+      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"ConditionAffinityWeight\": 1\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"ConditionAffinityWeight\": 2\n    }\n  ]\n}",
       "result": "CreateBaseModelResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
@@ -11846,7 +11881,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBatchModelRequest",
-      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"ConditionAffinityWeight\": 1\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"ConditionAffinityWeight\": 2\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ],\n  \"InitialSettingsModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"MatchResultStartTimeUtc\": \"2024-06-21T15:39:28.183Z\",\n  \"MatchResultEndTimeUtc\": \"2024-06-21T16:09:28.184Z\",\n  \"MaxIterations\": 100,\n  \"AnomalousMatchResultIgnoreThreshold\": -20.0\n}",
+      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"ConditionAffinityWeight\": 1\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"ConditionAffinityWeight\": 2\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ],\n  \"InitialSettingsModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"MatchResultStartTimeUtc\": \"2024-07-18T22:10:26.513Z\",\n  \"MatchResultEndTimeUtc\": \"2024-07-18T22:40:26.513Z\",\n  \"MaxIterations\": 100,\n  \"AnomalousMatchResultIgnoreThreshold\": -20.0\n}",
       "result": "CreateBatchModelResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
@@ -12068,17 +12103,17 @@
       ]
     },
     {
-      "name": "CreateScenarioConfiguration",
+      "name": "CreateScenario",
       "summary": "Create a scenario to specify which conditions, conditions values and events will be allowed when submitting match results.",
       "requestDetails": "Create a scenario to specify which conditions, conditions values and events will be allowed when submitting match results. Callers must be a title.",
       "subgroup": "TrueSkill Admin",
       "titleTiers": null,
-      "url": "/TrueSkill/CreateScenarioConfiguration",
+      "url": "/TrueSkill/CreateScenario",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "CreateScenarioConfigurationRequest",
+      "request": "CreateScenarioRequest",
       "requestExample": "{\n  \"Name\": \"Test Scenario\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"Values\": [\n        \"PC\",\n        \"Xbox\"\n      ]\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"Values\": [\n        \"Slayer\",\n        \"TeamDeathmatch\"\n      ]\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ]\n}",
-      "result": "CreateScenarioConfigurationResponse",
+      "result": "CreateScenarioResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
@@ -12439,17 +12474,17 @@
       ]
     },
     {
-      "name": "DeleteScenarioConfiguration",
-      "summary": "Delete a scenario configuration.",
-      "requestDetails": "Delete a scenario configuration. Can only be deleted if there are no active models for the scenario. Callers must be a title.",
+      "name": "DeleteScenario",
+      "summary": "Delete a scenario.",
+      "requestDetails": "Delete a scenario. Can only be deleted if there are no active models for the scenario. Callers must be a title.",
       "subgroup": "TrueSkill Admin",
       "titleTiers": null,
-      "url": "/TrueSkill/DeleteScenarioConfiguration",
+      "url": "/TrueSkill/DeleteScenario",
       "auth": "EntityToken",
       "method": "POST",
-      "request": "DeleteScenarioConfigurationRequest",
+      "request": "DeleteScenarioRequest",
       "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\"\n}",
-      "result": "DeleteScenarioConfigurationResponse",
+      "result": "DeleteScenarioResponse",
       "resultExample": "",
       "AnyInclusiveFlags": [
         "Beta"
@@ -12996,9 +13031,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetPlayerSkillRequest",
-      "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"1234\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"5678\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
+      "requestExample": "{\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
       "result": "GetPlayerSkillResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-06-21T16:09:28.17Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-06-21T16:09:28.17Z\"\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-07-18T22:40:26.497Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-07-18T22:40:26.497Z\"\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -13029,9 +13064,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetPlayerSkillFromModelRequest",
-      "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Entities\": [\n    {\n      \"Id\": \"1234\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"5678\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
+      "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  }\n}",
       "result": "GetPlayerSkillFromModelResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-06-21T16:09:28.173Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-06-21T16:09:28.173Z\"\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-07-18T22:40:26.501Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"LastProcessedMatchUploadTimeUtc\": \"2024-07-18T22:40:26.501Z\"\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -13113,7 +13148,7 @@
       "request": "GetScenarioConfigurationRequest",
       "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\"\n}",
       "result": "GetScenarioConfigurationResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Test Scenario\",\n    \"Conditions\": [\n      {\n        \"State\": \"Required\",\n        \"Key\": \"Platform\",\n        \"Values\": [\n          \"PC\",\n          \"Xbox\"\n        ]\n      },\n      {\n        \"State\": \"Allowed\",\n        \"Key\": \"GameMode\",\n        \"Values\": [\n          \"Slayer\",\n          \"TeamDeathmatch\"\n        ]\n      }\n    ],\n    \"Events\": [\n      {\n        \"Name\": \"Kills\",\n        \"State\": \"Required\"\n      },\n      {\n        \"Name\": \"Deaths\",\n        \"State\": \"Required\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Name\": \"Test Scenario\",\n    \"PrimaryModelId\": \"71e13b05-cef5-4f03-bd76-abd321ec8943\",\n    \"Conditions\": [\n      {\n        \"State\": \"Required\",\n        \"Key\": \"Platform\",\n        \"Values\": [\n          \"PC\",\n          \"Xbox\"\n        ]\n      },\n      {\n        \"State\": \"Allowed\",\n        \"Key\": \"GameMode\",\n        \"Values\": [\n          \"Slayer\",\n          \"TeamDeathmatch\"\n        ]\n      }\n    ],\n    \"Events\": [\n      {\n        \"Name\": \"Kills\",\n        \"State\": \"Required\"\n      },\n      {\n        \"Name\": \"Deaths\",\n        \"State\": \"Required\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -14441,9 +14476,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UploadMatchResultRequest",
-      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2024-06-21T15:39:28.175Z\",\n    \"EndDateTimeUtc\": \"2024-06-21T16:09:28.175Z\"\n  }\n}",
+      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2024-07-18T22:10:26.503Z\",\n    \"EndDateTimeUtc\": \"2024-07-18T22:40:26.503Z\"\n  }\n}",
       "result": "UploadMatchResultResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\",\n    \"UploadTimeUtc\": \"2024-06-21T16:09:28.178Z\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\",\n    \"UploadTimeUtc\": \"2024-07-18T22:40:26.508Z\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -16775,13 +16810,45 @@
       "id": 1579,
       "name": "CloudScriptAzureFunctionsEventHubRequestError"
     },
-    "LeaderboardRateLimitExceeded": {
-      "id": 1580,
-      "name": "LeaderboardRateLimitExceeded"
-    },
     "ExternalEntityNotAllowedForTier": {
-      "id": 1581,
+      "id": 1580,
       "name": "ExternalEntityNotAllowedForTier"
+    },
+    "InvalidBaseTimeForInterval": {
+      "id": 1581,
+      "name": "InvalidBaseTimeForInterval"
+    },
+    "EntityTypeMismatchWithStatDefinition": {
+      "id": 1582,
+      "name": "EntityTypeMismatchWithStatDefinition"
+    },
+    "SpecifiedVersionLeaderboardNotFound": {
+      "id": 1583,
+      "name": "SpecifiedVersionLeaderboardNotFound"
+    },
+    "LeaderboardColumnLengthMismatchWithStatDefinition": {
+      "id": 1584,
+      "name": "LeaderboardColumnLengthMismatchWithStatDefinition"
+    },
+    "DuplicateColumnNameFound": {
+      "id": 1585,
+      "name": "DuplicateColumnNameFound"
+    },
+    "LinkedStatisticColumnNotFound": {
+      "id": 1586,
+      "name": "LinkedStatisticColumnNotFound"
+    },
+    "LinkedStatisticColumnRequired": {
+      "id": 1587,
+      "name": "LinkedStatisticColumnRequired"
+    },
+    "MultipleLinkedStatisticsNotAllowed": {
+      "id": 1588,
+      "name": "MultipleLinkedStatisticsNotAllowed"
+    },
+    "MaxQueryableVerionsValueNotAllowedForTier": {
+      "id": 1589,
+      "name": "MaxQueryableVerionsValueNotAllowedForTier"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -17491,6 +17558,10 @@
       "id": 15014,
       "name": "EventSinkContainerNotFound"
     },
+    "EventSinkTenantIdInvalid": {
+      "id": 15015,
+      "name": "EventSinkTenantIdInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -17815,9 +17886,45 @@
       "id": 20058,
       "name": "TrueSkillConditionValuePerKeyLimitExceeded"
     },
-    "TrueSkillEventLimitExceeded": {
+    "TrueSkillInvalidTimestamp": {
       "id": 20059,
+      "name": "TrueSkillInvalidTimestamp"
+    },
+    "TrueSkillEventLimitExceeded": {
+      "id": 20060,
       "name": "TrueSkillEventLimitExceeded"
+    },
+    "TrueSkillInvalidPlayers": {
+      "id": 20061,
+      "name": "TrueSkillInvalidPlayers"
+    },
+    "TrueSkillTrueSkillPlayerNull": {
+      "id": 20062,
+      "name": "TrueSkillTrueSkillPlayerNull"
+    },
+    "TrueSkillInvalidPlayerId": {
+      "id": 20063,
+      "name": "TrueSkillInvalidPlayerId"
+    },
+    "TrueSkillInvalidSquadSize": {
+      "id": 20064,
+      "name": "TrueSkillInvalidSquadSize"
+    },
+    "TrueSkillConditionSetNotInModel": {
+      "id": 20065,
+      "name": "TrueSkillConditionSetNotInModel"
+    },
+    "GameSaveManifestNotFound": {
+      "id": 20300,
+      "name": "GameSaveManifestNotFound"
+    },
+    "GameSaveManifestVersionAlreadyExists": {
+      "id": 20301,
+      "name": "GameSaveManifestVersionAlreadyExists"
+    },
+    "GameSaveConflictUpdatingManifest": {
+      "id": 20302,
+      "name": "GameSaveConflictUpdatingManifest"
     },
     "StateShareForbidden": {
       "id": 21000,
@@ -18420,8 +18527,16 @@
     "StatisticDefinitionModificationNotAllowedWhileLinked",
     "LeaderboardUpdateNotAllowedWhileLinked",
     "CloudScriptAzureFunctionsEventHubRequestError",
-    "LeaderboardRateLimitExceeded",
     "ExternalEntityNotAllowedForTier",
+    "InvalidBaseTimeForInterval",
+    "EntityTypeMismatchWithStatDefinition",
+    "SpecifiedVersionLeaderboardNotFound",
+    "LeaderboardColumnLengthMismatchWithStatDefinition",
+    "DuplicateColumnNameFound",
+    "LinkedStatisticColumnNotFound",
+    "LinkedStatisticColumnRequired",
+    "MultipleLinkedStatisticsNotAllowed",
+    "MaxQueryableVerionsValueNotAllowedForTier",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -18599,6 +18714,7 @@
     "EventSinkTitleUnauthorized",
     "EventSinkInsufficientRoleAssignment",
     "EventSinkContainerNotFound",
+    "EventSinkTenantIdInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed",
@@ -18680,7 +18796,16 @@
     "TrueSkillInvalidAnomalyThreshold",
     "TrueSkillConditionKeyLimitExceeded",
     "TrueSkillConditionValuePerKeyLimitExceeded",
+    "TrueSkillInvalidTimestamp",
     "TrueSkillEventLimitExceeded",
+    "TrueSkillInvalidPlayers",
+    "TrueSkillTrueSkillPlayerNull",
+    "TrueSkillInvalidPlayerId",
+    "TrueSkillInvalidSquadSize",
+    "TrueSkillConditionSetNotInModel",
+    "GameSaveManifestNotFound",
+    "GameSaveManifestVersionAlreadyExists",
+    "GameSaveConflictUpdatingManifest",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",

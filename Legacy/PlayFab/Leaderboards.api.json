@@ -46,7 +46,7 @@
         },
         {
           "name": "LinkedStatisticName",
-          "description": "The name of the statistic to link this leaderboard to. Do not provide to create an indepent leaderboard.",
+          "description": "The name of the statistic to link this leaderboard to. Do not provide to create an independent leaderboard.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -64,6 +64,14 @@
           "jsontype": "Number",
           "actualtype": "int32",
           "optional": false
+        },
+        {
+          "name": "VersionConfiguration",
+          "description": "The version reset configuration for the leaderboard definition.",
+          "jsontype": "Object",
+          "actualtype": "VersionConfiguration",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -107,6 +115,14 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
+        },
+        {
+          "name": "VersionConfiguration",
+          "description": "The version reset configuration for the statistic definition.",
+          "jsontype": "Object",
+          "actualtype": "VersionConfiguration",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -862,6 +878,14 @@
           "optional": true
         },
         {
+          "name": "LinkedLeaderboardNames",
+          "description": "The list of leaderboards that are linked to this statistic definition.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
           "name": "Name",
           "description": "Name of the statistic.",
           "jsontype": "String",
@@ -1145,13 +1169,23 @@
       ],
       "properties": [
         {
-          "name": "Name",
-          "jsontype": "String",
-          "actualtype": "String",
+          "name": "LinkedStatisticColumn",
+          "description": "If the value for this column is sourced from a statistic, details of the linked column. Null if the leaderboard is not linked.",
+          "jsontype": "Object",
+          "actualtype": "LinkedStatisticColumn",
+          "isclass": true,
           "optional": true
         },
         {
+          "name": "Name",
+          "description": "A name for the leaderboard column, unique per leaderboard definition.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
           "name": "SortDirection",
+          "description": "The sort direction for this column.",
           "jsontype": "String",
           "actualtype": "LeaderboardSortDirection",
           "isenum": true,
@@ -1279,6 +1313,31 @@
         }
       ]
     },
+    "LinkedStatisticColumn": {
+      "name": "LinkedStatisticColumn",
+      "className": "LinkedStatisticColumn",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LinkedStatisticColumnName",
+          "description": "The name of the statistic column that this leaderboard column is sourced from.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        },
+        {
+          "name": "LinkedStatisticName",
+          "description": "The name of the statistic.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
     "ListLeaderboardDefinitionsRequest": {
       "name": "ListLeaderboardDefinitionsRequest",
       "className": "ListLeaderboardDefinitionsRequest",
@@ -1369,6 +1428,33 @@
         }
       ]
     },
+    "ResetInterval": {
+      "name": "ResetInterval",
+      "className": "ResetInterval",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Manual"
+        },
+        {
+          "name": "Hour"
+        },
+        {
+          "name": "Day"
+        },
+        {
+          "name": "Week"
+        },
+        {
+          "name": "Month"
+        }
+      ]
+    },
     "StatisticAggregationMethod": {
       "name": "StatisticAggregationMethod",
       "className": "StatisticAggregationMethod",
@@ -1413,7 +1499,7 @@
           "name": "Name",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": true
+          "optional": false
         }
       ]
     },
@@ -1479,6 +1565,14 @@
         {
           "name": "LinkedLeaderboardName",
           "description": "Associated leaderboard name.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "LinkedLeaderboardNames",
+          "description": "The list of leaderboards that are linked to this statistic definition.",
+          "collection": "array",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -1715,6 +1809,32 @@
           "optional": true
         }
       ]
+    },
+    "VersionConfiguration": {
+      "name": "VersionConfiguration",
+      "className": "VersionConfiguration",
+      "classNameSpace": "PlayFab.Leaderboards.Models",
+      "assembly": "PlayFab.Leaderboards.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "MaxQueryableVersions",
+          "description": "The maximum number of versions of this leaderboard/statistic that can be queried. ",
+          "jsontype": "Number",
+          "actualtype": "int32",
+          "optional": false
+        },
+        {
+          "name": "ResetInterval",
+          "description": "Reset interval that statistics or leaderboards will reset on. When using Manual intervalthe reset can only be increased by calling the Increase version API. When using Hour interval the resetwill occur at the start of the next hour UTC time. When using Day interval the reset will occur at thestart of the next day in UTC time. When using the Week interval the reset will occur at the start ofthe next Monday in UTC time. When using Month interval the reset will occur at the start of the nextmonth in UTC time.",
+          "jsontype": "String",
+          "actualtype": "ResetInterval",
+          "isenum": true,
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
@@ -1772,9 +1892,12 @@
       ],
       "errors": [
         "ApiNotEnabledForTitle",
+        "InvalidBaseTimeForInterval",
         "LeaderboardNameConflict",
+        "LeaderboardSizeLimitExceeded",
         "LinkedStatisticColumnMismatch",
         "LinkingStatsNotAllowedForEntityType",
+        "MaxQueryableVerionsValueNotAllowedForTier",
         "StatDefinitionAlreadyLinkedToLeaderboard",
         "StatisticNotFound"
       ]
@@ -1794,12 +1917,11 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "seeAlso": [
-        "Statistic/DeleteStatisticDefinition"
-      ],
       "errors": [
         "ApiNotEnabledForTitle",
         "DuplicateStatisticName",
+        "InvalidBaseTimeForInterval",
+        "MaxQueryableVerionsValueNotAllowedForTier",
         "StatisticCountLimitExceeded",
         "StatisticNameConflict"
       ]
@@ -1818,9 +1940,6 @@
       "resultExample": "",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Leaderboard/CreateLeaderboardDefinition"
       ],
       "errors": [
         "LeaderboardDefinitionModificationNotAllowedWhileLinked",
@@ -1841,9 +1960,6 @@
       "resultExample": "",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Leaderboard/UpdateLeaderboardEntries"
       ],
       "errors": [
         "ApiNotEnabledForTitle",
@@ -1889,9 +2005,6 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProfileVersion\": 0,\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Statistic/UpdateStatistics"
       ]
     },
     {
@@ -1912,6 +2025,7 @@
       "errors": [
         "ApiNotEnabledForTitle",
         "InvalidEntityType",
+        "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
       ]
@@ -1934,6 +2048,7 @@
       "errors": [
         "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
+        "SpecifiedVersionLeaderboardNotFound",
         "StatisticNotFound"
       ]
     },
@@ -1978,6 +2093,7 @@
       ],
       "errors": [
         "ApiNotEnabledForTitle",
+        "LeaderboardColumnLengthMismatchWithStatDefinition",
         "LeaderboardNotFound"
       ]
     },
@@ -1998,6 +2114,7 @@
       ],
       "errors": [
         "ApiNotEnabledForTitle",
+        "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
         "StatisticNotFound"
       ]
@@ -2017,13 +2134,7 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "seeAlso": [
-        "Statistic/CreateStatisticDefinition",
-        "Statistic/DeleteStatisticDefinition"
-      ],
       "errors": [
-        "StatisticCountLimitExceeded",
-        "StatisticNameConflict",
         "StatisticNotFound"
       ]
     },
@@ -2041,10 +2152,6 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"StatisticDefinitions\": [\n      {\n        \"Name\": \"Points\",\n        \"AggregationMethod\": \"Last\",\n        \"Version\": 89,\n        \"Created\": \"0001-01-01T00:00:00Z\",\n        \"ResetInterval\": \"Manual\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Statistic/CreateStatisticDefinition",
-        "Statistic/DeleteStatisticDefinition"
       ],
       "errors": [
         "StatisticCountLimitExceeded"
@@ -2064,9 +2171,6 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Scores\": [\n          \"89\"\n        ],\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Statistic/DeleteStatistics"
       ],
       "errors": [
         "APINotEnabledForGameClientAccess",
@@ -2089,9 +2193,6 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"EntitiesStatistics\": [\n      {\n        \"EntityKey\": {\n          \"Id\": \"A197412JDA\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"89\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"3\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      },\n      {\n        \"EntityKey\": {\n          \"Id\": \"B197412JDB\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"50\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"1\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Statistic/DeleteStatistics"
       ],
       "errors": [
         "InvalidEntityType",
@@ -2119,6 +2220,7 @@
       ],
       "errors": [
         "ConcurrentEditError",
+        "LeaderboardDefinitionModificationNotAllowedWhileLinked",
         "LeaderboardNotFound"
       ]
     },
@@ -2226,9 +2328,6 @@
       "AnyInclusiveFlags": [
         "Beta"
       ],
-      "seeAlso": [
-        "Leaderboard/DeleteLeaderboardEntries"
-      ],
       "errors": [
         "LeaderboardNotFound",
         "LeaderboardUpdateNotAllowedWhileLinked"
@@ -2254,8 +2353,9 @@
       ],
       "errors": [
         "APINotEnabledForGameClientAccess",
-        "InvalidAttributeStatisticsSpecified",
+        "EntityTypeMismatchWithStatDefinition",
         "InvalidEntityType",
+        "LeaderboardColumnLengthMismatch",
         "NotAuthorized",
         "StatisticNotFound"
       ]
@@ -4530,13 +4630,45 @@
       "id": 1579,
       "name": "CloudScriptAzureFunctionsEventHubRequestError"
     },
-    "LeaderboardRateLimitExceeded": {
-      "id": 1580,
-      "name": "LeaderboardRateLimitExceeded"
-    },
     "ExternalEntityNotAllowedForTier": {
-      "id": 1581,
+      "id": 1580,
       "name": "ExternalEntityNotAllowedForTier"
+    },
+    "InvalidBaseTimeForInterval": {
+      "id": 1581,
+      "name": "InvalidBaseTimeForInterval"
+    },
+    "EntityTypeMismatchWithStatDefinition": {
+      "id": 1582,
+      "name": "EntityTypeMismatchWithStatDefinition"
+    },
+    "SpecifiedVersionLeaderboardNotFound": {
+      "id": 1583,
+      "name": "SpecifiedVersionLeaderboardNotFound"
+    },
+    "LeaderboardColumnLengthMismatchWithStatDefinition": {
+      "id": 1584,
+      "name": "LeaderboardColumnLengthMismatchWithStatDefinition"
+    },
+    "DuplicateColumnNameFound": {
+      "id": 1585,
+      "name": "DuplicateColumnNameFound"
+    },
+    "LinkedStatisticColumnNotFound": {
+      "id": 1586,
+      "name": "LinkedStatisticColumnNotFound"
+    },
+    "LinkedStatisticColumnRequired": {
+      "id": 1587,
+      "name": "LinkedStatisticColumnRequired"
+    },
+    "MultipleLinkedStatisticsNotAllowed": {
+      "id": 1588,
+      "name": "MultipleLinkedStatisticsNotAllowed"
+    },
+    "MaxQueryableVerionsValueNotAllowedForTier": {
+      "id": 1589,
+      "name": "MaxQueryableVerionsValueNotAllowedForTier"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
@@ -5246,6 +5378,10 @@
       "id": 15014,
       "name": "EventSinkContainerNotFound"
     },
+    "EventSinkTenantIdInvalid": {
+      "id": 15015,
+      "name": "EventSinkTenantIdInvalid"
+    },
     "OperationCanceled": {
       "id": 16000,
       "name": "OperationCanceled"
@@ -5570,9 +5706,45 @@
       "id": 20058,
       "name": "TrueSkillConditionValuePerKeyLimitExceeded"
     },
-    "TrueSkillEventLimitExceeded": {
+    "TrueSkillInvalidTimestamp": {
       "id": 20059,
+      "name": "TrueSkillInvalidTimestamp"
+    },
+    "TrueSkillEventLimitExceeded": {
+      "id": 20060,
       "name": "TrueSkillEventLimitExceeded"
+    },
+    "TrueSkillInvalidPlayers": {
+      "id": 20061,
+      "name": "TrueSkillInvalidPlayers"
+    },
+    "TrueSkillTrueSkillPlayerNull": {
+      "id": 20062,
+      "name": "TrueSkillTrueSkillPlayerNull"
+    },
+    "TrueSkillInvalidPlayerId": {
+      "id": 20063,
+      "name": "TrueSkillInvalidPlayerId"
+    },
+    "TrueSkillInvalidSquadSize": {
+      "id": 20064,
+      "name": "TrueSkillInvalidSquadSize"
+    },
+    "TrueSkillConditionSetNotInModel": {
+      "id": 20065,
+      "name": "TrueSkillConditionSetNotInModel"
+    },
+    "GameSaveManifestNotFound": {
+      "id": 20300,
+      "name": "GameSaveManifestNotFound"
+    },
+    "GameSaveManifestVersionAlreadyExists": {
+      "id": 20301,
+      "name": "GameSaveManifestVersionAlreadyExists"
+    },
+    "GameSaveConflictUpdatingManifest": {
+      "id": 20302,
+      "name": "GameSaveConflictUpdatingManifest"
     },
     "StateShareForbidden": {
       "id": 21000,
@@ -6175,8 +6347,16 @@
     "StatisticDefinitionModificationNotAllowedWhileLinked",
     "LeaderboardUpdateNotAllowedWhileLinked",
     "CloudScriptAzureFunctionsEventHubRequestError",
-    "LeaderboardRateLimitExceeded",
     "ExternalEntityNotAllowedForTier",
+    "InvalidBaseTimeForInterval",
+    "EntityTypeMismatchWithStatDefinition",
+    "SpecifiedVersionLeaderboardNotFound",
+    "LeaderboardColumnLengthMismatchWithStatDefinition",
+    "DuplicateColumnNameFound",
+    "LinkedStatisticColumnNotFound",
+    "LinkedStatisticColumnRequired",
+    "MultipleLinkedStatisticsNotAllowed",
+    "MaxQueryableVerionsValueNotAllowedForTier",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -6354,6 +6534,7 @@
     "EventSinkTitleUnauthorized",
     "EventSinkInsufficientRoleAssignment",
     "EventSinkContainerNotFound",
+    "EventSinkTenantIdInvalid",
     "OperationCanceled",
     "InvalidDisplayNameRandomSuffixLength",
     "AllowNonUniquePlayerDisplayNamesDisableNotAllowed",
@@ -6435,7 +6616,16 @@
     "TrueSkillInvalidAnomalyThreshold",
     "TrueSkillConditionKeyLimitExceeded",
     "TrueSkillConditionValuePerKeyLimitExceeded",
+    "TrueSkillInvalidTimestamp",
     "TrueSkillEventLimitExceeded",
+    "TrueSkillInvalidPlayers",
+    "TrueSkillTrueSkillPlayerNull",
+    "TrueSkillInvalidPlayerId",
+    "TrueSkillInvalidSquadSize",
+    "TrueSkillConditionSetNotInModel",
+    "GameSaveManifestNotFound",
+    "GameSaveManifestVersionAlreadyExists",
+    "GameSaveConflictUpdatingManifest",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
