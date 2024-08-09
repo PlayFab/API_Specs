@@ -178,13 +178,39 @@ function CheckLegacyApiGroupList(playFabUrl, tocObj, isAzure) {
         description = "legacyApiList";
     }
 
+    var apiList = tocObj.documents.filter(obj =>
+        obj.format === "LegacyPlayFabApiSpec" || obj.format === "LegacyPlayFabModels"
+    )
+
     var options = {
         description: description,
         expectJson: true,
-        jsonTabSpaces: 0
-        // TODO: Add a function to compare tocObj with the json result
+        jsonTabSpaces: 0,
+        tocRef: apiList,
+        onFileDownload: CompareApiListWithToc
     };
     GetFileFromUrl(legacyApiListUrl, options);
+}
+
+function CompareApiListWithToc(apis, options) {
+    var apiList = JSON.parse(apis);
+    // Check if all elements from the incoming API list exist in the TOC
+    var allElementsExist = apiList.every(element => 
+        options.tocRef.some(obj => obj.docKey === element)); // The incoming API name is a subset of the TOC.document.name
+    if(!allElementsExist) {
+        throw "Current TOC does not match API List.\n TOC: " + JSON.stringify(options.tocRef, apiListReplacer, 2) + "\n API List: " + apis;
+    }
+    return true;
+}
+
+function apiListReplacer(key, value) {
+    if (key === "" || key === "docKey") {
+      return value;
+    }
+    if (typeof value === "object" && value !== null) {
+        return { docKey: value.docKey };
+    }
+    return undefined;
 }
 
 // Find Api Groups from the TOC or swagger Api list, which don't exist in the other
@@ -200,13 +226,37 @@ function CheckSwaggerApiGroupList(playFabUrl, tocObj, isAzure) {
         description = "legacySwaggerList";
     }
 
+    var swaggerList = tocObj.documents.filter(obj => obj.format === "Swagger")
+
     var options = {
-        description: "description",
+        description: description,
         expectJson: true,
-        jsonTabSpaces: 0
-        // TODO: Add a function to compare tocObj with the json result
+        jsonTabSpaces: 0,
+        tocRef: swaggerList,
+        onFileDownload: CompareSwaggerListWithToc
     };
     GetFileFromUrl(swaggerApiListUrl, options);
+}
+
+function CompareSwaggerListWithToc(swagger, options) {
+    var swaggerList = JSON.parse(swagger);
+    // Check if all elements from the incoming Swagger list exist in the TOC
+    var allElementsExist = swaggerList.every(element =>
+       options.tocRef.some(obj => element.includes(obj.pfurl.split("/")[1]))); // TOC.document.pfurl is a subset the incoming Swagger entry
+    if(!allElementsExist) {
+        throw "Current TOC does not match Swagger List. \nTOC: " + JSON.stringify(options.tocRef, swaggerListReplacer, 2) + "\n Swagger: " + swagger;
+    }
+    return true;
+}
+
+function swaggerListReplacer(key, value) {
+    if (key === "" || key === "pfurl") {
+      return value;
+    }
+    if (typeof value === "object" && value !== null) {
+        return { pfurl: value.pfurl.split("/")[1] };
+    }
+    return undefined;
 }
 
 function DoWork() {
