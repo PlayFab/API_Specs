@@ -4589,7 +4589,7 @@
       "className": "GetFriendsListResult",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
+      "description": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. Note: If the user authenticated with AuthenticationToken when calling LoginWithFacebook, instead of AcessToken, an empty list will be returned. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
       "isResult": true,
       "properties": [
         {
@@ -8770,7 +8770,7 @@
       "className": "LoginWithFacebookRequest",
       "classNameSpace": "PlayFab.Client.Models",
       "assembly": "PlayFab.Client.Models",
-      "description": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Note that titles should never re-use the same Facebook applications between PlayFab Title IDs, as Facebook provides unique user IDs per application and doing so can result in issues with the Facebook ID for the user in their PlayFab account information. If you must re-use an application in a new PlayFab Title ID, please be sure to first unlink all accounts from Facebook, or delete all users in the first Title ID.",
+      "description": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Note that titles should never re-use the same Facebook applications between PlayFab Title IDs, as Facebook provides unique user IDs per application and doing so can result in issues with the Facebook ID for the user in their PlayFab account information. If you must re-use an application in a new PlayFab Title ID, please be sure to first unlink all accounts from Facebook, or delete all users in the first Title ID. Note: If the user is authenticated with AuthenticationToken, instead of AccessToken, the GetFriendsList API will return an empty list.",
       "isRequest": true,
       "properties": [
         {
@@ -8778,7 +8778,14 @@
           "description": "Unique identifier from Facebook for the user.",
           "jsontype": "String",
           "actualtype": "String",
-          "optional": false
+          "optional": true
+        },
+        {
+          "name": "AuthenticationToken",
+          "description": "Token used for limited login authentication.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         },
         {
           "name": "CreateAccount",
@@ -15936,12 +15943,6 @@
       "requestExample": "{\n  \"TradeId\": \"D819CEC225EA9948C351\"\n}",
       "result": "CancelTradeResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Trade\": {\n      \"Status\": \"Cancelled\",\n      \"TradeId\": \"D819CEC225EA9948C351\",\n      \"OfferingPlayerId\": \"CD803BF233CE76CC\",\n      \"OfferedInventoryInstanceIds\": [\n        \"1359447\",\n        \"635691\"\n      ],\n      \"RequestedCatalogItemIds\": [\n        \"rare_hat_7\"\n      ],\n      \"OpenedAt\": \"2015-04-07T09:04:28Z\",\n      \"CancelledAt\": \"2015-04-07T09:18:24Z\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Client/AcceptTrade",
-        "Client/GetPlayerTrades",
-        "Client/GetTradeStatus",
-        "Client/OpenTrade"
-      ],
       "errors": [
         "TradeAlreadyFilled",
         "TradeCancelled",
@@ -15964,10 +15965,6 @@
       "requestExample": "{\n  \"OrderId\": \"8853591446005860822\"\n}",
       "result": "ConfirmPurchaseResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"OrderId\": \"8853591446005860822\",\n    \"PurchaseDate\": \"2014-04-07T09:04:28Z\",\n    \"Items\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"40895075594\",\n        \"CatalogVersion\": \"5\",\n        \"DisplayName\": \"Level 5 Shield\",\n        \"UnitCurrency\": \"GV\",\n        \"UnitPrice\": 25\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Client/PayForPurchase",
-        "Client/StartPurchase"
-      ],
       "errors": [
         "FailedByPaymentProvider",
         "PurchaseDoesNotExist"
@@ -16248,12 +16245,7 @@
       "request": "GetCharacterLeaderboardRequest",
       "requestExample": "{\n  \"CharacterType\": \"blue_warrior\",\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 0,\n  \"MaxResultsCount\": 20\n}",
       "result": "GetCharacterLeaderboardResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Client/GetCharacterStatistics",
-        "Client/GetLeaderboardAroundCharacter",
-        "Client/UpdateCharacterStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetCharacterReadOnlyData",
@@ -16320,10 +16312,7 @@
       "request": "GetCloudScriptUrlRequest",
       "requestExample": "{\n  \"Version\": 1,\n  \"Testing\": false\n}",
       "result": "GetCloudScriptUrlResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Url\": \"https://1.playfablogic.com/0/prod\"\n  }\n}",
-      "seeAlso": [
-        "Client/RunCloudScript"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Url\": \"https://1.playfablogic.com/0/prod\"\n  }\n}"
     },
     {
       "name": "GetContentDownloadUrl",
@@ -16364,14 +16353,7 @@
       "request": "CurrentGamesRequest",
       "requestExample": "{\n  \"Region\": \"USCentral\",\n  \"BuildVersion\": \"5.0.1\",\n  \"GameMode\": \"CaptureTheFlag\",\n  \"StatisticName\": \"level\",\n  \"TagFilter\": {\n    \"Includes\": [\n      {\n        \"Data\": {\n          \"level_cap\": \"0\"\n        }\n      }\n    ],\n    \"Excludes\": [\n      {\n        \"Data\": {\n          \"newbie\": \"0\"\n        }\n      }\n    ]\n  }\n}",
       "result": "CurrentGamesResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Games\": [\n      {\n        \"Region\": \"USCentral\",\n        \"LobbyID\": \"Lobby 32\",\n        \"BuildVersion\": \"5.01\",\n        \"GameMode\": \"0\",\n        \"MaxPlayers\": 26,\n        \"PlayerUserIds\": [\n          \"70CE3CC42DD4D363\",\n          \"17978105374C103C\"\n        ],\n        \"RunTime\": 400,\n        \"GameServerState\": 0,\n        \"GameServerData\": \"\\\"ValueA\\\":\\\"FFA\\\",\\\"ValueB\\\":\\\"BBE\\\"\"\n      }\n    ],\n    \"PlayerCount\": 95,\n    \"GameCount\": 19\n  }\n}",
-      "seeAlso": [
-        "Admin/AddServerBuild",
-        "Client/GetGameServerRegions",
-        "Client/Matchmake",
-        "Admin/RemoveServerBuild",
-        "Client/StartGame"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Games\": [\n      {\n        \"Region\": \"USCentral\",\n        \"LobbyID\": \"Lobby 32\",\n        \"BuildVersion\": \"5.01\",\n        \"GameMode\": \"0\",\n        \"MaxPlayers\": 26,\n        \"PlayerUserIds\": [\n          \"70CE3CC42DD4D363\",\n          \"17978105374C103C\"\n        ],\n        \"RunTime\": 400,\n        \"GameServerState\": 0,\n        \"GameServerData\": \"\\\"ValueA\\\":\\\"FFA\\\",\\\"ValueB\\\":\\\"BBE\\\"\"\n      }\n    ],\n    \"PlayerCount\": 95,\n    \"GameCount\": 19\n  }\n}"
     },
     {
       "name": "GetFriendLeaderboard",
@@ -16386,12 +16368,6 @@
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 1258,\n  \"MaxResultsCount\": 20,\n  \"ExternalPlatformFriends\": \"Facebook, Xbox, Psn\"\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/GetFriendLeaderboardAroundPlayer",
-        "Client/GetLeaderboard",
-        "Client/GetLeaderboardAroundPlayer",
-        "Client/GetUserStatistics"
-      ],
       "errors": [
         "ExpiredXboxLiveToken",
         "FacebookAPIError",
@@ -16446,12 +16422,6 @@
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"MaxResultsCount\": 20,\n  \"ExternalPlatformFriends\": \"None\"\n}",
       "result": "GetFriendLeaderboardAroundPlayerResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/GetFriendLeaderboard",
-        "Client/GetLeaderboard",
-        "Client/GetLeaderboardAroundPlayer",
-        "Client/GetUserStatistics"
-      ],
       "errors": [
         "ExpiredXboxLiveToken",
         "FacebookAPIError",
@@ -16465,7 +16435,7 @@
     {
       "name": "GetFriendsList",
       "summary": "Retrieves the current friend list for the local user, constrained to users who have PlayFab accounts. Friends from linked accounts (Facebook, Steam) are also included. You may optionally exclude some linked services' friends.",
-      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
+      "resultDetails": "If any additional services are queried for the user's friends, those friends who also have a PlayFab account registered for the title will be returned in the results. For Facebook, user has to have logged into the title's Facebook app recently, and only friends who also plays this game will be included. Note: If the user authenticated with AuthenticationToken when calling LoginWithFacebook, instead of AcessToken, an empty list will be returned. For Xbox Live, user has to have logged into the Xbox Live recently, and only friends who also play this game will be included.",
       "subgroup": "Friend List Management",
       "titleTiers": null,
       "url": "/Client/GetFriendsList",
@@ -16475,11 +16445,6 @@
       "requestExample": "{\n  \"ExternalPlatformFriends\": \"Steam\"\n}",
       "result": "GetFriendsListResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Friends\": [\n      {\n        \"FriendPlayFabId\": \"93798903892789754w\",\n        \"Username\": \"accountName\",\n        \"TitleDisplayName\": \"Davros01\",\n        \"Tags\": [\n          \"single blue eye\",\n          \"genius with robotics\"\n        ],\n        \"CurrentMatchmakerLobbyId\": \"2073\",\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile1.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 7\n            },\n            {\n              \"Name\": \"Points\",\n              \"Version\": 1,\n              \"Value\": 40\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 10\n            }\n          ]\n        }\n      },\n      {\n        \"FriendPlayFabId\": \"334907923945f\",\n        \"Username\": \"accountName\",\n        \"TitleDisplayName\": \"CyberLeader1\",\n        \"Tags\": [\n          \"allergic to gold\",\n          \"upgradeable\"\n        ],\n        \"CurrentMatchmakerLobbyId\": \"2073\",\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile2.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 15\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 5\n            }\n          ]\n        }\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Client/AddFriend",
-        "Client/GetPlayerProfile",
-        "Client/RemoveFriend"
-      ],
       "errors": [
         "AccountNotFound",
         "ExpiredXboxLiveToken",
@@ -16508,13 +16473,6 @@
       "requestExample": "{\n  \"BuildVersion\": \"5.0.1\",\n  \"TitleId\": \"2074\"\n}",
       "result": "GameServerRegionsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Regions\": [\n      {\n        \"Region\": \"USEast\",\n        \"Name\": \"USCentral\",\n        \"Available\": true,\n        \"PingUrl\": \"10.31.58.95\"\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Admin/AddServerBuild",
-        "Client/GetCurrentGames",
-        "Client/Matchmake",
-        "Admin/RemoveServerBuild",
-        "Client/StartGame"
-      ],
       "errors": [
         "SecretKeyNotFound"
       ]
@@ -16578,12 +16536,7 @@
       "request": "GetLeaderboardAroundCurrentUserRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"MaxResultsCount\": 20\n}",
       "result": "GetLeaderboardAroundCurrentUserResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/GetFriendLeaderboard",
-        "Client/GetLeaderboard",
-        "Client/GetUserStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ],\n    \"Version\": 0\n  }\n}"
     },
     {
       "name": "GetLeaderboardAroundPlayer",
@@ -16619,12 +16572,7 @@
       "request": "GetLeaderboardForUsersCharactersRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\"\n}",
       "result": "GetLeaderboardForUsersCharactersResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Client/GetCharacterLeaderboard",
-        "Client/GetLeaderboard",
-        "Server/GetLeaderboardAroundUser"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPaymentToken",
@@ -16638,9 +16586,6 @@
       "requestExample": "{\n  \"TokenProvider\": \"xsolla\"\n}",
       "result": "GetPaymentTokenResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ProviderToken\": \"uV0iCEvWkUGVqWerTgbrndWePOMiLAfO\",\n    \"OrderId\": \"8853591446005860822\"\n  }\n}",
-      "seeAlso": [
-        "Client/GetPurchase"
-      ],
       "errors": [
         "InvalidPaymentProvider",
         "NoPartnerEnabled"
@@ -17079,9 +17024,6 @@
       "requestExample": "{\n  \"StoreId\": \"BonusStore\"\n}",
       "result": "GetStoreItemsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Store\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 180,\n          \"GV\": 20\n        },\n        \"RealCurrencyPrices\": {\n          \"GBP\": 100\n        }\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 250,\n          \"GV\": 30\n        }\n      },\n      {\n        \"ItemId\": \"starterpack_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 399\n        }\n      }\n    ],\n    \"Source\": \"Admin\",\n    \"CatalogVersion\": \"1\",\n    \"StoreId\": \"BonusStore\",\n    \"MarketingData\": {\n      \"DisplayName\": \"Amazing Bonus Store\",\n      \"Description\": \"Elite tier bonuses available here\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Client/GetCatalogItems"
-      ],
       "errors": [
         "StoreNotFound"
       ]
@@ -17190,10 +17132,7 @@
       "request": "GetUserCombinedInfoRequest",
       "requestExample": "{\n  \"GetInventory\": false,\n  \"UserDataKeys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"GetReadOnlyData\": false\n}",
       "result": "GetUserCombinedInfoResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"10931252888739651331\",\n    \"AccountInfo\": {\n      \"PlayFabId\": \"10931252888739651331\",\n      \"Created\": \"2013-04-07T09:04:28Z\",\n      \"Username\": \"accountname\",\n      \"TitleInfo\": {\n        \"Origination\": \"IOS\",\n        \"Created\": \"2014-01-08T11:03:18Z\",\n        \"LastLogin\": \"2014-04-07T09:04:28Z\",\n        \"FirstLogin\": \"2014-01-08T11:03:18Z\",\n        \"TitlePlayerAccount\": {\n          \"Id\": \"174812abf712\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        }\n      },\n      \"FacebookInfo\": {\n        \"FacebookId\": \"23525445454\"\n      },\n      \"SteamInfo\": {\n        \"SteamCountry\": \"US\",\n        \"SteamCurrency\": \"USD\"\n      },\n      \"GameCenterInfo\": {\n        \"GameCenterId\": \"someone\"\n      }\n    },\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    },\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    },\n    \"DataVersion\": 12,\n    \"ReadOnlyDataVersion\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/GetPlayerCombinedInfo"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"10931252888739651331\",\n    \"AccountInfo\": {\n      \"PlayFabId\": \"10931252888739651331\",\n      \"Created\": \"2013-04-07T09:04:28Z\",\n      \"Username\": \"accountname\",\n      \"TitleInfo\": {\n        \"Origination\": \"IOS\",\n        \"Created\": \"2014-01-08T11:03:18Z\",\n        \"LastLogin\": \"2014-04-07T09:04:28Z\",\n        \"FirstLogin\": \"2014-01-08T11:03:18Z\",\n        \"TitlePlayerAccount\": {\n          \"Id\": \"174812abf712\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        }\n      },\n      \"FacebookInfo\": {\n        \"FacebookId\": \"23525445454\"\n      },\n      \"SteamInfo\": {\n        \"SteamCountry\": \"US\",\n        \"SteamCurrency\": \"USD\"\n      },\n      \"GameCenterInfo\": {\n        \"GameCenterId\": \"someone\"\n      }\n    },\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    },\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    },\n    \"DataVersion\": 12,\n    \"ReadOnlyDataVersion\": 0\n  }\n}"
     },
     {
       "name": "GetUserData",
@@ -17308,12 +17247,7 @@
       "request": "GetUserStatisticsRequest",
       "requestExample": "{}",
       "result": "GetUserStatisticsResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"UserStatistics\": {\n      \"Headshots\": 18,\n      \"Kills\": 47\n    }\n  }\n}",
-      "seeAlso": [
-        "Client/GetLeaderboard",
-        "Client/GetLeaderboardAroundCurrentUser",
-        "Client/UpdateUserStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"UserStatistics\": {\n      \"Headshots\": 18,\n      \"Kills\": 47\n    }\n  }\n}"
     },
     {
       "name": "GrantCharacterToUser",
@@ -17365,10 +17299,6 @@
       "requestExample": "{\n  \"IdentityToken\": \"eyJraWQi...\"\n}",
       "result": "EmptyResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LoginWithApple",
-        "Client/UnlinkApple"
-      ],
       "errors": [
         "AppleNotEnabledForTitle",
         "InvalidIdentityProviderId",
@@ -17593,10 +17523,6 @@
       "requestExample": "{\n  \"NintendoSwitchDeviceId\": \"526f79204261747479\"\n}",
       "result": "LinkNintendoSwitchDeviceIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LoginWithNintendoSwitchDeviceId",
-        "Client/UnlinkNintendoSwitchDeviceId"
-      ],
       "errors": [
         "LinkedIdentifierAlreadyClaimed"
       ]
@@ -17613,10 +17539,6 @@
       "requestExample": "{\n  \"ConnectionId\": \"exampleprovider\",\n  \"IdToken\": \"eyJraWQi...\"\n}",
       "result": "EmptyResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LoginWithOpenIdConnect",
-        "Client/UnlinkOpenIdConnect"
-      ],
       "errors": [
         "InvalidIdentityProviderId",
         "LinkedIdentifierAlreadyClaimed"
@@ -17684,10 +17606,6 @@
       "requestExample": "{\n  \"AccessToken\": \"TwitchAccessToken\"\n}",
       "result": "LinkTwitchAccountResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LoginWithTwitch",
-        "Client/UnlinkTwitch"
-      ],
       "errors": [
         "AccountAlreadyLinked",
         "FeatureNotConfiguredForTitle",
@@ -17733,11 +17651,6 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Properties\": [\n      {\n        \"Name\": \"level\",\n        \"Value\": 5\n      },\n      {\n        \"Name\": \"created\",\n        \"Value\": true\n      }\n    ],\n    \"PropertiesVersion\": 12\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
-      ],
-      "seeAlso": [
-        "Client/DeletePlayerCustomProperties",
-        "Client/GetPlayerCustomProperty",
-        "Client/UpdatePlayerCustomProperties"
       ]
     },
     {
@@ -17780,11 +17693,6 @@
       "requestExample": "{\n  \"AndroidDeviceId\": \"526f79204261747479\",\n  \"OS\": \"5.0\",\n  \"AndroidDevice\": \"Nexus 6\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkAndroidDeviceID",
-        "Client/LoginWithIOSDeviceID",
-        "Client/UnlinkAndroidDeviceID"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -17808,10 +17716,6 @@
       "requestExample": "{\n  \"IdentityToken\": \"eyJraWQi...\",\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkApple",
-        "Client/UnlinkApple"
-      ],
       "errors": [
         "AppleNotEnabledForTitle",
         "EncryptionKeyMissing",
@@ -17878,7 +17782,7 @@
     {
       "name": "LoginWithFacebook",
       "summary": "Signs the user in using a Facebook access token, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
-      "requestDetails": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Note that titles should never re-use the same Facebook applications between PlayFab Title IDs, as Facebook provides unique user IDs per application and doing so can result in issues with the Facebook ID for the user in their PlayFab account information. If you must re-use an application in a new PlayFab Title ID, please be sure to first unlink all accounts from Facebook, or delete all users in the first Title ID.",
+      "requestDetails": "Facebook sign-in is accomplished using the Facebook User Access Token. More information on the Token can be found in the Facebook developer documentation (https://developers.facebook.com/docs/facebook-login/access-tokens/). In Unity, for example, the Token is available as AccessToken in the Facebook SDK ScriptableObject FB. If this is the first time a user has signed in with the Facebook account and CreateAccount is set to true, a new PlayFab account will be created and linked to the provided account's Facebook ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Facebook account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Note that titles should never re-use the same Facebook applications between PlayFab Title IDs, as Facebook provides unique user IDs per application and doing so can result in issues with the Facebook ID for the user in their PlayFab account information. If you must re-use an application in a new PlayFab Title ID, please be sure to first unlink all accounts from Facebook, or delete all users in the first Title ID. Note: If the user is authenticated with AuthenticationToken, instead of AccessToken, the GetFriendsList API will return an empty list.",
       "subgroup": "Authentication",
       "titleTiers": null,
       "url": "/Client/LoginWithFacebook",
@@ -17888,10 +17792,6 @@
       "requestExample": "{\n  \"AccessToken\": \"FaceAccessTokenID\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkFacebookAccount",
-        "Client/UnlinkFacebookAccount"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18021,10 +17921,6 @@
       "requestExample": "{\n  \"DeviceId\": \"29848d9bh8900a0b003\",\n  \"OS\": \"7.11\",\n  \"DeviceModel\": \"Iphone 5s\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkIOSDeviceID",
-        "Client/UnlinkIOSDeviceID"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18049,10 +17945,6 @@
       "requestExample": "{\n  \"KongregateId\": \"457332\",\n  \"AuthTicket\": \"SomeKongregateTokenHere\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkKongregate",
-        "Client/UnlinkKongregate"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18075,10 +17967,6 @@
       "requestExample": "{\n  \"IdentityToken\": \"eyJraWQi...\",\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkNintendoServiceAccount",
-        "Client/UnlinkNintendoServiceAccount"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18102,10 +17990,6 @@
       "requestExample": "{\n  \"NintendoSwitchDeviceId\": \"526f79204261747479\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkNintendoSwitchDeviceId",
-        "Client/UnlinkNintendoSwitchDeviceId"
-      ],
       "errors": [
         "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
@@ -18127,10 +18011,6 @@
       "requestExample": "{\n  \"ConnectionId\": \"exampleprovider\",\n  \"IdToken\": \"eyJraWQi...\",\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkOpenIdConnect",
-        "Client/UnlinkOpenIdConnect"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18155,11 +18035,6 @@
       "requestExample": "{\n  \"Username\": \"theuser\",\n  \"Password\": \"ExampleSecret\",\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/AddUsernamePassword",
-        "Client/LoginWithEmailAddress",
-        "Client/RegisterPlayFabUser"
-      ],
       "errors": [
         "InvalidSignature",
         "InvalidUsernameOrPassword",
@@ -18235,10 +18110,6 @@
       "requestExample": "{\n  \"AccessToken\": \"SomeTwitchTokenHere\",\n  \"CreateAccount\": false,\n  \"TitleId\": \"144\"\n}",
       "result": "LoginResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SessionTicket\": \"50DF92E291CCD4C3---A54F-8D3909FF54DEE10-B7817722BC94E536.A6DCCFE1C9709ABB\",\n    \"PlayFabId\": \"50DF92E291CCD4C3\",\n    \"NewlyCreated\": false\n  }\n}",
-      "seeAlso": [
-        "Client/LinkTwitch",
-        "Client/UnlinkTwitch"
-      ],
       "errors": [
         "EncryptionKeyMissing",
         "EvaluationModePlayerCountExceeded",
@@ -18297,13 +18168,6 @@
       "requestExample": "{\n  \"BuildVersion\": \"5.01\",\n  \"Region\": \"USCentral\",\n  \"GameMode\": \"0\",\n  \"TagFilter\": {\n    \"Includes\": [\n      {\n        \"Data\": {\n          \"level_cap\": \"0\"\n        }\n      }\n    ],\n    \"Excludes\": [\n      {\n        \"Data\": {\n          \"newbie\": \"0\"\n        }\n      }\n    ]\n  }\n}",
       "result": "MatchmakeResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LobbyID\": \"4006214\",\n    \"ServerHostname\": \"192.168.0.1\",\n    \"ServerIPV6Address\": \"2600:1f18:70d:5100:8949:a309:976a:e6fa\",\n    \"ServerPort\": 9000,\n    \"Ticket\": \"e98yf289f248902f4904f0924f9pj\",\n    \"Status\": \"Waiting\"\n  }\n}",
-      "seeAlso": [
-        "Admin/AddServerBuild",
-        "Client/GetCurrentGames",
-        "Client/GetGameServerRegions",
-        "Admin/RemoveServerBuild",
-        "Client/StartGame"
-      ],
       "errors": [
         "BuildNotFound",
         "GameModeNotFound"
@@ -18321,12 +18185,6 @@
       "requestExample": "{\n  \"OfferedInventoryInstanceIds\": [\n    \"1359447\",\n    \"635691\"\n  ],\n  \"RequestedCatalogItemIds\": [\n    \"rare_hat_7\"\n  ]\n}",
       "result": "OpenTradeResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Trade\": {\n      \"Status\": \"Opening\",\n      \"TradeId\": \"D819CEC225EA9948C351\",\n      \"OfferingPlayerId\": \"CD803BF233CE76CC\",\n      \"OfferedInventoryInstanceIds\": [\n        \"1359447\",\n        \"635691\"\n      ],\n      \"RequestedCatalogItemIds\": [\n        \"rare_hat_7\"\n      ],\n      \"OpenedAt\": \"2015-04-07T09:04:28Z\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Client/AcceptTrade",
-        "Client/CancelTrade",
-        "Client/GetPlayerTrades",
-        "Client/GetTradeStatus"
-      ],
       "errors": [
         "TradeAcceptedCatalogItemInvalid",
         "TradeAcceptedCatalogItemIsNotTradable",
@@ -18358,10 +18216,6 @@
       "requestExample": "{\n  \"OrderId\": \"8853591446005860822\",\n  \"ProviderName\": \"PayPal\",\n  \"Currency\": \"RM\"\n}",
       "result": "PayForPurchaseResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"OrderId\": \"8853591446005860822\",\n    \"Status\": \"Init\",\n    \"PurchaseCurrency\": \"RM\",\n    \"PurchasePrice\": 199,\n    \"CreditApplied\": 0\n  }\n}",
-      "seeAlso": [
-        "Client/ConfirmPurchase",
-        "Client/StartPurchase"
-      ],
       "errors": [
         "DuplicatePurchaseTransactionId",
         "FailedByPaymentProvider",
@@ -18663,9 +18517,6 @@
       "requestExample": "{\n  \"ActionId\": \"onLevelComplete\",\n  \"ParamsEncoded\": \"{\\\"level\\\":1}\"\n}",
       "result": "RunCloudScriptResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ActionId\": \"onLevelComplete\",\n    \"Version\": 1,\n    \"Revision\": 2,\n    \"Results\": {\n      \"rewards\": [\n        {\n          \"PlayFabId\": 1111111111111111,\n          \"ItemId\": \"TestItem1\",\n          \"Annotation\": \"Given by completing level 1\",\n          \"Result\": false\n        }\n      ],\n      \"totalXP\": 1001\n    },\n    \"ResultsEncoded\": \"{\\\"rewards\\\":[{\\\"PlayFabId\\\":\\\"1111111111111111\\\",\\\"ItemId\\\":\\\"TestItem1\\\",\\\"Annotation\\\":\\\"Given by completing level 1\\\",\\\"Result\\\":false}]}\",\n    \"ActionLog\": \"info: \",\n    \"ExecutionTime\": 0.0709738\n  }\n}",
-      "seeAlso": [
-        "Client/GetCloudScriptUrl"
-      ],
       "errors": [
         "CloudScriptNotFound",
         "JavascriptException"
@@ -18703,11 +18554,7 @@
       "request": "SetFriendTagsRequest",
       "requestExample": "{\n  \"FriendPlayFabId\": \"29837799\",\n  \"Tags\": [\n    \"great sniper\",\n    \"no good at melee\"\n  ]\n}",
       "result": "SetFriendTagsResult",
-      "resultExample": "",
-      "seeAlso": [
-        "Client/AddFriend",
-        "Client/RemoveFriend"
-      ]
+      "resultExample": ""
     },
     {
       "name": "SetPlayerSecret",
@@ -18747,13 +18594,6 @@
       "requestExample": "{\n  \"BuildVersion\": \"5.01\",\n  \"Region\": \"EUWest\",\n  \"GameMode\": \"0\",\n  \"CustomCommandLineData\": \"custom_gameserver_commandline_parameter\"\n}",
       "result": "StartGameResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"LobbyID\": \"4006214\",\n    \"ServerHostname\": \"103.29.85.12\",\n    \"ServerIPV6Address\": \"2600:1f18:70d:5100:8949:a309:976a:e6fa\",\n    \"ServerPort\": 2019,\n    \"Ticket\": \"7D2920DE87C1D3A7-76561198047385422-3-3-8D0252520DB76F9-E6D775474D744A16.XXX\",\n    \"Expires\": \"Never\",\n    \"Password\": \"ExampleSecret\"\n  }\n}",
-      "seeAlso": [
-        "Admin/AddServerBuild",
-        "Client/GetCurrentGames",
-        "Client/GetGameServerRegions",
-        "Client/Matchmake",
-        "Admin/RemoveServerBuild"
-      ],
       "errors": [
         "APINotEnabledForGameClientAccess",
         "BuildNotFound"
@@ -18772,10 +18612,6 @@
       "requestExample": "{\n  \"CatalogVersion\": \"0\",\n  \"StoreId\": \"BonusStore\",\n  \"Items\": [\n    {\n      \"ItemId\": \"something\",\n      \"Quantity\": 1,\n      \"Annotation\": \"totally buying something\"\n    }\n  ]\n}",
       "result": "StartPurchaseResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"OrderId\": \"8853591446005860822\",\n    \"Contents\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemClass\": \"shields\",\n        \"DisplayName\": \"Level 5 Shield\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 199,\n          \"GV\": 25\n        }\n      }\n    ],\n    \"PaymentOptions\": [\n      {\n        \"Currency\": \"RM\",\n        \"ProviderName\": \"Steam\",\n        \"Price\": 199,\n        \"StoreCredit\": 0\n      },\n      {\n        \"Currency\": \"RM\",\n        \"ProviderName\": \"Amazon\",\n        \"Price\": 199,\n        \"StoreCredit\": 0\n      },\n      {\n        \"Currency\": \"RM\",\n        \"ProviderName\": \"Paypal\",\n        \"Price\": 199,\n        \"StoreCredit\": 0\n      },\n      {\n        \"Currency\": \"GV\",\n        \"ProviderName\": \"TitleA90A\",\n        \"Price\": 25,\n        \"StoreCredit\": 0\n      }\n    ],\n    \"VirtualCurrencyBalances\": {\n      \"GV\": 25\n    }\n  }\n}",
-      "seeAlso": [
-        "Client/ConfirmPurchase",
-        "Client/PayForPurchase"
-      ],
       "errors": [
         "StoreNotFound"
       ]
@@ -18814,10 +18650,6 @@
       "requestExample": "{\n  \"AndroidDeviceId\": \"526f79204261747479\"\n}",
       "result": "UnlinkAndroidDeviceIDResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkAndroidDeviceID",
-        "Client/LoginWithAndroidDeviceID"
-      ],
       "errors": [
         "AccountNotLinked",
         "DeviceNotLinked"
@@ -18835,10 +18667,6 @@
       "requestExample": "{}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkApple",
-        "Client/LoginWithApple"
-      ],
       "errors": [
         "AccountNotLinked",
         "AppleNotEnabledForTitle"
@@ -18896,10 +18724,6 @@
       "requestExample": "{\n  \"FacebookInstantGamesId\": \"1114685845316173\"\n}",
       "result": "UnlinkFacebookInstantGamesIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkFacebookInstantGamesId",
-        "Client/LoginWithFacebookInstantGamesId"
-      ],
       "errors": [
         "AccountNotLinked",
         "FacebookInstantGamesIdNotLinked"
@@ -19038,10 +18862,6 @@
       "requestExample": "{\n  \"NintendoSwitchDeviceId\": \"526f79204261747479\"\n}",
       "result": "UnlinkNintendoSwitchDeviceIdResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkNintendoSwitchDeviceId",
-        "Client/LoginWithNintendoSwitchDeviceId"
-      ],
       "errors": [
         "AccountNotLinked",
         "NintendoSwitchDeviceIdNotLinked"
@@ -19097,9 +18917,6 @@
       "requestExample": "{}",
       "result": "UnlinkSteamAccountResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/LinkSteamAccount"
-      ],
       "errors": [
         "AccountNotLinked"
       ]
@@ -19386,11 +19203,6 @@
       "requestExample": "{\n  \"UserStatistics\": {\n    \"Headshots\": 18,\n    \"Kills\": 47\n  }\n}",
       "result": "UpdateUserStatisticsResult",
       "resultExample": "",
-      "seeAlso": [
-        "Client/GetLeaderboard",
-        "Client/GetLeaderboardAroundCurrentUser",
-        "Client/GetUserStatistics"
-      ],
       "errors": [
         "APINotEnabledForGameClientAccess",
         "InvalidStatisticName",
