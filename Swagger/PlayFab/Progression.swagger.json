@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "240913",
+    "version": "241014",
     "title": "PlayFab Progression API",
     "description": "Manage entity statistics Manage entity leaderboards",
     "termsOfService": "https://playfab.com/terms/",
@@ -57,13 +57,19 @@
         ],
         "x-ms-docs-errors": [
           "ApiNotEnabledForTitle",
+          "DuplicateColumnNameFound",
           "DuplicateLinkedStatisticColumnNameFound",
+          "ExternalEntityNotAllowedForTier",
           "InvalidBaseTimeForInterval",
+          "LeaderboardCountLimitExceeded",
           "LeaderboardNameConflict",
           "LeaderboardSizeLimitExceeded",
           "LinkedStatisticColumnMismatch",
+          "LinkedStatisticColumnNotFound",
+          "LinkedStatisticColumnRequired",
           "LinkingStatsNotAllowedForEntityType",
           "MaxQueryableVersionsValueNotAllowedForTier",
+          "MultipleLinkedStatisticsNotAllowed",
           "StatDefinitionAlreadyLinkedToLeaderboard",
           "StatisticNotFound"
         ]
@@ -150,7 +156,7 @@
         "tags": [
           "Leaderboards"
         ],
-        "description": "Get the friend leaderboard for the specified entity. A maximum of 100 friend entries are listed in the leaderboard.",
+        "description": "Get the friend leaderboard for the specified entity. A maximum of 25 friend entries are listed in the leaderboard.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/progression/leaderboards/getfriendleaderboardforentity"
         },
@@ -506,7 +512,9 @@
         "x-ms-docs-errors": [
           "AggregationTypeNotAllowedForMultiColumnStatistic",
           "ApiNotEnabledForTitle",
+          "DuplicateColumnNameFound",
           "DuplicateStatisticName",
+          "ExternalEntityNotAllowedForTier",
           "InvalidBaseTimeForInterval",
           "MaxQueryableVersionsValueNotAllowedForTier",
           "StatisticCountLimitExceeded",
@@ -928,7 +936,7 @@
           "type": "string"
         },
         "Name": {
-          "description": "Name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "description": "Name of the statistic. Must be less than 150 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
           "type": "string"
         },
         "VersionConfiguration": {
@@ -1236,12 +1244,17 @@
       "type": "object",
       "properties": {
         "Columns": {
-          "description": "Leaderboard columns describing the sort directions,",
+          "description": "Leaderboard columns describing the sort directions.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/LeaderboardColumn"
           },
           "x-isclass": true
+        },
+        "EntryCount": {
+          "description": "The number of entries on the leaderboard.",
+          "type": "number",
+          "x-actualtype": "uint32"
         },
         "Rankings": {
           "description": "Individual entity rankings in the leaderboard, in sorted order by rank.",
@@ -1258,7 +1271,8 @@
         }
       },
       "required": [
-        "Version"
+        "Version",
+        "EntryCount"
       ],
       "example": {
         "Version": 5,
@@ -1503,7 +1517,7 @@
           "type": "object"
         },
         "Name": {
-          "description": "Name of the statistic. Must be less than 50 characters.",
+          "description": "Name of the statistic. Must be less than 150 characters.",
           "type": "string"
         }
       },
@@ -6370,6 +6384,14 @@
       "id": 20065,
       "name": "TrueSkillConditionSetNotInModel"
     },
+    "TrueSkillModelStateInvalidForOperation": {
+      "id": 20066,
+      "name": "TrueSkillModelStateInvalidForOperation"
+    },
+    "TrueSkillScenarioContainsActiveModel": {
+      "id": 20067,
+      "name": "TrueSkillScenarioContainsActiveModel"
+    },
     "GameSaveManifestNotFound": {
       "id": 20300,
       "name": "GameSaveManifestNotFound"
@@ -6405,6 +6427,14 @@
     "GameSaveFileNotUploaded": {
       "id": 20308,
       "name": "GameSaveFileNotUploaded"
+    },
+    "GameSaveBadRequest": {
+      "id": 20309,
+      "name": "GameSaveBadRequest"
+    },
+    "GameSaveOperationNotAllowed": {
+      "id": 20310,
+      "name": "GameSaveOperationNotAllowed"
     },
     "StateShareForbidden": {
       "id": 21000,

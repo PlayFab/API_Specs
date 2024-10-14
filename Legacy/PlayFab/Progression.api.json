@@ -95,7 +95,7 @@
         },
         {
           "name": "Name",
-          "description": "Name of the statistic. Must be less than 50 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "description": "Name of the statistic. Must be less than 150 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -483,12 +483,19 @@
       "properties": [
         {
           "name": "Columns",
-          "description": "Leaderboard columns describing the sort directions,",
+          "description": "Leaderboard columns describing the sort directions.",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "LeaderboardColumn",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "EntryCount",
+          "description": "The number of entries on the leaderboard.",
+          "jsontype": "Number",
+          "actualtype": "uint32",
+          "optional": false
         },
         {
           "name": "Rankings",
@@ -758,7 +765,7 @@
         },
         {
           "name": "Name",
-          "description": "Name of the statistic. Must be less than 50 characters.",
+          "description": "Name of the statistic. Must be less than 150 characters.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": false
@@ -1731,13 +1738,19 @@
       ],
       "errors": [
         "ApiNotEnabledForTitle",
+        "DuplicateColumnNameFound",
         "DuplicateLinkedStatisticColumnNameFound",
+        "ExternalEntityNotAllowedForTier",
         "InvalidBaseTimeForInterval",
+        "LeaderboardCountLimitExceeded",
         "LeaderboardNameConflict",
         "LeaderboardSizeLimitExceeded",
         "LinkedStatisticColumnMismatch",
+        "LinkedStatisticColumnNotFound",
+        "LinkedStatisticColumnRequired",
         "LinkingStatsNotAllowedForEntityType",
         "MaxQueryableVersionsValueNotAllowedForTier",
+        "MultipleLinkedStatisticsNotAllowed",
         "StatDefinitionAlreadyLinkedToLeaderboard",
         "StatisticNotFound"
       ]
@@ -1760,7 +1773,9 @@
       "errors": [
         "AggregationTypeNotAllowedForMultiColumnStatistic",
         "ApiNotEnabledForTitle",
+        "DuplicateColumnNameFound",
         "DuplicateStatisticName",
+        "ExternalEntityNotAllowedForTier",
         "InvalidBaseTimeForInterval",
         "MaxQueryableVersionsValueNotAllowedForTier",
         "StatisticCountLimitExceeded",
@@ -1848,7 +1863,7 @@
     },
     {
       "name": "GetFriendLeaderboardForEntity",
-      "summary": "Get the friend leaderboard for the specified entity. A maximum of 100 friend entries are listed in the leaderboard.",
+      "summary": "Get the friend leaderboard for the specified entity. A maximum of 25 friend entries are listed in the leaderboard.",
       "subgroup": "Leaderboards",
       "titleTiers": null,
       "url": "/Leaderboard/GetFriendLeaderboardForEntity",
@@ -1857,7 +1872,7 @@
       "request": "GetFriendLeaderboardForEntityRequest",
       "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"ExternalFriendSources\": \"None\"\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ],\n    \"EntryCount\": 0\n  }\n}",
       "errors": [
         "ApiNotEnabledForTitle",
         "InvalidEntityType",
@@ -1877,7 +1892,7 @@
       "request": "GetEntityLeaderboardRequest",
       "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"StartingPosition\": 100,\n  \"PageSize\": 20\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ],\n    \"EntryCount\": 0\n  }\n}",
       "errors": [
         "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
@@ -1896,7 +1911,7 @@
       "request": "GetLeaderboardAroundEntityRequest",
       "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"MaxSurroundingEntries\": 0,\n  \"Entity\": {\n    \"Id\": \"819478109412\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ],\n    \"EntryCount\": 0\n  }\n}",
       "errors": [
         "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
@@ -1935,7 +1950,7 @@
       "request": "GetLeaderboardForEntitiesRequest",
       "requestExample": "{\n  \"LeaderboardName\": \"Points\",\n  \"Version\": 2,\n  \"EntityIds\": [\n    \"12802710371\",\n    \"01849174301\"\n  ]\n}",
       "result": "GetEntityLeaderboardResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 5,\n    \"Rankings\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1784371290HJA9\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"FastHand\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4503\"\n        ],\n        \"Rank\": 1,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"1947109JA18412\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"DisplayName\": \"Mouse\",\n        \"Score\": 0,\n        \"Scores\": [\n          \"4502\"\n        ],\n        \"Rank\": 2,\n        \"LastUpdated\": \"0001-01-01T00:00:00Z\"\n      }\n    ],\n    \"EntryCount\": 0\n  }\n}",
       "errors": [
         "ApiNotEnabledForTitle",
         "LeaderboardNotFound",
@@ -5565,6 +5580,14 @@
       "id": 20065,
       "name": "TrueSkillConditionSetNotInModel"
     },
+    "TrueSkillModelStateInvalidForOperation": {
+      "id": 20066,
+      "name": "TrueSkillModelStateInvalidForOperation"
+    },
+    "TrueSkillScenarioContainsActiveModel": {
+      "id": 20067,
+      "name": "TrueSkillScenarioContainsActiveModel"
+    },
     "GameSaveManifestNotFound": {
       "id": 20300,
       "name": "GameSaveManifestNotFound"
@@ -5600,6 +5623,14 @@
     "GameSaveFileNotUploaded": {
       "id": 20308,
       "name": "GameSaveFileNotUploaded"
+    },
+    "GameSaveBadRequest": {
+      "id": 20309,
+      "name": "GameSaveBadRequest"
+    },
+    "GameSaveOperationNotAllowed": {
+      "id": 20310,
+      "name": "GameSaveOperationNotAllowed"
     },
     "StateShareForbidden": {
       "id": 21000,
@@ -6482,6 +6513,8 @@
     "TrueSkillInvalidPlayerId",
     "TrueSkillInvalidSquadSize",
     "TrueSkillConditionSetNotInModel",
+    "TrueSkillModelStateInvalidForOperation",
+    "TrueSkillScenarioContainsActiveModel",
     "GameSaveManifestNotFound",
     "GameSaveManifestVersionAlreadyExists",
     "GameSaveConflictUpdatingManifest",
@@ -6491,6 +6524,8 @@
     "GameSaveUnknownFileInManifest",
     "GameSaveFileExceededReportedSize",
     "GameSaveFileNotUploaded",
+    "GameSaveBadRequest",
+    "GameSaveOperationNotAllowed",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
