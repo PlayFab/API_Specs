@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "241014",
+    "version": "241025",
     "title": "PlayFab Groups API",
     "description": "The Groups API is designed for any permanent or semi-permanent collections of Entities (players, or non-players). If you want to make Guilds/Clans/Corporations/etc., then you should use groups. Groups can also be used to make chatrooms, parties, or any other persistent collection of entities.",
     "termsOfService": "https://playfab.com/terms/",
@@ -53,6 +53,11 @@
           }
         },
         "x-requestDetails": "Accepts an outstanding invitation to to join a group if the invited entity is not blocked by the group. Nothing is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/ApplyToGroup",
+          "Group/ListGroupApplications",
+          "Group/RemoveGroupApplication"
+        ],
         "x-ms-docs-errors": [
           "EntityBlockedByGroup",
           "EntityIsAlreadyMember",
@@ -89,6 +94,12 @@
           }
         },
         "x-requestDetails": "Accepts an outstanding invitation to join the group if the invited entity is not blocked by the group. Only the invited entity or a parent in its chain (e.g. title) may accept the invitation on the invited entity's behalf. Nothing is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/InviteToGroup",
+          "Group/ListGroupInvitations",
+          "Group/ListMembershipOpportunities",
+          "Group/RemoveGroupInvitation"
+        ],
         "x-ms-docs-errors": [
           "EntityBlockedByGroup",
           "EntityIsAlreadyMember",
@@ -166,6 +177,11 @@
           }
         },
         "x-requestDetails": "Creates an application to join a group. Calling this while a group application already exists will return the same application instead of an error and will not refresh the time before the application expires. By default, if the entity has an invitation to join the group outstanding, this will accept the invitation to join the group instead and return an error indicating such, rather than creating a duplicate application to join that will need to be cleaned up later. Returns information about the application or an error indicating an invitation was accepted instead.",
+        "x-seeAlso": [
+          "Group/AcceptGroupApplication",
+          "Group/ListGroupApplications",
+          "Group/RemoveGroupApplication"
+        ],
         "x-ms-docs-errors": [
           "EntityBlockedByGroup",
           "EntityIsAlreadyMember",
@@ -202,7 +218,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Blocks a list of entities from joining a group. Blocked entities may not create new applications to join, be invited to join, accept an invitation, or have an application accepted. Failure due to being blocked does not clean up existing applications or invitations to the group. No data is returned in the case of success."
+        "x-requestDetails": "Blocks a list of entities from joining a group. Blocked entities may not create new applications to join, be invited to join, accept an invitation, or have an application accepted. Failure due to being blocked does not clean up existing applications or invitations to the group. No data is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/ListGroupBlocks",
+          "Group/UnblockEntity"
+        ]
       }
     },
     "/Group/ChangeMemberRole": {
@@ -273,6 +293,14 @@
           }
         },
         "x-requestDetails": "Creates a new group, as well as administration and member roles, based off of a title's group template. Returns information about the group that was created.",
+        "x-seeAlso": [
+          "Group/AddMembers",
+          "Group/ApplyToGroup",
+          "Group/DeleteGroup",
+          "Group/InviteToGroup",
+          "Group/ListGroupMembers",
+          "Group/RemoveMembers"
+        ],
         "x-ms-docs-errors": [
           "GroupNameNotAvailable"
         ]
@@ -307,6 +335,9 @@
           }
         },
         "x-requestDetails": "Creates a new role within an existing group, with no members. Both the role ID and role name must be unique within the group, but the name can be the same as the ID. The role ID is set at creation and cannot be changed. Returns information about the role that was created.",
+        "x-seeAlso": [
+          "Group/DeleteRole"
+        ],
         "x-ms-docs-errors": [
           "DuplicateRoleId",
           "RoleNameNotAvailable"
@@ -341,7 +372,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Deletes a group and all roles, invitations, join requests, and blocks associated with it. Permission to delete is only required the group itself to execute this action. The group and data cannot be cannot be recovered once removed, but any abuse reports about the group will remain. No data is returned in the case of success."
+        "x-requestDetails": "Deletes a group and all roles, invitations, join requests, and blocks associated with it. Permission to delete is only required the group itself to execute this action. The group and data cannot be cannot be recovered once removed, but any abuse reports about the group will remain. No data is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/CreateGroup"
+        ]
       }
     },
     "/Group/DeleteRole": {
@@ -373,6 +407,9 @@
           }
         },
         "x-requestDetails": "Returns information about the role",
+        "x-seeAlso": [
+          "Group/CreateRole"
+        ],
         "x-ms-docs-errors": [
           "RoleDoesNotExist",
           "RoleIsGroupAdmin",
@@ -408,7 +445,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Returns the ID, name, role list and other non-membership related information about a group."
+        "x-requestDetails": "Returns the ID, name, role list and other non-membership related information about a group.",
+        "x-seeAlso": [
+          "Group/UpdateGroup"
+        ]
       }
     },
     "/Group/InviteToGroup": {
@@ -483,6 +523,9 @@
           }
         },
         "x-requestDetails": "Checks to see if an entity is a member of a group or role within the group. A result indicating if the entity is a member of the group is returned, or a permission error if the caller does not have permission to read the group's member list.",
+        "x-seeAlso": [
+          "Group/GetGroup"
+        ],
         "x-ms-docs-errors": [
           "RoleDoesNotExist"
         ]
@@ -516,7 +559,12 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Lists all outstanding requests to join a group. Returns a list of all requests to join, as well as when the request will expire. To get the group applications for a specific entity, use ListMembershipOpportunities."
+        "x-requestDetails": "Lists all outstanding requests to join a group. Returns a list of all requests to join, as well as when the request will expire. To get the group applications for a specific entity, use ListMembershipOpportunities.",
+        "x-seeAlso": [
+          "Group/AcceptGroupApplication",
+          "Group/ApplyToGroup",
+          "Group/RemoveGroupApplication"
+        ]
       }
     },
     "/Group/ListGroupBlocks": {
@@ -547,7 +595,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Lists all entities blocked from joining a group. A list of blocked entities is returned"
+        "x-requestDetails": "Lists all entities blocked from joining a group. A list of blocked entities is returned",
+        "x-seeAlso": [
+          "Group/BlockEntity",
+          "Group/UnblockEntity"
+        ]
       }
     },
     "/Group/ListGroupInvitations": {
@@ -578,7 +630,13 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Lists all outstanding invitations for a group. Returns a list of entities that have been invited, as well as when the invitation will expire. To get the group invitations for a specific entity, use ListMembershipOpportunities."
+        "x-requestDetails": "Lists all outstanding invitations for a group. Returns a list of entities that have been invited, as well as when the invitation will expire. To get the group invitations for a specific entity, use ListMembershipOpportunities.",
+        "x-seeAlso": [
+          "Group/AcceptGroupInvitation",
+          "Group/InviteToGroup",
+          "Group/ListMembershipOpportunities",
+          "Group/RemoveGroupInvitation"
+        ]
       }
     },
     "/Group/ListGroupMembers": {
@@ -609,7 +667,10 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Gets a list of members and the roles they belong to within the group. If the caller does not have permission to view the role, and the member is in no other role, the member is not displayed. Returns a list of entities that are members of the group."
+        "x-requestDetails": "Gets a list of members and the roles they belong to within the group. If the caller does not have permission to view the role, and the member is in no other role, the member is not displayed. Returns a list of entities that are members of the group.",
+        "x-seeAlso": [
+          "Group/ListMembership"
+        ]
       }
     },
     "/Group/ListMembership": {
@@ -640,7 +701,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Lists the groups and roles that an entity is a part of, checking to see if group and role metadata and memberships should be visible to the caller. If the entity is not in any roles that are visible to the caller, the group is not returned in the results, even if the caller otherwise has permission to see that the entity is a member of that group."
+        "x-requestDetails": "Lists the groups and roles that an entity is a part of, checking to see if group and role metadata and memberships should be visible to the caller. If the entity is not in any roles that are visible to the caller, the group is not returned in the results, even if the caller otherwise has permission to see that the entity is a member of that group.",
+        "x-seeAlso": [
+          "Group/ListGroupMembers",
+          "Group/ListMembershipOpportunities"
+        ]
       }
     },
     "/Group/ListMembershipOpportunities": {
@@ -707,6 +772,11 @@
           }
         },
         "x-requestDetails": "Removes an existing application to join the group. This is used for both rejection of an application as well as withdrawing an application. The applying entity or a parent in its chain (e.g. title) may withdraw the application, and any caller with appropriate access in the group may reject an application. No data is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/AcceptGroupApplication",
+          "Group/ApplyToGroup",
+          "Group/ListGroupApplications"
+        ],
         "x-ms-docs-errors": [
           "GroupApplicationNotFound"
         ]
@@ -818,7 +888,11 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Unblocks a list of entities from joining a group. No data is returned in the case of success."
+        "x-requestDetails": "Unblocks a list of entities from joining a group. No data is returned in the case of success.",
+        "x-seeAlso": [
+          "Group/BlockEntity",
+          "Group/ListGroupBlocks"
+        ]
       }
     },
     "/Group/UpdateGroup": {
@@ -890,6 +964,10 @@
           }
         },
         "x-requestDetails": "Updates the role name. Returns information about whether the update was successful.",
+        "x-seeAlso": [
+          "Group/CreateRole",
+          "Group/DeleteRole"
+        ],
         "x-ms-docs-errors": [
           "RoleDoesNotExist"
         ]
@@ -5923,6 +6001,14 @@
     "StatisticColumnLengthMismatch": {
       "id": 1593,
       "name": "StatisticColumnLengthMismatch"
+    },
+    "InvalidExternalEntityId": {
+      "id": 1594,
+      "name": "InvalidExternalEntityId"
+    },
+    "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier": {
+      "id": 1595,
+      "name": "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
