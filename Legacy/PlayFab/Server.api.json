@@ -5053,6 +5053,12 @@
           "name": "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier"
         },
         {
+          "name": "TransactionAlreadyApplied"
+        },
+        {
+          "name": "ReportDataNotRetrievedSuccessfully"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -5888,6 +5894,12 @@
         },
         {
           "name": "GameSaveOperationNotAllowed"
+        },
+        {
+          "name": "GameSaveDataStorageQuotaExceeded"
+        },
+        {
+          "name": "GameSaveNewerManifestExists"
         },
         {
           "name": "StateShareForbidden"
@@ -7937,6 +7949,42 @@
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "SteamPlayFabIdPair",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayFabIDsFromSteamNamesRequest": {
+      "name": "GetPlayFabIDsFromSteamNamesRequest",
+      "className": "GetPlayFabIDsFromSteamNamesRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "SteamNames",
+          "description": "Array of unique Steam identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": false
+        }
+      ]
+    },
+    "GetPlayFabIDsFromSteamNamesResult": {
+      "name": "GetPlayFabIDsFromSteamNamesResult",
+      "className": "GetPlayFabIDsFromSteamNamesResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Steam identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "SteamNamePlayFabIdPair",
           "isclass": true,
           "optional": true
         }
@@ -13168,6 +13216,28 @@
         }
       ]
     },
+    "SteamNamePlayFabIdPair": {
+      "name": "SteamNamePlayFabIdPair",
+      "className": "SteamNamePlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SteamName",
+          "description": "Unique Steam identifier for a user, also known as Steam persona name.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "SteamPlayFabIdPair": {
       "name": "SteamPlayFabIdPair",
       "className": "SteamPlayFabIdPair",
@@ -15727,6 +15797,7 @@
         "GetPlayFabIDsFromPSNAccountIDs",
         "GetPlayFabIDsFromPSNOnlineIDs",
         "GetPlayFabIDsFromSteamIDs",
+        "GetPlayFabIDsFromSteamNames",
         "GetPlayFabIDsFromTwitchIDs",
         "GetPlayFabIDsFromXboxLiveIDs",
         "GetServerCustomIDsFromPlayFabIDs",
@@ -16961,6 +17032,20 @@
       "requestExample": "{\n  \"SteamStringIDs\": [\n    \"857498576495\",\n    \"759374651209\"\n  ]\n}",
       "result": "GetPlayFabIDsFromSteamIDsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"SteamStringId\": \"857498576495\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"SteamStringId\": \"759374651209\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
+    },
+    {
+      "name": "GetPlayFabIDsFromSteamNames",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Steam identifiers. The Steam identifiers are persona names.",
+      "resultDetails": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "titleTiers": null,
+      "url": "/Server/GetPlayFabIDsFromSteamNames",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromSteamNamesRequest",
+      "requestExample": "{\n  \"SteamNames\": [\n    \"steamPersonaName1\",\n    \"steamPersonaName2\"\n  ]\n}",
+      "result": "GetPlayFabIDsFromSteamNamesResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"SteamName\": \"steamPersonaName1\",\n        \"PlayFabId\": \"18727374849283\"\n      },\n      {\n        \"SteamName\": \"steamPersonaName2\",\n        \"PlayFabId\": \"18727374849284\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromTwitchIDs",
@@ -21402,6 +21487,14 @@
       "id": 1595,
       "name": "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier"
     },
+    "TransactionAlreadyApplied": {
+      "id": 1596,
+      "name": "TransactionAlreadyApplied"
+    },
+    "ReportDataNotRetrievedSuccessfully": {
+      "id": 1597,
+      "name": "ReportDataNotRetrievedSuccessfully"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -22518,6 +22611,14 @@
       "id": 20310,
       "name": "GameSaveOperationNotAllowed"
     },
+    "GameSaveDataStorageQuotaExceeded": {
+      "id": 20311,
+      "name": "GameSaveDataStorageQuotaExceeded"
+    },
+    "GameSaveNewerManifestExists": {
+      "id": 20312,
+      "name": "GameSaveNewerManifestExists"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -23135,6 +23236,8 @@
     "StatisticColumnLengthMismatch",
     "InvalidExternalEntityId",
     "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier",
+    "TransactionAlreadyApplied",
+    "ReportDataNotRetrievedSuccessfully",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -23414,6 +23517,8 @@
     "GameSaveFileNotUploaded",
     "GameSaveBadRequest",
     "GameSaveOperationNotAllowed",
+    "GameSaveDataStorageQuotaExceeded",
+    "GameSaveNewerManifestExists",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
