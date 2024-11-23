@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "241108",
+    "version": "241122",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -1744,6 +1744,37 @@
         "responses": {
           "200": {
             "$ref": "#/responses/GetPlayFabIDsFromSteamIDsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
+    "/Server/GetPlayFabIDsFromSteamNames": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromSteamNames",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Steam identifiers. The Steam identifiers are persona names.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/getplayfabidsfromsteamnames"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromSteamNamesRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromSteamNamesResult"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -7488,6 +7519,8 @@
         "StatisticColumnLengthMismatch",
         "InvalidExternalEntityId",
         "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier",
+        "TransactionAlreadyApplied",
+        "ReportDataNotRetrievedSuccessfully",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -7767,6 +7800,8 @@
         "GameSaveFileNotUploaded",
         "GameSaveBadRequest",
         "GameSaveOperationNotAllowed",
+        "GameSaveDataStorageQuotaExceeded",
+        "GameSaveNewerManifestExists",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -9939,6 +9974,53 @@
           {
             "SteamStringId": "759374651209",
             "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
+    "GetPlayFabIDsFromSteamNamesRequest": {
+      "type": "object",
+      "properties": {
+        "SteamNames": {
+          "description": "Array of unique Steam identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 2,000 in length.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "SteamNames"
+      ],
+      "example": {
+        "SteamNames": [
+          "steamPersonaName1",
+          "steamPersonaName2"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromSteamNamesResult": {
+      "description": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of Steam identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SteamNamePlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "SteamName": "steamPersonaName1",
+            "PlayFabId": "18727374849283"
+          },
+          {
+            "SteamName": "steamPersonaName2",
+            "PlayFabId": "18727374849284"
           }
         ]
       }
@@ -13742,6 +13824,19 @@
         "Version": 2
       }
     },
+    "SteamNamePlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Steam identifier.",
+          "type": "string"
+        },
+        "SteamName": {
+          "description": "Unique Steam identifier for a user, also known as Steam persona name.",
+          "type": "string"
+        }
+      }
+    },
     "SteamPlayFabIdPair": {
       "type": "object",
       "properties": {
@@ -15842,6 +15937,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetPlayFabIDsFromSteamIDsRequest"
+      }
+    },
+    "GetPlayFabIDsFromSteamNamesRequest": {
+      "name": "GetPlayFabIDsFromSteamNamesRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromSteamNamesRequest"
       }
     },
     "GetPlayFabIDsFromTwitchIDsRequest": {
@@ -18046,6 +18148,41 @@
               {
                 "SteamStringId": "759374651209",
                 "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromSteamNamesResult": {
+      "description": "For Steam identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromSteamNamesResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "SteamName": "steamPersonaName1",
+                "PlayFabId": "18727374849283"
+              },
+              {
+                "SteamName": "steamPersonaName2",
+                "PlayFabId": "18727374849284"
               }
             ]
           }
@@ -22182,6 +22319,14 @@
       "id": 1595,
       "name": "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier"
     },
+    "TransactionAlreadyApplied": {
+      "id": 1596,
+      "name": "TransactionAlreadyApplied"
+    },
+    "ReportDataNotRetrievedSuccessfully": {
+      "id": 1597,
+      "name": "ReportDataNotRetrievedSuccessfully"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -23297,6 +23442,14 @@
     "GameSaveOperationNotAllowed": {
       "id": 20310,
       "name": "GameSaveOperationNotAllowed"
+    },
+    "GameSaveDataStorageQuotaExceeded": {
+      "id": 20311,
+      "name": "GameSaveDataStorageQuotaExceeded"
+    },
+    "GameSaveNewerManifestExists": {
+      "id": 20312,
+      "name": "GameSaveNewerManifestExists"
     },
     "StateShareForbidden": {
       "id": 21000,
