@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250117",
+    "version": "250214",
     "title": "PlayFab Progression API",
     "description": "Manage entity statistics Manage entity leaderboards",
     "termsOfService": "https://playfab.com/terms/",
@@ -376,9 +376,9 @@
         ],
         "x-ms-docs-errors": [
           "ConcurrentEditError",
-          "ExternalEntityNotAllowedForTier",
           "LeaderboardDefinitionModificationNotAllowedWhileLinked",
-          "LeaderboardNotFound"
+          "LeaderboardNotFound",
+          "VersionIncrementRateExceeded"
         ]
       }
     },
@@ -449,6 +449,44 @@
         "x-ms-docs-errors": [
           "LeaderboardNotFound",
           "NoLinkedStatisticToLeaderboard"
+        ]
+      }
+    },
+    "/Leaderboard/UpdateLeaderboardDefinition": {
+      "post": {
+        "operationId": "UpdateLeaderboardDefinition",
+        "tags": [
+          "Leaderboards"
+        ],
+        "description": "Updates a leaderboard definition.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/progression/leaderboards/updateleaderboarddefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateLeaderboardDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Leaderboard/DeleteLeaderboardDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "LeaderboardSizeLimitExceeded",
+          "MaxQueryableVersionsValueNotAllowedForTier",
+          "ResetIntervalCannotBeModified"
         ]
       }
     },
@@ -755,7 +793,8 @@
         "x-ms-docs-errors": [
           "StatisticNotFound",
           "StatisticUpdateInProgress",
-          "StatisticVersionIncrementRateExceeded"
+          "StatisticVersionIncrementRateExceeded",
+          "VersionIncrementRateExceeded"
         ]
       }
     },
@@ -793,6 +832,46 @@
         ],
         "x-ms-docs-errors": [
           "StatisticCountLimitExceeded"
+        ]
+      }
+    },
+    "/Statistic/UpdateStatisticDefinition": {
+      "post": {
+        "operationId": "UpdateStatisticDefinition",
+        "tags": [
+          "Statistics"
+        ],
+        "description": "Update an existing entity statistic definition.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/progression/statistics/updatestatisticdefinition"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UpdateStatisticDefinitionRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "ApiNotEnabledForTitle",
+          "InvalidBaseTimeForInterval",
+          "MaxQueryableVersionsValueNotAllowedForTier",
+          "ResetIntervalCannotBeModified",
+          "StatisticNotFound"
         ]
       }
     },
@@ -835,7 +914,8 @@
           "NotAuthorized",
           "StatisticColumnLengthMismatch",
           "StatisticNotFound",
-          "TransactionAlreadyApplied"
+          "TransactionAlreadyApplied",
+          "UpdatingStatisticsUsingTransactionIdNotAvailableForFreeTier"
         ]
       }
     }
@@ -1270,6 +1350,10 @@
           "description": "The number of entries on the leaderboard.",
           "type": "number",
           "x-actualtype": "uint32"
+        },
+        "NextReset": {
+          "description": "The time the next scheduled reset will occur. Null if the leaderboard does not reset on a schedule.",
+          "type": "string"
         },
         "Rankings": {
           "description": "Individual entity rankings in the leaderboard, in sorted order by rank.",
@@ -2204,6 +2288,40 @@
         "StatisticName": "HighestScoresByLevel"
       }
     },
+    "UpdateLeaderboardDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Name": {
+          "description": "The name of the leaderboard to update the definition for.",
+          "type": "string"
+        },
+        "SizeLimit": {
+          "description": "Maximum number of entries on this leaderboard",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "VersionConfiguration": {
+          "$ref": "#/definitions/VersionConfiguration",
+          "description": "The version reset configuration for the leaderboard definition.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "HighestScoresByLevel",
+        "VersionConfiguration": {
+          "MaxQueryableVersions": 1
+        },
+        "SizeLimit": 1000
+      }
+    },
     "UpdateLeaderboardEntriesRequest": {
       "type": "object",
       "properties": {
@@ -2245,6 +2363,34 @@
             "EntityId": "01849174301"
           }
         ]
+      }
+    },
+    "UpdateStatisticDefinitionRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Name": {
+          "description": "Name of the statistic. Must be less than 150 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
+          "type": "string"
+        },
+        "VersionConfiguration": {
+          "$ref": "#/definitions/VersionConfiguration",
+          "description": "The version reset configuration for the statistic definition.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Name"
+      ],
+      "example": {
+        "Name": "HighestScoresByLevel",
+        "VersionConfiguration": {
+          "MaxQueryableVersions": 2
+        }
       }
     },
     "UpdateStatisticsRequest": {
@@ -2520,12 +2666,28 @@
         "$ref": "#/definitions/UnlinkLeaderboardFromStatisticRequest"
       }
     },
+    "UpdateLeaderboardDefinitionRequest": {
+      "name": "UpdateLeaderboardDefinitionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UpdateLeaderboardDefinitionRequest"
+      }
+    },
     "UpdateLeaderboardEntriesRequest": {
       "name": "UpdateLeaderboardEntriesRequest",
       "in": "body",
       "description": "",
       "schema": {
         "$ref": "#/definitions/UpdateLeaderboardEntriesRequest"
+      }
+    },
+    "UpdateStatisticDefinitionRequest": {
+      "name": "UpdateStatisticDefinitionRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UpdateStatisticDefinitionRequest"
       }
     },
     "UpdateStatisticsRequest": {
@@ -5355,6 +5517,14 @@
       "id": 1597,
       "name": "ReportDataNotRetrievedSuccessfully"
     },
+    "ResetIntervalCannotBeModified": {
+      "id": 1598,
+      "name": "ResetIntervalCannotBeModified"
+    },
+    "VersionIncrementRateExceeded": {
+      "id": 1599,
+      "name": "VersionIncrementRateExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6486,6 +6656,10 @@
     "GameSaveBaseVersionNotAvailable": {
       "id": 20313,
       "name": "GameSaveBaseVersionNotAvailable"
+    },
+    "GameSaveManifestVersionQuarantined": {
+      "id": 20314,
+      "name": "GameSaveManifestVersionQuarantined"
     },
     "StateShareForbidden": {
       "id": 21000,
