@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250314",
+    "version": "250328",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information. The TrueSkill service helps titles to estimate a player's skill based on their match results. The player skill values from this service are commonly used by a matchmaking service to provide players with balanced matches.",
     "termsOfService": "https://playfab.com/terms/",
@@ -5781,6 +5781,10 @@
           "type": "string",
           "x-isenum": true
         },
+        "RestrictInvitesToLobbyOwner": {
+          "description": "A setting that controls whether only the lobby owner can send invites to join the lobby. When true, only the lobby owner can send invites. When false or not specified, any member can send invites. Defaults to false if not specified. Restricted to client owned lobbies.",
+          "type": "boolean"
+        },
         "SearchData": {
           "description": "The public key-value pairs which allow queries to differentiate between lobbies. Queries will refer to these key-value pairs in their filter and order by clauses to retrieve lobbies fitting the specified criteria. At most 30 key-value pairs may be stored here. Keys are of the format string_key1, string_key2 ... string_key30 for string values, or number_key1, number_key2, ... number_key30 for numeric values.Numeric values are floats. Values can be at most 256 characters long. The total size of all searchData values may not exceed 1024 bytes.",
           "type": "object"
@@ -5793,7 +5797,8 @@
       "required": [
         "MaxPlayers",
         "Owner",
-        "UseConnections"
+        "UseConnections",
+        "RestrictInvitesToLobbyOwner"
       ],
       "example": {
         "MaxPlayers": 50,
@@ -8181,6 +8186,10 @@
           "type": "string",
           "x-isenum": true
         },
+        "RestrictInvitesToLobbyOwner": {
+          "description": "A setting that controls whether only the lobby owner can send invites to join the lobby. When true, only the lobby owner can send invites. When false or not specified, any member can send invites. Defaults to false if not specified. Restricted to client owned lobbies.",
+          "type": "boolean"
+        },
         "UseConnections": {
           "description": "A setting to control whether connections are used. Defaults to true. When true, notifications are sent to subscribed players, disconnect detection removes connectionHandles, only owner migration policies using connections are allowed, and lobbies must have at least one connected member to be searchable or be a server hosted lobby with a connected server. If false, then notifications are not sent, connections are not allowed, and lobbies do not need connections to be searchable.",
           "type": "boolean"
@@ -8190,7 +8199,8 @@
         "MaxPlayers",
         "UseConnections",
         "MemberEntity",
-        "ArrangementString"
+        "ArrangementString",
+        "RestrictInvitesToLobbyOwner"
       ],
       "example": {
         "MaxPlayers": 50,
@@ -9509,6 +9519,10 @@
           "description": "An opaque string stored on a SubscribeToLobbyResource call, which indicates the connection an owner or member has with PubSub.",
           "type": "string"
         },
+        "RestrictInvitesToLobbyOwner": {
+          "description": "A setting that controls lobby invites. When true only owners can invite new players, when false all members area allowed to invite.",
+          "type": "boolean"
+        },
         "SearchData": {
           "description": "Search data.",
           "type": "object"
@@ -9531,7 +9545,8 @@
         "UseConnections",
         "AccessPolicy",
         "MembershipLock",
-        "ConnectionString"
+        "ConnectionString",
+        "RestrictInvitesToLobbyOwner"
       ]
     },
     "LobbyEmptyResult": {
@@ -17569,6 +17584,10 @@
       "id": 1600,
       "name": "InvalidSteamUsername"
     },
+    "InvalidVersionResetForLinkedLeaderboard": {
+      "id": 1601,
+      "name": "InvalidVersionResetForLinkedLeaderboard"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -18025,6 +18044,10 @@
       "id": 7022,
       "name": "ExperimentationExclusionGroupInvalidName"
     },
+    "ExperimentationLegacyExperimentInvalidOperation": {
+      "id": 7023,
+      "name": "ExperimentationLegacyExperimentInvalidOperation"
+    },
     "MaxActionDepthExceeded": {
       "id": 8000,
       "name": "MaxActionDepthExceeded"
@@ -18284,6 +18307,34 @@
     "EventSinkTenantIdInvalid": {
       "id": 15015,
       "name": "EventSinkTenantIdInvalid"
+    },
+    "EventSinkResourceMisconfigured": {
+      "id": 15016,
+      "name": "EventSinkResourceMisconfigured"
+    },
+    "EventSinkAccessDenied": {
+      "id": 15017,
+      "name": "EventSinkAccessDenied"
+    },
+    "EventSinkWriteConflict": {
+      "id": 15018,
+      "name": "EventSinkWriteConflict"
+    },
+    "EventSinkResourceNotFound": {
+      "id": 15019,
+      "name": "EventSinkResourceNotFound"
+    },
+    "EventSinkResourceFeatureNotSupported": {
+      "id": 15020,
+      "name": "EventSinkResourceFeatureNotSupported"
+    },
+    "EventSinkBucketNameInvalid": {
+      "id": 15021,
+      "name": "EventSinkBucketNameInvalid"
+    },
+    "EventSinkResourceUnavailable": {
+      "id": 15022,
+      "name": "EventSinkResourceUnavailable"
     },
     "OperationCanceled": {
       "id": 16000,
@@ -18712,6 +18763,30 @@
     "GameSaveManifestVersionQuarantined": {
       "id": 20314,
       "name": "GameSaveManifestVersionQuarantined"
+    },
+    "GameSaveManifestUploadProgressUpdateNotAllowed": {
+      "id": 20315,
+      "name": "GameSaveManifestUploadProgressUpdateNotAllowed"
+    },
+    "GameSaveNotFinalizedManifestNotEligibleAsKnownGood": {
+      "id": 20316,
+      "name": "GameSaveNotFinalizedManifestNotEligibleAsKnownGood"
+    },
+    "GameSaveNoUpdatesRequested": {
+      "id": 20317,
+      "name": "GameSaveNoUpdatesRequested"
+    },
+    "GameSaveTitleDoesNotExist": {
+      "id": 20318,
+      "name": "GameSaveTitleDoesNotExist"
+    },
+    "GameSaveOperationNotAllowedForTitle": {
+      "id": 20319,
+      "name": "GameSaveOperationNotAllowedForTitle"
+    },
+    "GameSaveManifestFilesLimitExceeded": {
+      "id": 20320,
+      "name": "GameSaveManifestFilesLimitExceeded"
     },
     "StateShareForbidden": {
       "id": 21000,
