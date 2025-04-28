@@ -566,7 +566,7 @@
       "properties": [
         {
           "name": "AnomalousMatchResultIgnoreThreshold",
-          "description": "The initial threshold value for determining if a match result is considered anomalous enough to be ignored. If this is not specified and the parent model ID is specified, then the parent model's value will be used. Otherwise, a default value of -20 is used. Note: This was the one that was used when creating the batch model, which might differ from <c>CurrentAnomalousMatchResultIgnoreThreshold</c> value.",
+          "description": "The initial threshold value for determining if a match result is considered anomalous enough to be ignored. If this is not specified and the parent model ID is specified, then the parent model's value will be used. Otherwise, a default value of -20 is used. Note: This was the one that was used when creating the batch model, which might differ from \u003Cc\u003ECurrentAnomalousMatchResultIgnoreThreshold\u003C/c\u003E value.",
           "jsontype": "Number",
           "actualtype": "double",
           "optional": true
@@ -595,6 +595,43 @@
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
+        }
+      ]
+    },
+    "BatchResults": {
+      "name": "BatchResults",
+      "className": "BatchResults",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "LearningActivity",
+          "description": "A dictionary containing the activity value for certain batch learning iterations. The key is the iteration number and the value is the activity value. The activity value is a measure of how much the model is changing. The batch learning algorithm will stop if the activity drops below a convergence threshold.",
+          "collection": "map",
+          "jsontype": "Number",
+          "actualtype": "double",
+          "optional": true
+        },
+        {
+          "name": "MatchResultsIgnoredCount",
+          "description": "The number of match results that were within the date range for the batch run but were ignored because they didn't have the required conditions or events.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "MatchResultsUsedCount",
+          "description": "The number of match results that were processed in the batch run.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "RunTimeInSeconds",
+          "description": "The total duration in seconds of the batch run.",
+          "jsontype": "Number",
+          "actualtype": "int32"
         }
       ]
     },
@@ -1194,6 +1231,25 @@
         },
         {
           "name": "TextToText"
+        }
+      ]
+    },
+    "ConditionsSet": {
+      "name": "ConditionsSet",
+      "className": "ConditionsSet",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Conditions",
+          "description": "A map from condition names to condition values in which to get the skills of the players.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -5444,6 +5500,165 @@
         }
       ]
     },
+    "GetPlayerSkillForConditionsFromModelRequest": {
+      "name": "GetPlayerSkillForConditionsFromModelRequest",
+      "className": "GetPlayerSkillForConditionsFromModelRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Request to get skill values of a set of players for multiple sets of conditions from a specific model. A Title, Server or Client can request a player's skill.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Conditions",
+          "description": "A map from condition names to condition values in which to get the skills of the players.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ConditionsSet",
+          "isclass": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IncludeSkillBreakdown",
+          "description": "If set to true, TrueSkill will return the player's SkillBreakdown as part of the response.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "ModelId",
+          "description": "ID of the model to get the players' skill from.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "Players",
+          "description": "List of players to retrieve skill values for.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TrueSkillPlayer",
+          "isclass": true
+        },
+        {
+          "name": "ScenarioId",
+          "description": "ID of the scenario to get the players' skill from.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "GetPlayerSkillForConditionsFromModelResponse": {
+      "name": "GetPlayerSkillForConditionsFromModelResponse",
+      "className": "GetPlayerSkillForConditionsFromModelResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IsModelPrimary",
+          "description": "If the specified model is marked as primary for the given scenario.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "Skills",
+          "description": "The skill values for the specified players in a given model.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PlayerSkills",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayerSkillForConditionsRequest": {
+      "name": "GetPlayerSkillForConditionsRequest",
+      "className": "GetPlayerSkillForConditionsRequest",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "description": "Request to get skill values of a set of players for multiple sets of conditions from the primary model of a given scenario. A Title, Server or Client can request a player's skill.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Conditions",
+          "description": "A map from condition names to condition values in which to get the skills of the players.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "ConditionsSet",
+          "isclass": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IncludeSkillBreakdown",
+          "description": "If set to true, TrueSkill will return the player's SkillBreakdown as part of the response.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "Players",
+          "description": "List of players to retrieve skill values for.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "TrueSkillPlayer",
+          "isclass": true
+        },
+        {
+          "name": "ScenarioId",
+          "description": "ID of the scenario to get the players' skill from.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "GetPlayerSkillForConditionsResponse": {
+      "name": "GetPlayerSkillForConditionsResponse",
+      "className": "GetPlayerSkillForConditionsResponse",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "isResult": true,
+      "properties": [
+        {
+          "name": "ModelId",
+          "description": "ID of the Model where the skill values were retrieved from.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Skills",
+          "description": "The skill values for the specified players in the primary model of a given scenario.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PlayerSkills",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetPlayerSkillFromModelRequest": {
       "name": "GetPlayerSkillFromModelRequest",
       "className": "GetPlayerSkillFromModelRequest",
@@ -8101,13 +8316,13 @@
         },
         {
           "name": "Max",
-          "description": "The maximum total value for a group. Must be >= Min.",
+          "description": "The maximum total value for a group. Must be \u003E= Min.",
           "jsontype": "Number",
           "actualtype": "double"
         },
         {
           "name": "Min",
-          "description": "The minimum total value for a group. Must be >=2.",
+          "description": "The minimum total value for a group. Must be \u003E=2.",
           "jsontype": "Number",
           "actualtype": "double"
         },
@@ -8261,6 +8476,14 @@
           "optional": true
         },
         {
+          "name": "BatchResults",
+          "description": "The summary of the batch results for this model. This will be null when the model is a base model or when the batch run hasn't finished..",
+          "jsontype": "Object",
+          "actualtype": "BatchResults",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "Conditions",
           "description": "List of condition keys and their associated affinity weights that this model supports.",
           "collection": "array",
@@ -8277,7 +8500,7 @@
         },
         {
           "name": "CurrentAnomalousMatchResultIgnoreThreshold",
-          "description": "The current threshold value for determining if a match result is considered anomalous enough to be ignored. This will be null when creating a batch model and the settings have not been loaded yet. Note: <c>BatchParameters.AnomalousMatchResultIgnoreThreshold</c> value was the one that was used when creating the batch model, which might differ from this value.",
+          "description": "The current threshold value for determining if a match result is considered anomalous enough to be ignored. This will be null when creating a batch model and the settings have not been loaded yet. Note: \u003Cc\u003EBatchParameters.AnomalousMatchResultIgnoreThreshold\u003C/c\u003E value was the one that was used when creating the batch model, which might differ from this value.",
           "jsontype": "Number",
           "actualtype": "double",
           "optional": true
@@ -8781,7 +9004,7 @@
         },
         {
           "name": "SkillBreakdown",
-          "description": "A detailed breakdown of the player's skill. This will only be returned if GetSkillBreakdown was specified and true in the request.",
+          "description": "A detailed breakdown of the player's skill. This will only be returned if IncludeSkillBreakdown was specified and true in the request.",
           "jsontype": "Object",
           "actualtype": "SkillBreakdown",
           "isclass": true,
@@ -8792,6 +9015,79 @@
           "description": "The given player's individual skill computed by TrueSkill.",
           "jsontype": "Number",
           "actualtype": "double"
+        }
+      ]
+    },
+    "PlayerSkillForCondition": {
+      "name": "PlayerSkillForCondition",
+      "className": "PlayerSkillForCondition",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Conditions",
+          "description": "Set of Conditions of the respective player skills data.",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "MatchmakingSkillValue",
+          "description": "The given player's skill value to be used for Matchmaking computed by TrueSkill. This takes into account the player's squad size, as well as other modifiers related to the skills in this condition as a whole",
+          "jsontype": "Number",
+          "actualtype": "double"
+        },
+        {
+          "name": "SkillBreakdown",
+          "description": "A detailed breakdown of the player's skill. This will only be returned if IncludeSkillBreakdown was specified and true in the request.",
+          "jsontype": "Object",
+          "actualtype": "SkillBreakdown",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "SkillValue",
+          "description": "The given player's individual skill computed by TrueSkill.",
+          "jsontype": "Number",
+          "actualtype": "double"
+        }
+      ]
+    },
+    "PlayerSkills": {
+      "name": "PlayerSkills",
+      "className": "PlayerSkills",
+      "classNameSpace": "PlayFab.Multiplayer.Models",
+      "assembly": "PlayFab.Multiplayer.Models",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "properties": [
+        {
+          "name": "Entity",
+          "description": "Entity of the given player.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LastProcessedMatchUploadTimeUtc",
+          "description": "Time when the last match to update the player's skill was uploaded.",
+          "jsontype": "String",
+          "actualtype": "DateTime"
+        },
+        {
+          "name": "SkillsForConditions",
+          "description": "List of skill values for all the conditions sets that were requested.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PlayerSkillForCondition",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -11770,6 +12066,8 @@
       "name": "TrueSkill",
       "methods": [
         "GetPlayerSkill",
+        "GetPlayerSkillForConditions",
+        "GetPlayerSkillForConditionsFromModel",
         "GetPlayerSkillFromModel",
         "UploadMatchResult"
       ]
@@ -11939,7 +12237,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "CreateBatchModelRequest",
-      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"Rank\": 2\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"Rank\": 1\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ],\n  \"InitialSettingsModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"MatchResultStartTimeUtc\": \"2025-03-28T13:31:07.553Z\",\n  \"MatchResultEndTimeUtc\": \"2025-03-28T14:01:07.553Z\",\n  \"MaxIterations\": 100,\n  \"AnomalousMatchResultIgnoreThreshold\": -20.0\n}",
+      "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelName\": \"Test Batch Model\",\n  \"Conditions\": [\n    {\n      \"Key\": \"Platform\",\n      \"Rank\": 2\n    },\n    {\n      \"Key\": \"GameMode\",\n      \"Rank\": 1\n    }\n  ],\n  \"Events\": [\n    \"Kills\",\n    \"Deaths\"\n  ],\n  \"InitialSettingsModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"MatchResultStartTimeUtc\": \"2025-04-28T21:27:34.612Z\",\n  \"MatchResultEndTimeUtc\": \"2025-04-28T21:57:34.612Z\",\n  \"MaxIterations\": 100,\n  \"AnomalousMatchResultIgnoreThreshold\": -20.0\n}",
       "result": "CreateBatchModelResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
@@ -12665,7 +12963,7 @@
       "request": "GetAssetDownloadUrlRequest",
       "requestExample": "{\n  \"FileName\": \"gameserver.zip\"\n}",
       "result": "GetAssetDownloadUrlResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"FileName\": \"gameserver.zip\",\n    \"AssetDownloadUrl\": \"https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"FileName\": \"gameserver.zip\",\n    \"AssetDownloadUrl\": \"https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=\u003CstartDate\u003E&se=\u003CendDate\u003E&spr=https&sig=\u003CsampleSig\u003E&api-version=2017-07-29\"\n  }\n}",
       "seeAlso": [
         "MultiplayerServer/GetAssetUploadUrl",
         "MultiplayerServer/ListAssetSummaries"
@@ -12691,7 +12989,7 @@
       "request": "GetAssetUploadUrlRequest",
       "requestExample": "{\n  \"FileName\": \"gameserver.zip\"\n}",
       "result": "GetAssetUploadUrlResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"FileName\": \"gameserver.zip\",\n    \"AssetUploadUrl\": \"https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=<startDate>&se=<endDate>&spr=https&sig=<sampleSig>&api-version=2017-07-29\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"FileName\": \"gameserver.zip\",\n    \"AssetUploadUrl\": \"https://sampleStorageAccount.blob.core.windows.net/gameassets/gameserver.zip?sv=2015-04-05&ss=b&srt=sco&sp=rw&st=\u003CstartDate\u003E&se=\u003CendDate\u003E&spr=https&sig=\u003CsampleSig\u003E&api-version=2017-07-29\"\n  }\n}",
       "seeAlso": [
         "MultiplayerServer/ListAssetSummaries",
         "MultiplayerServer/ListCertificateSummaries",
@@ -12932,7 +13230,7 @@
       "request": "GetModelDetailsRequest",
       "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n}",
       "result": "GetModelDetailsResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ModelDetails\": {\n      \"ModelCreationMethod\": \"Batch\",\n      \"Conditions\": [\n        {\n          \"Key\": \"Platform\",\n          \"Rank\": 2\n        },\n        {\n          \"Key\": \"GameMode\",\n          \"Rank\": 1\n        }\n      ],\n      \"Events\": [\n        \"Kills\",\n        \"Deaths\"\n      ],\n      \"BatchParameters\": {\n        \"ParentModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n        \"MatchResultStartDateTime\": \"2025-03-28T13:31:07.588Z\",\n        \"MatchResultEndDateTime\": \"2025-03-28T14:01:07.588Z\",\n        \"MaxIterations\": 100,\n        \"AnomalousMatchResultIgnoreThreshold\": -20.0\n      },\n      \"EstimatedTimeRemainingInSeconds\": 0,\n      \"CurrentAnomalousMatchResultIgnoreThreshold\": -20.0,\n      \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n      \"ModelName\": \"Test Batch Model\",\n      \"ModelState\": \"Active\",\n      \"IsPrimary\": true,\n      \"CreationDateTime\": \"2025-03-28T14:01:07.588Z\"\n    }\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ModelDetails\": {\n      \"ModelCreationMethod\": \"Batch\",\n      \"Conditions\": [\n        {\n          \"Key\": \"Platform\",\n          \"Rank\": 2\n        },\n        {\n          \"Key\": \"GameMode\",\n          \"Rank\": 1\n        }\n      ],\n      \"Events\": [\n        \"Kills\",\n        \"Deaths\"\n      ],\n      \"BatchParameters\": {\n        \"ParentModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n        \"MatchResultStartDateTime\": \"2025-04-28T21:27:34.644Z\",\n        \"MatchResultEndDateTime\": \"2025-04-28T21:57:34.644Z\",\n        \"MaxIterations\": 100,\n        \"AnomalousMatchResultIgnoreThreshold\": -20.0\n      },\n      \"EstimatedTimeRemainingInSeconds\": 0,\n      \"CurrentAnomalousMatchResultIgnoreThreshold\": -20.0,\n      \"BatchResults\": {\n        \"LearningActivity\": {\n          \"2\": 2.1,\n          \"3\": 0.1\n        },\n        \"RunTimeInSeconds\": 3600,\n        \"MatchResultsUsedCount\": 100000,\n        \"MatchResultsIgnoredCount\": 1\n      },\n      \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n      \"ModelName\": \"Test Batch Model\",\n      \"ModelState\": \"Active\",\n      \"IsPrimary\": true,\n      \"CreationDateTime\": \"2025-04-28T21:57:34.644Z\"\n    }\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -12957,7 +13255,7 @@
       "request": "GetModelsByScenarioRequest",
       "requestExample": "{\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\"\n}",
       "result": "GetModelsByScenarioResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Models\": [\n      {\n        \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n        \"ModelName\": \"Test Batch Model\",\n        \"ModelState\": \"Active\",\n        \"IsPrimary\": true,\n        \"CreationDateTime\": \"2025-03-28T14:01:07.569Z\"\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Models\": [\n      {\n        \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n        \"ModelName\": \"Test Batch Model\",\n        \"ModelState\": \"Active\",\n        \"IsPrimary\": true,\n        \"CreationDateTime\": \"2025-04-28T21:57:34.625Z\"\n      }\n    ]\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -13086,9 +13384,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetPlayerSkillRequest",
-      "requestExample": "{\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  },\n  \"IncludeSkillBreakdown\": true\n}",
+      "requestExample": "{\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  },\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"IncludeSkillBreakdown\": true\n}",
       "result": "GetPlayerSkillResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-03-28T14:01:07.534Z\",\n        \"SkillBreakdown\": {\n          \"Mean\": 1.0,\n          \"Variance\": 0.1,\n          \"Experience\": 0,\n          \"QuantileRank\": 0.5\n        }\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-03-28T14:01:07.534Z\",\n        \"SkillBreakdown\": {\n          \"Mean\": 2.0,\n          \"Variance\": 0.08,\n          \"Experience\": 5,\n          \"QuantileRank\": 0.8\n        }\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.587Z\",\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"SkillBreakdown\": {\n          \"Mean\": 1.0,\n          \"Variance\": 0.1,\n          \"Experience\": 0,\n          \"QuantileRank\": 0.5\n        }\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.587Z\",\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"SkillBreakdown\": {\n          \"Mean\": 2.0,\n          \"Variance\": 0.08,\n          \"Experience\": 5,\n          \"QuantileRank\": 0.8\n        }\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -13110,6 +13408,76 @@
       ]
     },
     {
+      "name": "GetPlayerSkillForConditions",
+      "summary": "Gets skill values of a set of players for multiple sets of conditions from the primary model of a given scenario.",
+      "requestDetails": "Gets skill values of a set of players for multiple sets of conditions from the primary model of a given scenario. The caller is either a game server, the title or a player looking to get their own skill values.",
+      "subgroup": "TrueSkill",
+      "url": "/TrueSkill/GetPlayerSkillForConditions",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetPlayerSkillForConditionsRequest",
+      "requestExample": "{\n  \"Conditions\": [\n    {\n      \"Conditions\": {\n        \"Platform\": \"Xbox\",\n        \"Mode\": \"Deathmatch\"\n      }\n    },\n    {\n      \"Conditions\": {\n        \"Platform\": \"Xbox\",\n        \"Mode\": \"Guardian\"\n      }\n    }\n  ],\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"IncludeSkillBreakdown\": true\n}",
+      "result": "GetPlayerSkillForConditionsResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.596Z\",\n        \"SkillsForConditions\": [\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"SkillValue\": 1.0,\n            \"MatchmakingSkillValue\": 0.9,\n            \"SkillBreakdown\": {\n              \"Mean\": 1.0,\n              \"Variance\": 0.1,\n              \"Experience\": 0,\n              \"QuantileRank\": 0.5\n            }\n          },\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Guardian\"\n            },\n            \"SkillValue\": 1.0,\n            \"MatchmakingSkillValue\": 0.9,\n            \"SkillBreakdown\": {\n              \"Mean\": 1.0,\n              \"Variance\": 0.1,\n              \"Experience\": 0,\n              \"QuantileRank\": 0.5\n            }\n          }\n        ]\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.596Z\",\n        \"SkillsForConditions\": [\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"SkillValue\": 2.0,\n            \"MatchmakingSkillValue\": 1.8,\n            \"SkillBreakdown\": {\n              \"Mean\": 2.0,\n              \"Variance\": 0.08,\n              \"Experience\": 5,\n              \"QuantileRank\": 0.8\n            }\n          },\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Guardian\"\n            },\n            \"SkillValue\": 2.0,\n            \"MatchmakingSkillValue\": 1.8,\n            \"SkillBreakdown\": {\n              \"Mean\": 2.0,\n              \"Variance\": 0.08,\n              \"Experience\": 5,\n              \"QuantileRank\": 0.8\n            }\n          }\n        ]\n      }\n    ],\n    \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\"\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InternalServerError",
+        "ServiceUnavailable",
+        "TrueSkillDuplicateCondition",
+        "TrueSkillInvalidConditionKey",
+        "TrueSkillInvalidConditionsList",
+        "TrueSkillInvalidConditionValue",
+        "TrueSkillInvalidEntityKey",
+        "TrueSkillInvalidPlayerIds",
+        "TrueSkillInvalidScenarioId",
+        "TrueSkillMissingRequiredCondition",
+        "TrueSkillNoModelInScenario",
+        "TrueSkillScenarioConfigDoesNotExist",
+        "TrueSkillUnauthorized",
+        "TrueSkillUnauthorizedToQueryOtherPlayerSkills",
+        "TrueSkillUnknownConditionKey",
+        "TrueSkillUnknownConditionValue"
+      ]
+    },
+    {
+      "name": "GetPlayerSkillForConditionsFromModel",
+      "summary": "Gets skill values of a set of players for multiple sets of conditions from a specific model.",
+      "requestDetails": "Gets skill values of a set of players for multiple sets of conditions from a specific model. The caller is either a game server, the title or a player looking to get their own skill values.",
+      "subgroup": "TrueSkill",
+      "url": "/TrueSkill/GetPlayerSkillForConditionsFromModel",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "GetPlayerSkillForConditionsFromModelRequest",
+      "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Conditions\": [\n    {\n      \"Conditions\": {\n        \"Platform\": \"Xbox\",\n        \"Mode\": \"Deathmatch\"\n      }\n    },\n    {\n      \"Conditions\": {\n        \"Platform\": \"Xbox\",\n        \"Mode\": \"Guardian\"\n      }\n    }\n  ],\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"IncludeSkillBreakdown\": true\n}",
+      "result": "GetPlayerSkillForConditionsFromModelResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.601Z\",\n        \"SkillsForConditions\": [\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"SkillValue\": 1.0,\n            \"MatchmakingSkillValue\": 0.9,\n            \"SkillBreakdown\": {\n              \"Mean\": 1.0,\n              \"Variance\": 0.1,\n              \"Experience\": 0,\n              \"QuantileRank\": 0.5\n            }\n          },\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Guardian\"\n            },\n            \"SkillValue\": 1.0,\n            \"MatchmakingSkillValue\": 0.9,\n            \"SkillBreakdown\": {\n              \"Mean\": 1.0,\n              \"Variance\": 0.1,\n              \"Experience\": 0,\n              \"QuantileRank\": 0.5\n            }\n          }\n        ]\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.601Z\",\n        \"SkillsForConditions\": [\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"SkillValue\": 2.0,\n            \"MatchmakingSkillValue\": 1.8,\n            \"SkillBreakdown\": {\n              \"Mean\": 2.0,\n              \"Variance\": 0.08,\n              \"Experience\": 5,\n              \"QuantileRank\": 0.8\n            }\n          },\n          {\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Guardian\"\n            },\n            \"SkillValue\": 2.0,\n            \"MatchmakingSkillValue\": 1.8,\n            \"SkillBreakdown\": {\n              \"Mean\": 2.0,\n              \"Variance\": 0.08,\n              \"Experience\": 5,\n              \"QuantileRank\": 0.8\n            }\n          }\n        ]\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
+      "AnyInclusiveFlags": [
+        "Beta"
+      ],
+      "errors": [
+        "InternalServerError",
+        "ServiceUnavailable",
+        "TrueSkillDuplicateCondition",
+        "TrueSkillInvalidConditionKey",
+        "TrueSkillInvalidConditionsList",
+        "TrueSkillInvalidConditionValue",
+        "TrueSkillInvalidEntityKey",
+        "TrueSkillInvalidModelId",
+        "TrueSkillInvalidPlayerIds",
+        "TrueSkillInvalidScenarioId",
+        "TrueSkillMissingRequiredCondition",
+        "TrueSkillModelIsNotActive",
+        "TrueSkillScenarioConfigDoesNotExist",
+        "TrueSkillUnauthorized",
+        "TrueSkillUnauthorizedToQueryOtherPlayerSkills",
+        "TrueSkillUnknownConditionKey",
+        "TrueSkillUnknownConditionValue",
+        "TrueSkillUnknownModelId"
+      ]
+    },
+    {
       "name": "GetPlayerSkillFromModel",
       "summary": "Gets skill values of a set of players from a specific model.",
       "requestDetails": "Gets skill values of a set of players from a specific model. The caller is either a game server, the title or a player looking to get their own skill value.",
@@ -13118,9 +13486,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetPlayerSkillFromModelRequest",
-      "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  },\n  \"IncludeSkillBreakdown\": true\n}",
+      "requestExample": "{\n  \"ModelId\": \"73a2506e-9fd3-4d84-8dd7-570c8e9e02cf\",\n  \"Conditions\": {\n    \"Platform\": \"Xbox\",\n    \"Mode\": \"Deathmatch\"\n  },\n  \"Players\": [\n    {\n      \"Entity\": {\n        \"Id\": \"1234\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      }\n    },\n    {\n      \"Entity\": {\n        \"Id\": \"5678\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"SquadSize\": 2\n    }\n  ],\n  \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n  \"IncludeSkillBreakdown\": true\n}",
       "result": "GetPlayerSkillFromModelResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-03-28T14:01:07.54Z\",\n        \"SkillBreakdown\": {\n          \"Mean\": 1.0,\n          \"Variance\": 0.1,\n          \"Experience\": 0,\n          \"QuantileRank\": 0.5\n        }\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-03-28T14:01:07.54Z\",\n        \"SkillBreakdown\": {\n          \"Mean\": 2.0,\n          \"Variance\": 0.08,\n          \"Experience\": 5,\n          \"QuantileRank\": 0.8\n        }\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Skills\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.591Z\",\n        \"SkillValue\": 1.0,\n        \"MatchmakingSkillValue\": 0.9,\n        \"SkillBreakdown\": {\n          \"Mean\": 1.0,\n          \"Variance\": 0.1,\n          \"Experience\": 0,\n          \"QuantileRank\": 0.5\n        }\n      },\n      {\n        \"Entity\": {\n          \"Id\": \"5678\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"LastProcessedMatchUploadTimeUtc\": \"2025-04-28T21:57:34.591Z\",\n        \"SkillValue\": 2.0,\n        \"MatchmakingSkillValue\": 1.8,\n        \"SkillBreakdown\": {\n          \"Mean\": 2.0,\n          \"Variance\": 0.08,\n          \"Experience\": 5,\n          \"QuantileRank\": 0.8\n        }\n      }\n    ],\n    \"IsModelPrimary\": true\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -14534,9 +14902,9 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "UploadMatchResultRequest",
-      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2025-03-28T13:31:07.543Z\",\n    \"EndDateTimeUtc\": \"2025-03-28T14:01:07.543Z\"\n  }\n}",
+      "requestExample": "{\n  \"MatchResult\": {\n    \"ScenarioId\": \"f9f0331e-0149-42ba-a994-29b18cac4e4d\",\n    \"Teams\": [\n      {\n        \"Players\": [\n          {\n            \"Entity\": {\n              \"Id\": \"5678\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PC\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 35,\n              \"Deaths\": 5\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"8765\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"PreMatchPartyId\": \"630a6523-8853-4cf6-9fda-c7da84f3d87a\",\n            \"SecondsPlayed\": 1800,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 15,\n              \"Deaths\": 10\n            }\n          }\n        ],\n        \"Rank\": 0\n      },\n      {\n        \"Players\": [\n          {\n            \"SecondsPlayed\": 1800,\n            \"BotId\": 77,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"Xbox\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 10,\n              \"Deaths\": 15\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"0371\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Disconnected\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 2,\n              \"Deaths\": 20\n            }\n          },\n          {\n            \"Entity\": {\n              \"Id\": \"9731\",\n              \"Type\": \"title_player_account\",\n              \"TypeString\": \"title_player_account\"\n            },\n            \"SecondsPlayed\": 900,\n            \"CompletionStatus\": \"Completed\",\n            \"Conditions\": {\n              \"Platform\": \"PlayStation\",\n              \"Mode\": \"Deathmatch\"\n            },\n            \"EventCounts\": {\n              \"Kills\": 3,\n              \"Deaths\": 15\n            }\n          }\n        ],\n        \"Rank\": 1\n      }\n    ],\n    \"StartDateTimeUtc\": \"2025-04-28T21:27:34.604Z\",\n    \"EndDateTimeUtc\": \"2025-04-28T21:57:34.604Z\"\n  }\n}",
       "result": "UploadMatchResultResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\",\n    \"UploadTimeUtc\": \"2025-03-28T14:01:07.547Z\"\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"MatchResultId\": \"62f531c9d84065895ab12663efab5a85\",\n    \"UploadTimeUtc\": \"2025-04-28T21:57:34.607Z\"\n  }\n}",
       "AnyInclusiveFlags": [
         "Beta"
       ],
@@ -15014,10 +15382,6 @@
     "InvalidReportDate": {
       "id": 1111,
       "name": "InvalidReportDate"
-    },
-    "ReportNotAvailable": {
-      "id": 1112,
-      "name": "ReportNotAvailable"
     },
     "DatabaseThroughputExceeded": {
       "id": 1113,
@@ -16955,6 +17319,30 @@
       "id": 1601,
       "name": "InvalidVersionResetForLinkedLeaderboard"
     },
+    "BattleNetNotEnabledForTitle": {
+      "id": 1602,
+      "name": "BattleNetNotEnabledForTitle"
+    },
+    "ReportNotProcessed": {
+      "id": 1603,
+      "name": "ReportNotProcessed"
+    },
+    "DataNotAvailable": {
+      "id": 1604,
+      "name": "DataNotAvailable"
+    },
+    "InvalidReportName": {
+      "id": 1605,
+      "name": "InvalidReportName"
+    },
+    "ResourceNotModified": {
+      "id": 1606,
+      "name": "ResourceNotModified"
+    },
+    "StudioCreationLimitExceeded": {
+      "id": 1607,
+      "name": "StudioCreationLimitExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -18071,6 +18459,10 @@
       "id": 20069,
       "name": "TrueSkillTotalScenarioLimitExceeded"
     },
+    "TrueSkillInvalidConditionsList": {
+      "id": 20070,
+      "name": "TrueSkillInvalidConditionsList"
+    },
     "GameSaveManifestNotFound": {
       "id": 20300,
       "name": "GameSaveManifestNotFound"
@@ -18155,6 +18547,18 @@
       "id": 20320,
       "name": "GameSaveManifestFilesLimitExceeded"
     },
+    "GameSaveManifestDescriptionUpdateNotAllowed": {
+      "id": 20321,
+      "name": "GameSaveManifestDescriptionUpdateNotAllowed"
+    },
+    "GameSaveTitleConfigNotFound": {
+      "id": 20322,
+      "name": "GameSaveTitleConfigNotFound"
+    },
+    "GameSaveTitleAlreadyOnboarded": {
+      "id": 20323,
+      "name": "GameSaveTitleAlreadyOnboarded"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -18186,6 +18590,14 @@
     "StateShareIdMissingOrMalformed": {
       "id": 21007,
       "name": "StateShareIdMissingOrMalformed"
+    },
+    "PlayerCreationDisabled": {
+      "id": 22000,
+      "name": "PlayerCreationDisabled"
+    },
+    "AccountAlreadyExists": {
+      "id": 22001,
+      "name": "AccountAlreadyExists"
     }
   },
   "errorList": [
@@ -18293,7 +18705,6 @@
     "UnableToConnectToDatabase",
     "InternalServerError",
     "InvalidReportDate",
-    "ReportNotAvailable",
     "DatabaseThroughputExceeded",
     "InvalidGameTicket",
     "ExpiredGameTicket",
@@ -18778,6 +19189,12 @@
     "VersionIncrementRateExceeded",
     "InvalidSteamUsername",
     "InvalidVersionResetForLinkedLeaderboard",
+    "BattleNetNotEnabledForTitle",
+    "ReportNotProcessed",
+    "DataNotAvailable",
+    "InvalidReportName",
+    "ResourceNotModified",
+    "StudioCreationLimitExceeded",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -19057,6 +19474,7 @@
     "TrueSkillScenarioContainsActiveModel",
     "TrueSkillInvalidConditionRank",
     "TrueSkillTotalScenarioLimitExceeded",
+    "TrueSkillInvalidConditionsList",
     "GameSaveManifestNotFound",
     "GameSaveManifestVersionAlreadyExists",
     "GameSaveConflictUpdatingManifest",
@@ -19078,6 +19496,9 @@
     "GameSaveTitleDoesNotExist",
     "GameSaveOperationNotAllowedForTitle",
     "GameSaveManifestFilesLimitExceeded",
+    "GameSaveManifestDescriptionUpdateNotAllowed",
+    "GameSaveTitleConfigNotFound",
+    "GameSaveTitleAlreadyOnboarded",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
@@ -19085,6 +19506,8 @@
     "StateShareStateRedemptionLimitExceeded",
     "StateShareStateRedemptionLimitNotUpdated",
     "StateShareCreatedStatesLimitExceeded",
-    "StateShareIdMissingOrMalformed"
+    "StateShareIdMissingOrMalformed",
+    "PlayerCreationDisabled",
+    "AccountAlreadyExists"
   ]
 }

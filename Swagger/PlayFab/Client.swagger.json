@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250328",
+    "version": "250428",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -1743,6 +1743,37 @@
         ]
       }
     },
+    "/Client/GetPlayFabIDsFromBattleNetAccountIds": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromBattleNetAccountIds",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of Battle.net account identifiers.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfrombattlenetaccountids"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromBattleNetAccountIdsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromBattleNetAccountIdsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For Battle.net account identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
     "/Client/GetPlayFabIDsFromFacebookIDs": {
       "post": {
         "operationId": "GetPlayFabIDsFromFacebookIDs",
@@ -2826,6 +2857,46 @@
         ]
       }
     },
+    "/Client/LinkBattleNet": {
+      "post": {
+        "operationId": "LinkBattleNet",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Battle.net account associated with the token to the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/linkbattlenet"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkBattleNetRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LoginWithBattleNet",
+          "Client/UnlinkBattleNet"
+        ],
+        "x-ms-docs-errors": [
+          "BattleNetNotEnabledForTitle",
+          "InvalidIdentityProviderId",
+          "LinkedIdentifierAlreadyClaimed",
+          "TokenSigningKeyNotFound"
+        ]
+      }
+    },
     "/Client/LinkCustomID": {
       "post": {
         "operationId": "LinkCustomID",
@@ -3502,6 +3573,7 @@
           "EvaluationModePlayerCountExceeded",
           "InvalidSignature",
           "InvalidSignatureTime",
+          "PlayerCreationDisabled",
           "PlayerSecretAlreadyConfigured",
           "PlayerSecretNotConfigured",
           "RequestViewConstraintParamsNotAllowed",
@@ -3554,6 +3626,49 @@
         ]
       }
     },
+    "/Client/LoginWithBattleNet": {
+      "post": {
+        "operationId": "LoginWithBattleNet",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Sign in the user with a Battle.net identity token",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/authentication/loginwithbattlenet"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithBattleNetRequest"
+          }
+        ],
+        "security": [
+          {
+            "None": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkBattleNet",
+          "Client/UnlinkBattleNet"
+        ],
+        "x-ms-docs-errors": [
+          "BattleNetNotEnabledForTitle",
+          "EncryptionKeyMissing",
+          "EvaluationModePlayerCountExceeded",
+          "InvalidSignature",
+          "InvalidSignatureTime",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured"
+        ]
+      }
+    },
     "/Client/LoginWithCustomID": {
       "post": {
         "operationId": "LoginWithCustomID",
@@ -3593,6 +3708,7 @@
           "EvaluationModePlayerCountExceeded",
           "InvalidSignature",
           "InvalidSignatureTime",
+          "PlayerCreationDisabled",
           "PlayerSecretAlreadyConfigured",
           "PlayerSecretNotConfigured",
           "RequestViewConstraintParamsNotAllowed",
@@ -3895,6 +4011,7 @@
           "EvaluationModePlayerCountExceeded",
           "InvalidSignature",
           "InvalidSignatureTime",
+          "PlayerCreationDisabled",
           "PlayerSecretAlreadyConfigured",
           "PlayerSecretNotConfigured",
           "RequestViewConstraintParamsNotAllowed",
@@ -5172,6 +5289,44 @@
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "AppleNotEnabledForTitle"
+        ]
+      }
+    },
+    "/Client/UnlinkBattleNet": {
+      "post": {
+        "operationId": "UnlinkBattleNet",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Battle.net account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/unlinkbattlenet"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkBattleNetRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Client/LinkBattleNet",
+          "Client/LoginWithBattleNet"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "BattleNetNotEnabledForTitle"
         ]
       }
     },
@@ -6896,6 +7051,19 @@
     "AttributeInstallResult": {
       "type": "object",
       "properties": {}
+    },
+    "BattleNetAccountPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "BattleNetAccountId": {
+          "description": "Unique Battle.net account identifier for a user.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Battle.net account identifier.",
+          "type": "string"
+        }
+      }
     },
     "CancelTradeRequest": {
       "type": "object",
@@ -10408,6 +10576,53 @@
         ]
       }
     },
+    "GetPlayFabIDsFromBattleNetAccountIdsRequest": {
+      "type": "object",
+      "properties": {
+        "BattleNetAccountIds": {
+          "description": "Array of unique Battle.net account identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 10 in length.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "BattleNetAccountIds"
+      ],
+      "example": {
+        "BattleNetAccountIds": [
+          "526f79204261747478",
+          "526f79204261747479"
+        ]
+      }
+    },
+    "GetPlayFabIDsFromBattleNetAccountIdsResult": {
+      "description": "For Battle.net account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of Battle.net account identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BattleNetAccountPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "BattleNetAccountId": "526f79204261747478",
+            "PlayFabId": "5a446c83645201"
+          },
+          {
+            "BattleNetAccountId": "526f79204261747479",
+            "PlayFabId": "6345cd25a6c7cc"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromFacebookIDsRequest": {
       "type": "object",
       "properties": {
@@ -11979,6 +12194,29 @@
         "IdentityToken": "eyJraWQi..."
       }
     },
+    "LinkBattleNetRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to a specific Battle.net account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IdentityToken"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi..."
+      }
+    },
     "LinkCustomIDRequest": {
       "type": "object",
       "properties": {
@@ -12585,7 +12823,8 @@
         "NintendoSwitchAccount",
         "GooglePlayGames",
         "XboxMobileStore",
-        "King"
+        "King",
+        "BattleNet"
       ]
     },
     "LoginResult": {
@@ -12711,6 +12950,49 @@
         },
         "IdentityToken": {
           "description": "The JSON Web token (JWT) returned by Apple after login. Represented as the identityToken field in the authorization credential payload. If you choose to ignore the expiration date for identity tokens, you will receive an NotAuthorized error if Apple rotates the signing key. In this case, users have to login to provide a fresh identity token.",
+          "type": "string"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayerSecret": {
+          "description": "Player secret that is used to verify API request signatures (Enterprise Only).",
+          "type": "string"
+        },
+        "TitleId": {
+          "description": "Unique identifier for the title, found in the Settings > Game Properties section of the PlayFab developer site when a title has been selected.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "IdentityToken",
+        "TitleId"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi...",
+        "TitleId": "144"
+      }
+    },
+    "LoginWithBattleNetRequest": {
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EncryptedRequest": {
+          "description": "Base64 encoded body that is encrypted with the Title's public RSA key (Enterprise Only).",
+          "type": "string"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
           "type": "string"
         },
         "InfoRequestParameters": {
@@ -15567,6 +15849,16 @@
       },
       "example": {}
     },
+    "UnlinkBattleNetRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        }
+      },
+      "example": {}
+    },
     "UnlinkCustomIDRequest": {
       "type": "object",
       "properties": {
@@ -17626,6 +17918,13 @@
         "$ref": "#/definitions/GetPlayerTradesRequest"
       }
     },
+    "GetPlayFabIDsFromBattleNetAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromBattleNetAccountIdsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromBattleNetAccountIdsRequest"
+      }
+    },
     "GetPlayFabIDsFromFacebookIDsRequest": {
       "name": "GetPlayFabIDsFromFacebookIDsRequest",
       "in": "body",
@@ -17836,6 +18135,13 @@
         "$ref": "#/definitions/LinkAppleRequest"
       }
     },
+    "LinkBattleNetRequest": {
+      "name": "LinkBattleNetRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkBattleNetRequest"
+      }
+    },
     "LinkCustomIDRequest": {
       "name": "LinkCustomIDRequest",
       "in": "body",
@@ -17973,6 +18279,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/LoginWithAppleRequest"
+      }
+    },
+    "LoginWithBattleNetRequest": {
+      "name": "LoginWithBattleNetRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LoginWithBattleNetRequest"
       }
     },
     "LoginWithCustomIDRequest": {
@@ -18272,6 +18585,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkAppleRequest"
+      }
+    },
+    "UnlinkBattleNetRequest": {
+      "name": "UnlinkBattleNetRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkBattleNetRequest"
       }
     },
     "UnlinkCustomIDRequest": {
@@ -20217,6 +20537,41 @@
                 ],
                 "OpenedAt": "2015-05-01T11:45:19+00:00",
                 "FilledAt": "2015-05-01T15:07:34+00:00"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromBattleNetAccountIdsResult": {
+      "description": "For Battle.net account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromBattleNetAccountIdsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "BattleNetAccountId": "526f79204261747478",
+                "PlayFabId": "5a446c83645201"
+              },
+              {
+                "BattleNetAccountId": "526f79204261747479",
+                "PlayFabId": "6345cd25a6c7cc"
               }
             ]
           }
@@ -23268,10 +23623,6 @@
       "id": 1111,
       "name": "InvalidReportDate"
     },
-    "ReportNotAvailable": {
-      "id": 1112,
-      "name": "ReportNotAvailable"
-    },
     "DatabaseThroughputExceeded": {
       "id": 1113,
       "name": "DatabaseThroughputExceeded"
@@ -25208,6 +25559,26 @@
       "id": 1601,
       "name": "InvalidVersionResetForLinkedLeaderboard"
     },
+    "BattleNetNotEnabledForTitle": {
+      "id": 1602,
+      "name": "BattleNetNotEnabledForTitle"
+    },
+    "ReportNotProcessed": {
+      "id": 1603,
+      "name": "ReportNotProcessed"
+    },
+    "DataNotAvailable": {
+      "id": 1604,
+      "name": "DataNotAvailable"
+    },
+    "InvalidReportName": {
+      "id": 1605,
+      "name": "InvalidReportName"
+    },
+    "ResourceNotModified": {
+      "id": 1606,
+      "name": "ResourceNotModified"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -26324,6 +26695,10 @@
       "id": 20069,
       "name": "TrueSkillTotalScenarioLimitExceeded"
     },
+    "TrueSkillInvalidConditionsList": {
+      "id": 20070,
+      "name": "TrueSkillInvalidConditionsList"
+    },
     "GameSaveManifestNotFound": {
       "id": 20300,
       "name": "GameSaveManifestNotFound"
@@ -26408,6 +26783,18 @@
       "id": 20320,
       "name": "GameSaveManifestFilesLimitExceeded"
     },
+    "GameSaveManifestDescriptionUpdateNotAllowed": {
+      "id": 20321,
+      "name": "GameSaveManifestDescriptionUpdateNotAllowed"
+    },
+    "GameSaveTitleConfigNotFound": {
+      "id": 20322,
+      "name": "GameSaveTitleConfigNotFound"
+    },
+    "GameSaveTitleAlreadyOnboarded": {
+      "id": 20323,
+      "name": "GameSaveTitleAlreadyOnboarded"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -26439,6 +26826,14 @@
     "StateShareIdMissingOrMalformed": {
       "id": 21007,
       "name": "StateShareIdMissingOrMalformed"
+    },
+    "PlayerCreationDisabled": {
+      "id": 22000,
+      "name": "PlayerCreationDisabled"
+    },
+    "AccountAlreadyExists": {
+      "id": 22001,
+      "name": "AccountAlreadyExists"
     }
   }
 }
