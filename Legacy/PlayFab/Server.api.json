@@ -604,6 +604,28 @@
         }
       ]
     },
+    "BattleNetAccountPlayFabIdPair": {
+      "name": "BattleNetAccountPlayFabIdPair",
+      "className": "BattleNetAccountPlayFabIdPair",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "properties": [
+        {
+          "name": "BattleNetAccountId",
+          "description": "Unique Battle.net account identifier for a user.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Battle.net account identifier.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "CatalogItem": {
       "name": "CatalogItem",
       "className": "CatalogItem",
@@ -3538,9 +3560,6 @@
           "name": "InvalidReportDate"
         },
         {
-          "name": "ReportNotAvailable"
-        },
-        {
           "name": "DatabaseThroughputExceeded"
         },
         {
@@ -4993,6 +5012,21 @@
           "name": "InvalidVersionResetForLinkedLeaderboard"
         },
         {
+          "name": "BattleNetNotEnabledForTitle"
+        },
+        {
+          "name": "ReportNotProcessed"
+        },
+        {
+          "name": "DataNotAvailable"
+        },
+        {
+          "name": "InvalidReportName"
+        },
+        {
+          "name": "ResourceNotModified"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -5830,6 +5864,9 @@
           "name": "TrueSkillTotalScenarioLimitExceeded"
         },
         {
+          "name": "TrueSkillInvalidConditionsList"
+        },
+        {
           "name": "GameSaveManifestNotFound"
         },
         {
@@ -5893,6 +5930,15 @@
           "name": "GameSaveManifestFilesLimitExceeded"
         },
         {
+          "name": "GameSaveManifestDescriptionUpdateNotAllowed"
+        },
+        {
+          "name": "GameSaveTitleConfigNotFound"
+        },
+        {
+          "name": "GameSaveTitleAlreadyOnboarded"
+        },
+        {
           "name": "StateShareForbidden"
         },
         {
@@ -5915,6 +5961,12 @@
         },
         {
           "name": "StateShareIdMissingOrMalformed"
+        },
+        {
+          "name": "PlayerCreationDisabled"
+        },
+        {
+          "name": "AccountAlreadyExists"
         }
       ]
     },
@@ -7560,6 +7612,41 @@
           "collection": "array",
           "jsontype": "String",
           "actualtype": "String"
+        }
+      ]
+    },
+    "GetPlayFabIDsFromBattleNetAccountIdsRequest": {
+      "name": "GetPlayFabIDsFromBattleNetAccountIdsRequest",
+      "className": "GetPlayFabIDsFromBattleNetAccountIdsRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "BattleNetAccountIds",
+          "description": "Array of unique Battle.net account identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 10 in length.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "GetPlayFabIDsFromBattleNetAccountIdsResult": {
+      "name": "GetPlayFabIDsFromBattleNetAccountIdsResult",
+      "className": "GetPlayFabIDsFromBattleNetAccountIdsResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "For Battle.net account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Data",
+          "description": "Mapping of Battle.net account identifiers to PlayFab identifiers.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "BattleNetAccountPlayFabIdPair",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -9863,6 +9950,154 @@
         },
         {
           "name": "King"
+        },
+        {
+          "name": "BattleNet"
+        }
+      ]
+    },
+    "LoginWithAndroidDeviceIDRequest": {
+      "name": "LoginWithAndroidDeviceIDRequest",
+      "className": "LoginWithAndroidDeviceIDRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device and CreateAccount is set to true, a new PlayFab account will be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Please note that while multiple devices of this type can be linked to a single user account, only the one most recently used to login (or most recently linked) will be reflected in the user's account information. We will be updating to show all linked devices in a future release.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "AndroidDevice",
+          "description": "Specific model of the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "AndroidDeviceId",
+          "description": "Android device identifier for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "OS",
+          "description": "Specific Operating System version for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "LoginWithCustomIDRequest": {
+      "name": "LoginWithCustomIDRequest",
+      "className": "LoginWithCustomIDRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "It is highly recommended that developers ensure that it is extremely unlikely that a customer could generate an ID which is already in use by another customer. If this is the first time a user has signed in with the Custom ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Custom ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Custom ID, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomId",
+          "description": "Custom unique identifier for the user, generated by the title.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "LoginWithIOSDeviceIDRequest": {
+      "name": "LoginWithIOSDeviceIDRequest",
+      "className": "LoginWithIOSDeviceIDRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device and CreateAccount is set to true, a new PlayFab account will be created and linked to the vendor-specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "DeviceId",
+          "description": "Vendor-specific iOS identifier for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "DeviceModel",
+          "description": "Specific model of the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "OS",
+          "description": "Specific Operating System version for the user's device.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -15473,6 +15708,7 @@
         "DeletePlayer",
         "DeletePushNotificationTemplate",
         "GetPlayerProfile",
+        "GetPlayFabIDsFromBattleNetAccountIds",
         "GetPlayFabIDsFromFacebookIDs",
         "GetPlayFabIDsFromFacebookInstantGamesIds",
         "GetPlayFabIDsFromGenericIDs",
@@ -15526,6 +15762,9 @@
       "name": "Authentication",
       "methods": [
         "AuthenticateSessionTicket",
+        "LoginWithAndroidDeviceID",
+        "LoginWithCustomID",
+        "LoginWithIOSDeviceID",
         "LoginWithPSN",
         "LoginWithServerCustomId",
         "LoginWithSteamId",
@@ -15786,9 +16025,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"20394883\",\n  \"VirtualCurrency\": \"GC\",\n  \"Amount\": 100\n}",
       "result": "ModifyUserVirtualCurrencyResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"B456AE0\",\n    \"VirtualCurrency\": \"GC\",\n    \"BalanceChange\": 10,\n    \"Balance\": 1500\n  }\n}",
-      "seeAlso": [
-        "Server/SubtractUserVirtualCurrency"
-      ],
       "errors": [
         "InvalidVirtualCurrency",
         "VirtualCurrencyCurrentlyUnavailable"
@@ -15837,12 +16073,6 @@
       "requestExample": "{\n  \"Bans\": [\n    {\n      \"PlayFabId\": \"1679AF5CD04BD838\",\n      \"IPAddress\": \"192.168.1.1\",\n      \"Reason\": \"You cheated!\",\n      \"DurationInHours\": 7\n    },\n    {\n      \"PlayFabId\": \"2329AF5CD04BF513\",\n      \"Reason\": \"Caught you using speed hack!\"\n    }\n  ]\n}",
       "result": "BanUsersResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserBans",
-        "Server/RevokeAllBansForUser",
-        "Server/RevokeBans",
-        "Server/UpdateBans"
-      ],
       "errors": [
         "UserisNotValid"
       ]
@@ -16154,12 +16384,7 @@
       "request": "GetCharacterLeaderboardRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 0,\n  \"MaxResultsCount\": 20\n}",
       "result": "GetCharacterLeaderboardResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warriors\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/GetCharacterStatistics",
-        "Server/GetLeaderboardAroundCharacter",
-        "Server/UpdateCharacterStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"9874325\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warriors\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetCharacterReadOnlyData",
@@ -16265,11 +16490,6 @@
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"StartPosition\": 0,\n  \"MaxResultsCount\": 20\n}",
       "result": "GetLeaderboardResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"DisplayName\": \"username\",\n        \"StatValue\": 12,\n        \"Position\": 0,\n        \"Profile\": {\n          \"AvatarUrl\": \"https://example.org/profile.jpg\",\n          \"Statistics\": [\n            {\n              \"Name\": \"Points\",\n              \"Version\": 2,\n              \"Value\": 15\n            },\n            {\n              \"Name\": \"XP\",\n              \"Version\": 1,\n              \"Value\": 10\n            }\n          ]\n        }\n      }\n    ],\n    \"Version\": 0\n  }\n}",
-      "seeAlso": [
-        "Server/GetLeaderboardAroundUser",
-        "Server/GetUserStatistics",
-        "Server/UpdateUserStatistics"
-      ],
       "errors": [
         "LeaderboardVersionNotAvailable"
       ]
@@ -16314,12 +16534,7 @@
       "request": "GetLeaderboardForUsersCharactersRequest",
       "requestExample": "{\n  \"StatisticName\": \"Kills\",\n  \"PlayFabId\": \"10931252888739651331\"\n}",
       "result": "GetLeaderboardForUsersCharactersResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/GetLeaderboard",
-        "Server/GetLeaderboardAroundCharacter",
-        "Server/UpdateCharacterStatistics"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Leaderboard\": [\n      {\n        \"PlayFabId\": \"10931252888739651331\",\n        \"CharacterId\": \"987343220\",\n        \"CharacterName\": \"FighterDude\",\n        \"DisplayName\": \"username\",\n        \"CharacterType\": \"blue_warrior\",\n        \"StatValue\": 12,\n        \"Position\": 0\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayerCombinedInfo",
@@ -16440,6 +16655,19 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"10931252888739651331\",\n    \"Tags\": [\n      \"title.AAA.MostKilled\",\n      \"title.AAA.MostPlayed\",\n      \"title.AAA.MostBanned\"\n    ]\n  }\n}"
     },
     {
+      "name": "GetPlayFabIDsFromBattleNetAccountIds",
+      "summary": "Retrieves the unique PlayFab identifiers for the given set of Battle.net account identifiers.",
+      "resultDetails": "For Battle.net account identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "subgroup": "Account Management",
+      "url": "/Server/GetPlayFabIDsFromBattleNetAccountIds",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayFabIDsFromBattleNetAccountIdsRequest",
+      "requestExample": "{\n  \"BattleNetAccountIds\": [\n    \"526f79204261747478\",\n    \"526f79204261747479\"\n  ]\n}",
+      "result": "GetPlayFabIDsFromBattleNetAccountIdsResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"BattleNetAccountId\": \"526f79204261747478\",\n        \"PlayFabId\": \"5a446c83645201\"\n      },\n      {\n        \"BattleNetAccountId\": \"526f79204261747479\",\n        \"PlayFabId\": \"6345cd25a6c7cc\"\n      }\n    ]\n  }\n}"
+    },
+    {
       "name": "GetPlayFabIDsFromFacebookIDs",
       "summary": "Retrieves the unique PlayFab identifiers for the given set of Facebook identifiers.",
       "resultDetails": "For Facebook identifiers which have not been linked to PlayFab accounts, null will be returned.",
@@ -16476,11 +16704,7 @@
       "request": "GetPlayFabIDsFromGenericIDsRequest",
       "requestExample": "{\n  \"GenericIDs\": [\n    {\n      \"ServiceName\": \"BigBizSocial\",\n      \"UserId\": \"1234567890\"\n    },\n    {\n      \"ServiceName\": \"VeeCeeMe\",\n      \"UserId\": \"og5igh85gf43gf\"\n    }\n  ]\n}",
       "result": "GetPlayFabIDsFromGenericIDsResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"BigBizSocial\",\n          \"UserId\": \"1234567890\"\n        },\n        \"PlayFabId\": \"ABCDEF0123456789\"\n      },\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"VeeCeeMe\",\n          \"UserId\": \"og5igh85gf43gf\"\n        },\n        \"PlayFabId\": \"1234567890ABCDEF\"\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/AddGenericID",
-        "Server/RemoveGenericID"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": [\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"BigBizSocial\",\n          \"UserId\": \"1234567890\"\n        },\n        \"PlayFabId\": \"ABCDEF0123456789\"\n      },\n      {\n        \"GenericId\": {\n          \"ServiceName\": \"VeeCeeMe\",\n          \"UserId\": \"og5igh85gf43gf\"\n        },\n        \"PlayFabId\": \"1234567890ABCDEF\"\n      }\n    ]\n  }\n}"
     },
     {
       "name": "GetPlayFabIDsFromNintendoServiceAccountIds",
@@ -16659,9 +16883,6 @@
       "requestExample": "{\n  \"StoreId\": \"BonusStore\",\n  \"PlayFabId\": \"20394883\"\n}",
       "result": "GetStoreItemsResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Store\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 180,\n          \"GV\": 20\n        },\n        \"RealCurrencyPrices\": {\n          \"GBP\": 100\n        }\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 250,\n          \"GV\": 30\n        }\n      },\n      {\n        \"ItemId\": \"starterpack_1\",\n        \"VirtualCurrencyPrices\": {\n          \"RM\": 399\n        }\n      }\n    ],\n    \"Source\": \"Admin\",\n    \"CatalogVersion\": \"1\",\n    \"StoreId\": \"BonusStore\",\n    \"MarketingData\": {\n      \"DisplayName\": \"Amazing Bonus Store\",\n      \"Description\": \"Elite tier bonuses available here\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetCatalogItems"
-      ],
       "errors": [
         "CatalogNotConfigured",
         "StoreNotFound"
@@ -16695,10 +16916,7 @@
       "request": "GetTitleDataRequest",
       "requestExample": "{\n  \"Keys\": [\n    \"color\",\n    \"propertyA\"\n  ]\n}",
       "result": "GetTitleDataResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/SetTitleData"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}"
     },
     {
       "name": "GetTitleInternalData",
@@ -16711,10 +16929,7 @@
       "request": "GetTitleDataRequest",
       "requestExample": "{\n  \"Keys\": [\n    \"color\",\n    \"propertyA\"\n  ]\n}",
       "result": "GetTitleDataResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/SetTitleInternalData"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Data\": {\n      \"color\": \"blue\",\n      \"propertyA\": \"xyz123\"\n    }\n  }\n}"
     },
     {
       "name": "GetTitleNews",
@@ -16794,10 +17009,7 @@
       "request": "GetUserInventoryRequest",
       "requestExample": "{\n  \"PlayFabId\": \"204883457\"\n}",
       "result": "GetUserInventoryResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserAccountInfo"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}"
     },
     {
       "name": "GetUserPublisherData",
@@ -16811,13 +17023,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Keys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"IfChangedFromDataVersion\": 13\n}",
       "result": "GetUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DataVersion\": 12,\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherInternalData",
-        "Server/GetUserPublisherReadOnlyData",
-        "Server/UpdateUserPublisherData",
-        "Server/UpdateUserPublisherInternalData",
-        "Server/UpdateUserPublisherReadOnlyData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -16834,13 +17039,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Keys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"IfChangedFromDataVersion\": 13\n}",
       "result": "GetUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DataVersion\": 12,\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherData",
-        "Server/GetUserPublisherReadOnlyData",
-        "Server/UpdateUserPublisherData",
-        "Server/UpdateUserPublisherInternalData",
-        "Server/UpdateUserPublisherReadOnlyData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -16857,13 +17055,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Keys\": [\n    \"preferences\",\n    \"progress\"\n  ],\n  \"IfChangedFromDataVersion\": 13\n}",
       "result": "GetUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"2039475\",\n    \"DataVersion\": 12,\n    \"Data\": {\n      \"preferences\": {\n        \"Value\": \"alpha\",\n        \"LastUpdated\": \"2014-08-20T12:30:45Z\",\n        \"Permission\": \"Public\"\n      },\n      \"progress\": {\n        \"Value\": \"level_twenty\",\n        \"LastUpdated\": \"2014-09-01T10:12:30Z\",\n        \"Permission\": \"Private\"\n      }\n    }\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherData",
-        "Server/GetUserPublisherInternalData",
-        "Server/UpdateUserPublisherData",
-        "Server/UpdateUserPublisherInternalData",
-        "Server/UpdateUserPublisherReadOnlyData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -16997,10 +17188,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\",\n  \"Subject\": \"8e7Eju4j9\"\n}",
       "result": "EmptyResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkNintendoServiceAccount",
-        "Server/UnlinkNintendoServiceAccount"
-      ],
       "errors": [
         "InvalidIdentityProviderId",
         "LinkedIdentifierAlreadyClaimed",
@@ -17156,6 +17343,57 @@
       ]
     },
     {
+      "name": "LoginWithAndroidDeviceID",
+      "summary": "Signs the user in using the Android device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device and CreateAccount is set to true, a new PlayFab account will be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Please note that while multiple devices of this type can be linked to a single user account, only the one most recently used to login (or most recently linked) will be reflected in the user's account information. We will be updating to show all linked devices in a future release.",
+      "subgroup": "Authentication",
+      "url": "/Server/LoginWithAndroidDeviceID",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithAndroidDeviceIDRequest",
+      "requestExample": "{\n  \"AndroidDeviceId\": \"526f79204261747479\",\n  \"OS\": \"5.0\",\n  \"AndroidDevice\": \"Nexus 6\",\n  \"CreateAccount\": false\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "errors": [
+        "EvaluationModePlayerCountExceeded",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
+      "name": "LoginWithCustomID",
+      "summary": "Signs the user in using a custom unique identifier generated by the title, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "It is highly recommended that developers ensure that it is extremely unlikely that a customer could generate an ID which is already in use by another customer. If this is the first time a user has signed in with the Custom ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Custom ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Custom ID, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "url": "/Server/LoginWithCustomID",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithCustomIDRequest",
+      "requestExample": "{\n  \"CustomId\": \"67AB-5397-CC54-EA31\",\n  \"CreateAccount\": false\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "errors": [
+        "EvaluationModePlayerCountExceeded",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
+      "name": "LoginWithIOSDeviceID",
+      "summary": "Signs the user in using the iOS device identifier, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
+      "requestDetails": "On iOS devices, the identifierForVendor (https://developer.apple.com/library/ios/documentation/UIKit/Reference/UIDevice_Class/index.html#//apple_ref/occ/instp/UIDevice/identifierForVendor) must be used as the DeviceId, as the UIDevice uniqueIdentifier has been deprecated as of iOS 5, and use of the advertisingIdentifier for this purpose will result in failure of Apple's certification process. If this is the first time a user has signed in with the iOS device and CreateAccount is set to true, a new PlayFab account will be created and linked to the vendor-specific iOS device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the iOS device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
+      "subgroup": "Authentication",
+      "url": "/Server/LoginWithIOSDeviceID",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithIOSDeviceIDRequest",
+      "requestExample": "{\n  \"DeviceId\": \"29848d9bh8900a0b003\",\n  \"OS\": \"7.11\",\n  \"DeviceModel\": \"Iphone 5s\",\n  \"CreateAccount\": false\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "errors": [
+        "EvaluationModePlayerCountExceeded",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
       "name": "LoginWithPSN",
       "summary": "Signs the user in using a PlayStation :tm: Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
       "requestDetails": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
@@ -17210,6 +17448,7 @@
         "EvaluationModePlayerCountExceeded",
         "InvalidSignature",
         "InvalidSignatureTime",
+        "InvalidSteamUsername",
         "RequestViewConstraintParamsNotAllowed",
         "SteamNotEnabledForTitle",
         "SteamUserNotFound"
@@ -17286,11 +17525,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"GivingCharacterId\": \"98092347523\",\n  \"ReceivingCharacterId\": \"6323489712\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToCharacterFromCharacterResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToCharacterFromUser",
-        "Server/MoveItemToUserFromCharacter"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -17308,10 +17542,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"CharacterId\": \"98092347523\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToCharacterFromUserResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToUserFromCharacter"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -17329,10 +17559,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"234234897234\",\n  \"CharacterId\": \"98092347523\",\n  \"ItemInstanceId\": \"701231299999\"\n}",
       "result": "MoveItemToUserFromCharacterResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {}\n}",
-      "seeAlso": [
-        "Server/GrantItemsToCharacter",
-        "Server/MoveItemToCharacterFromUser"
-      ],
       "errors": [
         "CharacterNotFound",
         "ItemNotOwned"
@@ -17453,10 +17679,6 @@
       "requestExample": "{\n  \"FriendPlayFabId\": \"29837799\",\n  \"PlayFabId\": \"1a46086aed40f142\"\n}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Server/AddFriend",
-        "Server/SetFriendTags"
-      ],
       "errors": [
         "AccountNotFound"
       ]
@@ -17472,10 +17694,6 @@
       "requestExample": "{\n  \"GenericId\": {\n    \"ServiceName\": \"BigBizSocial\",\n    \"UserId\": \"1234567890\"\n  }\n}",
       "result": "EmptyResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/AddGenericID",
-        "Server/GetPlayFabIDsFromGenericIDs"
-      ],
       "errors": [
         "AccountNotLinked",
         "IdentifierNotLinked"
@@ -17534,12 +17752,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "RevokeAllBansForUserResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
-      "seeAlso": [
-        "Server/BanUsers",
-        "Server/GetUserBans",
-        "Server/RevokeBans",
-        "Server/UpdateBans"
-      ],
       "errors": [
         "UserisNotValid"
       ]
@@ -17569,9 +17781,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"203945882\",\n  \"ItemInstanceId\": \"2048583045\"\n}",
       "result": "RevokeInventoryResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetUserInventory"
-      ],
       "errors": [
         "ItemNotFound"
       ]
@@ -17705,12 +17914,7 @@
       "request": "SetFriendTagsRequest",
       "requestExample": "{\n  \"PlayFabId\": \"ABCDEF123456\",\n  \"FriendPlayFabId\": \"298ABC37799\",\n  \"Tags\": [\n    \"sniper\",\n    \"melee\"\n  ]\n}",
       "result": "EmptyResponse",
-      "resultExample": "",
-      "seeAlso": [
-        "Server/AddFriend",
-        "Server/GetFriendsList",
-        "Server/RemoveFriend"
-      ]
+      "resultExample": ""
     },
     {
       "name": "SetGameServerInstanceData",
@@ -17803,9 +18007,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetPublisherDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetPublisherData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -17822,9 +18023,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetTitleDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetTitleData"
-      ],
       "errors": [
         "DataLengthExceeded",
         "TooManyKeys"
@@ -17842,9 +18040,6 @@
       "requestExample": "{\n  \"Key\": \"Running Speed\",\n  \"Value\": \"1.03\"\n}",
       "result": "SetTitleDataResult",
       "resultExample": "",
-      "seeAlso": [
-        "Server/GetTitleInternalData"
-      ],
       "errors": [
         "DataLengthExceeded",
         "TooManyKeys"
@@ -17876,9 +18071,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"20394883\",\n  \"VirtualCurrency\": \"GC\",\n  \"Amount\": 100\n}",
       "result": "ModifyUserVirtualCurrencyResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"B456AE0\",\n    \"VirtualCurrency\": \"GC\",\n    \"BalanceChange\": 10,\n    \"Balance\": 1500\n  }\n}",
-      "seeAlso": [
-        "Server/AddUserVirtualCurrency"
-      ],
       "errors": [
         "InvalidVirtualCurrency",
         "VirtualCurrencyCurrentlyUnavailable"
@@ -17895,10 +18087,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"1234FA342\"\n}",
       "result": "EmptyResponse",
       "resultExample": "",
-      "seeAlso": [
-        "Server/LinkNintendoServiceAccount",
-        "Server/LinkNintendoServiceAccountSubject"
-      ],
       "errors": [
         "AccountNotLinked",
         "NintendoSwitchNotEnabledForTitle"
@@ -18207,14 +18395,7 @@
       "request": "UpdateUserInternalDataRequest",
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  }\n}",
       "result": "UpdateUserDataResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 8\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserData",
-        "Server/GetUserInternalData",
-        "Server/GetUserReadOnlyData",
-        "Server/UpdateUserData",
-        "Server/UpdateUserReadOnlyData"
-      ]
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 8\n  }\n}"
     },
     {
       "name": "UpdateUserInventoryItemCustomData",
@@ -18241,13 +18422,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  },\n  \"Permission\": \"Public\"\n}",
       "result": "UpdateUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 8\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherData",
-        "Server/GetUserPublisherInternalData",
-        "Server/GetUserPublisherReadOnlyData",
-        "Server/UpdateUserPublisherInternalData",
-        "Server/UpdateUserPublisherReadOnlyData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -18264,13 +18438,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  }\n}",
       "result": "UpdateUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 8\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherData",
-        "Server/GetUserPublisherInternalData",
-        "Server/GetUserPublisherReadOnlyData",
-        "Server/UpdateUserPublisherData",
-        "Server/UpdateUserPublisherReadOnlyData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -18287,13 +18454,6 @@
       "requestExample": "{\n  \"PlayFabId\": \"2039475\",\n  \"Data\": {\n    \"Class\": \"Fighter\",\n    \"Gender\": \"Female\",\n    \"Icon\": \"Guard 3\",\n    \"Theme\": \"Colorful\"\n  },\n  \"Permission\": \"Public\"\n}",
       "result": "UpdateUserDataResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"DataVersion\": 8\n  }\n}",
-      "seeAlso": [
-        "Server/GetUserPublisherData",
-        "Server/GetUserPublisherInternalData",
-        "Server/GetUserPublisherReadOnlyData",
-        "Server/UpdateUserPublisherData",
-        "Server/UpdateUserPublisherInternalData"
-      ],
       "errors": [
         "PublisherNotSet"
       ]
@@ -18807,10 +18967,6 @@
     "InvalidReportDate": {
       "id": 1111,
       "name": "InvalidReportDate"
-    },
-    "ReportNotAvailable": {
-      "id": 1112,
-      "name": "ReportNotAvailable"
     },
     "DatabaseThroughputExceeded": {
       "id": 1113,
@@ -20748,6 +20904,26 @@
       "id": 1601,
       "name": "InvalidVersionResetForLinkedLeaderboard"
     },
+    "BattleNetNotEnabledForTitle": {
+      "id": 1602,
+      "name": "BattleNetNotEnabledForTitle"
+    },
+    "ReportNotProcessed": {
+      "id": 1603,
+      "name": "ReportNotProcessed"
+    },
+    "DataNotAvailable": {
+      "id": 1604,
+      "name": "DataNotAvailable"
+    },
+    "InvalidReportName": {
+      "id": 1605,
+      "name": "InvalidReportName"
+    },
+    "ResourceNotModified": {
+      "id": 1606,
+      "name": "ResourceNotModified"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -21864,6 +22040,10 @@
       "id": 20069,
       "name": "TrueSkillTotalScenarioLimitExceeded"
     },
+    "TrueSkillInvalidConditionsList": {
+      "id": 20070,
+      "name": "TrueSkillInvalidConditionsList"
+    },
     "GameSaveManifestNotFound": {
       "id": 20300,
       "name": "GameSaveManifestNotFound"
@@ -21948,6 +22128,18 @@
       "id": 20320,
       "name": "GameSaveManifestFilesLimitExceeded"
     },
+    "GameSaveManifestDescriptionUpdateNotAllowed": {
+      "id": 20321,
+      "name": "GameSaveManifestDescriptionUpdateNotAllowed"
+    },
+    "GameSaveTitleConfigNotFound": {
+      "id": 20322,
+      "name": "GameSaveTitleConfigNotFound"
+    },
+    "GameSaveTitleAlreadyOnboarded": {
+      "id": 20323,
+      "name": "GameSaveTitleAlreadyOnboarded"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -21979,6 +22171,14 @@
     "StateShareIdMissingOrMalformed": {
       "id": 21007,
       "name": "StateShareIdMissingOrMalformed"
+    },
+    "PlayerCreationDisabled": {
+      "id": 22000,
+      "name": "PlayerCreationDisabled"
+    },
+    "AccountAlreadyExists": {
+      "id": 22001,
+      "name": "AccountAlreadyExists"
     }
   },
   "errorList": [
@@ -22086,7 +22286,6 @@
     "UnableToConnectToDatabase",
     "InternalServerError",
     "InvalidReportDate",
-    "ReportNotAvailable",
     "DatabaseThroughputExceeded",
     "InvalidGameTicket",
     "ExpiredGameTicket",
@@ -22571,6 +22770,11 @@
     "VersionIncrementRateExceeded",
     "InvalidSteamUsername",
     "InvalidVersionResetForLinkedLeaderboard",
+    "BattleNetNotEnabledForTitle",
+    "ReportNotProcessed",
+    "DataNotAvailable",
+    "InvalidReportName",
+    "ResourceNotModified",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -22850,6 +23054,7 @@
     "TrueSkillScenarioContainsActiveModel",
     "TrueSkillInvalidConditionRank",
     "TrueSkillTotalScenarioLimitExceeded",
+    "TrueSkillInvalidConditionsList",
     "GameSaveManifestNotFound",
     "GameSaveManifestVersionAlreadyExists",
     "GameSaveConflictUpdatingManifest",
@@ -22871,6 +23076,9 @@
     "GameSaveTitleDoesNotExist",
     "GameSaveOperationNotAllowedForTitle",
     "GameSaveManifestFilesLimitExceeded",
+    "GameSaveManifestDescriptionUpdateNotAllowed",
+    "GameSaveTitleConfigNotFound",
+    "GameSaveTitleAlreadyOnboarded",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
@@ -22878,6 +23086,8 @@
     "StateShareStateRedemptionLimitExceeded",
     "StateShareStateRedemptionLimitNotUpdated",
     "StateShareCreatedStatesLimitExceeded",
-    "StateShareIdMissingOrMalformed"
+    "StateShareIdMissingOrMalformed",
+    "PlayerCreationDisabled",
+    "AccountAlreadyExists"
   ]
 }
