@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250428",
+    "version": "250512",
     "title": "PlayFab Addon API",
     "description": "APIs for managing addons.",
     "termsOfService": "https://playfab.com/terms/",
@@ -330,6 +330,42 @@
           "BillingInformationRequired",
           "CatalogBadRequest",
           "CatalogConfigInvalid",
+          "InvalidEntityType",
+          "InvalidParams",
+          "InvalidTitleId"
+        ]
+      }
+    },
+    "/Addon/CreateOrUpdateToxMod": {
+      "post": {
+        "operationId": "CreateOrUpdateToxMod",
+        "tags": [
+          "Addon"
+        ],
+        "description": "Creates the ToxMod addon on a title, or updates it if it already exists.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/addon/addon/createorupdatetoxmod"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/CreateOrUpdateToxModRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CreateOrUpdateToxModResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AddonAlreadyExists",
           "InvalidEntityType",
           "InvalidParams",
           "InvalidTitleId"
@@ -671,6 +707,42 @@
         ]
       }
     },
+    "/Addon/DeleteToxMod": {
+      "post": {
+        "operationId": "DeleteToxMod",
+        "tags": [
+          "Addon"
+        ],
+        "description": "Deletes the ToxMod addon on a title.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/addon/addon/deletetoxmod"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/DeleteToxModRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteToxModResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AddonDoesntExist",
+          "InvalidEntityType",
+          "InvalidParams",
+          "InvalidTitleId"
+        ]
+      }
+    },
     "/Addon/DeleteTwitch": {
       "post": {
         "operationId": "DeleteTwitch",
@@ -976,6 +1048,41 @@
         "responses": {
           "200": {
             "$ref": "#/responses/GetSteamResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "InvalidEntityType",
+          "InvalidParams",
+          "InvalidTitleId"
+        ]
+      }
+    },
+    "/Addon/GetToxMod": {
+      "post": {
+        "operationId": "GetToxMod",
+        "tags": [
+          "Addon"
+        ],
+        "description": "Gets information of the ToxMod addon on a title, omits secrets.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/addon/addon/gettoxmod"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetToxModRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetToxModResponse"
           },
           "400": {
             "$ref": "#/responses/ApiErrorWrapper"
@@ -1416,6 +1523,50 @@
       "type": "object",
       "properties": {}
     },
+    "CreateOrUpdateToxModRequest": {
+      "type": "object",
+      "properties": {
+        "AccountId": {
+          "description": "Account ID obtained after creating your ToxMod developer account.",
+          "type": "string"
+        },
+        "AccountKey": {
+          "description": "Account Key obtained after creating your ToxMod developer account.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Enabled": {
+          "description": "Whether ToxMod Addon is Enabled by Title.",
+          "type": "boolean"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "ErrorIfExists": {
+          "description": "If an error should be returned if the addon already exists.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Enabled",
+        "AccountId",
+        "AccountKey"
+      ],
+      "example": {
+        "AccountId": "123456",
+        "AccountKey": "654321"
+      }
+    },
+    "CreateOrUpdateToxModResponse": {
+      "type": "object",
+      "properties": {}
+    },
     "CreateOrUpdateTwitchRequest": {
       "type": "object",
       "properties": {
@@ -1608,6 +1759,26 @@
       "example": {}
     },
     "DeleteSteamResponse": {
+      "type": "object",
+      "properties": {}
+    },
+    "DeleteToxModRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {}
+    },
+    "DeleteToxModResponse": {
       "type": "object",
       "properties": {}
     },
@@ -1940,6 +2111,47 @@
         "Created"
       ]
     },
+    "GetToxModRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "example": {}
+    },
+    "GetToxModResponse": {
+      "type": "object",
+      "properties": {
+        "AccountId": {
+          "description": "Account ID obtained after creating your Twitch developer account.",
+          "type": "string"
+        },
+        "AccountKey": {
+          "description": "Account Key obtained after creating your Twitch developer account.",
+          "type": "string"
+        },
+        "Created": {
+          "description": "Addon status.",
+          "type": "boolean"
+        },
+        "Enabled": {
+          "description": "Whether the ToxMod Addon is enabled by the title.",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "Created",
+        "Enabled"
+      ]
+    },
     "GetTwitchRequest": {
       "type": "object",
       "properties": {
@@ -2047,6 +2259,13 @@
         "$ref": "#/definitions/CreateOrUpdateSteamRequest"
       }
     },
+    "CreateOrUpdateToxModRequest": {
+      "name": "CreateOrUpdateToxModRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/CreateOrUpdateToxModRequest"
+      }
+    },
     "CreateOrUpdateTwitchRequest": {
       "name": "CreateOrUpdateTwitchRequest",
       "in": "body",
@@ -2110,6 +2329,13 @@
         "$ref": "#/definitions/DeleteSteamRequest"
       }
     },
+    "DeleteToxModRequest": {
+      "name": "DeleteToxModRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/DeleteToxModRequest"
+      }
+    },
     "DeleteTwitchRequest": {
       "name": "DeleteTwitchRequest",
       "in": "body",
@@ -2171,6 +2397,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetSteamRequest"
+      }
+    },
+    "GetToxModRequest": {
+      "name": "GetToxModRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetToxModRequest"
       }
     },
     "GetTwitchRequest": {
@@ -2336,6 +2569,25 @@
           },
           "data": {
             "$ref": "#/definitions/CreateOrUpdateSteamResponse"
+          }
+        }
+      }
+    },
+    "CreateOrUpdateToxModResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/CreateOrUpdateToxModResponse"
           }
         }
       }
@@ -2511,6 +2763,25 @@
         }
       }
     },
+    "DeleteToxModResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/DeleteToxModResponse"
+          }
+        }
+      }
+    },
     "DeleteTwitchResponse": {
       "description": "",
       "schema": {
@@ -2678,6 +2949,25 @@
           },
           "data": {
             "$ref": "#/definitions/GetSteamResponse"
+          }
+        }
+      }
+    },
+    "GetToxModResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetToxModResponse"
           }
         }
       }
@@ -5106,6 +5396,10 @@
       "id": 1606,
       "name": "ResourceNotModified"
     },
+    "StudioCreationLimitExceeded": {
+      "id": 1607,
+      "name": "StudioCreationLimitExceeded"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6322,6 +6616,14 @@
       "id": 20323,
       "name": "GameSaveTitleAlreadyOnboarded"
     },
+    "GameSaveServiceNotEnabledForTitle": {
+      "id": 20324,
+      "name": "GameSaveServiceNotEnabledForTitle"
+    },
+    "GameSaveServiceOnboardingPending": {
+      "id": 20325,
+      "name": "GameSaveServiceOnboardingPending"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -6361,6 +6663,38 @@
     "AccountAlreadyExists": {
       "id": 22001,
       "name": "AccountAlreadyExists"
+    },
+    "TagInvalid": {
+      "id": 23000,
+      "name": "TagInvalid"
+    },
+    "TagTooLong": {
+      "id": 23001,
+      "name": "TagTooLong"
+    },
+    "StatisticColumnAggregationMismatch": {
+      "id": 23002,
+      "name": "StatisticColumnAggregationMismatch"
+    },
+    "StatisticResetIntervalMismatch": {
+      "id": 23003,
+      "name": "StatisticResetIntervalMismatch"
+    },
+    "VersionConfigurationCannotBeSpecifiedForLinkedStat": {
+      "id": 23004,
+      "name": "VersionConfigurationCannotBeSpecifiedForLinkedStat"
+    },
+    "VersionConfigurationIsRequired": {
+      "id": 23005,
+      "name": "VersionConfigurationIsRequired"
+    },
+    "InvalidEntityTypeForAggregation": {
+      "id": 23006,
+      "name": "InvalidEntityTypeForAggregation"
+    },
+    "MultiLevelAggregationNotAllowed": {
+      "id": 23007,
+      "name": "MultiLevelAggregationNotAllowed"
     }
   }
 }
