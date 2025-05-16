@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250512",
+    "version": "250516",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2746,6 +2746,43 @@
         ]
       }
     },
+    "/Server/LinkBattleNetAccount": {
+      "post": {
+        "operationId": "LinkBattleNetAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Battle.net account associated with the token to the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linkbattlenetaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkBattleNetAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/UnlinkBattleNetAccount"
+        ],
+        "x-ms-docs-errors": [
+          "BattleNetNotEnabledForTitle",
+          "LinkedIdentifierAlreadyClaimed"
+        ]
+      }
+    },
     "/Server/LinkNintendoServiceAccount": {
       "post": {
         "operationId": "LinkNintendoServiceAccount",
@@ -4370,6 +4407,43 @@
         "x-ms-docs-errors": [
           "InvalidVirtualCurrency",
           "VirtualCurrencyCurrentlyUnavailable"
+        ]
+      }
+    },
+    "/Server/UnlinkBattleNetAccount": {
+      "post": {
+        "operationId": "UnlinkBattleNetAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Battle.net account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkbattlenetaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkBattleNetAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkBattleNetAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "BattleNetNotEnabledForTitle"
         ]
       }
     },
@@ -8249,6 +8323,7 @@
         "GameSaveTitleAlreadyOnboarded",
         "GameSaveServiceNotEnabledForTitle",
         "GameSaveServiceOnboardingPending",
+        "GameSaveManifestNotEligibleAsConflictingVersion",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -11882,6 +11957,35 @@
       },
       "x-sortKey": "ItemInstanceId"
     },
+    "LinkBattleNetAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to a specific Battle.net account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "IdentityToken"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "IdentityToken": "eyJraWQi..."
+      }
+    },
     "LinkedPlatformAccountModel": {
       "type": "object",
       "properties": {
@@ -14833,6 +14937,25 @@
         }
       }
     },
+    "UnlinkBattleNetAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
     "UnlinkNintendoServiceAccountRequest": {
       "type": "object",
       "properties": {
@@ -16937,6 +17060,13 @@
         "$ref": "#/definitions/GrantItemsToUsersRequest"
       }
     },
+    "LinkBattleNetAccountRequest": {
+      "name": "LinkBattleNetAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkBattleNetAccountRequest"
+      }
+    },
     "LinkNintendoServiceAccountRequest": {
       "name": "LinkNintendoServiceAccountRequest",
       "in": "body",
@@ -17262,6 +17392,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/SubtractUserVirtualCurrencyRequest"
+      }
+    },
+    "UnlinkBattleNetAccountRequest": {
+      "name": "UnlinkBattleNetAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkBattleNetAccountRequest"
       }
     },
     "UnlinkNintendoServiceAccountRequest": {
@@ -24644,6 +24781,10 @@
     "GameSaveServiceOnboardingPending": {
       "id": 20325,
       "name": "GameSaveServiceOnboardingPending"
+    },
+    "GameSaveManifestNotEligibleAsConflictingVersion": {
+      "id": 20326,
+      "name": "GameSaveManifestNotEligibleAsConflictingVersion"
     },
     "StateShareForbidden": {
       "id": 21000,
