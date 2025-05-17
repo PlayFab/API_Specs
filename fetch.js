@@ -16,7 +16,7 @@ async function CompareLegacyApiListWithToc(fetchedList, tocObj) {
     });
 
     if (!allElementsExist) {
-        throw "Current TOC does not match Swagger List or some fetched APIs did not return status 200.";
+        throw "Current TOC does not match Legacy List or some fetched APIs did not return status 200.";
     }
 
     console.log(" <- Finished CompareLegacyApiListWithToc");
@@ -109,7 +109,7 @@ async function FetchLegacyApis(playFabUrl, tocObj) {
             const data = await FetchDataFromUrl(`${playFabUrl}${api.pfurl}`);
             fetchedList.push(data);
         } catch (error) {
-            console.error("!!!!!!!!!! Aborting fetchLegacyApis, failed\n", error);
+            console.error("!!!!!!!!!! Aborting FetchLegacyApis, failed\n", error);
         }
     }
 
@@ -127,7 +127,7 @@ async function FetchSwaggerApiGroupList(swaggerApiListUrl, tocObj) {
             const data = await FetchDataFromUrl(`${swaggerApiListUrl}${api.pfurl}`);
             fetchedList.push(data);
         } catch (error) {
-            console.error("  !!!!!!!!!!  Aborting FetchDataFromUrl, failed\n", error);
+            console.error("  !!!!!!!!!!  Aborting FetchSwaggerApiGroupList, failed\n", error);
         }
     }
 
@@ -161,7 +161,7 @@ async function UpdateApiFiles(jsonToUploadList, tocObj) {
             await WriteFetchedData(api.response, filepath, 2);
         }
     } catch (error) {
-        console.error("  !!!!!!!!!!  Aborting UpdateApiFilesFromToc, failed\n", error);
+        console.error("  !!!!!!!!!!  Aborting UpdateApiFiles, failed\n", error);
     }
 
     console.log("<- Finished UpdateApiFiles");
@@ -175,7 +175,7 @@ async function UpdateSdkManualNotes() {
         var data = await FetchDataFromUrl(sdkManualNotesUrl);
         await UpdateVersionNumbers(data);
     } catch (error) {
-        console.error("  !!!!!!!!!!  Aborting FetchDataFromUrl, failed\n", error);
+        console.error("  !!!!!!!!!!  Aborting UpdateSdkManualNotes, failed\n", error);
     }
 
     console.log("<- Finished SdkManualNotes");
