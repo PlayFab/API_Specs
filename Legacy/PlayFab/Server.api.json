@@ -5948,6 +5948,9 @@
           "name": "GameSaveServiceOnboardingPending"
         },
         {
+          "name": "GameSaveManifestNotEligibleAsConflictingVersion"
+        },
+        {
           "name": "StateShareForbidden"
         },
         {
@@ -9285,6 +9288,42 @@
         }
       ]
     },
+    "LinkBattleNetAccountRequest": {
+      "name": "LinkBattleNetAccountRequest",
+      "className": "LinkBattleNetAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ForceLink",
+          "description": "If another user is already linked to a specific Battle.net account, unlink the other user and re-link.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "IdentityToken",
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
     "LinkedPlatformAccountModel": {
       "name": "LinkedPlatformAccountModel",
       "className": "LinkedPlatformAccountModel",
@@ -10038,6 +10077,57 @@
           "description": "Specific Operating System version for the user's device.",
           "jsontype": "String",
           "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "LoginWithBattleNetRequest": {
+      "name": "LoginWithBattleNetRequest",
+      "className": "LoginWithBattleNetRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IdentityToken",
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for which pieces of info to return for the user.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Formerly triggered an Entity login with a normal client login. This is now automatic, and always-on.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
           "optional": true
         }
       ]
@@ -13655,6 +13745,29 @@
         }
       ]
     },
+    "UnlinkBattleNetAccountRequest": {
+      "name": "UnlinkBattleNetAccountRequest",
+      "className": "UnlinkBattleNetAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PlayFabId",
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
     "UnlinkNintendoServiceAccountRequest": {
       "name": "UnlinkNintendoServiceAccountRequest",
       "className": "UnlinkNintendoServiceAccountRequest",
@@ -15786,6 +15899,7 @@
         "GetServerCustomIDsFromPlayFabIDs",
         "GetUserAccountInfo",
         "GetUserBans",
+        "LinkBattleNetAccount",
         "LinkNintendoServiceAccount",
         "LinkNintendoServiceAccountSubject",
         "LinkNintendoSwitchDeviceId",
@@ -15802,6 +15916,7 @@
         "SendEmailFromTemplate",
         "SendPushNotification",
         "SendPushNotificationFromTemplate",
+        "UnlinkBattleNetAccount",
         "UnlinkNintendoServiceAccount",
         "UnlinkNintendoSwitchDeviceId",
         "UnlinkPSNAccount",
@@ -15826,6 +15941,7 @@
       "methods": [
         "AuthenticateSessionTicket",
         "LoginWithAndroidDeviceID",
+        "LoginWithBattleNet",
         "LoginWithCustomID",
         "LoginWithIOSDeviceID",
         "LoginWithPSN",
@@ -17439,6 +17555,25 @@
       ]
     },
     {
+      "name": "LinkBattleNetAccount",
+      "summary": "Links the Battle.net account associated with the token to the user's PlayFab account.",
+      "subgroup": "Account Management",
+      "url": "/Server/LinkBattleNetAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LinkBattleNetAccountRequest",
+      "requestExample": "{\n  \"PlayFabId\": \"1234FA342\",\n  \"IdentityToken\": \"eyJraWQi...\"\n}",
+      "result": "EmptyResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/UnlinkBattleNetAccount"
+      ],
+      "errors": [
+        "BattleNetNotEnabledForTitle",
+        "LinkedIdentifierAlreadyClaimed"
+      ]
+    },
+    {
       "name": "LinkNintendoServiceAccount",
       "summary": "Links the Nintendo account associated with the token to the user's PlayFab account",
       "subgroup": "Account Management",
@@ -17661,6 +17796,35 @@
       "resultExample": "",
       "errors": [
         "EvaluationModePlayerCountExceeded",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
+      "name": "LoginWithBattleNet",
+      "summary": "Sign in the user with a Battle.net identity token",
+      "subgroup": "Authentication",
+      "url": "/Server/LoginWithBattleNet",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithBattleNetRequest",
+      "requestExample": "{\n  \"IdentityToken\": \"eyJraWQi...\"\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/LinkBattleNetAccount",
+        "Server/UnlinkBattleNetAccount"
+      ],
+      "errors": [
+        "AccountNotFound",
+        "BattleNetNotEnabledForTitle",
+        "EncryptionKeyMissing",
+        "EvaluationModePlayerCountExceeded",
+        "InvalidAuthToken",
+        "InvalidSignature",
+        "InvalidSignatureTime",
+        "InvalidTitleId",
+        "PlayerSecretAlreadyConfigured",
+        "PlayerSecretNotConfigured",
         "RequestViewConstraintParamsNotAllowed"
       ]
     },
@@ -18454,6 +18618,25 @@
       "errors": [
         "InvalidVirtualCurrency",
         "VirtualCurrencyCurrentlyUnavailable"
+      ]
+    },
+    {
+      "name": "UnlinkBattleNetAccount",
+      "summary": "Unlinks the related Battle.net account from the user's PlayFab account.",
+      "subgroup": "Account Management",
+      "url": "/Server/UnlinkBattleNetAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UnlinkBattleNetAccountRequest",
+      "requestExample": "{\n  \"PlayFabId\": \"1234FA342\"\n}",
+      "result": "EmptyResponse",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/LinkBattleNetAccount"
+      ],
+      "errors": [
+        "AccountNotLinked",
+        "BattleNetNotEnabledForTitle"
       ]
     },
     {
@@ -22640,6 +22823,10 @@
       "id": 20325,
       "name": "GameSaveServiceOnboardingPending"
     },
+    "GameSaveManifestNotEligibleAsConflictingVersion": {
+      "id": 20326,
+      "name": "GameSaveManifestNotEligibleAsConflictingVersion"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -23614,6 +23801,7 @@
     "GameSaveTitleAlreadyOnboarded",
     "GameSaveServiceNotEnabledForTitle",
     "GameSaveServiceOnboardingPending",
+    "GameSaveManifestNotEligibleAsConflictingVersion",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250512",
+    "version": "250519",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -2746,6 +2746,43 @@
         ]
       }
     },
+    "/Server/LinkBattleNetAccount": {
+      "post": {
+        "operationId": "LinkBattleNetAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Battle.net account associated with the token to the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linkbattlenetaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkBattleNetAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/UnlinkBattleNetAccount"
+        ],
+        "x-ms-docs-errors": [
+          "BattleNetNotEnabledForTitle",
+          "LinkedIdentifierAlreadyClaimed"
+        ]
+      }
+    },
     "/Server/LinkNintendoServiceAccount": {
       "post": {
         "operationId": "LinkNintendoServiceAccount",
@@ -3130,6 +3167,53 @@
         "x-requestDetails": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device and CreateAccount is set to true, a new PlayFab account will be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Please note that while multiple devices of this type can be linked to a single user account, only the one most recently used to login (or most recently linked) will be reflected in the user's account information. We will be updating to show all linked devices in a future release.",
         "x-ms-docs-errors": [
           "EvaluationModePlayerCountExceeded",
+          "RequestViewConstraintParamsNotAllowed"
+        ]
+      }
+    },
+    "/Server/LoginWithBattleNet": {
+      "post": {
+        "operationId": "LoginWithBattleNet",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Sign in the user with a Battle.net identity token",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/authentication/loginwithbattlenet"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithBattleNetRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkBattleNetAccount",
+          "Server/UnlinkBattleNetAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "BattleNetNotEnabledForTitle",
+          "EncryptionKeyMissing",
+          "EvaluationModePlayerCountExceeded",
+          "InvalidAuthToken",
+          "InvalidSignature",
+          "InvalidSignatureTime",
+          "InvalidTitleId",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured",
           "RequestViewConstraintParamsNotAllowed"
         ]
       }
@@ -4370,6 +4454,43 @@
         "x-ms-docs-errors": [
           "InvalidVirtualCurrency",
           "VirtualCurrencyCurrentlyUnavailable"
+        ]
+      }
+    },
+    "/Server/UnlinkBattleNetAccount": {
+      "post": {
+        "operationId": "UnlinkBattleNetAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Battle.net account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkbattlenetaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkBattleNetAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkBattleNetAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "BattleNetNotEnabledForTitle"
         ]
       }
     },
@@ -8249,6 +8370,7 @@
         "GameSaveTitleAlreadyOnboarded",
         "GameSaveServiceNotEnabledForTitle",
         "GameSaveServiceOnboardingPending",
+        "GameSaveManifestNotEligibleAsConflictingVersion",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -11882,6 +12004,35 @@
       },
       "x-sortKey": "ItemInstanceId"
     },
+    "LinkBattleNetAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to a specific Battle.net account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "IdentityToken"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "IdentityToken": "eyJraWQi..."
+      }
+    },
     "LinkedPlatformAccountModel": {
       "type": "object",
       "properties": {
@@ -12383,6 +12534,35 @@
         "OS": "5.0",
         "AndroidDevice": "Nexus 6",
         "CreateAccount": false
+      }
+    },
+    "LoginWithBattleNetRequest": {
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not currently linked to this ID.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web Token (JWT) returned by Battle.net after login",
+          "type": "string"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for which pieces of info to return for the user.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "IdentityToken"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi..."
       }
     },
     "LoginWithCustomIDRequest": {
@@ -14833,6 +15013,25 @@
         }
       }
     },
+    "UnlinkBattleNetAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
     "UnlinkNintendoServiceAccountRequest": {
       "type": "object",
       "properties": {
@@ -16937,6 +17136,13 @@
         "$ref": "#/definitions/GrantItemsToUsersRequest"
       }
     },
+    "LinkBattleNetAccountRequest": {
+      "name": "LinkBattleNetAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkBattleNetAccountRequest"
+      }
+    },
     "LinkNintendoServiceAccountRequest": {
       "name": "LinkNintendoServiceAccountRequest",
       "in": "body",
@@ -17014,6 +17220,13 @@
       "description": "On Android devices, the recommendation is to use the Settings.Secure.ANDROID_ID as the AndroidDeviceId, as described in this blog post (http://android-developers.blogspot.com/2011/03/identifying-app-installations.html). More information on this identifier can be found in the Android documentation (http://developer.android.com/reference/android/provider/Settings.Secure.html). If this is the first time a user has signed in with the Android device and CreateAccount is set to true, a new PlayFab account will be created and linked to the Android device ID. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Android device, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Please note that while multiple devices of this type can be linked to a single user account, only the one most recently used to login (or most recently linked) will be reflected in the user's account information. We will be updating to show all linked devices in a future release.",
       "schema": {
         "$ref": "#/definitions/LoginWithAndroidDeviceIDRequest"
+      }
+    },
+    "LoginWithBattleNetRequest": {
+      "name": "LoginWithBattleNetRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LoginWithBattleNetRequest"
       }
     },
     "LoginWithCustomIDRequest": {
@@ -17262,6 +17475,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/SubtractUserVirtualCurrencyRequest"
+      }
+    },
+    "UnlinkBattleNetAccountRequest": {
+      "name": "UnlinkBattleNetAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkBattleNetAccountRequest"
       }
     },
     "UnlinkNintendoServiceAccountRequest": {
@@ -24644,6 +24864,10 @@
     "GameSaveServiceOnboardingPending": {
       "id": 20325,
       "name": "GameSaveServiceOnboardingPending"
+    },
+    "GameSaveManifestNotEligibleAsConflictingVersion": {
+      "id": 20326,
+      "name": "GameSaveManifestNotEligibleAsConflictingVersion"
     },
     "StateShareForbidden": {
       "id": 21000,
