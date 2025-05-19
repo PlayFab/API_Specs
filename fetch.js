@@ -240,7 +240,7 @@ async function DoWork() {
     await CompareSwaggerListWithToc(fetchedSwaggerApis, tocObj);
     await UpdateApiFiles(fetchedSwaggerApis, tocObj);
 
-    UpdateSdkManualNotes();
+    await UpdateSdkManualNotes();
 }
 
 DoWork();
