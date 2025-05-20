@@ -7,12 +7,10 @@ async function CompareLegacyApiListWithToc(fetchedList, tocObj) {
     console.log("-> Begin CompareLegacyApiListWithToc");
 
     var apiList = tocObj.documents.filter(obj => obj.format === "LegacyPlayFabApiSpec" || obj.format === "LegacyPlayFabModels");
-    const allElementsExist = fetchedList.every(fetchedApi => {
-        const urlPart = fetchedApi.url.split("/")[4];
-        const statusOk = fetchedApi.status === 200;
-        const hasMatch = apiList.some(api => urlPart === api.pfurl.split("/")[1]);
-        
-        return statusOk && hasMatch;
+
+    const allElementsExist = apiList.every(api => {
+        const urlPart = api.pfurl.split("/")[1]
+        return fetchedList.some(fetchedApi =>  urlPart === fetchedApi.url.split("/")[4] && fetchedApi.status === 200);
     });
 
     if (!allElementsExist) {
@@ -27,12 +25,9 @@ async function CompareSwaggerListWithToc(fetchedList, tocObj) {
     console.log("-> Begin CompareSwaggerListWithToc");
 
     var swaggerList = tocObj.documents.filter(obj => obj.format === "Swagger")
-    const allElementsExist = fetchedList.every(fetchedApi => {
-        const urlPart = fetchedApi.url.split("/")[4];
-        const statusOk = fetchedApi.status === 200;
-        const hasMatch = swaggerList.some(swaggerApi => urlPart === swaggerApi.pfurl.split("/")[1]);
-        
-        return statusOk && hasMatch;
+    const allElementsExist = swaggerList.every(swaggerApi => {
+        const urlPart = swaggerApi.pfurl.split("/")[1];
+       return fetchedList.some(api => urlPart === api.url.split("/")[4] && api.status === 200);
     });
 
     if (!allElementsExist) {
@@ -162,6 +157,7 @@ async function UpdateApiFiles(jsonToUploadList, tocObj) {
         }
     } catch (error) {
         console.error("  !!!!!!!!!!  Aborting UpdateApiFiles, failed\n", error);
+        throw error;
     }
 
     console.log("<- Finished UpdateApiFiles");
@@ -176,6 +172,7 @@ async function UpdateSdkManualNotes() {
         await UpdateVersionNumbers(data);
     } catch (error) {
         console.error("  !!!!!!!!!!  Aborting UpdateSdkManualNotes, failed\n", error);
+        throw error;
     }
 
     console.log("<- Finished SdkManualNotes");
