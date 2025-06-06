@@ -341,7 +341,7 @@
       "properties": [
         {
           "name": "EntityKey",
-          "description": "Entity key",
+          "description": "The entity for which the statistics are returned.",
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
@@ -349,7 +349,7 @@
         },
         {
           "name": "Statistics",
-          "description": "All statistics for the given entitykey",
+          "description": "The statistics for the given entity key.",
           "collection": "array",
           "jsontype": "Object",
           "actualtype": "EntityStatisticValue",
@@ -907,6 +907,14 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true
+        },
+        {
+          "name": "StatisticNames",
+          "description": "The list of statistics to return for the user. If set to null, the current version of all statistics are returned.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -958,6 +966,14 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "StatisticNames",
+          "description": "The list of statistics to return for the user. If set to null, the current version of all statistics are returned.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -1801,6 +1817,7 @@
         "ApiNotEnabledForTitle",
         "DuplicateColumnNameFound",
         "DuplicateLinkedStatisticColumnNameFound",
+        "EntityTypeMismatchWithStatDefinition",
         "ExternalEntityNotAllowedForTier",
         "InvalidBaseTimeForInterval",
         "LeaderboardCountLimitExceeded",
@@ -1840,7 +1857,8 @@
         "MaxQueryableVersionsValueNotAllowedForTier",
         "StatisticCountLimitExceeded",
         "StatisticDefinitionHasNullOrEmptyVersionConfiguration",
-        "StatisticNameConflict"
+        "StatisticNameConflict",
+        "VersionConfigurationIsRequired"
       ]
     },
     {
@@ -1979,6 +1997,7 @@
       "errors": [
         "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
+        "SpecifiedVersionLeaderboardNotFound",
         "StatisticNotFound"
       ]
     },
@@ -2017,6 +2036,7 @@
         "ApiNotEnabledForTitle",
         "LeaderboardNotFound",
         "NoLeaderboardForStatistic",
+        "SpecifiedVersionLeaderboardNotFound",
         "StatisticNotFound"
       ]
     },
@@ -2072,7 +2092,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetStatisticsRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"StatisticNames\": [\n    \"SpeedRuns\",\n    \"Boosts\"\n  ],\n  \"Entity\": {\n    \"Id\": \"A197412JDA\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetStatisticsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Statistics\": {\n      \"SpeedRuns\": {\n        \"Name\": \"SpeedRuns\",\n        \"Id\": \"00000000-0000-0000-0000-000000000000\",\n        \"Scores\": [\n          \"89\"\n        ],\n        \"Version\": 0\n      }\n    },\n    \"Entity\": {\n      \"Id\": \"184131840178\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  }\n}",
       "seeAlso": [
@@ -2093,7 +2113,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetStatisticsForEntitiesRequest",
-      "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"A197412JDA\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"B197412JDB\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"A197412JDA\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"B197412JDB\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ],\n  \"StatisticNames\": [\n    \"SpeedRuns\",\n    \"Boosts\"\n  ]\n}",
       "result": "GetStatisticsForEntitiesResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"EntitiesStatistics\": [\n      {\n        \"EntityKey\": {\n          \"Id\": \"A197412JDA\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"89\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"3\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      },\n      {\n        \"EntityKey\": {\n          \"Id\": \"B197412JDB\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"Statistics\": [\n          {\n            \"Name\": \"SpeedRuns\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"50\"\n            ],\n            \"Version\": 0\n          },\n          {\n            \"Name\": \"Boosts\",\n            \"Id\": \"00000000-0000-0000-0000-000000000000\",\n            \"Scores\": [\n              \"1\"\n            ],\n            \"Version\": 0\n          }\n        ]\n      }\n    ]\n  }\n}",
       "seeAlso": [
@@ -5896,6 +5916,18 @@
       "id": 20326,
       "name": "GameSaveManifestNotEligibleAsConflictingVersion"
     },
+    "GameSaveServiceUnavailable": {
+      "id": 20327,
+      "name": "GameSaveServiceUnavailable"
+    },
+    "GameSaveConflict": {
+      "id": 20328,
+      "name": "GameSaveConflict"
+    },
+    "GameSaveManifestNotEligibleForRollback": {
+      "id": 20329,
+      "name": "GameSaveManifestNotEligibleForRollback"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -5967,6 +5999,10 @@
     "MultiLevelAggregationNotAllowed": {
       "id": 23007,
       "name": "MultiLevelAggregationNotAllowed"
+    },
+    "AggregationTypeNotAllowedForLinkedStat": {
+      "id": 23008,
+      "name": "AggregationTypeNotAllowedForLinkedStat"
     }
   },
   "errorList": [
@@ -6871,6 +6907,9 @@
     "GameSaveServiceNotEnabledForTitle",
     "GameSaveServiceOnboardingPending",
     "GameSaveManifestNotEligibleAsConflictingVersion",
+    "GameSaveServiceUnavailable",
+    "GameSaveConflict",
+    "GameSaveManifestNotEligibleForRollback",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
@@ -6888,6 +6927,7 @@
     "VersionConfigurationCannotBeSpecifiedForLinkedStat",
     "VersionConfigurationIsRequired",
     "InvalidEntityTypeForAggregation",
-    "MultiLevelAggregationNotAllowed"
+    "MultiLevelAggregationNotAllowed",
+    "AggregationTypeNotAllowedForLinkedStat"
   ]
 }

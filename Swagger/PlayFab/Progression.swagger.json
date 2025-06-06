@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250526",
+    "version": "250606",
     "title": "PlayFab Progression API",
     "description": "Manage entity statistics Manage entity leaderboards",
     "termsOfService": "https://playfab.com/terms/",
@@ -59,6 +59,7 @@
           "ApiNotEnabledForTitle",
           "DuplicateColumnNameFound",
           "DuplicateLinkedStatisticColumnNameFound",
+          "EntityTypeMismatchWithStatDefinition",
           "ExternalEntityNotAllowedForTier",
           "InvalidBaseTimeForInterval",
           "LeaderboardCountLimitExceeded",
@@ -265,6 +266,7 @@
         "x-ms-docs-errors": [
           "LeaderboardNotFound",
           "NoLeaderboardForStatistic",
+          "SpecifiedVersionLeaderboardNotFound",
           "StatisticNotFound"
         ]
       }
@@ -339,6 +341,7 @@
           "ApiNotEnabledForTitle",
           "LeaderboardNotFound",
           "NoLeaderboardForStatistic",
+          "SpecifiedVersionLeaderboardNotFound",
           "StatisticNotFound"
         ]
       }
@@ -571,7 +574,8 @@
           "MaxQueryableVersionsValueNotAllowedForTier",
           "StatisticCountLimitExceeded",
           "StatisticDefinitionHasNullOrEmptyVersionConfiguration",
-          "StatisticNameConflict"
+          "StatisticNameConflict",
+          "VersionConfigurationIsRequired"
         ]
       }
     },
@@ -1250,12 +1254,12 @@
       "properties": {
         "EntityKey": {
           "$ref": "#/definitions/EntityKey",
-          "description": "Entity key",
+          "description": "The entity for which the statistics are returned.",
           "type": "object",
           "x-isclass": true
         },
         "Statistics": {
-          "description": "All statistics for the given entitykey",
+          "description": "The statistics for the given entity key.",
           "type": "array",
           "items": {
             "$ref": "#/definitions/EntityStatisticValue"
@@ -1724,6 +1728,13 @@
             "$ref": "#/definitions/EntityKey"
           },
           "x-isclass": true
+        },
+        "StatisticNames": {
+          "description": "The list of statistics to return for the user. If set to null, the current version of all statistics are returned.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "required": [
@@ -1741,6 +1752,10 @@
             "Type": "title_player_account",
             "TypeString": "title_player_account"
           }
+        ],
+        "StatisticNames": [
+          "SpeedRuns",
+          "Boosts"
         ]
       }
     },
@@ -1821,9 +1836,20 @@
           "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
           "type": "object",
           "x-isclass": true
+        },
+        "StatisticNames": {
+          "description": "The list of statistics to return for the user. If set to null, the current version of all statistics are returned.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "example": {
+        "StatisticNames": [
+          "SpeedRuns",
+          "Boosts"
+        ],
         "Entity": {
           "Id": "A197412JDA",
           "Type": "title_player_account",
@@ -6817,6 +6843,18 @@
       "id": 20326,
       "name": "GameSaveManifestNotEligibleAsConflictingVersion"
     },
+    "GameSaveServiceUnavailable": {
+      "id": 20327,
+      "name": "GameSaveServiceUnavailable"
+    },
+    "GameSaveConflict": {
+      "id": 20328,
+      "name": "GameSaveConflict"
+    },
+    "GameSaveManifestNotEligibleForRollback": {
+      "id": 20329,
+      "name": "GameSaveManifestNotEligibleForRollback"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -6888,6 +6926,10 @@
     "MultiLevelAggregationNotAllowed": {
       "id": 23007,
       "name": "MultiLevelAggregationNotAllowed"
+    },
+    "AggregationTypeNotAllowedForLinkedStat": {
+      "id": 23008,
+      "name": "AggregationTypeNotAllowedForLinkedStat"
     }
   }
 }
