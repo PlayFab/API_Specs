@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250801",
+    "version": "250815",
     "title": "PlayFab Progression API",
     "description": "Manage entity statistics Manage entity leaderboards",
     "termsOfService": "https://playfab.com/terms/",
@@ -979,6 +979,12 @@
           "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "type": "string"
         },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/LeaderboardEventEmissionConfig",
+          "description": "[In Preview]: The configuration for the events emitted by this leaderboard. If not specified, no events will be emitted.",
+          "type": "object",
+          "x-isclass": true
+        },
         "Name": {
           "description": "A name for the leaderboard, unique per title.",
           "type": "string"
@@ -1046,6 +1052,12 @@
         "EntityType": {
           "description": "The entity type allowed to have score(s) for this statistic.",
           "type": "string"
+        },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/StatisticsEventEmissionConfig",
+          "description": "[In Preview]: Configurations for different Statistics events that can be emitted by the service.",
+          "type": "object",
+          "x-isclass": true
         },
         "Name": {
           "description": "Name of the statistic. Must be less than 150 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
@@ -1304,6 +1316,14 @@
         "Version"
       ]
     },
+    "EventType": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Telemetry",
+        "PlayStream"
+      ]
+    },
     "ExternalFriendSources": {
       "type": "string",
       "enum": [
@@ -1544,6 +1564,12 @@
           "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "type": "string"
         },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/LeaderboardEventEmissionConfig",
+          "description": "[In Preview]: The configuration for the events emitted by this leaderboard. If not specified, no events will be emitted.",
+          "type": "object",
+          "x-isclass": true
+        },
         "LastResetTime": {
           "description": "Last time, in UTC, leaderboard version was incremented.",
           "type": "string"
@@ -1679,6 +1705,12 @@
         "EntityType": {
           "description": "The entity type that can have this statistic.",
           "type": "string"
+        },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/StatisticsEventEmissionConfig",
+          "description": "[In Preview]: Configurations for different Statistics events that can be emitted by the service.",
+          "type": "object",
+          "x-isclass": true
         },
         "LastResetTime": {
           "description": "Last time, in UTC, statistic version was incremented.",
@@ -2021,6 +2053,12 @@
           "description": "The entity type being represented on the leaderboard. If it doesn't correspond to the PlayFab entity types, use 'external' as the type.",
           "type": "string"
         },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/LeaderboardEventEmissionConfig",
+          "description": "[In Preview]: The configuration for the events emitted by this leaderboard. If not specified, no events will be emitted.",
+          "type": "object",
+          "x-isclass": true
+        },
         "LastResetTime": {
           "description": "Last time, in UTC, leaderboard version was incremented.",
           "type": "string"
@@ -2056,6 +2094,26 @@
         "VersionConfiguration"
       ]
     },
+    "LeaderboardEntityRankOnVersionEndConfig": {
+      "type": "object",
+      "properties": {
+        "EventType": {
+          "$ref": "#/definitions/EventType",
+          "description": "The type of event to emit when the leaderboard version end.",
+          "type": "string",
+          "x-isenum": true
+        },
+        "RankLimit": {
+          "description": "The maximum number of entity to return on leaderboard version end. Range is 1 to 1000.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "EventType",
+        "RankLimit"
+      ]
+    },
     "LeaderboardEntryUpdate": {
       "type": "object",
       "properties": {
@@ -2079,11 +2137,42 @@
         "EntityId"
       ]
     },
+    "LeaderboardEventEmissionConfig": {
+      "type": "object",
+      "properties": {
+        "EntityRankOnVersionEndConfig": {
+          "$ref": "#/definitions/LeaderboardEntityRankOnVersionEndConfig",
+          "description": "This event emits the top ranks of the leaderboard when the leaderboard version end.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "VersionEndConfig": {
+          "$ref": "#/definitions/LeaderboardVersionEndConfig",
+          "description": "This event is emitted when the leaderboard version end.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
     "LeaderboardSortDirection": {
       "type": "string",
       "enum": [
         "Descending",
         "Ascending"
+      ]
+    },
+    "LeaderboardVersionEndConfig": {
+      "type": "object",
+      "properties": {
+        "EventType": {
+          "$ref": "#/definitions/EventType",
+          "description": "The type of event to emit when the leaderboard version end.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "EventType"
       ]
     },
     "LinkedStatisticColumn": {
@@ -2260,6 +2349,12 @@
           "description": "The entity type that can have this statistic.",
           "type": "string"
         },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/StatisticsEventEmissionConfig",
+          "description": "[In Preview]: Configurations for different Statistics events that can be emitted by the service.",
+          "type": "object",
+          "x-isclass": true
+        },
         "LastResetTime": {
           "description": "Last time, in UTC, statistic version was incremented.",
           "type": "string"
@@ -2306,6 +2401,31 @@
       },
       "required": [
         "Name"
+      ]
+    },
+    "StatisticsEventEmissionConfig": {
+      "type": "object",
+      "properties": {
+        "UpdateEventConfig": {
+          "$ref": "#/definitions/StatisticsUpdateEventConfig",
+          "description": "Emitted when statistics are updated.",
+          "type": "object",
+          "x-isclass": true
+        }
+      }
+    },
+    "StatisticsUpdateEventConfig": {
+      "type": "object",
+      "properties": {
+        "EventType": {
+          "$ref": "#/definitions/EventType",
+          "description": "The event type to emit when statistics are updated.",
+          "type": "string",
+          "x-isenum": true
+        }
+      },
+      "required": [
+        "EventType"
       ]
     },
     "StatisticUpdate": {
@@ -2367,6 +2487,12 @@
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
+        },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/LeaderboardEventEmissionConfig",
+          "description": "[In Preview]: The configuration for the events emitted by this leaderboard. If not specified, no events will be emitted.",
+          "type": "object",
+          "x-isclass": true
         },
         "Name": {
           "description": "The name of the leaderboard to update the definition for.",
@@ -2450,6 +2576,12 @@
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
+        },
+        "EventEmissionConfig": {
+          "$ref": "#/definitions/StatisticsEventEmissionConfig",
+          "description": "[In Preview]: Configurations for different Statistics events that can be emitted by the service.",
+          "type": "object",
+          "x-isclass": true
         },
         "Name": {
           "description": "Name of the statistic. Must be less than 150 characters. Restricted to a-Z, 0-9, '(', ')', '_', '-' and '.'.",
