@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250801",
+    "version": "250815",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -1412,49 +1412,6 @@
         },
         "x-seeAlso": [
           "Server/GetAllSegments"
-        ]
-      }
-    },
-    "/Server/GetPlayersInSegment": {
-      "post": {
-        "operationId": "GetPlayersInSegment",
-        "tags": [
-          "PlayStream"
-        ],
-        "description": "Allows for paging through all players in a given segment. This API creates a snapshot of all player profiles that match the segment definition at the time of its creation and lives through the Total Seconds to Live, refreshing its life span on each subsequent use of the Continuation Token. Profiles that change during the course of paging will not be reflected in the results. AB Test segments are currently not supported by this operation. NOTE: This API is limited to being called 30 times in one minute. You will be returned an error if you exceed this threshold.",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/server/playstream/getplayersinsegment"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetPlayersInSegmentRequest"
-          }
-        ],
-        "security": [
-          {
-            "SecretKey": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetPlayersInSegmentResult"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. This API is resource intensive and should not be used in scenarios which might generate high request volumes. Only one request to this API at a time should be made per title. Concurrent requests to the API may be rejected with the APIConcurrentRequestLimitExceeded error.",
-        "x-seeAlso": [
-          "Server/GetAllSegments"
-        ],
-        "x-ms-docs-errors": [
-          "ExpiredContinuationToken",
-          "GetPlayersInSegmentRateLimitExceeded",
-          "InternalServerError",
-          "InvalidContinuationToken",
-          "InvalidSearchTerm",
-          "InvalidSegment",
-          "SegmentNotFound"
         ]
       }
     },
@@ -5568,26 +5525,6 @@
         "errorCode"
       ]
     },
-    "AdCampaignAttribution": {
-      "type": "object",
-      "properties": {
-        "AttributedAt": {
-          "description": "UTC time stamp of attribution",
-          "type": "string"
-        },
-        "CampaignId": {
-          "description": "Attribution campaign identifier",
-          "type": "string"
-        },
-        "Platform": {
-          "description": "Attribution network name",
-          "type": "string"
-        }
-      },
-      "required": [
-        "AttributedAt"
-      ]
-    },
     "AdCampaignAttributionModel": {
       "type": "object",
       "properties": {
@@ -6341,15 +6278,6 @@
         "CharacterType": "StrongWarrior"
       }
     },
-    "ChurnRiskLevel": {
-      "type": "string",
-      "enum": [
-        "NoData",
-        "LowRisk",
-        "MediumRisk",
-        "HighRisk"
-      ]
-    },
     "CloudScriptRevisionOption": {
       "type": "string",
       "enum": [
@@ -6409,25 +6337,6 @@
       "required": [
         "RemainingUses"
       ]
-    },
-    "ContactEmailInfo": {
-      "type": "object",
-      "properties": {
-        "EmailAddress": {
-          "description": "The email address",
-          "type": "string"
-        },
-        "Name": {
-          "description": "The name of the email info data",
-          "type": "string"
-        },
-        "VerificationStatus": {
-          "$ref": "#/definitions/EmailVerificationStatus",
-          "description": "The verification status of the email",
-          "type": "string",
-          "x-isenum": true
-        }
-      }
     },
     "ContactEmailInfoModel": {
       "type": "object",
@@ -9969,76 +9878,6 @@
         ]
       }
     },
-    "GetPlayersInSegmentRequest": {
-      "description": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. This API is resource intensive and should not be used in scenarios which might generate high request volumes. Only one request to this API at a time should be made per title. Concurrent requests to the API may be rejected with the APIConcurrentRequestLimitExceeded error.",
-      "type": "object",
-      "properties": {
-        "ContinuationToken": {
-          "description": "Continuation token if retrieving subsequent pages of results.",
-          "type": "string"
-        },
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        },
-        "GetProfilesAsync": {
-          "description": "If set to true, the profiles are loaded asynchronously and the response will include a continuation token and approximate profile count until the first batch of profiles is loaded. Use this parameter to help avoid network timeouts.",
-          "type": "boolean"
-        },
-        "MaxBatchSize": {
-          "description": "Maximum is 10,000. The value 0 will prevent loading any profiles and return only the count of profiles matching this segment.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "SecondsToLive": {
-          "description": "Number of seconds to keep the continuation token active. After token expiration it is not possible to continue paging results. Default is 300 (5 minutes). Maximum is 5,400 (90 minutes).",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "SegmentId": {
-          "description": "Unique identifier for this segment.",
-          "type": "string"
-        }
-      },
-      "required": [
-        "SegmentId"
-      ],
-      "example": {
-        "SegmentId": "1337AA00",
-        "SecondsToLive": 5,
-        "MaxBatchSize": 500
-      }
-    },
-    "GetPlayersInSegmentResult": {
-      "type": "object",
-      "properties": {
-        "ContinuationToken": {
-          "description": "Continuation token to use to retrieve subsequent pages of results. If token returns null there are no more results.",
-          "type": "string"
-        },
-        "PlayerProfiles": {
-          "description": "Array of player profiles in this segment.",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PlayerProfile"
-          },
-          "x-isclass": true
-        },
-        "ProfilesInSegment": {
-          "description": "Count of profiles matching this segment.",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "ProfilesInSegment"
-      ],
-      "example": {
-        "ProfilesInSegment": 15,
-        "ContinuationToken": "asd981if0aiojiud",
-        "PlayerProfiles": []
-      }
-    },
     "GetPlayersSegmentsRequest": {
       "type": "object",
       "properties": {
@@ -13143,197 +12982,6 @@
         "Position"
       ]
     },
-    "PlayerLinkedAccount": {
-      "type": "object",
-      "properties": {
-        "Email": {
-          "description": "Linked account's email",
-          "type": "string"
-        },
-        "Platform": {
-          "$ref": "#/definitions/LoginIdentityProvider",
-          "description": "Authentication platform",
-          "type": "string",
-          "x-isenum": true
-        },
-        "PlatformUserId": {
-          "description": "Platform user identifier",
-          "type": "string"
-        },
-        "Username": {
-          "description": "Linked account's username",
-          "type": "string"
-        }
-      }
-    },
-    "PlayerLocation": {
-      "type": "object",
-      "properties": {
-        "City": {
-          "description": "City of the player's geographic location.",
-          "type": "string"
-        },
-        "ContinentCode": {
-          "$ref": "#/definitions/ContinentCode",
-          "description": "The two-character continent code for this location",
-          "type": "string",
-          "x-isenum": true
-        },
-        "CountryCode": {
-          "$ref": "#/definitions/CountryCode",
-          "description": "The two-character ISO 3166-1 country code for the country associated with the location",
-          "type": "string",
-          "x-isenum": true
-        },
-        "Latitude": {
-          "description": "Latitude coordinate of the player's geographic location.",
-          "type": "number",
-          "x-actualtype": "double"
-        },
-        "Longitude": {
-          "description": "Longitude coordinate of the player's geographic location.",
-          "type": "number",
-          "x-actualtype": "double"
-        }
-      },
-      "required": [
-        "ContinentCode",
-        "CountryCode"
-      ]
-    },
-    "PlayerProfile": {
-      "type": "object",
-      "properties": {
-        "AdCampaignAttributions": {
-          "description": "Array of ad campaigns player has been attributed to",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/AdCampaignAttribution"
-          },
-          "x-isclass": true
-        },
-        "AvatarUrl": {
-          "description": "Image URL of the player's avatar.",
-          "type": "string"
-        },
-        "BannedUntil": {
-          "description": "Banned until UTC Date. If permanent ban this is set for 20 years after the original ban date.",
-          "type": "string"
-        },
-        "ChurnPrediction": {
-          "$ref": "#/definitions/ChurnRiskLevel",
-          "description": "The prediction of the player to churn within the next seven days.",
-          "type": "string",
-          "x-isenum": true
-        },
-        "ContactEmailAddresses": {
-          "description": "Array of contact email addresses associated with the player",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ContactEmailInfo"
-          },
-          "x-isclass": true
-        },
-        "Created": {
-          "description": "Player record created",
-          "type": "string"
-        },
-        "CustomProperties": {
-          "description": "Dictionary of player's custom properties.",
-          "type": "object"
-        },
-        "DisplayName": {
-          "description": "Player Display Name",
-          "type": "string"
-        },
-        "LastLogin": {
-          "description": "Last login",
-          "type": "string"
-        },
-        "LinkedAccounts": {
-          "description": "Array of third party accounts linked to this player",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PlayerLinkedAccount"
-          },
-          "x-isclass": true
-        },
-        "Locations": {
-          "$ref": "#/definitions/PlayerLocation",
-          "description": "Dictionary of player's locations by type.",
-          "type": "object",
-          "x-isclass": true
-        },
-        "Origination": {
-          "$ref": "#/definitions/LoginIdentityProvider",
-          "description": "Player account origination",
-          "type": "string",
-          "x-isenum": true
-        },
-        "PlayerExperimentVariants": {
-          "description": "List of player variants for experimentation",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "PlayerId": {
-          "description": "PlayFab Player ID",
-          "type": "string"
-        },
-        "PlayerStatistics": {
-          "description": "Array of player statistics",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PlayerStatistic"
-          },
-          "x-isclass": true
-        },
-        "PublisherId": {
-          "description": "Publisher this player belongs to",
-          "type": "string"
-        },
-        "PushNotificationRegistrations": {
-          "description": "Array of configured push notification end points",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/PushNotificationRegistration"
-          },
-          "x-isclass": true
-        },
-        "Statistics": {
-          "description": "Dictionary of player's statistics using only the latest version's value",
-          "type": "object",
-          "x-actualtype": "int32"
-        },
-        "Tags": {
-          "description": "List of player's tags for segmentation.",
-          "type": "array",
-          "items": {
-            "type": "string"
-          }
-        },
-        "TitleId": {
-          "description": "Title ID this profile applies to",
-          "type": "string"
-        },
-        "TotalValueToDateInUSD": {
-          "description": "A sum of player's total purchases in USD across all currencies.",
-          "type": "number",
-          "x-actualtype": "uint32"
-        },
-        "ValuesToDate": {
-          "description": "Dictionary of player's total purchases by currency.",
-          "type": "object",
-          "x-actualtype": "uint32"
-        },
-        "VirtualCurrencyBalances": {
-          "description": "Dictionary of player's virtual currency balances",
-          "type": "object",
-          "x-actualtype": "int32"
-        }
-      }
-    },
     "PlayerProfileModel": {
       "type": "object",
       "properties": {
@@ -13560,33 +13208,6 @@
         "ShowExperimentVariants"
       ]
     },
-    "PlayerStatistic": {
-      "type": "object",
-      "properties": {
-        "Id": {
-          "description": "Statistic ID",
-          "type": "string"
-        },
-        "Name": {
-          "description": "Statistic name",
-          "type": "string"
-        },
-        "StatisticValue": {
-          "description": "Current statistic value",
-          "type": "number",
-          "x-actualtype": "int32"
-        },
-        "StatisticVersion": {
-          "description": "Statistic version (0 if not a versioned statistic)",
-          "type": "number",
-          "x-actualtype": "int32"
-        }
-      },
-      "required": [
-        "StatisticVersion",
-        "StatisticValue"
-      ]
-    },
     "PlayerStatisticVersion": {
       "type": "object",
       "properties": {
@@ -13693,21 +13314,6 @@
         "ApplePushNotificationService",
         "GoogleCloudMessaging"
       ]
-    },
-    "PushNotificationRegistration": {
-      "type": "object",
-      "properties": {
-        "NotificationEndpointARN": {
-          "description": "Notification configured endpoint",
-          "type": "string"
-        },
-        "Platform": {
-          "$ref": "#/definitions/PushNotificationPlatform",
-          "description": "Push notification platform",
-          "type": "string",
-          "x-isenum": true
-        }
-      }
     },
     "PushNotificationRegistrationModel": {
       "type": "object",
@@ -16896,14 +16502,6 @@
         "$ref": "#/definitions/GetPlayerProfileRequest"
       }
     },
-    "GetPlayersInSegmentRequest": {
-      "name": "GetPlayersInSegmentRequest",
-      "in": "body",
-      "description": "Initial request must contain at least a Segment ID. Subsequent requests must contain the Segment ID as well as the Continuation Token. Failure to send the Continuation Token will result in a new player segment list being generated. Each time the Continuation Token is passed in the length of the Total Seconds to Live is refreshed. If too much time passes between requests to the point that a subsequent request is past the Total Seconds to Live an error will be returned and paging will be terminated. This API is resource intensive and should not be used in scenarios which might generate high request volumes. Only one request to this API at a time should be made per title. Concurrent requests to the API may be rejected with the APIConcurrentRequestLimitExceeded error.",
-      "schema": {
-        "$ref": "#/definitions/GetPlayersInSegmentRequest"
-      }
-    },
     "GetPlayersSegmentsRequest": {
       "name": "GetPlayersSegmentsRequest",
       "in": "body",
@@ -18921,34 +18519,6 @@
                 "Name": "Fast Players"
               }
             ]
-          }
-        }
-      }
-    },
-    "GetPlayersInSegmentResult": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetPlayersInSegmentResult"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "ProfilesInSegment": 15,
-            "ContinuationToken": "asd981if0aiojiud",
-            "PlayerProfiles": []
           }
         }
       }
