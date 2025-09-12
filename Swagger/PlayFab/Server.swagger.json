@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250815",
+    "version": "250912",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -3054,6 +3054,45 @@
         "x-ms-docs-errors": [
           "AccountAlreadyLinked",
           "InvalidXboxLiveToken",
+          "LinkedAccountAlreadyClaimed"
+        ]
+      }
+    },
+    "/Server/LinkXboxId": {
+      "post": {
+        "operationId": "LinkXboxId",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Xbox Live account associated with the provided Xbox ID and Sandbox to the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linkxboxid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkXboxIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LinkXboxAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkXboxAccount",
+          "Server/LoginWithXboxId",
+          "Server/UnlinkXboxAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountAlreadyLinked",
           "LinkedAccountAlreadyClaimed"
         ]
       }
@@ -7974,6 +8013,8 @@
         "ResourceNotModified",
         "StudioCreationLimitExceeded",
         "StudioDeletionInitiated",
+        "ProductDisabledForTitle",
+        "PreconditionFailed",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -8106,6 +8147,7 @@
         "AsyncExportNotFound",
         "AsyncExportRateLimitExceeded",
         "AnalyticsSegmentCountOverLimit",
+        "GetPlayersInSegmentDeprecated",
         "SnapshotNotFound",
         "InventoryApiNotImplemented",
         "InventoryCollectionDeletionDisallowed",
@@ -8303,7 +8345,13 @@
         "InvalidEntityTypeForAggregation",
         "MultiLevelAggregationNotAllowed",
         "AggregationTypeNotAllowedForLinkedStat",
-        "StoreMetricsRequestInvalidInput"
+        "OperationDeniedDueToDefinitionPolicy",
+        "StatisticUpdateNotAllowedWhileLinked",
+        "UnsupportedEntityType",
+        "EntityTypeSpecifiedRequiresAggregationSource",
+        "PlayFabErrorEventNotSupportedForEntityType",
+        "StoreMetricsRequestInvalidInput",
+        "StoreMetricsErrorRetrievingMetrics"
       ]
     },
     "GenericPlayFabIdPair": {
@@ -12119,7 +12167,7 @@
           "type": "boolean"
         },
         "PlayFabId": {
-          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "description": "PlayFab unique identifier of the user to link.",
           "type": "string"
         },
         "SteamId": {
@@ -12152,7 +12200,7 @@
           "type": "boolean"
         },
         "PlayFabId": {
-          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "description": "PlayFab unique identifier of the user to link.",
           "type": "string"
         },
         "XboxToken": {
@@ -12172,6 +12220,42 @@
     "LinkXboxAccountResult": {
       "type": "object",
       "properties": {}
+    },
+    "LinkXboxIdRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user to link.",
+          "type": "string"
+        },
+        "Sandbox": {
+          "description": "The id of Xbox Live sandbox.",
+          "type": "string"
+        },
+        "XboxId": {
+          "description": "Unique Xbox identifier for a user.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "XboxId",
+        "Sandbox",
+        "PlayFabId"
+      ],
+      "example": {
+        "XboxId": "12344553",
+        "Sandbox": "RETAIL",
+        "PlayFabId": "5A446C83645201",
+        "ForceLink": false
+      }
     },
     "ListPlayerCustomPropertiesRequest": {
       "type": "object",
@@ -14774,7 +14858,7 @@
           "type": "object"
         },
         "PlayFabId": {
-          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Xbox Live identifier.",
+          "description": "PlayFab unique identifier of the user to unlink.",
           "type": "string"
         }
       },
@@ -16801,6 +16885,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/LinkXboxAccountRequest"
+      }
+    },
+    "LinkXboxIdRequest": {
+      "name": "LinkXboxIdRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkXboxIdRequest"
       }
     },
     "ListPlayerCustomPropertiesRequest": {
@@ -23221,6 +23312,14 @@
       "id": 1608,
       "name": "StudioDeletionInitiated"
     },
+    "ProductDisabledForTitle": {
+      "id": 1609,
+      "name": "ProductDisabledForTitle"
+    },
+    "PreconditionFailed": {
+      "id": 1610,
+      "name": "PreconditionFailed"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -23748,6 +23847,10 @@
     "AnalyticsSegmentCountOverLimit": {
       "id": 10014,
       "name": "AnalyticsSegmentCountOverLimit"
+    },
+    "GetPlayersInSegmentDeprecated": {
+      "id": 10015,
+      "name": "GetPlayersInSegmentDeprecated"
     },
     "SnapshotNotFound": {
       "id": 11000,
@@ -24537,9 +24640,33 @@
       "id": 23008,
       "name": "AggregationTypeNotAllowedForLinkedStat"
     },
+    "OperationDeniedDueToDefinitionPolicy": {
+      "id": 23009,
+      "name": "OperationDeniedDueToDefinitionPolicy"
+    },
+    "StatisticUpdateNotAllowedWhileLinked": {
+      "id": 23010,
+      "name": "StatisticUpdateNotAllowedWhileLinked"
+    },
+    "UnsupportedEntityType": {
+      "id": 23011,
+      "name": "UnsupportedEntityType"
+    },
+    "EntityTypeSpecifiedRequiresAggregationSource": {
+      "id": 23012,
+      "name": "EntityTypeSpecifiedRequiresAggregationSource"
+    },
+    "PlayFabErrorEventNotSupportedForEntityType": {
+      "id": 23013,
+      "name": "PlayFabErrorEventNotSupportedForEntityType"
+    },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,
       "name": "StoreMetricsRequestInvalidInput"
+    },
+    "StoreMetricsErrorRetrievingMetrics": {
+      "id": 23502,
+      "name": "StoreMetricsErrorRetrievingMetrics"
     }
   }
 }

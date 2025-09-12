@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250815",
+    "version": "250912",
     "title": "PlayFab Progression API",
     "description": "Manage entity statistics Manage entity leaderboards",
     "termsOfService": "https://playfab.com/terms/",
@@ -71,6 +71,7 @@
           "LinkingStatsNotAllowedForEntityType",
           "MaxQueryableVersionsValueNotAllowedForTier",
           "MultipleLinkedStatisticsNotAllowed",
+          "PlayFabErrorEventNotSupportedForEntityType",
           "StatDefinitionAlreadyLinkedToLeaderboard",
           "StatisticNotFound"
         ]
@@ -572,6 +573,7 @@
           "ExternalEntityNotAllowedForTier",
           "InvalidBaseTimeForInterval",
           "MaxQueryableVersionsValueNotAllowedForTier",
+          "PlayFabErrorEventNotSupportedForEntityType",
           "StatisticCountLimitExceeded",
           "StatisticDefinitionHasNullOrEmptyVersionConfiguration",
           "StatisticNameConflict",
@@ -837,6 +839,43 @@
         ],
         "x-ms-docs-errors": [
           "StatisticCountLimitExceeded"
+        ]
+      }
+    },
+    "/Statistic/UnlinkAggregationSourceFromStatistic": {
+      "post": {
+        "operationId": "UnlinkAggregationSourceFromStatistic",
+        "tags": [
+          "Statistics"
+        ],
+        "description": "Unlinks an aggregation source from a statistic definition.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/progression/statistics/unlinkaggregationsourcefromstatistic"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkAggregationSourceFromStatisticRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Statistic/CreateStatisticDefinition"
+        ],
+        "x-ms-docs-errors": [
+          "ApiNotEnabledForTitle",
+          "StatisticNotFound"
         ]
       }
     },
@@ -2456,6 +2495,31 @@
         "Name"
       ]
     },
+    "UnlinkAggregationSourceFromStatisticRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Name": {
+          "description": "The name of the statistic to unlink.",
+          "type": "string"
+        },
+        "SourceStatisticName": {
+          "description": "The name of the aggregation source statistic to unlink.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Name",
+        "SourceStatisticName"
+      ],
+      "example": {
+        "Name": "TotalKills",
+        "SourceStatisticName": "KillsPerPlayer"
+      }
+    },
     "UnlinkLeaderboardFromStatisticRequest": {
       "type": "object",
       "properties": {
@@ -2872,6 +2936,14 @@
       "description": "",
       "schema": {
         "$ref": "#/definitions/ListStatisticDefinitionsRequest"
+      }
+    },
+    "UnlinkAggregationSourceFromStatisticRequest": {
+      "name": "UnlinkAggregationSourceFromStatisticRequest",
+      "in": "body",
+      "description": "",
+      "schema": {
+        "$ref": "#/definitions/UnlinkAggregationSourceFromStatisticRequest"
       }
     },
     "UnlinkLeaderboardFromStatisticRequest": {
@@ -5776,6 +5848,14 @@
       "id": 1608,
       "name": "StudioDeletionInitiated"
     },
+    "ProductDisabledForTitle": {
+      "id": 1609,
+      "name": "ProductDisabledForTitle"
+    },
+    "PreconditionFailed": {
+      "id": 1610,
+      "name": "PreconditionFailed"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -6303,6 +6383,10 @@
     "AnalyticsSegmentCountOverLimit": {
       "id": 10014,
       "name": "AnalyticsSegmentCountOverLimit"
+    },
+    "GetPlayersInSegmentDeprecated": {
+      "id": 10015,
+      "name": "GetPlayersInSegmentDeprecated"
     },
     "SnapshotNotFound": {
       "id": 11000,
@@ -7092,9 +7176,33 @@
       "id": 23008,
       "name": "AggregationTypeNotAllowedForLinkedStat"
     },
+    "OperationDeniedDueToDefinitionPolicy": {
+      "id": 23009,
+      "name": "OperationDeniedDueToDefinitionPolicy"
+    },
+    "StatisticUpdateNotAllowedWhileLinked": {
+      "id": 23010,
+      "name": "StatisticUpdateNotAllowedWhileLinked"
+    },
+    "UnsupportedEntityType": {
+      "id": 23011,
+      "name": "UnsupportedEntityType"
+    },
+    "EntityTypeSpecifiedRequiresAggregationSource": {
+      "id": 23012,
+      "name": "EntityTypeSpecifiedRequiresAggregationSource"
+    },
+    "PlayFabErrorEventNotSupportedForEntityType": {
+      "id": 23013,
+      "name": "PlayFabErrorEventNotSupportedForEntityType"
+    },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,
       "name": "StoreMetricsRequestInvalidInput"
+    },
+    "StoreMetricsErrorRetrievingMetrics": {
+      "id": 23502,
+      "name": "StoreMetricsErrorRetrievingMetrics"
     }
   }
 }
