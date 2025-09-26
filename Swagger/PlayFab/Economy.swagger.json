@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "250912",
+    "version": "250926",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity. API methods for managing the versioned catalogs.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1321,6 +1321,41 @@
           }
         },
         "x-requestDetails": "Redeem items from the Apple App Store.",
+        "x-ms-docs-errors": [
+          "InvalidCatalogItemConfiguration",
+          "PreconditionFailed"
+        ]
+      }
+    },
+    "/Inventory/RedeemAppleAppStoreWithJwsInventoryItems": {
+      "post": {
+        "operationId": "RedeemAppleAppStoreWithJwsInventoryItems",
+        "tags": [
+          "Inventory"
+        ],
+        "description": "Redeem items.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/redeemappleappstorewithjwsinventoryitems"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/RedeemAppleAppStoreWithJwsInventoryItemsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/RedeemAppleAppStoreWithJwsInventoryItemsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Redeem items from the Apple App Store using the JWS receipt from StoreKit 2.",
         "x-ms-docs-errors": [
           "InvalidCatalogItemConfiguration",
           "PreconditionFailed"
@@ -3872,6 +3907,10 @@
           "description": "The entity to perform this action on.",
           "type": "object",
           "x-isclass": true
+        },
+        "OperationToken": {
+          "description": "The token to get the status of the inventory operation.",
+          "type": "string"
         }
       },
       "example": {
@@ -5157,6 +5196,10 @@
         ]
       }
     },
+    "PurchaseOverride": {
+      "type": "object",
+      "properties": {}
+    },
     "PurchaseOverridesInfo": {
       "type": "object",
       "properties": {}
@@ -5285,6 +5328,92 @@
       }
     },
     "RedeemAppleAppStoreInventoryItemsResponse": {
+      "type": "object",
+      "properties": {
+        "Failed": {
+          "description": "The list of failed redemptions from the external marketplace.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RedemptionFailure"
+          },
+          "x-isclass": true
+        },
+        "Succeeded": {
+          "description": "The list of successful redemptions from the external marketplace.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RedemptionSuccess"
+          },
+          "x-isclass": true
+        },
+        "TransactionIds": {
+          "description": "The Transaction IDs associated with the inventory modifications",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "TransactionIds": [
+          "transactionId1",
+          "transactionId2"
+        ],
+        "Succeeded": [
+          {
+            "SuccessCode": "success",
+            "SuccessTimestamp": "2022-09-08T00:00:00",
+            "MarketplaceTransactionId": "marketplaceTransactionId1",
+            "MarketplaceAlternateId": "MarketplaceAlternateId1"
+          },
+          {
+            "SuccessCode": "success",
+            "SuccessTimestamp": "2022-09-08T00:00:00",
+            "MarketplaceTransactionId": "marketplaceTransactionId2",
+            "MarketplaceAlternateId": "MarketplaceAlternateId2"
+          }
+        ],
+        "Failed": []
+      }
+    },
+    "RedeemAppleAppStoreWithJwsInventoryItemsRequest": {
+      "description": "The request for a redeem Apple AppStore With JWS",
+      "type": "object",
+      "properties": {
+        "CollectionId": {
+          "description": "The id of the entity's collection to perform this action on. (Default=\"default\")",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The entity to perform this action on.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "JWSTransactions": {
+          "description": "The JWS representation of a transaction.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "JWSTransactions"
+      ],
+      "example": {
+        "JWSTransactions": [
+          "JWS1",
+          "JWS2"
+        ]
+      }
+    },
+    "RedeemAppleAppStoreWithJwsInventoryItemsResponse": {
+      "description": "The response for a redeem Apple AppStore With JWS",
       "type": "object",
       "properties": {
         "Failed": {
@@ -7374,6 +7503,14 @@
         "$ref": "#/definitions/RedeemAppleAppStoreInventoryItemsRequest"
       }
     },
+    "RedeemAppleAppStoreWithJwsInventoryItemsRequest": {
+      "name": "RedeemAppleAppStoreWithJwsInventoryItemsRequest",
+      "in": "body",
+      "description": "The request for a redeem Apple AppStore With JWS",
+      "schema": {
+        "$ref": "#/definitions/RedeemAppleAppStoreWithJwsInventoryItemsRequest"
+      }
+    },
     "RedeemGooglePlayInventoryItemsRequest": {
       "name": "RedeemGooglePlayInventoryItemsRequest",
       "in": "body",
@@ -9096,6 +9233,50 @@
           },
           "data": {
             "$ref": "#/definitions/RedeemAppleAppStoreInventoryItemsResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "TransactionIds": [
+              "transactionId1",
+              "transactionId2"
+            ],
+            "Succeeded": [
+              {
+                "SuccessCode": "success",
+                "SuccessTimestamp": "2022-09-08T00:00:00",
+                "MarketplaceTransactionId": "marketplaceTransactionId1",
+                "MarketplaceAlternateId": "MarketplaceAlternateId1"
+              },
+              {
+                "SuccessCode": "success",
+                "SuccessTimestamp": "2022-09-08T00:00:00",
+                "MarketplaceTransactionId": "marketplaceTransactionId2",
+                "MarketplaceAlternateId": "MarketplaceAlternateId2"
+              }
+            ],
+            "Failed": []
+          }
+        }
+      }
+    },
+    "RedeemAppleAppStoreWithJwsInventoryItemsResponse": {
+      "description": "The response for a redeem Apple AppStore With JWS",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/RedeemAppleAppStoreWithJwsInventoryItemsResponse"
           }
         },
         "example": {
