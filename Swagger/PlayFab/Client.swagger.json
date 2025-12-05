@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "251121",
+    "version": "251205",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -2055,6 +2055,41 @@
           }
         },
         "x-responseDetails": "For Nintendo Switch identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
+    "/Client/GetPlayFabIDsFromOpenIdSubjectIdentifiers": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromOpenIdSubjectIdentifiers",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of OpenId subject identifiers. A OpenId identifier is the service name plus the service-specific ID for the player, as specified by the title when the OpenId identifier was added to the player account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/client/account-management/getplayfabidsfromopenidsubjectidentifiers"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromOpenIdsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SessionTicket": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromOpenIdsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned.",
+        "x-seeAlso": [
+          "Client/LinkOpenIdConnect",
+          "Client/UnlinkOpenIdConnect"
+        ]
       }
     },
     "/Client/GetPlayFabIDsFromPSNAccountIDs": {
@@ -11080,6 +11115,66 @@
         ]
       }
     },
+    "GetPlayFabIDsFromOpenIdsRequest": {
+      "type": "object",
+      "properties": {
+        "OpenIdSubjectIdentifiers": {
+          "description": "Array of unique OpenId Connect identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 10 in length.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OpenIdSubjectIdentifier"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "OpenIdSubjectIdentifiers"
+      ],
+      "example": {
+        "OpenIdSubjectIdentifiers": [
+          {
+            "Issuer": "https://example.com",
+            "Subject": "123456789012345678"
+          },
+          {
+            "Issuer": "https://example-2.com",
+            "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+          }
+        ]
+      }
+    },
+    "GetPlayFabIDsFromOpenIdsResult": {
+      "description": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of OpenId Connect identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OpenIdSubjectIdentifierPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "OpenIdSubjectIdentifier": {
+              "Issuer": "https://example.com",
+              "Subject": "123456789012345678"
+            },
+            "PlayFabId": "ABCDEF0123456789"
+          },
+          {
+            "OpenIdSubjectIdentifier": {
+              "Issuer": "https://example-2.com",
+              "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            },
+            "PlayFabId": "1234567890ABCDEF"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromPSNAccountIDsRequest": {
       "type": "object",
       "properties": {
@@ -13981,6 +14076,49 @@
           "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Device identifier.",
           "type": "string"
         }
+      }
+    },
+    "OpenIdSubjectIdentifier": {
+      "type": "object",
+      "properties": {
+        "Issuer": {
+          "description": "The issuer URL for the OpenId Connect provider, or the override URL if an override exists.",
+          "type": "string"
+        },
+        "Subject": {
+          "description": "The unique subject identifier within the context of the issuer.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Issuer",
+        "Subject"
+      ],
+      "example": {
+        "Issuer": "https://example.com",
+        "Subject": "123456789012345678"
+      }
+    },
+    "OpenIdSubjectIdentifierPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "OpenIdSubjectIdentifier": {
+          "$ref": "#/definitions/OpenIdSubjectIdentifier",
+          "description": "Unique OpenId Connect identifier for a user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the OpenId Connect identifier.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "OpenIdSubjectIdentifier": {
+          "Issuer": "https://example.com",
+          "Subject": "123456789012345678"
+        },
+        "PlayFabId": "5a446c83645201"
       }
     },
     "OpenTradeRequest": {
@@ -18032,6 +18170,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest"
       }
     },
+    "GetPlayFabIDsFromOpenIdsRequest": {
+      "name": "GetPlayFabIDsFromOpenIdsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromOpenIdsRequest"
+      }
+    },
     "GetPlayFabIDsFromPSNAccountIDsRequest": {
       "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
       "in": "body",
@@ -20937,6 +21082,47 @@
               {
                 "NintendoSwitchDeviceId": "526f79204261747479",
                 "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromOpenIdsResult": {
+      "description": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromOpenIdsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "OpenIdSubjectIdentifier": {
+                  "Issuer": "https://example.com",
+                  "Subject": "123456789012345678"
+                },
+                "PlayFabId": "ABCDEF0123456789"
+              },
+              {
+                "OpenIdSubjectIdentifier": {
+                  "Issuer": "https://example-2.com",
+                  "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                },
+                "PlayFabId": "1234567890ABCDEF"
               }
             ]
           }
@@ -26998,6 +27184,10 @@
     "PlayFabErrorEventNotSupportedForEntityType": {
       "id": 23013,
       "name": "PlayFabErrorEventNotSupportedForEntityType"
+    },
+    "MetadataLengthExceeded": {
+      "id": 23014,
+      "name": "MetadataLengthExceeded"
     },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,

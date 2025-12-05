@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "251121",
+    "version": "251205",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -319,7 +319,7 @@
         "tags": [
           "Account Management"
         ],
-        "description": "Bans users by PlayFab ID with optional IP address, or MAC address for the provided game.",
+        "description": "Bans users by PlayFab ID with optional IP address for the provided game.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/banusers"
         },
@@ -341,7 +341,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+        "x-requestDetails": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
         "x-seeAlso": [
           "Server/GetUserBans",
           "Server/RevokeAllBansForUser",
@@ -1716,6 +1716,37 @@
         "x-responseDetails": "For Nintendo Switch Device identifiers which have not been linked to PlayFab accounts, null will be returned."
       }
     },
+    "/Server/GetPlayFabIDsFromOpenIdSubjectIdentifiers": {
+      "post": {
+        "operationId": "GetPlayFabIDsFromOpenIdSubjectIdentifiers",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Retrieves the unique PlayFab identifiers for the given set of OpenId subject identifiers. A OpenId subject identifier is the OpenId issuer plus the OpenId subject for the player, as specified by the title when the OpenId identifier was added to the player account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/getplayfabidsfromopenidsubjectidentifiers"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayFabIDsFromOpenIdsRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayFabIDsFromOpenIdsResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-responseDetails": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned."
+      }
+    },
     "/Server/GetPlayFabIDsFromPSNAccountIDs": {
       "post": {
         "operationId": "GetPlayFabIDsFromPSNAccountIDs",
@@ -3019,6 +3050,45 @@
         ]
       }
     },
+    "/Server/LinkTwitchAccount": {
+      "post": {
+        "operationId": "LinkTwitchAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Links the Twitch account associated with the token to the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/linktwitchaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LinkTwitchAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/UnlinkTwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "FeatureNotConfiguredForTitle",
+          "InvalidTwitchToken",
+          "LinkedIdentifierAlreadyClaimed",
+          "TwitchResponseError"
+        ]
+      }
+    },
     "/Server/LinkXboxAccount": {
       "post": {
         "operationId": "LinkXboxAccount",
@@ -3403,6 +3473,50 @@
           "RequestViewConstraintParamsNotAllowed",
           "SteamNotEnabledForTitle",
           "SteamUserNotFound"
+        ]
+      }
+    },
+    "/Server/LoginWithTwitch": {
+      "post": {
+        "operationId": "LoginWithTwitch",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Sign in the user with a Twitch access token",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/authentication/loginwithtwitch"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithTwitchRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "More details regarding Twitch and their authentication system can be found at https://github.com/justintv/Twitch-API/blob/master/authentication.md. Developers must provide the Twitch access token that is generated using one of the Twitch authentication flows. PlayFab will use the title's unique Twitch Client ID to authenticate the token and log in to the PlayFab system. If CreateAccount is set to true and there is not already a user matched to the Twitch username that generated the token, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
+        "x-seeAlso": [
+          "Server/LinkTwitchAccount",
+          "Server/UnlinkTwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "FeatureNotConfiguredForTitle",
+          "InvalidTwitchToken",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured",
+          "RequestViewConstraintParamsNotAllowed",
+          "TwitchResponseError"
         ]
       }
     },
@@ -4676,6 +4790,44 @@
         ],
         "x-ms-docs-errors": [
           "AccountNotLinked"
+        ]
+      }
+    },
+    "/Server/UnlinkTwitchAccount": {
+      "post": {
+        "operationId": "UnlinkTwitchAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Twitch account from the user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinktwitchaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkTwitchAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/EmptyResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-seeAlso": [
+          "Server/LinkTwitchAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "FeatureNotConfiguredForTitle",
+          "InvalidTwitchToken"
         ]
       }
     },
@@ -5983,7 +6135,7 @@
       ]
     },
     "BanUsersRequest": {
-      "description": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
       "type": "object",
       "properties": {
         "Bans": {
@@ -8354,6 +8506,7 @@
         "UnsupportedEntityType",
         "EntityTypeSpecifiedRequiresAggregationSource",
         "PlayFabErrorEventNotSupportedForEntityType",
+        "MetadataLengthExceeded",
         "StoreMetricsRequestInvalidInput",
         "StoreMetricsErrorRetrievingMetrics"
       ]
@@ -10405,6 +10558,66 @@
         ]
       }
     },
+    "GetPlayFabIDsFromOpenIdsRequest": {
+      "type": "object",
+      "properties": {
+        "OpenIdSubjectIdentifiers": {
+          "description": "Array of unique OpenId Connect identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 10 in length.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OpenIdSubjectIdentifier"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "OpenIdSubjectIdentifiers"
+      ],
+      "example": {
+        "OpenIdSubjectIdentifiers": [
+          {
+            "Issuer": "https://example.com",
+            "Subject": "123456789012345678"
+          },
+          {
+            "Issuer": "https://example-2.com",
+            "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+          }
+        ]
+      }
+    },
+    "GetPlayFabIDsFromOpenIdsResult": {
+      "description": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "type": "object",
+      "properties": {
+        "Data": {
+          "description": "Mapping of OpenId Connect identifiers to PlayFab identifiers.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OpenIdSubjectIdentifierPlayFabIdPair"
+          },
+          "x-isclass": true
+        }
+      },
+      "example": {
+        "Data": [
+          {
+            "OpenIdSubjectIdentifier": {
+              "Issuer": "https://example.com",
+              "Subject": "123456789012345678"
+            },
+            "PlayFabId": "ABCDEF0123456789"
+          },
+          {
+            "OpenIdSubjectIdentifier": {
+              "Issuer": "https://example-2.com",
+              "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+            },
+            "PlayFabId": "1234567890ABCDEF"
+          }
+        ]
+      }
+    },
     "GetPlayFabIDsFromPSNAccountIDsRequest": {
       "type": "object",
       "properties": {
@@ -12192,6 +12405,36 @@
       "type": "object",
       "properties": {}
     },
+    "LinkTwitchAccountRequest": {
+      "type": "object",
+      "properties": {
+        "AccessToken": {
+          "description": "Twitch access token for authentication.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "ForceLink": {
+          "description": "If another user is already linked to the account, unlink the other user and re-link.",
+          "type": "boolean"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user to link.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "AccessToken"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "AccessToken": "twitch-access-token",
+        "ForceLink": false
+      }
+    },
     "LinkXboxAccountRequest": {
       "type": "object",
       "properties": {
@@ -12677,6 +12920,47 @@
         "CreateAccount": false
       }
     },
+    "LoginWithTwitchRequest": {
+      "description": "More details regarding Twitch and their authentication system can be found at https://github.com/justintv/Twitch-API/blob/master/authentication.md. Developers must provide the Twitch access token that is generated using one of the Twitch authentication flows. PlayFab will use the title's unique Twitch Client ID to authenticate the token and log in to the PlayFab system. If CreateAccount is set to true and there is not already a user matched to the Twitch username that generated the token, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
+      "type": "object",
+      "properties": {
+        "AccessToken": {
+          "description": "Twitch access token for authentication.",
+          "type": "string"
+        },
+        "CreateAccount": {
+          "description": "If true, create a new PlayFab account if one does not exist.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Parameters for requesting additional player info.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayerSecret": {
+          "description": "Player secret for additional authentication.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "AccessToken"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "AccessToken": "twitch-access-token",
+        "CreateAccount": true
+      }
+    },
     "LoginWithXboxIdRequest": {
       "description": "If this is the first time a user has signed in with the Xbox ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Xbox Live account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Xbox Live account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "type": "object",
@@ -13035,6 +13319,49 @@
           "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the Nintendo Switch Device identifier.",
           "type": "string"
         }
+      }
+    },
+    "OpenIdSubjectIdentifier": {
+      "type": "object",
+      "properties": {
+        "Issuer": {
+          "description": "The issuer URL for the OpenId Connect provider, or the override URL if an override exists.",
+          "type": "string"
+        },
+        "Subject": {
+          "description": "The unique subject identifier within the context of the issuer.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "Issuer",
+        "Subject"
+      ],
+      "example": {
+        "Issuer": "https://example.com",
+        "Subject": "123456789012345678"
+      }
+    },
+    "OpenIdSubjectIdentifierPlayFabIdPair": {
+      "type": "object",
+      "properties": {
+        "OpenIdSubjectIdentifier": {
+          "$ref": "#/definitions/OpenIdSubjectIdentifier",
+          "description": "Unique OpenId Connect identifier for a user.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab identifier for a user, or null if no PlayFab account is linked to the OpenId Connect identifier.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "OpenIdSubjectIdentifier": {
+          "Issuer": "https://example.com",
+          "Subject": "123456789012345678"
+        },
+        "PlayFabId": "5a446c83645201"
       }
     },
     "PlayerLeaderboardEntry": {
@@ -14854,6 +15181,29 @@
       "type": "object",
       "properties": {}
     },
+    "UnlinkTwitchAccountRequest": {
+      "type": "object",
+      "properties": {
+        "AccessToken": {
+          "description": "Valid token issued by Twitch. Used to specify which twitch account to unlink from the profile. By default it uses the one that is present on the profile.",
+          "type": "string"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user to unlink.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
     "UnlinkXboxAccountRequest": {
       "type": "object",
       "properties": {
@@ -16399,7 +16749,7 @@
     "BanUsersRequest": {
       "name": "BanUsersRequest",
       "in": "body",
-      "description": "The existence of each user will not be verified. When banning by IP or MAC address, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
       "schema": {
         "$ref": "#/definitions/BanUsersRequest"
       }
@@ -16662,6 +17012,13 @@
         "$ref": "#/definitions/GetPlayFabIDsFromNintendoSwitchDeviceIdsRequest"
       }
     },
+    "GetPlayFabIDsFromOpenIdsRequest": {
+      "name": "GetPlayFabIDsFromOpenIdsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/GetPlayFabIDsFromOpenIdsRequest"
+      }
+    },
     "GetPlayFabIDsFromPSNAccountIDsRequest": {
       "name": "GetPlayFabIDsFromPSNAccountIDsRequest",
       "in": "body",
@@ -16884,6 +17241,13 @@
         "$ref": "#/definitions/LinkSteamIdRequest"
       }
     },
+    "LinkTwitchAccountRequest": {
+      "name": "LinkTwitchAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/LinkTwitchAccountRequest"
+      }
+    },
     "LinkXboxAccountRequest": {
       "name": "LinkXboxAccountRequest",
       "in": "body",
@@ -16965,6 +17329,14 @@
       "description": "If this is the first time a user has signed in with the Steam ID and CreateAccount is set to true, a new PlayFab account will be created and linked to the Steam account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the Steam account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account. Steam users that are not logged into the Steam Client app will only have their Steam username synced, other data, such as currency and country will not be available until they login while the Client is open.",
       "schema": {
         "$ref": "#/definitions/LoginWithSteamIdRequest"
+      }
+    },
+    "LoginWithTwitchRequest": {
+      "name": "LoginWithTwitchRequest",
+      "in": "body",
+      "description": "More details regarding Twitch and their authentication system can be found at https://github.com/justintv/Twitch-API/blob/master/authentication.md. Developers must provide the Twitch access token that is generated using one of the Twitch authentication flows. PlayFab will use the title's unique Twitch Client ID to authenticate the token and log in to the PlayFab system. If CreateAccount is set to true and there is not already a user matched to the Twitch username that generated the token, then PlayFab will create a new account for this user and link the ID. In this case, no email or username will be associated with the PlayFab account. If there is already a different PlayFab user linked with this account, then an error will be returned.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithTwitchRequest"
       }
     },
     "LoginWithXboxIdRequest": {
@@ -17216,6 +17588,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkSteamIdRequest"
+      }
+    },
+    "UnlinkTwitchAccountRequest": {
+      "name": "UnlinkTwitchAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkTwitchAccountRequest"
       }
     },
     "UnlinkXboxAccountRequest": {
@@ -18928,6 +19307,47 @@
               {
                 "NintendoSwitchDeviceId": "526f79204261747479",
                 "PlayFabId": "6345cd25a6c7cc"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "GetPlayFabIDsFromOpenIdsResult": {
+      "description": "For OpenId identifiers which have not been linked to PlayFab accounts, null will be returned.",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayFabIDsFromOpenIdsResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "Data": [
+              {
+                "OpenIdSubjectIdentifier": {
+                  "Issuer": "https://example.com",
+                  "Subject": "123456789012345678"
+                },
+                "PlayFabId": "ABCDEF0123456789"
+              },
+              {
+                "OpenIdSubjectIdentifier": {
+                  "Issuer": "https://example-2.com",
+                  "Subject": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+                },
+                "PlayFabId": "1234567890ABCDEF"
               }
             ]
           }
@@ -24683,6 +25103,10 @@
     "PlayFabErrorEventNotSupportedForEntityType": {
       "id": 23013,
       "name": "PlayFabErrorEventNotSupportedForEntityType"
+    },
+    "MetadataLengthExceeded": {
+      "id": 23014,
+      "name": "MetadataLengthExceeded"
     },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,
