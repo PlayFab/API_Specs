@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "251219",
+    "version": "260109",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -4603,6 +4603,73 @@
         ]
       }
     },
+    "/Server/UnlinkFacebookAccount": {
+      "post": {
+        "operationId": "UnlinkFacebookAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Facebook account from the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkfacebookaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkFacebookAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkFacebookAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AccountNotLinked"
+        ]
+      }
+    },
+    "/Server/UnlinkFacebookInstantGamesId": {
+      "post": {
+        "operationId": "UnlinkFacebookInstantGamesId",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Facebook Instant Games identifier from the user's PlayFab account",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkfacebookinstantgamesid"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkFacebookInstantGamesIdRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkFacebookInstantGamesIdResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AccountNotLinked",
+          "FacebookInstantGamesIdNotLinked"
+        ]
+      }
+    },
     "/Server/UnlinkNintendoServiceAccount": {
       "post": {
         "operationId": "UnlinkNintendoServiceAccount",
@@ -8285,6 +8352,7 @@
         "ExperimentationExclusionGroupInvalidTrafficAllocation",
         "ExperimentationExclusionGroupInvalidName",
         "ExperimentationLegacyExperimentInvalidOperation",
+        "ExperimentationExperimentStopFailed",
         "MaxActionDepthExceeded",
         "TitleNotOnUpdatedPricingPlan",
         "SegmentManagementTitleNotInFlight",
@@ -15059,6 +15127,57 @@
         "PlayFabId": "1234FA342"
       }
     },
+    "UnlinkFacebookAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user to unlink.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
+    "UnlinkFacebookAccountResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "UnlinkFacebookInstantGamesIdRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "FacebookInstantGamesId": {
+          "description": "Facebook Instant Games identifier for the user. If not specified, the most recently linked identifier will be used.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "PlayFab unique identifier of the user to unlink.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342",
+        "FacebookInstantGamesId": "123456789012345"
+      }
+    },
+    "UnlinkFacebookInstantGamesIdResult": {
+      "type": "object",
+      "properties": {}
+    },
     "UnlinkNintendoServiceAccountRequest": {
       "type": "object",
       "properties": {
@@ -17553,6 +17672,20 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkBattleNetAccountRequest"
+      }
+    },
+    "UnlinkFacebookAccountRequest": {
+      "name": "UnlinkFacebookAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkFacebookAccountRequest"
+      }
+    },
+    "UnlinkFacebookInstantGamesIdRequest": {
+      "name": "UnlinkFacebookInstantGamesIdRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkFacebookInstantGamesIdRequest"
       }
     },
     "UnlinkNintendoServiceAccountRequest": {
@@ -20926,6 +21059,44 @@
         }
       }
     },
+    "UnlinkFacebookAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkFacebookAccountResult"
+          }
+        }
+      }
+    },
+    "UnlinkFacebookInstantGamesIdResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkFacebookInstantGamesIdResult"
+          }
+        }
+      }
+    },
     "UnlinkNintendoSwitchDeviceIdResult": {
       "description": "",
       "schema": {
@@ -24219,6 +24390,10 @@
     "ExperimentationLegacyExperimentInvalidOperation": {
       "id": 7023,
       "name": "ExperimentationLegacyExperimentInvalidOperation"
+    },
+    "ExperimentationExperimentStopFailed": {
+      "id": 7024,
+      "name": "ExperimentationExperimentStopFailed"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
