@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260109",
+    "version": "260123",
     "title": "PlayFab Economy API",
     "description": "API methods for managing the catalog. Inventory manages in-game assets for any given entity. API methods for managing the versioned catalogs.",
     "termsOfService": "https://playfab.com/terms/",
@@ -1190,40 +1190,6 @@
           }
         },
         "x-requestDetails": "Get the status of an Inventory Operation using an OperationToken."
-      }
-    },
-    "/Inventory/GetMicrosoftStoreAccessTokens": {
-      "post": {
-        "operationId": "GetMicrosoftStoreAccessTokens",
-        "tags": [
-          "Inventory"
-        ],
-        "description": "Gets the access tokens.\n\nAllowed entity token types: title, master_player_account, title_player_account",
-        "externalDocs": {
-          "url": "https://docs.microsoft.com/rest/api/playfab/economy/inventory/getmicrosoftstoreaccesstokens"
-        },
-        "parameters": [
-          {
-            "$ref": "#/parameters/GetMicrosoftStoreAccessTokensRequest"
-          }
-        ],
-        "security": [
-          {
-            "EntityToken": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/responses/GetMicrosoftStoreAccessTokensResponse"
-          },
-          "400": {
-            "$ref": "#/responses/ApiErrorWrapper"
-          }
-        },
-        "x-requestDetails": "Gets the access tokens for Microsoft Store authentication.",
-        "x-ms-docs-errors": [
-          "NotImplemented"
-        ]
       }
     },
     "/Inventory/GetTransactionHistory": {
@@ -4685,37 +4651,6 @@
         ]
       }
     },
-    "GetMicrosoftStoreAccessTokensRequest": {
-      "description": "Gets the access tokens for Microsoft Store authentication.",
-      "type": "object",
-      "properties": {
-        "CustomTags": {
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "type": "object"
-        }
-      },
-      "example": {}
-    },
-    "GetMicrosoftStoreAccessTokensResponse": {
-      "type": "object",
-      "properties": {
-        "CollectionsAccessToken": {
-          "description": "The collections access token for calling https://onestore.microsoft.com/b2b/keys/create/collections to obtain a CollectionsIdKey for the user",
-          "type": "string"
-        },
-        "CollectionsAccessTokenExpirationDate": {
-          "description": "The date the collections access token expires",
-          "type": "string"
-        }
-      },
-      "required": [
-        "CollectionsAccessTokenExpirationDate"
-      ],
-      "example": {
-        "CollectionsAccessToken": "collectionsAccessToken",
-        "CollectionsAccessTokenExpirationDate": "2022-09-07T00:00:00"
-      }
-    },
     "GetTransactionHistoryRequest": {
       "description": "Get transaction history for specified entity and collection.",
       "type": "object",
@@ -5274,6 +5209,7 @@
       }
     },
     "RealMoneyPriceDetails": {
+      "description": "The multi-currency unit price, in real money, of the item that was redeemed within an individual marketplace. Each property is a dictionary where the key is the three-letter currency code as defined in ISO 4217, and the value is the currency amount in the smallest unit (e.g. cents, pence, etc.) in accordance with ISO 4217. Example: If the product price in USD is $1.39, the dictionary entry would be: [\"USD\"] = 139. Currently, only United States Dollar (USD) is supported.",
       "type": "object",
       "properties": {
         "AppleAppStorePrices": {
@@ -5561,10 +5497,6 @@
       "properties": {
         "CollectionId": {
           "description": "The id of the entity's collection to perform this action on. (Default=\"default\")",
-          "type": "string"
-        },
-        "CollectionsIdKey": {
-          "description": "The OneStore Collections Id Key used for AAD authentication.",
           "type": "string"
         },
         "CustomTags": {
@@ -5891,6 +5823,10 @@
     "RedemptionSuccess": {
       "type": "object",
       "properties": {
+        "ExpirationTimestamp": {
+          "description": "The timestamp for when the redeem expired.",
+          "type": "string"
+        },
         "MarketplaceAlternateId": {
           "description": "The Marketplace Alternate ID being redeemed.",
           "type": "string"
@@ -7469,14 +7405,6 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/GetItemsRequest"
-      }
-    },
-    "GetMicrosoftStoreAccessTokensRequest": {
-      "name": "GetMicrosoftStoreAccessTokensRequest",
-      "in": "body",
-      "description": "Gets the access tokens for Microsoft Store authentication.",
-      "schema": {
-        "$ref": "#/definitions/GetMicrosoftStoreAccessTokensRequest"
       }
     },
     "GetTransactionHistoryRequest": {
@@ -9102,33 +9030,6 @@
                 "DefaultStackId": "Static_Default_Stack_Id"
               }
             ]
-          }
-        }
-      }
-    },
-    "GetMicrosoftStoreAccessTokensResponse": {
-      "description": "",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "integer",
-            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
-          },
-          "status": {
-            "type": "string",
-            "description": "The Http status code as a string."
-          },
-          "data": {
-            "$ref": "#/definitions/GetMicrosoftStoreAccessTokensResponse"
-          }
-        },
-        "example": {
-          "code": 200,
-          "status": "OK",
-          "data": {
-            "CollectionsAccessToken": "collectionsAccessToken",
-            "CollectionsAccessTokenExpirationDate": "2022-09-07T00:00:00"
           }
         }
       }
@@ -12648,6 +12549,10 @@
     "InvalidCatalogItemConfiguration": {
       "id": 4015,
       "name": "InvalidCatalogItemConfiguration"
+    },
+    "LegacyEconomyDisabled": {
+      "id": 4016,
+      "name": "LegacyEconomyDisabled"
     },
     "ExportInvalidStatusUpdate": {
       "id": 5000,

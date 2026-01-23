@@ -3736,46 +3736,6 @@
         }
       ]
     },
-    "GetMicrosoftStoreAccessTokensRequest": {
-      "name": "GetMicrosoftStoreAccessTokensRequest",
-      "className": "GetMicrosoftStoreAccessTokensRequest",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "description": "Gets the access tokens for Microsoft Store authentication.",
-      "isRequest": true,
-      "properties": [
-        {
-          "name": "CustomTags",
-          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
-          "collection": "map",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        }
-      ]
-    },
-    "GetMicrosoftStoreAccessTokensResponse": {
-      "name": "GetMicrosoftStoreAccessTokensResponse",
-      "className": "GetMicrosoftStoreAccessTokensResponse",
-      "classNameSpace": "PlayFab.Economy.Models",
-      "assembly": "PlayFab.Economy.Models",
-      "isResult": true,
-      "properties": [
-        {
-          "name": "CollectionsAccessToken",
-          "description": "The collections access token for calling https://onestore.microsoft.com/b2b/keys/create/collections to obtain a CollectionsIdKey for the user",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CollectionsAccessTokenExpirationDate",
-          "description": "The date the collections access token expires",
-          "jsontype": "String",
-          "actualtype": "DateTime"
-        }
-      ]
-    },
     "GetTransactionHistoryRequest": {
       "name": "GetTransactionHistoryRequest",
       "className": "GetTransactionHistoryRequest",
@@ -4982,6 +4942,7 @@
       "className": "RealMoneyPriceDetails",
       "classNameSpace": "PlayFab.Economy.Models",
       "assembly": "PlayFab.Economy.Models",
+      "description": "The multi-currency unit price, in real money, of the item that was redeemed within an individual marketplace. Each property is a dictionary where the key is the three-letter currency code as defined in ISO 4217, and the value is the currency amount in the smallest unit (e.g. cents, pence, etc.) in accordance with ISO 4217. Example: If the product price in USD is $1.39, the dictionary entry would be: [\"USD\"] = 139. Currently, only United States Dollar (USD) is supported.",
       "properties": [
         {
           "name": "AppleAppStorePrices",
@@ -5341,13 +5302,6 @@
         {
           "name": "CollectionId",
           "description": "The id of the entity's collection to perform this action on. (Default=\"default\")",
-          "jsontype": "String",
-          "actualtype": "String",
-          "optional": true
-        },
-        {
-          "name": "CollectionsIdKey",
-          "description": "The OneStore Collections Id Key used for AAD authentication.",
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -5788,6 +5742,13 @@
       "classNameSpace": "PlayFab.Economy.Models",
       "assembly": "PlayFab.Economy.Models",
       "properties": [
+        {
+          "name": "ExpirationTimestamp",
+          "description": "The timestamp for when the redeem expired.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
         {
           "name": "MarketplaceAlternateId",
           "description": "The Marketplace Alternate ID being redeemed.",
@@ -8338,7 +8299,6 @@
         "GetInventoryCollectionIds",
         "GetInventoryItems",
         "GetInventoryOperationStatus",
-        "GetMicrosoftStoreAccessTokens",
         "GetTransactionHistory",
         "PurchaseInventoryItems",
         "RedeemAppleAppStoreInventoryItems",
@@ -9006,27 +8966,6 @@
       ]
     },
     {
-      "name": "GetMicrosoftStoreAccessTokens",
-      "summary": "Gets the access tokens.",
-      "requestDetails": "Gets the access tokens for Microsoft Store authentication.",
-      "subgroup": "Inventory",
-      "url": "/Inventory/GetMicrosoftStoreAccessTokens",
-      "auth": "EntityToken",
-      "method": "POST",
-      "request": "GetMicrosoftStoreAccessTokensRequest",
-      "requestExample": "{}",
-      "result": "GetMicrosoftStoreAccessTokensResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"CollectionsAccessToken\": \"collectionsAccessToken\",\n    \"CollectionsAccessTokenExpirationDate\": \"2022-09-07T00:00:00Z\"\n  }\n}",
-      "errors": [
-        "NotImplemented"
-      ],
-      "allowedentitytokentypes": [
-        "title",
-        "master_player_account",
-        "title_player_account"
-      ]
-    },
-    {
       "name": "GetTransactionHistory",
       "summary": "Get transaction history for a player. Up to 250 Events can be returned at once. You can use continuation tokens to paginate through results that return greater than the limit. Getting transaction history has a lower RPS limit than getting a Player's inventory with Player Entities having a limit of 30 requests in 300 seconds.",
       "requestDetails": "Get transaction history for specified entity and collection.",
@@ -9275,7 +9214,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "RedeemMicrosoftStoreInventoryItemsRequest",
-      "requestExample": "{\n  \"CollectionsIdKey\": \"collectionsIdKey\"\n}",
+      "requestExample": "{}",
       "result": "RedeemMicrosoftStoreInventoryItemsResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"TransactionIds\": [\n      \"transactionId1\",\n      \"transactionId2\"\n    ],\n    \"Succeeded\": [\n      {\n        \"SuccessCode\": \"success\",\n        \"SuccessTimestamp\": \"2022-09-08T00:00:00Z\",\n        \"MarketplaceTransactionId\": \"marketplaceTransactionId1\",\n        \"MarketplaceAlternateId\": \"MarketplaceAlternateId1\"\n      },\n      {\n        \"SuccessCode\": \"success\",\n        \"SuccessTimestamp\": \"2022-09-08T00:00:00Z\",\n        \"MarketplaceTransactionId\": \"marketplaceTransactionId2\",\n        \"MarketplaceAlternateId\": \"MarketplaceAlternateId2\"\n      }\n    ],\n    \"Failed\": []\n  }\n}",
       "errors": [
@@ -12221,6 +12160,10 @@
       "id": 4015,
       "name": "InvalidCatalogItemConfiguration"
     },
+    "LegacyEconomyDisabled": {
+      "id": 4016,
+      "name": "LegacyEconomyDisabled"
+    },
     "ExportInvalidStatusUpdate": {
       "id": 5000,
       "name": "ExportInvalidStatusUpdate"
@@ -14052,6 +13995,7 @@
     "CatalogBadRequest",
     "CatalogTooManyRequests",
     "InvalidCatalogItemConfiguration",
+    "LegacyEconomyDisabled",
     "ExportInvalidStatusUpdate",
     "ExportInvalidPrefix",
     "ExportBlobContainerDoesNotExist",
