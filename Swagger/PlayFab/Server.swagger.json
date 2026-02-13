@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260123",
+    "version": "260213",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -135,6 +135,37 @@
           "IdentifierAlreadyClaimed",
           "UserisNotValid"
         ]
+      }
+    },
+    "/Server/AddOrUpdateContactEmail": {
+      "post": {
+        "operationId": "AddOrUpdateContactEmail",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Adds or updates a contact email to the specified player's profile.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/addorupdatecontactemail"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/AddOrUpdateContactEmailRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddOrUpdateContactEmailResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "This API adds a contact email to the specified player's profile. If the player's profile already contains a contact email, it will update the contact email to the email address specified."
       }
     },
     "/Server/AddPlayerTag": {
@@ -5897,6 +5928,37 @@
           "UserId": "1234567890"
         }
       }
+    },
+    "AddOrUpdateContactEmailRequest": {
+      "description": "This API adds a contact email to the specified player's profile. If the player's profile already contains a contact email, it will update the contact email to the email address specified.",
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "EmailAddress": {
+          "description": "The new contact email to associate with the player.",
+          "type": "string"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId",
+        "EmailAddress"
+      ],
+      "example": {
+        "PlayFabId": "A01DC15D8E12E230",
+        "EmailAddress": "user@example.com"
+      }
+    },
+    "AddOrUpdateContactEmailResult": {
+      "type": "object",
+      "properties": {},
+      "example": {}
     },
     "AddPlayerTagRequest": {
       "description": "This API will trigger a player_tag_added event and add a tag with the given TagName and PlayFabID to the corresponding player profile. TagName can be used for segmentation and it is limited to 256 characters. Also there is a limit on the number of tags a title can have.",
@@ -16830,6 +16892,14 @@
         "$ref": "#/definitions/AddGenericIDRequest"
       }
     },
+    "AddOrUpdateContactEmailRequest": {
+      "name": "AddOrUpdateContactEmailRequest",
+      "in": "body",
+      "description": "This API adds a contact email to the specified player's profile. If the player's profile already contains a contact email, it will update the contact email to the email address specified.",
+      "schema": {
+        "$ref": "#/definitions/AddOrUpdateContactEmailRequest"
+      }
+    },
     "AddPlayerTagRequest": {
       "name": "AddPlayerTagRequest",
       "in": "body",
@@ -17864,6 +17934,30 @@
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "AddOrUpdateContactEmailResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/AddOrUpdateContactEmailResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {}
+        }
       }
     },
     "AddPlayerTagResult": {
