@@ -7752,6 +7752,9 @@
           "name": "MetadataLengthExceeded"
         },
         {
+          "name": "MaxQueryableVersionsExceeded"
+        },
+        {
           "name": "StoreMetricsRequestInvalidInput"
         },
         {
@@ -18097,6 +18100,7 @@
       ],
       "errors": [
         "InvalidVirtualCurrency",
+        "ProductDisabledForTitle",
         "VirtualCurrencyCurrentlyUnavailable"
       ]
     },
@@ -18118,6 +18122,7 @@
       ],
       "errors": [
         "InvalidVirtualCurrencyCode",
+        "ProductDisabledForTitle",
         "VirtualCurrencyCodeExists",
         "VirtualCurrencyCountLimitExceeded"
       ]
@@ -18158,6 +18163,9 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Amount\": 49\n  }\n}",
       "seeAlso": [
         "Admin/IncrementLimitedEditionItemAvailability"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -18247,6 +18255,7 @@
       "errors": [
         "InvalidScheduledTaskName",
         "InvalidTaskSchedule",
+        "ProductDisabledForTitle",
         "ScheduledTaskCreateConflict",
         "ScheduledTaskNameConflict"
       ]
@@ -18273,6 +18282,7 @@
       "errors": [
         "InvalidScheduledTaskName",
         "InvalidTaskSchedule",
+        "ProductDisabledForTitle",
         "ScheduledTaskCreateConflict",
         "ScheduledTaskNameConflict",
         "TitleNotOnUpdatedPricingPlan"
@@ -18337,6 +18347,7 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "StatisticCountLimitExceeded",
         "StatisticNameConflict"
       ]
@@ -18356,6 +18367,7 @@
       "errors": [
         "InvalidSegment",
         "NameNotAvailable",
+        "ProductDisabledForTitle",
         "SegmentManagementInvalidInput",
         "SegmentManagementInvalidSegmentId",
         "SegmentManagementInvalidSegmentName",
@@ -18534,6 +18546,7 @@
       "result": "DeleteSegmentsResponse",
       "resultExample": "",
       "errors": [
+        "ProductDisabledForTitle",
         "SegmentManagementInvalidSegmentId",
         "UnknownError"
       ]
@@ -18557,6 +18570,7 @@
       ],
       "errors": [
         "CatalogNotConfigured",
+        "ProductDisabledForTitle",
         "StoreNotFound"
       ]
     },
@@ -18672,6 +18686,7 @@
         "AsyncExportRateLimitExceeded",
         "ExportUnknownError",
         "InvalidSegment",
+        "ProductDisabledForTitle",
         "SegmentNotFound"
       ]
     },
@@ -18695,6 +18710,7 @@
         "Admin/RunTask"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "TaskInstanceNotFound"
       ]
     },
@@ -18733,6 +18749,9 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Segments\": [\n      {\n        \"Id\": \"1337AA00\",\n        \"Name\": \"Fast Players\"\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Admin/GetPlayersInSegment"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -18749,6 +18768,9 @@
       "seeAlso": [
         "Admin/SetCatalogItems",
         "Admin/UpdateCatalogItems"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -18789,6 +18811,7 @@
       "result": "GetCloudScriptRevisionResult",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 1,\n    \"Revision\": 3,\n    \"CreatedAt\": \"2015-01-03T17:44:21Z\",\n    \"Files\": [\n      {\n        \"Filename\": \"main.js\",\n        \"FileContents\": \"var LevelRewards =\\r\\n[\\r\\n\\t[\\\"TestItem1\\\"],\\r\\n\\t[\\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\"],\\r\\n\\t[\\\"TestItem1\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem2\\\", \\\"TestItem2\\\"],\\r\\n\\t[\\\"TestItem3\\\", \\\"TestItem3\\\"]\\r\\n]\\r\\n\\r\\nhandlers.onLevelComplete = function(args)\\r\\n{\\r\\n\\tvar levelNum = args.level;\\r\\n\\t\\r\\n\\t// Do some basic input validation\\r\\n\\tif(levelNum < 0 || levelNum >= LevelRewards.length)\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Invalid level \\\"+levelNum+\\\" completed by \\\"+currentPlayerId);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar levelCompleteKey = \\\"LevelCompleted\\\"+levelNum;\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [levelCompleteKey]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Did they already complete this level?\\r\\n\\tif(playerInternalData.Data[levelCompleteKey])\\r\\n\\t{\\r\\n\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" already completed level \\\"+levelNum);\\r\\n\\t\\treturn {};\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar rewards = LevelRewards[levelNum];\\r\\n\\t\\r\\n\\tvar resultItems = null;\\r\\n\\tif(rewards)\\r\\n\\t{\\r\\n\\t\\t// Grant reward items to player for completing the level\\r\\n\\t\\tvar itemGrantResult = server.GrantItemsToUser(\\r\\n\\t\\t{\\r\\n\\t\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\t\\tAnnotation: \\\"Given by completing level \\\"+levelNum,\\r\\n\\t\\t\\tItemIds: rewards\\r\\n\\t\\t});\\r\\n\\t\\t\\r\\n\\t\\tresultItems = itemGrantResult.ItemGrantResults;\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Mark the level as being completed so they can't get the reward again\\r\\n\\tvar saveData = {};\\r\\n\\tsaveData[levelCompleteKey] = \\\"true\\\";\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: saveData\\r\\n\\t});\\r\\n\\r\\n\\t// Return the results of the item grant so the client can see what they got\\r\\n\\treturn {\\r\\n\\t\\trewards: resultItems\\r\\n\\t};\\r\\n}\\r\\n\\r\\nvar monsterRewards =\\r\\n{\\r\\n\\t\\\"skrill\\\" : { \\\"ChumpCoins\\\" : 100},\\r\\n\\t\\\"lumpur\\\" : { \\\"ChumpCoins\\\" : 200}\\r\\n}\\r\\n\\r\\nvar killCoolDown = 60;\\r\\n\\r\\nfunction currTimeSeconds()\\r\\n{\\r\\n\\tvar now = new Date();\\r\\n\\treturn now.getTime() / 1000;\\r\\n}\\r\\n\\r\\nhandlers.monsterKilled = function(args)\\r\\n{\\r\\n\\tvar monsterType = args.type;\\r\\n\\t\\r\\n\\tvar now = currTimeSeconds();\\r\\n\\t\\r\\n\\t// Get the user's internal data\\r\\n\\tvar playerInternalData = server.GetUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tKeys: [\\\"lastKill\\\"]\\r\\n\\t});\\r\\n\\t\\r\\n\\t// Check when the last time they killed a monster was \\r\\n\\tvar lastKill = playerInternalData.Data[\\\"lastKill\\\"];\\r\\n\\tif(lastKill)\\r\\n\\t{\\r\\n\\t\\t// We have a value, see when it is\\r\\n\\t\\tvar lastKillTime = parseInt(lastKill.Value);\\r\\n\\t\\tif(now - lastKillTime < killCoolDown)\\r\\n\\t\\t{\\r\\n\\t\\t\\t// In this particular game, it should not be possible to kill a monster more often than once a minute, so they might be cheating\\r\\n\\t\\t\\tlog.info(\\\"Player \\\"+currentPlayerId+\\\" killed \\\"+monsterType+\\\" again too quickly!\\\");\\r\\n\\t\\t\\treturn {};\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\tvar killReward = monsterRewards[monsterType];\\r\\n\\t\\r\\n\\tif(killReward)\\r\\n\\t{\\r\\n\\t\\tfor(var currency in killReward)\\r\\n\\t\\t{\\r\\n\\t\\t\\tvar amount = killReward[currency];\\r\\n\\t\\t\\tserver.AddUserVirtualCurrency({ PlayFabId: currentPlayerId, VirtualCurrency: currency, Amount: amount });\\r\\n\\t\\t}\\r\\n\\t}\\r\\n\\t\\r\\n\\t// Reset the kill timer\\r\\n\\tserver.UpdateUserInternalData(\\r\\n\\t{\\r\\n\\t\\tPlayFabId: currentPlayerId,\\r\\n\\t\\tData: {\\r\\n\\t\\t\\t\\\"lastKill\\\" : String(now)\\r\\n\\t\\t}\\r\\n\\t});\\r\\n\\t\\r\\n\\treturn {\\r\\n\\t\\trewards: killReward\\r\\n\\t};\\r\\n}\"\n      }\n    ],\n    \"IsPublished\": true\n  }\n}",
       "errors": [
+        "ProductDisabledForTitle",
         "RevisionNotFound",
         "VersionNotFound"
       ]
@@ -18813,6 +18836,7 @@
         "Admin/RunTask"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "TaskInstanceNotFound"
       ]
     },
@@ -18826,7 +18850,10 @@
       "request": "GetCloudScriptVersionsRequest",
       "requestExample": "{}",
       "result": "GetCloudScriptVersionsResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Versions\": [\n      {\n        \"Version\": 1,\n        \"PublishedRevision\": 3,\n        \"LatestRevision\": 5\n      },\n      {\n        \"Version\": 2,\n        \"PublishedRevision\": 1,\n        \"LatestRevision\": 1\n      }\n    ]\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Versions\": [\n      {\n        \"Version\": 1,\n        \"PublishedRevision\": 3,\n        \"LatestRevision\": 5\n      },\n      {\n        \"Version\": 2,\n        \"PublishedRevision\": 1,\n        \"LatestRevision\": 1\n      }\n    ]\n  }\n}",
+      "errors": [
+        "ProductDisabledForTitle"
+      ]
     },
     {
       "name": "GetContentList",
@@ -18869,7 +18896,8 @@
       "errors": [
         "BillingInformationRequired",
         "ContentQuotaExceeded",
-        "NotAuthorized"
+        "NotAuthorized",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19043,6 +19071,7 @@
         "Admin/GetAllSegments"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "SegmentNotFound"
       ]
     },
@@ -19091,6 +19120,7 @@
         "InvalidContinuationToken",
         "InvalidSearchTerm",
         "InvalidSegment",
+        "ProductDisabledForTitle",
         "SegmentNotFound"
       ]
     },
@@ -19113,6 +19143,9 @@
         "Admin/UpdatePlayerStatisticDefinition",
         "Client/UpdatePlayerStatistics",
         "Server/UpdatePlayerStatistics"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19137,6 +19170,7 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "StatisticNotFound"
       ]
     },
@@ -19205,6 +19239,9 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Tables\": {\n      \"blah\": {\n        \"CatalogVersion\": \"1\",\n        \"TableId\": \"DropTable 1\",\n        \"Nodes\": [\n          {\n            \"ResultItemType\": \"ItemId\",\n            \"ResultItem\": \"Gold Crown 1\",\n            \"Weight\": 20\n          },\n          {\n            \"ResultItemType\": \"ItemId\",\n            \"ResultItem\": \"Magic Sword 3\",\n            \"Weight\": 50\n          },\n          {\n            \"ResultItemType\": \"ItemId\",\n            \"ResultItem\": \"Clear Shield 3\",\n            \"Weight\": 70\n          }\n        ]\n      }\n    }\n  }\n}",
       "seeAlso": [
         "Admin/UpdateRandomResultTables"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19228,7 +19265,8 @@
         "AsyncExportRateLimitExceeded",
         "ExportNotFound",
         "ExportUnknownError",
-        "InvalidSegment"
+        "InvalidSegment",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19245,6 +19283,7 @@
       "resultExample": "",
       "errors": [
         "GetSegmentsRateLimitExceeded",
+        "ProductDisabledForTitle",
         "UnknownError"
       ]
     },
@@ -19293,6 +19332,7 @@
       ],
       "errors": [
         "CatalogNotConfigured",
+        "ProductDisabledForTitle",
         "StoreNotFound"
       ]
     },
@@ -19487,6 +19527,9 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PlayFabId\": \"204883457\",\n    \"Inventory\": [\n      {\n        \"ItemId\": \"shield_level_5\",\n        \"ItemInstanceId\": \"9879843\",\n        \"ItemClass\": \"shields\",\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"ItemId\": \"energy_boost_1\",\n        \"ItemInstanceId\": \"3854637\",\n        \"ItemClass\": \"boosts\",\n        \"RemainingUses\": 4,\n        \"CatalogVersion\": \"5\",\n        \"UnitPrice\": 0\n      }\n    ],\n    \"VirtualCurrency\": {\n      \"GC\": 15\n    },\n    \"VirtualCurrencyRechargeTimes\": {\n      \"GC\": {\n        \"SecondsToRecharge\": 3600,\n        \"RechargeTime\": \"2014-01-01T12:00:00Z\",\n        \"RechargeMax\": 50\n      }\n    }\n  }\n}",
       "seeAlso": [
         "Admin/GetUserAccountInfo"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19584,7 +19627,8 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"ItemGrantResults\": [\n      {\n        \"PlayFabId\": \"20394883\",\n        \"Result\": true,\n        \"ItemId\": \"shield_level_1\",\n        \"ItemInstanceId\": \"133713371337\",\n        \"ItemClass\": \"shields\",\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\n        \"RemainingUses\": 10,\n        \"Annotation\": \"Entered Level 2\",\n        \"CatalogVersion\": \"5\",\n        \"BundleParent\": \"crate block 1\",\n        \"UnitPrice\": 0\n      },\n      {\n        \"PlayFabId\": \"20394883\",\n        \"Result\": true,\n        \"ItemId\": \"shield_level_2\",\n        \"ItemInstanceId\": \"133713371337\",\n        \"ItemClass\": \"shields\",\n        \"PurchaseDate\": \"2017-03-07T00:00:00Z\",\n        \"Expiration\": \"2018-10-01T00:00:00Z\",\n        \"RemainingUses\": 10,\n        \"Annotation\": \"Entered Level 2\",\n        \"CatalogVersion\": \"5\",\n        \"BundleParent\": \"crate block 1\",\n        \"UnitPrice\": 0,\n        \"CustomData\": {\n          \"Equipped\": \"True\",\n          \"Slot\": \"Head\"\n        }\n      }\n    ]\n  }\n}",
       "errors": [
         "AccountNotFound",
-        "CatalogNotConfigured"
+        "CatalogNotConfigured",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19603,6 +19647,7 @@
         "Admin/CheckLimitedEditionItemAvailability"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "RequestAlreadyRunning"
       ]
     },
@@ -19629,6 +19674,7 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "StatisticNotFound",
         "StatisticUpdateInProgress",
         "StatisticVersionIncrementRateExceeded"
@@ -19707,6 +19753,9 @@
       "seeAlso": [
         "Admin/AddVirtualCurrencyTypes",
         "Admin/RemoveVirtualCurrencyTypes"
+      ],
+      "errors": [
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19771,7 +19820,10 @@
       "request": "RefundPurchaseRequest",
       "requestExample": "{\n  \"PlayFabId\": \"20394883\",\n  \"OrderId\": \"B456AE0\",\n  \"Reason\": \"Customer Request\"\n}",
       "result": "RefundPurchaseResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PurchaseStatus\": \"Refunded\"\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PurchaseStatus\": \"Refunded\"\n  }\n}",
+      "errors": [
+        "ProductDisabledForTitle"
+      ]
     },
     {
       "name": "RemovePlayerTag",
@@ -19833,6 +19885,7 @@
       ],
       "errors": [
         "InvalidVirtualCurrencyCode",
+        "ProductDisabledForTitle",
         "VirtualCurrencyCannotBeDeleted"
       ]
     },
@@ -19847,7 +19900,10 @@
       "request": "ResetCharacterStatisticsRequest",
       "requestExample": "{\n  \"PlayFabId\": \"293753934\",\n  \"CharacterId\": \"7654321\"\n}",
       "result": "ResetCharacterStatisticsResult",
-      "resultExample": ""
+      "resultExample": "",
+      "errors": [
+        "ProductDisabledForTitle"
+      ]
     },
     {
       "name": "ResetPassword",
@@ -19902,7 +19958,10 @@
       "request": "ResetUserStatisticsRequest",
       "requestExample": "{\n  \"PlayFabId\": \"293753934\"\n}",
       "result": "ResetUserStatisticsResult",
-      "resultExample": ""
+      "resultExample": "",
+      "errors": [
+        "ProductDisabledForTitle"
+      ]
     },
     {
       "name": "ResolvePurchaseDispute",
@@ -19914,7 +19973,10 @@
       "request": "ResolvePurchaseDisputeRequest",
       "requestExample": "{\n  \"PlayFabId\": \"20394883\",\n  \"OrderId\": \"B456AE0\",\n  \"Reason\": \"Customer Request\",\n  \"Outcome\": \"Reinstate\"\n}",
       "result": "ResolvePurchaseDisputeResponse",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PurchaseStatus\": \"Approved\"\n  }\n}"
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PurchaseStatus\": \"Approved\"\n  }\n}",
+      "errors": [
+        "ProductDisabledForTitle"
+      ]
     },
     {
       "name": "RevokeAllBansForUser",
@@ -19973,7 +20035,8 @@
         "Admin/GetUserInventory"
       ],
       "errors": [
-        "ItemNotFound"
+        "ItemNotFound",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -19992,7 +20055,8 @@
         "Admin/GetUserInventory"
       ],
       "errors": [
-        "ItemNotFound"
+        "ItemNotFound",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -20058,7 +20122,8 @@
         "InvalidDropTable",
         "InvalidItemId",
         "InvalidItemProperties",
-        "InvalidJSONContent"
+        "InvalidJSONContent",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -20180,7 +20245,8 @@
       "errors": [
         "CatalogNotConfigured",
         "InvalidItemId",
-        "InvalidJSONContent"
+        "InvalidJSONContent",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -20278,6 +20344,7 @@
       ],
       "errors": [
         "InvalidVirtualCurrency",
+        "ProductDisabledForTitle",
         "VirtualCurrencyCurrentlyUnavailable"
       ]
     },
@@ -20319,7 +20386,8 @@
       "errors": [
         "InvalidDropTable",
         "InvalidItemProperties",
-        "InvalidJSONContent"
+        "InvalidJSONContent",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -20335,6 +20403,7 @@
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Version\": 1,\n    \"Revision\": 5\n  }\n}",
       "errors": [
         "JavascriptException",
+        "ProductDisabledForTitle",
         "TitleDeleted"
       ]
     },
@@ -20421,6 +20490,7 @@
         "Server/UpdatePlayerStatistics"
       ],
       "errors": [
+        "ProductDisabledForTitle",
         "StatisticNotFound",
         "StatisticUpdateInProgress"
       ]
@@ -20458,7 +20528,8 @@
       ],
       "errors": [
         "InvalidDropTable",
-        "InvalidJSONContent"
+        "InvalidJSONContent",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -20476,6 +20547,7 @@
       "errors": [
         "InvalidSegment",
         "NameNotAvailable",
+        "ProductDisabledForTitle",
         "SegmentManagementInvalidInput",
         "SegmentManagementInvalidSegmentId",
         "SegmentManagementInvalidSegmentName",
@@ -20506,7 +20578,8 @@
       "errors": [
         "CatalogNotConfigured",
         "InvalidItemId",
-        "InvalidJSONContent"
+        "InvalidJSONContent",
+        "ProductDisabledForTitle"
       ]
     },
     {
@@ -24455,6 +24528,10 @@
       "id": 23014,
       "name": "MetadataLengthExceeded"
     },
+    "MaxQueryableVersionsExceeded": {
+      "id": 23015,
+      "name": "MaxQueryableVersionsExceeded"
+    },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,
       "name": "StoreMetricsRequestInvalidInput"
@@ -25405,6 +25482,7 @@
     "EntityTypeSpecifiedRequiresAggregationSource",
     "PlayFabErrorEventNotSupportedForEntityType",
     "MetadataLengthExceeded",
+    "MaxQueryableVersionsExceeded",
     "StoreMetricsRequestInvalidInput",
     "StoreMetricsErrorRetrievingMetrics"
   ]
