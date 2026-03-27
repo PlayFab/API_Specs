@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260313",
+    "version": "260327",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -7811,6 +7811,7 @@
         "ParentCustomerAccountNotFound",
         "AccountLinkedToABannedPlayer",
         "AzureSubscriptionNotEligibleForLinking",
+        "EntityIsNotAMember",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -7928,6 +7929,8 @@
         "ExperimentationExclusionGroupInvalidName",
         "ExperimentationLegacyExperimentInvalidOperation",
         "ExperimentationExperimentStopFailed",
+        "ExperimentationExperimentDeleteFailed",
+        "ExperimentationExperimentStartFailed",
         "MaxActionDepthExceeded",
         "TitleNotOnUpdatedPricingPlan",
         "SegmentManagementTitleNotInFlight",
@@ -8125,6 +8128,7 @@
         "GameSaveConflict",
         "GameSaveManifestNotEligibleForRollback",
         "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
+        "GameSaveTitleConfigNoUpdatesRequested",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -9145,7 +9149,7 @@
       "type": "object",
       "properties": {
         "PolicyName": {
-          "description": "The name of the policy to read. Only supported name is 'ApiPolicy'.",
+          "description": "The name of the policy to read. Only 'ApiPolicy' is supported. This parameter is optional and defaults to 'ApiPolicy' if omitted.",
           "type": "string"
         }
       },
@@ -9156,6 +9160,10 @@
     "GetPolicyResponse": {
       "type": "object",
       "properties": {
+        "LastUpdated": {
+          "description": "The UTC date and time when the policy was last updated. Null if the policy has never been customized.",
+          "type": "string"
+        },
         "PolicyName": {
           "description": "The name of the policy read.",
           "type": "string"
@@ -10838,7 +10846,7 @@
       "type": "object",
       "properties": {
         "Action": {
-          "description": "The action this statement effects. The only supported action is 'Execute'.",
+          "description": "The action this statement effects. May only be '*'. This parameter is optional and defaults to '*' if omitted.",
           "type": "string"
         },
         "ApiConditions": {
@@ -10858,7 +10866,7 @@
           "x-isenum": true
         },
         "Principal": {
-          "description": "The principal this statement will effect. The only supported principal is '*'.",
+          "description": "The principal this statement will effect. May be '*' to match all callers, or a JSON object targeting a specific entity type, e.g. {\"title_player_account\":\"*\"} for players or {\"master_player_account\":\"*\"} for master player accounts.",
           "type": "string"
         },
         "Resource": {
@@ -10868,7 +10876,6 @@
       },
       "required": [
         "Resource",
-        "Action",
         "Effect",
         "Principal"
       ]
@@ -14033,7 +14040,7 @@
           "type": "boolean"
         },
         "PolicyName": {
-          "description": "The name of the policy being updated. Only supported name is 'ApiPolicy'",
+          "description": "The name of the policy being updated. Only 'ApiPolicy' is supported. This parameter is optional and defaults to 'ApiPolicy' if omitted.",
           "type": "string"
         },
         "PolicyVersion": {
@@ -14051,7 +14058,6 @@
         }
       },
       "required": [
-        "PolicyName",
         "Statements",
         "OverwritePolicy",
         "PolicyVersion"
@@ -14088,6 +14094,13 @@
             "$ref": "#/definitions/PermissionStatement"
           },
           "x-isclass": true
+        },
+        "Warnings": {
+          "description": "Optional warnings about policy statements that may not have the intended effect. For example, resource paths that don't match any known API endpoint. The policy update still succeeds when warnings are present.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "example": {
@@ -21366,6 +21379,10 @@
       "id": 1614,
       "name": "AzureSubscriptionNotEligibleForLinking"
     },
+    "EntityIsNotAMember": {
+      "id": 1615,
+      "name": "EntityIsNotAMember"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -21833,6 +21850,14 @@
     "ExperimentationExperimentStopFailed": {
       "id": 7024,
       "name": "ExperimentationExperimentStopFailed"
+    },
+    "ExperimentationExperimentDeleteFailed": {
+      "id": 7025,
+      "name": "ExperimentationExperimentDeleteFailed"
+    },
+    "ExperimentationExperimentStartFailed": {
+      "id": 7026,
+      "name": "ExperimentationExperimentStartFailed"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
@@ -22621,6 +22646,10 @@
     "GameSaveTitleClientAnonymousAccountCreationNotDisabled": {
       "id": 20330,
       "name": "GameSaveTitleClientAnonymousAccountCreationNotDisabled"
+    },
+    "GameSaveTitleConfigNoUpdatesRequested": {
+      "id": 20331,
+      "name": "GameSaveTitleConfigNoUpdatesRequested"
     },
     "StateShareForbidden": {
       "id": 21000,

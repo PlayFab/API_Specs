@@ -284,6 +284,15 @@
           "optional": true
         },
         {
+          "name": "StatisticsColumnDetails",
+          "description": "A mapping of statistic name to the columns defined in the corresponding definition.",
+          "collection": "map",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumnCollection",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "VersionNumber",
           "description": "The version number of the profile in persistent storage at the time of the read. Used for optional optimistic concurrency during update.",
           "jsontype": "Number",
@@ -392,6 +401,12 @@
           "actualtype": "EntityKey",
           "isclass": true,
           "optional": true
+        },
+        {
+          "name": "IncludeStatistics",
+          "description": "Determines whether the entity statistics will be returned in the entity profile. Default is false.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
         }
       ]
     },
@@ -442,6 +457,12 @@
           "jsontype": "Object",
           "actualtype": "EntityKey",
           "isclass": true
+        },
+        {
+          "name": "IncludeStatistics",
+          "description": "Determines whether the entity statistics will be returned in the entity profile. Default is false.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
         }
       ]
     },
@@ -939,6 +960,65 @@
           "optional": true
         }
       ]
+    },
+    "StatisticAggregationMethod": {
+      "name": "StatisticAggregationMethod",
+      "className": "StatisticAggregationMethod",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "isenum": true,
+      "enumvalues": [
+        {
+          "name": "Last"
+        },
+        {
+          "name": "Min"
+        },
+        {
+          "name": "Max"
+        },
+        {
+          "name": "Sum"
+        }
+      ]
+    },
+    "StatisticColumn": {
+      "name": "StatisticColumn",
+      "className": "StatisticColumn",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "properties": [
+        {
+          "name": "AggregationMethod",
+          "description": "Aggregation method for calculating new value of a statistic.",
+          "jsontype": "String",
+          "actualtype": "StatisticAggregationMethod",
+          "isenum": true
+        },
+        {
+          "name": "Name",
+          "description": "Name of the statistic column, as originally configured.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "StatisticColumnCollection": {
+      "name": "StatisticColumnCollection",
+      "className": "StatisticColumnCollection",
+      "classNameSpace": "PlayFab.Profiles.Models",
+      "assembly": "PlayFab.Profiles.Models",
+      "properties": [
+        {
+          "name": "Columns",
+          "description": "Columns for the statistic defining the aggregation method for each column.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "StatisticColumn",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     }
   },
   "subgroups": [
@@ -987,7 +1067,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetEntityProfileRequest",
-      "requestExample": "{\n  \"Entity\": {\n    \"Id\": \"1234567787392\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
+      "requestExample": "{\n  \"IncludeStatistics\": false,\n  \"Entity\": {\n    \"Id\": \"1234567787392\",\n    \"Type\": \"title_player_account\",\n    \"TypeString\": \"title_player_account\"\n  }\n}",
       "result": "GetEntityProfileResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Profile\": {\n      \"Entity\": {\n        \"Id\": \"1234567787392\",\n        \"Type\": \"title_player_account\",\n        \"TypeString\": \"title_player_account\"\n      },\n      \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\n      \"VersionNumber\": 0,\n      \"Created\": \"0001-01-01T00:00:00Z\"\n    }\n  }\n}"
     },
@@ -1000,7 +1080,7 @@
       "auth": "EntityToken",
       "method": "POST",
       "request": "GetEntityProfilesRequest",
-      "requestExample": "{\n  \"Entities\": [\n    {\n      \"Id\": \"1234567787392\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"42434567785265\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"IncludeStatistics\": false,\n  \"Entities\": [\n    {\n      \"Id\": \"1234567787392\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    },\n    {\n      \"Id\": \"42434567785265\",\n      \"Type\": \"title_player_account\",\n      \"TypeString\": \"title_player_account\"\n    }\n  ]\n}",
       "result": "GetEntityProfilesResponse",
       "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"Profiles\": [\n      {\n        \"Entity\": {\n          \"Id\": \"1234567787392\",\n          \"Type\": \"title_player_account\",\n          \"TypeString\": \"title_player_account\"\n        },\n        \"EntityChain\": \"title_player_account!09839712/1289749013/19073097/1234567787392\",\n        \"VersionNumber\": 0,\n        \"Created\": \"0001-01-01T00:00:00Z\"\n      }\n    ]\n  }\n}"
     },
@@ -3522,6 +3602,10 @@
       "id": 1614,
       "name": "AzureSubscriptionNotEligibleForLinking"
     },
+    "EntityIsNotAMember": {
+      "id": 1615,
+      "name": "EntityIsNotAMember"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -3989,6 +4073,14 @@
     "ExperimentationExperimentStopFailed": {
       "id": 7024,
       "name": "ExperimentationExperimentStopFailed"
+    },
+    "ExperimentationExperimentDeleteFailed": {
+      "id": 7025,
+      "name": "ExperimentationExperimentDeleteFailed"
+    },
+    "ExperimentationExperimentStartFailed": {
+      "id": 7026,
+      "name": "ExperimentationExperimentStartFailed"
     },
     "MaxActionDepthExceeded": {
       "id": 8000,
@@ -4778,6 +4870,10 @@
       "id": 20330,
       "name": "GameSaveTitleClientAnonymousAccountCreationNotDisabled"
     },
+    "GameSaveTitleConfigNoUpdatesRequested": {
+      "id": 20331,
+      "name": "GameSaveTitleConfigNoUpdatesRequested"
+    },
     "StateShareForbidden": {
       "id": 21000,
       "name": "StateShareForbidden"
@@ -5493,6 +5589,7 @@
     "ParentCustomerAccountNotFound",
     "AccountLinkedToABannedPlayer",
     "AzureSubscriptionNotEligibleForLinking",
+    "EntityIsNotAMember",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
@@ -5610,6 +5707,8 @@
     "ExperimentationExclusionGroupInvalidName",
     "ExperimentationLegacyExperimentInvalidOperation",
     "ExperimentationExperimentStopFailed",
+    "ExperimentationExperimentDeleteFailed",
+    "ExperimentationExperimentStartFailed",
     "MaxActionDepthExceeded",
     "TitleNotOnUpdatedPricingPlan",
     "SegmentManagementTitleNotInFlight",
@@ -5807,6 +5906,7 @@
     "GameSaveConflict",
     "GameSaveManifestNotEligibleForRollback",
     "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
+    "GameSaveTitleConfigNoUpdatesRequested",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
