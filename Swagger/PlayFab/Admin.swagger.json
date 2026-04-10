@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260327",
+    "version": "260410",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -4450,6 +4450,41 @@
           "NameNotAvailable"
         ]
       }
+    },
+    "/Admin/ValidateApiPolicy": {
+      "post": {
+        "operationId": "ValidateApiPolicy",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Validates the result of a policy update without persisting it.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/authentication/validateapipolicy"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ValidateApiPolicyRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ValidateApiPolicyResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Validates the proposed policy change and returns the resulting merged policy, validation errors, warnings, and a diff summary showing what would change. Use this to validate the impact of a policy update before calling UpdatePolicy. No changes are saved.",
+        "x-seeAlso": [
+          "Admin/GetPolicy",
+          "Admin/UpdatePolicy"
+        ]
+      }
     }
   },
   "definitions": {
@@ -7949,6 +7984,8 @@
         "AsyncExportRateLimitExceeded",
         "AnalyticsSegmentCountOverLimit",
         "GetPlayersInSegmentRetired",
+        "GetSegmentPlayerCountNotInFlight",
+        "GetSegmentPlayerCountRateLimitExceeded",
         "SnapshotNotFound",
         "InventoryApiNotImplemented",
         "InventoryCollectionDeletionDisallowed",
@@ -8129,6 +8166,7 @@
         "GameSaveManifestNotEligibleForRollback",
         "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
         "GameSaveTitleConfigNoUpdatesRequested",
+        "GameSavePlayerNotEligibleForTransfer",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -11243,6 +11281,43 @@
         "Status": "Archived",
         "ArchiveDownloadUrl": "https://Someurl"
       }
+    },
+    "PolicyDiffSummary": {
+      "type": "object",
+      "properties": {
+        "StatementsAdded": {
+          "description": "Number of new statements that would be added.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StatementsRemoved": {
+          "description": "Number of existing statements that would be removed. Only applicable when OverwritePolicy is true.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StatementsReplaced": {
+          "description": "Number of existing statements that would be replaced by functionally equivalent incoming statements (e.g., same resource/effect/principal but different comment).",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "StatementsUnchanged": {
+          "description": "Number of existing statements that would remain unchanged.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "TotalResultingStatements": {
+          "description": "Total number of statements in the resulting policy.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "StatementsAdded",
+        "StatementsRemoved",
+        "StatementsUnchanged",
+        "StatementsReplaced",
+        "TotalResultingStatements"
+      ]
     },
     "PushNotificationContent": {
       "type": "object",
@@ -15074,6 +15149,121 @@
         }
       }
     },
+    "ValidateApiPolicyRequest": {
+      "description": "Validates the proposed policy change and returns the resulting merged policy, validation errors, warnings, and a diff summary showing what would change. Use this to validate the impact of a policy update before calling UpdatePolicy. No changes are saved.",
+      "type": "object",
+      "properties": {
+        "OverwritePolicy": {
+          "description": "Whether the validation should simulate overwriting or appending to the existing policy.",
+          "type": "boolean"
+        },
+        "PolicyName": {
+          "description": "The name of the policy to validate. Only 'ApiPolicy' is supported. This parameter is optional and defaults to 'ApiPolicy' if omitted.",
+          "type": "string"
+        },
+        "PolicyVersion": {
+          "description": "Version of the policy to validate against. Must be the latest (as returned by GetPolicy).",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "Statements": {
+          "description": "The statements to validate.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PermissionStatement"
+          },
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "Statements",
+        "OverwritePolicy",
+        "PolicyVersion"
+      ],
+      "example": {
+        "PolicyName": "ApiPolicy",
+        "Statements": [
+          {
+            "Resource": "pfrn:api--/Client/*",
+            "Action": "*",
+            "Principal": "*",
+            "Comment": "Allow all client APIs"
+          }
+        ],
+        "OverwritePolicy": true,
+        "PolicyVersion": 13
+      }
+    },
+    "ValidateApiPolicyResponse": {
+      "type": "object",
+      "properties": {
+        "Diff": {
+          "$ref": "#/definitions/PolicyDiffSummary",
+          "description": "Summary of what would change compared to the current policy.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "IsValid": {
+          "description": "Whether the proposed policy is valid and would be accepted by UpdatePolicy.",
+          "type": "boolean"
+        },
+        "PolicyName": {
+          "description": "The name of the policy validated.",
+          "type": "string"
+        },
+        "PolicyVersion": {
+          "description": "Policy version.",
+          "type": "number",
+          "x-actualtype": "int32"
+        },
+        "ResultingStatements": {
+          "description": "The full set of statements that would result from applying this update.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PermissionStatement"
+          },
+          "x-isclass": true
+        },
+        "ValidationErrors": {
+          "description": "Validation errors that would cause UpdatePolicy to reject this request. Empty if IsValid is true.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "Warnings": {
+          "description": "Non-blocking warnings about the proposed policy (e.g., near statement limit, duplicate statements).",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "PolicyVersion",
+        "IsValid"
+      ],
+      "example": {
+        "PolicyName": "ApiPolicy",
+        "PolicyVersion": 13,
+        "ResultingStatements": [
+          {
+            "Resource": "pfrn:api--/Client/*",
+            "Action": "*",
+            "Principal": "*",
+            "Comment": "Allow all client APIs"
+          }
+        ],
+        "IsValid": true,
+        "ValidationErrors": [],
+        "Warnings": [],
+        "Diff": {
+          "StatementsRemoved": 5,
+          "StatementsUnchanged": 1,
+          "TotalResultingStatements": 1
+        }
+      }
+    },
     "ValueToDateModel": {
       "type": "object",
       "properties": {
@@ -15995,6 +16185,14 @@
       "description": "In addition to the PlayFab username, titles can make use of a DisplayName which is also a unique identifier, but specific to the title. This allows for unique names which more closely match the theme or genre of a title, for example. This API enables changing that name, whether due to a customer request, an offensive name choice, etc.",
       "schema": {
         "$ref": "#/definitions/UpdateUserTitleDisplayNameRequest"
+      }
+    },
+    "ValidateApiPolicyRequest": {
+      "name": "ValidateApiPolicyRequest",
+      "in": "body",
+      "description": "Validates the proposed policy change and returns the resulting merged policy, validation errors, warnings, and a diff summary showing what would change. Use this to validate the impact of a policy update before calling UpdatePolicy. No changes are saved.",
+      "schema": {
+        "$ref": "#/definitions/ValidateApiPolicyRequest"
       }
     }
   },
@@ -18882,6 +19080,49 @@
           "status": "OK",
           "data": {
             "DisplayName": "New Display Name"
+          }
+        }
+      }
+    },
+    "ValidateApiPolicyResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ValidateApiPolicyResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "PolicyName": "ApiPolicy",
+            "PolicyVersion": 13,
+            "ResultingStatements": [
+              {
+                "Resource": "pfrn:api--/Client/*",
+                "Action": "*",
+                "Principal": "*",
+                "Comment": "Allow all client APIs"
+              }
+            ],
+            "IsValid": true,
+            "ValidationErrors": [],
+            "Warnings": [],
+            "Diff": {
+              "StatementsRemoved": 5,
+              "StatementsUnchanged": 1,
+              "TotalResultingStatements": 1
+            }
           }
         }
       }
@@ -21931,6 +22172,14 @@
       "id": 10015,
       "name": "GetPlayersInSegmentRetired"
     },
+    "GetSegmentPlayerCountNotInFlight": {
+      "id": 10016,
+      "name": "GetSegmentPlayerCountNotInFlight"
+    },
+    "GetSegmentPlayerCountRateLimitExceeded": {
+      "id": 10017,
+      "name": "GetSegmentPlayerCountRateLimitExceeded"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -22650,6 +22899,10 @@
     "GameSaveTitleConfigNoUpdatesRequested": {
       "id": 20331,
       "name": "GameSaveTitleConfigNoUpdatesRequested"
+    },
+    "GameSavePlayerNotEligibleForTransfer": {
+      "id": 20332,
+      "name": "GameSavePlayerNotEligibleForTransfer"
     },
     "StateShareForbidden": {
       "id": 21000,

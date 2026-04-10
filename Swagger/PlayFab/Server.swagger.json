@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260327",
+    "version": "260410",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -708,6 +708,49 @@
           "JavascriptException",
           "ProductDisabledForTitle",
           "TitleDeleted"
+        ]
+      }
+    },
+    "/Server/ExportPlayersInSegment": {
+      "post": {
+        "operationId": "ExportPlayersInSegment",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Starts an export for the player profiles in a segment. This API creates a snapshot of all the player profiles which match the segment definition at the time of the API call. Profiles which change while an export is in progress will not be reflected in the results.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/playstream/exportplayersinsegment"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ExportPlayersInSegmentRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ExportPlayersInSegmentResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain the Segment ID",
+        "x-seeAlso": [
+          "Server/GetAllSegments",
+          "Server/GetSegmentExport"
+        ],
+        "x-ms-docs-errors": [
+          "AsyncExportNotInFlight",
+          "AsyncExportRateLimitExceeded",
+          "ExportUnknownError",
+          "InvalidSegment",
+          "ProductDisabledForTitle",
+          "SegmentNotFound"
         ]
       }
     },
@@ -2081,6 +2124,49 @@
         "x-ms-docs-errors": [
           "CatalogNotConfigured",
           "InvalidDropTable",
+          "ProductDisabledForTitle"
+        ]
+      }
+    },
+    "/Server/GetSegmentExport": {
+      "post": {
+        "operationId": "GetSegmentExport",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Retrieves the result of an export started by ExportPlayersInSegment API. If the ExportPlayersInSegment is successful and complete, this API returns the IndexUrl from which the index file can be downloaded. The index file has a list of urls from which the files containing the player profile data can be downloaded. Otherwise, it returns the current 'State' of the export",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/playstream/getsegmentexport"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetPlayersInSegmentExportRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetPlayersInSegmentExportResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain the ExportId",
+        "x-seeAlso": [
+          "Server/ExportPlayersInSegment",
+          "Server/GetAllSegments"
+        ],
+        "x-ms-docs-errors": [
+          "AsyncExportNotInFlight",
+          "AsyncExportRateLimitExceeded",
+          "ExportNotFound",
+          "ExportUnknownError",
+          "InvalidSegment",
           "ProductDisabledForTitle"
         ]
       }
@@ -7641,6 +7727,39 @@
         "GeneratePlayStreamEvent": true
       }
     },
+    "ExportPlayersInSegmentRequest": {
+      "description": "Request must contain the Segment ID",
+      "type": "object",
+      "properties": {
+        "SegmentId": {
+          "description": "Unique identifier of the requested segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SegmentId"
+      ],
+      "example": {
+        "SegmentId": "ABCDEF1234567890"
+      }
+    },
+    "ExportPlayersInSegmentResult": {
+      "type": "object",
+      "properties": {
+        "ExportId": {
+          "description": "Unique identifier of the export for the requested Segment.",
+          "type": "string"
+        },
+        "SegmentId": {
+          "description": "Unique identifier of the requested Segment.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "SegmentId": "ABCDEF1234567890",
+        "ExportId": "abcdef12345"
+      }
+    },
     "ExternalFriendSources": {
       "type": "string",
       "enum": [
@@ -8509,6 +8628,8 @@
         "AsyncExportRateLimitExceeded",
         "AnalyticsSegmentCountOverLimit",
         "GetPlayersInSegmentRetired",
+        "GetSegmentPlayerCountNotInFlight",
+        "GetSegmentPlayerCountRateLimitExceeded",
         "SnapshotNotFound",
         "InventoryApiNotImplemented",
         "InventoryCollectionDeletionDisallowed",
@@ -8689,6 +8810,7 @@
         "GameSaveManifestNotEligibleForRollback",
         "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
         "GameSaveTitleConfigNoUpdatesRequested",
+        "GameSavePlayerNotEligibleForTransfer",
         "StateShareForbidden",
         "StateShareTitleNotInFlight",
         "StateShareStateNotFound",
@@ -10289,6 +10411,39 @@
             "Name": "Fast Players"
           }
         ]
+      }
+    },
+    "GetPlayersInSegmentExportRequest": {
+      "description": "Request must contain the ExportId",
+      "type": "object",
+      "properties": {
+        "ExportId": {
+          "description": "Unique identifier of the export for the requested Segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ExportId"
+      ],
+      "example": {
+        "ExportId": "ABCDEF1234567890"
+      }
+    },
+    "GetPlayersInSegmentExportResponse": {
+      "type": "object",
+      "properties": {
+        "IndexUrl": {
+          "description": "Url from which the index file can be downloaded.",
+          "type": "string"
+        },
+        "State": {
+          "description": "Shows the current status of the export",
+          "type": "string"
+        }
+      },
+      "example": {
+        "IndexUrl": "https://playfabplayerexports.blob.core.windows.net/titleexportabc/index.txt",
+        "State": "Complete"
       }
     },
     "GetPlayersSegmentsRequest": {
@@ -17090,6 +17245,14 @@
         "$ref": "#/definitions/ExecuteCloudScriptServerRequest"
       }
     },
+    "ExportPlayersInSegmentRequest": {
+      "name": "ExportPlayersInSegmentRequest",
+      "in": "body",
+      "description": "Request must contain the Segment ID",
+      "schema": {
+        "$ref": "#/definitions/ExportPlayersInSegmentRequest"
+      }
+    },
     "GetAllSegmentsRequest": {
       "name": "GetAllSegmentsRequest",
       "in": "body",
@@ -17205,6 +17368,14 @@
       "description": "This API allows for access to details regarding a user in the PlayFab service, usually for purposes of customer support. Note that data returned may be Personally Identifying Information (PII), such as email address, and so care should be taken in how this data is stored and managed. Since this call will always return the relevant information for users who have accessed the title, the recommendation is to not store this data locally.",
       "schema": {
         "$ref": "#/definitions/GetPlayerProfileRequest"
+      }
+    },
+    "GetPlayersInSegmentExportRequest": {
+      "name": "GetPlayersInSegmentExportRequest",
+      "in": "body",
+      "description": "Request must contain the ExportId",
+      "schema": {
+        "$ref": "#/definitions/GetPlayersInSegmentExportRequest"
       }
     },
     "GetPlayersSegmentsRequest": {
@@ -18435,6 +18606,33 @@
         }
       }
     },
+    "ExportPlayersInSegmentResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ExportPlayersInSegmentResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "SegmentId": "ABCDEF1234567890",
+            "ExportId": "abcdef12345"
+          }
+        }
+      }
+    },
     "GetAllSegmentsResult": {
       "description": "",
       "schema": {
@@ -19298,6 +19496,33 @@
                 "Name": "Fast Players"
               }
             ]
+          }
+        }
+      }
+    },
+    "GetPlayersInSegmentExportResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetPlayersInSegmentExportResponse"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "IndexUrl": "https://playfabplayerexports.blob.core.windows.net/titleexportabc/index.txt",
+            "State": "Complete"
           }
         }
       }
@@ -24655,6 +24880,14 @@
       "id": 10015,
       "name": "GetPlayersInSegmentRetired"
     },
+    "GetSegmentPlayerCountNotInFlight": {
+      "id": 10016,
+      "name": "GetSegmentPlayerCountNotInFlight"
+    },
+    "GetSegmentPlayerCountRateLimitExceeded": {
+      "id": 10017,
+      "name": "GetSegmentPlayerCountRateLimitExceeded"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -25374,6 +25607,10 @@
     "GameSaveTitleConfigNoUpdatesRequested": {
       "id": 20331,
       "name": "GameSaveTitleConfigNoUpdatesRequested"
+    },
+    "GameSavePlayerNotEligibleForTransfer": {
+      "id": 20332,
+      "name": "GameSavePlayerNotEligibleForTransfer"
     },
     "StateShareForbidden": {
       "id": 21000,
