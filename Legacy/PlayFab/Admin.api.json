@@ -7149,6 +7149,12 @@
           "name": "GetPlayersInSegmentRetired"
         },
         {
+          "name": "GetSegmentPlayerCountNotInFlight"
+        },
+        {
+          "name": "GetSegmentPlayerCountRateLimitExceeded"
+        },
+        {
           "name": "SnapshotNotFound"
         },
         {
@@ -7687,6 +7693,9 @@
         },
         {
           "name": "GameSaveTitleConfigNoUpdatesRequested"
+        },
+        {
+          "name": "GameSavePlayerNotEligibleForTransfer"
         },
         {
           "name": "StateShareForbidden"
@@ -11990,6 +11999,44 @@
           "description": "version of the statistic",
           "jsontype": "Number",
           "actualtype": "uint32"
+        }
+      ]
+    },
+    "PolicyDiffSummary": {
+      "name": "PolicyDiffSummary",
+      "className": "PolicyDiffSummary",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "properties": [
+        {
+          "name": "StatementsAdded",
+          "description": "Number of new statements that would be added.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "StatementsRemoved",
+          "description": "Number of existing statements that would be removed. Only applicable when OverwritePolicy is true.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "StatementsReplaced",
+          "description": "Number of existing statements that would be replaced by functionally equivalent incoming statements (e.g., same resource/effect/principal but different comment).",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "StatementsUnchanged",
+          "description": "Number of existing statements that would remain unchanged.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "TotalResultingStatements",
+          "description": "Total number of statements in the resulting policy.",
+          "jsontype": "Number",
+          "actualtype": "int32"
         }
       ]
     },
@@ -17635,6 +17682,104 @@
         }
       ]
     },
+    "ValidateApiPolicyRequest": {
+      "name": "ValidateApiPolicyRequest",
+      "className": "ValidateApiPolicyRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Validates the proposed policy change and returns the resulting merged policy, validation errors, warnings, and a diff summary showing what would change. Use this to validate the impact of a policy update before calling UpdatePolicy. No changes are saved.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "OverwritePolicy",
+          "description": "Whether the validation should simulate overwriting or appending to the existing policy.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "PolicyName",
+          "description": "The name of the policy to validate. Only 'ApiPolicy' is supported. This parameter is optional and defaults to 'ApiPolicy' if omitted.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PolicyVersion",
+          "description": "Version of the policy to validate against. Must be the latest (as returned by GetPolicy).",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "Statements",
+          "description": "The statements to validate.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PermissionStatement",
+          "isclass": true
+        }
+      ]
+    },
+    "ValidateApiPolicyResponse": {
+      "name": "ValidateApiPolicyResponse",
+      "className": "ValidateApiPolicyResponse",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "Diff",
+          "description": "Summary of what would change compared to the current policy.",
+          "jsontype": "Object",
+          "actualtype": "PolicyDiffSummary",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "IsValid",
+          "description": "Whether the proposed policy is valid and would be accepted by UpdatePolicy.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "PolicyName",
+          "description": "The name of the policy validated.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PolicyVersion",
+          "description": "Policy version.",
+          "jsontype": "Number",
+          "actualtype": "int32"
+        },
+        {
+          "name": "ResultingStatements",
+          "description": "The full set of statements that would result from applying this update.",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "PermissionStatement",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "ValidationErrors",
+          "description": "Validation errors that would cause UpdatePolicy to reject this request. Empty if IsValid is true.",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Warnings",
+          "description": "Non-blocking warnings about the proposed policy (e.g., near statement limit, duplicate statements).",
+          "collection": "array",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "ValueToDateModel": {
       "name": "ValueToDateModel",
       "className": "ValueToDateModel",
@@ -17831,7 +17976,8 @@
         "SetPlayerSecret",
         "UpdateOpenIdConnection",
         "UpdatePlayerSharedSecret",
-        "UpdatePolicy"
+        "UpdatePolicy",
+        "ValidateApiPolicy"
       ]
     },
     {
@@ -20800,6 +20946,23 @@
         "InsufficientFunds",
         "NameNotAvailable"
       ]
+    },
+    {
+      "name": "ValidateApiPolicy",
+      "summary": "Validates the result of a policy update without persisting it.",
+      "requestDetails": "Validates the proposed policy change and returns the resulting merged policy, validation errors, warnings, and a diff summary showing what would change. Use this to validate the impact of a policy update before calling UpdatePolicy. No changes are saved.",
+      "subgroup": "Authentication",
+      "url": "/Admin/ValidateApiPolicy",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ValidateApiPolicyRequest",
+      "requestExample": "{\n  \"PolicyName\": \"ApiPolicy\",\n  \"Statements\": [\n    {\n      \"Resource\": \"pfrn:api--/Client/*\",\n      \"Action\": \"*\",\n      \"Effect\": \"Allow\",\n      \"Principal\": \"*\",\n      \"Comment\": \"Allow all client APIs\"\n    }\n  ],\n  \"OverwritePolicy\": true,\n  \"PolicyVersion\": 13\n}",
+      "result": "ValidateApiPolicyResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"PolicyName\": \"ApiPolicy\",\n    \"PolicyVersion\": 13,\n    \"ResultingStatements\": [\n      {\n        \"Resource\": \"pfrn:api--/Client/*\",\n        \"Action\": \"*\",\n        \"Effect\": \"Allow\",\n        \"Principal\": \"*\",\n        \"Comment\": \"Allow all client APIs\"\n      }\n    ],\n    \"IsValid\": true,\n    \"ValidationErrors\": [],\n    \"Warnings\": [],\n    \"Diff\": {\n      \"StatementsAdded\": 0,\n      \"StatementsRemoved\": 5,\n      \"StatementsUnchanged\": 1,\n      \"StatementsReplaced\": 0,\n      \"TotalResultingStatements\": 1\n    }\n  }\n}",
+      "seeAlso": [
+        "Admin/GetPolicy",
+        "Admin/UpdatePolicy"
+      ]
     }
   ],
   "errors": {
@@ -23759,6 +23922,14 @@
       "id": 10015,
       "name": "GetPlayersInSegmentRetired"
     },
+    "GetSegmentPlayerCountNotInFlight": {
+      "id": 10016,
+      "name": "GetSegmentPlayerCountNotInFlight"
+    },
+    "GetSegmentPlayerCountRateLimitExceeded": {
+      "id": 10017,
+      "name": "GetSegmentPlayerCountRateLimitExceeded"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -24478,6 +24649,10 @@
     "GameSaveTitleConfigNoUpdatesRequested": {
       "id": 20331,
       "name": "GameSaveTitleConfigNoUpdatesRequested"
+    },
+    "GameSavePlayerNotEligibleForTransfer": {
+      "id": 20332,
+      "name": "GameSavePlayerNotEligibleForTransfer"
     },
     "StateShareForbidden": {
       "id": 21000,
@@ -25332,6 +25507,8 @@
     "AsyncExportRateLimitExceeded",
     "AnalyticsSegmentCountOverLimit",
     "GetPlayersInSegmentRetired",
+    "GetSegmentPlayerCountNotInFlight",
+    "GetSegmentPlayerCountRateLimitExceeded",
     "SnapshotNotFound",
     "InventoryApiNotImplemented",
     "InventoryCollectionDeletionDisallowed",
@@ -25512,6 +25689,7 @@
     "GameSaveManifestNotEligibleForRollback",
     "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
     "GameSaveTitleConfigNoUpdatesRequested",
+    "GameSavePlayerNotEligibleForTransfer",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",

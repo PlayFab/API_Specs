@@ -3080,6 +3080,45 @@
         }
       ]
     },
+    "ExportPlayersInSegmentRequest": {
+      "name": "ExportPlayersInSegmentRequest",
+      "className": "ExportPlayersInSegmentRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "Request must contain the Segment ID",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "SegmentId",
+          "description": "Unique identifier of the requested segment.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "ExportPlayersInSegmentResult": {
+      "name": "ExportPlayersInSegmentResult",
+      "className": "ExportPlayersInSegmentResult",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "ExportId",
+          "description": "Unique identifier of the export for the requested Segment.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "SegmentId",
+          "description": "Unique identifier of the requested Segment.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "ExternalFriendSources": {
       "name": "ExternalFriendSources",
       "className": "ExternalFriendSources",
@@ -5495,6 +5534,12 @@
           "name": "GetPlayersInSegmentRetired"
         },
         {
+          "name": "GetSegmentPlayerCountNotInFlight"
+        },
+        {
+          "name": "GetSegmentPlayerCountRateLimitExceeded"
+        },
+        {
           "name": "SnapshotNotFound"
         },
         {
@@ -6033,6 +6078,9 @@
         },
         {
           "name": "GameSaveTitleConfigNoUpdatesRequested"
+        },
+        {
+          "name": "GameSavePlayerNotEligibleForTransfer"
         },
         {
           "name": "StateShareForbidden"
@@ -7494,6 +7542,45 @@
           "jsontype": "Object",
           "actualtype": "GetSegmentResult",
           "isclass": true,
+          "optional": true
+        }
+      ]
+    },
+    "GetPlayersInSegmentExportRequest": {
+      "name": "GetPlayersInSegmentExportRequest",
+      "className": "GetPlayersInSegmentExportRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "Request must contain the ExportId",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "ExportId",
+          "description": "Unique identifier of the export for the requested Segment.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "GetPlayersInSegmentExportResponse": {
+      "name": "GetPlayersInSegmentExportResponse",
+      "className": "GetPlayersInSegmentExportResponse",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IndexUrl",
+          "description": "Url from which the index file can be downloaded.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "State",
+          "description": "Shows the current status of the export",
+          "jsontype": "String",
+          "actualtype": "String",
           "optional": true
         }
       ]
@@ -16532,11 +16619,13 @@
       "name": "PlayStream",
       "methods": [
         "AddPlayerTag",
+        "ExportPlayersInSegment",
         "GetAllActionGroups",
         "GetAllSegments",
         "GetPlayerSegments",
         "GetPlayersInSegment",
         "GetPlayerTags",
+        "GetSegmentExport",
         "RemovePlayerTag"
       ]
     },
@@ -16960,6 +17049,31 @@
         "JavascriptException",
         "ProductDisabledForTitle",
         "TitleDeleted"
+      ]
+    },
+    {
+      "name": "ExportPlayersInSegment",
+      "summary": "Starts an export for the player profiles in a segment. This API creates a snapshot of all the player profiles which match the segment definition at the time of the API call. Profiles which change while an export is in progress will not be reflected in the results.",
+      "requestDetails": "Request must contain the Segment ID",
+      "subgroup": "PlayStream",
+      "url": "/Server/ExportPlayersInSegment",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "ExportPlayersInSegmentRequest",
+      "requestExample": "{\n  \"SegmentId\": \"ABCDEF1234567890\"\n}",
+      "result": "ExportPlayersInSegmentResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"SegmentId\": \"ABCDEF1234567890\",\n    \"ExportId\": \"abcdef12345\"\n  }\n}",
+      "seeAlso": [
+        "Server/GetAllSegments",
+        "Server/GetSegmentExport"
+      ],
+      "errors": [
+        "AsyncExportNotInFlight",
+        "AsyncExportRateLimitExceeded",
+        "ExportUnknownError",
+        "InvalidSegment",
+        "ProductDisabledForTitle",
+        "SegmentNotFound"
       ]
     },
     {
@@ -17694,6 +17808,31 @@
       "errors": [
         "CatalogNotConfigured",
         "InvalidDropTable",
+        "ProductDisabledForTitle"
+      ]
+    },
+    {
+      "name": "GetSegmentExport",
+      "summary": "Retrieves the result of an export started by ExportPlayersInSegment API. If the ExportPlayersInSegment is successful and complete, this API returns the IndexUrl from which the index file can be downloaded. The index file has a list of urls from which the files containing the player profile data can be downloaded. Otherwise, it returns the current 'State' of the export",
+      "requestDetails": "Request must contain the ExportId",
+      "subgroup": "PlayStream",
+      "url": "/Server/GetSegmentExport",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetPlayersInSegmentExportRequest",
+      "requestExample": "{\n  \"ExportId\": \"ABCDEF1234567890\"\n}",
+      "result": "GetPlayersInSegmentExportResponse",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IndexUrl\": \"https://playfabplayerexports.blob.core.windows.net/titleexportabc/index.txt\",\n    \"State\": \"Complete\"\n  }\n}",
+      "seeAlso": [
+        "Server/ExportPlayersInSegment",
+        "Server/GetAllSegments"
+      ],
+      "errors": [
+        "AsyncExportNotInFlight",
+        "AsyncExportRateLimitExceeded",
+        "ExportNotFound",
+        "ExportUnknownError",
+        "InvalidSegment",
         "ProductDisabledForTitle"
       ]
     },
@@ -22863,6 +23002,14 @@
       "id": 10015,
       "name": "GetPlayersInSegmentRetired"
     },
+    "GetSegmentPlayerCountNotInFlight": {
+      "id": 10016,
+      "name": "GetSegmentPlayerCountNotInFlight"
+    },
+    "GetSegmentPlayerCountRateLimitExceeded": {
+      "id": 10017,
+      "name": "GetSegmentPlayerCountRateLimitExceeded"
+    },
     "SnapshotNotFound": {
       "id": 11000,
       "name": "SnapshotNotFound"
@@ -23582,6 +23729,10 @@
     "GameSaveTitleConfigNoUpdatesRequested": {
       "id": 20331,
       "name": "GameSaveTitleConfigNoUpdatesRequested"
+    },
+    "GameSavePlayerNotEligibleForTransfer": {
+      "id": 20332,
+      "name": "GameSavePlayerNotEligibleForTransfer"
     },
     "StateShareForbidden": {
       "id": 21000,
@@ -24436,6 +24587,8 @@
     "AsyncExportRateLimitExceeded",
     "AnalyticsSegmentCountOverLimit",
     "GetPlayersInSegmentRetired",
+    "GetSegmentPlayerCountNotInFlight",
+    "GetSegmentPlayerCountRateLimitExceeded",
     "SnapshotNotFound",
     "InventoryApiNotImplemented",
     "InventoryCollectionDeletionDisallowed",
@@ -24616,6 +24769,7 @@
     "GameSaveManifestNotEligibleForRollback",
     "GameSaveTitleClientAnonymousAccountCreationNotDisabled",
     "GameSaveTitleConfigNoUpdatesRequested",
+    "GameSavePlayerNotEligibleForTransfer",
     "StateShareForbidden",
     "StateShareTitleNotInFlight",
     "StateShareStateNotFound",
