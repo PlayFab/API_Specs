@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260424",
+    "version": "260512",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -4743,6 +4743,41 @@
         ]
       }
     },
+    "/Server/UnlinkApple": {
+      "post": {
+        "operationId": "UnlinkApple",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Apple account from the specified user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkapple"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkAppleRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkAppleResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "AccountNotLinked",
+          "AppleNotEnabledForTitle"
+        ]
+      }
+    },
     "/Server/UnlinkBattleNetAccount": {
       "post": {
         "operationId": "UnlinkBattleNetAccount",
@@ -4844,6 +4879,40 @@
         "x-ms-docs-errors": [
           "AccountNotLinked",
           "FacebookInstantGamesIdNotLinked"
+        ]
+      }
+    },
+    "/Server/UnlinkGameCenterAccount": {
+      "post": {
+        "operationId": "UnlinkGameCenterAccount",
+        "tags": [
+          "Account Management"
+        ],
+        "description": "Unlinks the related Game Center account from the specified user's PlayFab account.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/unlinkgamecenteraccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/UnlinkGameCenterAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UnlinkGameCenterAccountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "AccountNotLinked"
         ]
       }
     },
@@ -8837,6 +8906,7 @@
         "PlayFabErrorEventNotSupportedForEntityType",
         "MetadataLengthExceeded",
         "MaxQueryableVersionsExceeded",
+        "StatisticVersionIncrementNotAllowedWhileLinked",
         "StoreMetricsRequestInvalidInput",
         "StoreMetricsErrorRetrievingMetrics"
       ]
@@ -15403,6 +15473,29 @@
         }
       }
     },
+    "UnlinkAppleRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
+    "UnlinkAppleResult": {
+      "type": "object",
+      "properties": {}
+    },
     "UnlinkBattleNetAccountRequest": {
       "type": "object",
       "properties": {
@@ -15470,6 +15563,29 @@
       }
     },
     "UnlinkFacebookInstantGamesIdResult": {
+      "type": "object",
+      "properties": {}
+    },
+    "UnlinkGameCenterAccountRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "PlayFabId": {
+          "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "PlayFabId"
+      ],
+      "example": {
+        "PlayFabId": "1234FA342"
+      }
+    },
+    "UnlinkGameCenterAccountResult": {
       "type": "object",
       "properties": {}
     },
@@ -17986,6 +18102,13 @@
         "$ref": "#/definitions/SubtractUserVirtualCurrencyRequest"
       }
     },
+    "UnlinkAppleRequest": {
+      "name": "UnlinkAppleRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkAppleRequest"
+      }
+    },
     "UnlinkBattleNetAccountRequest": {
       "name": "UnlinkBattleNetAccountRequest",
       "in": "body",
@@ -18005,6 +18128,13 @@
       "in": "body",
       "schema": {
         "$ref": "#/definitions/UnlinkFacebookInstantGamesIdRequest"
+      }
+    },
+    "UnlinkGameCenterAccountRequest": {
+      "name": "UnlinkGameCenterAccountRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/UnlinkGameCenterAccountRequest"
       }
     },
     "UnlinkNintendoServiceAccountRequest": {
@@ -21456,6 +21586,25 @@
         }
       }
     },
+    "UnlinkAppleResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkAppleResult"
+          }
+        }
+      }
+    },
     "UnlinkFacebookAccountResult": {
       "description": "",
       "schema": {
@@ -21490,6 +21639,25 @@
           },
           "data": {
             "$ref": "#/definitions/UnlinkFacebookInstantGamesIdResult"
+          }
+        }
+      }
+    },
+    "UnlinkGameCenterAccountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/UnlinkGameCenterAccountResult"
           }
         }
       }
@@ -25715,6 +25883,10 @@
     "MaxQueryableVersionsExceeded": {
       "id": 23015,
       "name": "MaxQueryableVersionsExceeded"
+    },
+    "StatisticVersionIncrementNotAllowedWhileLinked": {
+      "id": 23016,
+      "name": "StatisticVersionIncrementNotAllowedWhileLinked"
     },
     "StoreMetricsRequestInvalidInput": {
       "id": 23501,
