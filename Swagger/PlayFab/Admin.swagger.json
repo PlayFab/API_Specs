@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260512",
+    "version": "260526",
     "title": "PlayFab Admin API",
     "description": "APIs for managing title configurations, uploaded Game Server code executables, and user data",
     "termsOfService": "https://playfab.com/terms/",
@@ -1222,7 +1222,7 @@
         "tags": [
           "PlayStream"
         ],
-        "description": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as GetPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
+        "description": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as ExportPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/admin/playstream/getallsegments"
         },
@@ -1246,7 +1246,8 @@
         },
         "x-requestDetails": "Request has no paramaters.",
         "x-seeAlso": [
-          "Admin/GetPlayersInSegment"
+          "Admin/ExportPlayersInSegment",
+          "Admin/GetSegmentExport"
         ],
         "x-ms-docs-errors": [
           "ProductDisabledForTitle"
@@ -2001,6 +2002,49 @@
           "ExportUnknownError",
           "InvalidSegment",
           "ProductDisabledForTitle"
+        ]
+      }
+    },
+    "/Admin/GetSegmentPlayerCount": {
+      "post": {
+        "operationId": "GetSegmentPlayerCount",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Returns the total number of players in a given segment.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/admin/playstream/getsegmentplayercount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSegmentPlayerCountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSegmentPlayerCountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain a valid Segment ID.",
+        "x-seeAlso": [
+          "Admin/ExportPlayersInSegment",
+          "Admin/GetAllSegments"
+        ],
+        "x-ms-docs-errors": [
+          "GetSegmentPlayerCountNotInFlight",
+          "GetSegmentPlayerCountRateLimitExceeded",
+          "InternalServerError",
+          "InvalidSegment",
+          "ProductDisabledForTitle",
+          "SegmentNotFound"
         ]
       }
     },
@@ -4871,6 +4915,12 @@
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
         },
+        "Status": {
+          "$ref": "#/definitions/NewsStatus",
+          "description": "Optional status for the new news item. If not set, defaults to Published.",
+          "type": "string",
+          "x-isenum": true
+        },
         "Timestamp": {
           "description": "Time this news was published. If not set, defaults to now.",
           "type": "string"
@@ -4887,7 +4937,8 @@
       "example": {
         "Timestamp": "2014-04-06T00:00:00",
         "Title": "News of the Day",
-        "Body": "<b>We have a new object to buy!</b>"
+        "Body": "<b>We have a new object to buy!</b>",
+        "Status": "Published"
       }
     },
     "AddNewsResult": {
@@ -7724,7 +7775,6 @@
         "InsightsManagementGetOperationStatusInvalidParameter",
         "DuplicatePurchaseTransactionId",
         "EvaluationModePlayerCountExceeded",
-        "GetPlayersInSegmentRateLimitExceeded",
         "CloudScriptFunctionNameSizeExceeded",
         "PaidInsightsFeaturesNotEnabled",
         "CloudScriptAzureFunctionsQueueRequestError",
@@ -7983,7 +8033,6 @@
         "AsyncExportNotFound",
         "AsyncExportRateLimitExceeded",
         "AnalyticsSegmentCountOverLimit",
-        "GetPlayersInSegmentRetired",
         "GetSegmentPlayerCountNotInFlight",
         "GetSegmentPlayerCountRateLimitExceeded",
         "SnapshotNotFound",
@@ -8061,8 +8110,6 @@
         "PlayerCustomPropertiesPropertyDoesNotExist",
         "AddonAlreadyExists",
         "AddonDoesntExist",
-        "CopilotDisabled",
-        "CopilotInvalidRequest",
         "TrueSkillUnauthorized",
         "TrueSkillInvalidTitleId",
         "TrueSkillInvalidScenarioId",
@@ -9320,6 +9367,38 @@
             ]
           }
         }
+      }
+    },
+    "GetSegmentPlayerCountRequest": {
+      "description": "Request must contain a valid Segment ID.",
+      "type": "object",
+      "properties": {
+        "SegmentId": {
+          "description": "Unique identifier for the requested segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SegmentId"
+      ],
+      "example": {
+        "SegmentId": "1337AA00"
+      }
+    },
+    "GetSegmentPlayerCountResult": {
+      "type": "object",
+      "properties": {
+        "ProfilesInSegment": {
+          "description": "Count of profiles matching this segment.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ProfilesInSegment"
+      ],
+      "example": {
+        "ProfilesInSegment": 15
       }
     },
     "GetSegmentResult": {
@@ -10815,6 +10894,15 @@
         "Name": "MyTask",
         "Id": "d739e188-22f6-4d13-a4d5-df2e93d4d2f7"
       }
+    },
+    "NewsStatus": {
+      "type": "string",
+      "enum": [
+        "None",
+        "Unpublished",
+        "Published",
+        "Archived"
+      ]
     },
     "OpenIdConnection": {
       "type": "object",
@@ -15782,6 +15870,14 @@
         "$ref": "#/definitions/GetRandomResultTablesRequest"
       }
     },
+    "GetSegmentPlayerCountRequest": {
+      "name": "GetSegmentPlayerCountRequest",
+      "in": "body",
+      "description": "Request must contain a valid Segment ID.",
+      "schema": {
+        "$ref": "#/definitions/GetSegmentPlayerCountRequest"
+      }
+    },
     "GetSegmentsRequest": {
       "name": "GetSegmentsRequest",
       "in": "body",
@@ -17702,6 +17798,32 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    "GetSegmentPlayerCountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetSegmentPlayerCountResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ProfilesInSegment": 15
           }
         }
       }
@@ -21133,10 +21255,6 @@
       "id": 1490,
       "name": "EvaluationModePlayerCountExceeded"
     },
-    "GetPlayersInSegmentRateLimitExceeded": {
-      "id": 1491,
-      "name": "GetPlayersInSegmentRateLimitExceeded"
-    },
     "CloudScriptFunctionNameSizeExceeded": {
       "id": 1492,
       "name": "CloudScriptFunctionNameSizeExceeded"
@@ -22169,10 +22287,6 @@
       "id": 10014,
       "name": "AnalyticsSegmentCountOverLimit"
     },
-    "GetPlayersInSegmentRetired": {
-      "id": 10015,
-      "name": "GetPlayersInSegmentRetired"
-    },
     "GetSegmentPlayerCountNotInFlight": {
       "id": 10016,
       "name": "GetSegmentPlayerCountNotInFlight"
@@ -22480,14 +22594,6 @@
     "AddonDoesntExist": {
       "id": 19009,
       "name": "AddonDoesntExist"
-    },
-    "CopilotDisabled": {
-      "id": 19100,
-      "name": "CopilotDisabled"
-    },
-    "CopilotInvalidRequest": {
-      "id": 19101,
-      "name": "CopilotInvalidRequest"
     },
     "TrueSkillUnauthorized": {
       "id": 20000,

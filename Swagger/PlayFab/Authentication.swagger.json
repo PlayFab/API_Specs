@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260512",
+    "version": "260526",
     "title": "PlayFab Authentication API",
     "description": "The Authentication APIs provide a convenient way to convert classic authentication responses into entity authentication models. These APIs will provide you with the entity authentication token needed for subsequent Entity API calls. The game_server API is designed to create uniquely identifiable game_server entities. The game_server Entity token can be used to call Matchmaking Lobby and Pubsub for server scenarios.",
     "termsOfService": "https://playfab.com/terms/",
@@ -52,7 +52,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
+        "x-requestDetails": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. The header must still be valid and cannot be expired or revoked.If successful, it will issue a new entity token and emit the \"entity_logged_in\" PlayStream event.",
         "x-ms-docs-errors": [
           "EncryptionKeyBroken",
           "NoValidCertificateForAad"
@@ -343,18 +343,12 @@
       }
     },
     "GetEntityTokenRequest": {
-      "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
+      "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. The header must still be valid and cannot be expired or revoked.If successful, it will issue a new entity token and emit the \"entity_logged_in\" PlayStream event.",
       "type": "object",
       "properties": {
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
-        },
-        "Entity": {
-          "$ref": "#/definitions/EntityKey",
-          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
-          "type": "object",
-          "x-isclass": true
         }
       },
       "example": {}
@@ -522,7 +516,7 @@
     "GetEntityTokenRequest": {
       "name": "GetEntityTokenRequest",
       "in": "body",
-      "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. An optional EntityKey may be included to attempt to set the resulting EntityToken to a specific entity, however the entity must be a relation of the caller, such as the master_player_account of a character. If sending X-EntityToken the account will be marked as freshly logged in and will issue a new token. If using X-Authentication or X-EntityToken the header must still be valid and cannot be expired or revoked.",
+      "description": "This API must be called with X-SecretKey, X-Authentication or X-EntityToken headers. The header must still be valid and cannot be expired or revoked.If successful, it will issue a new entity token and emit the \"entity_logged_in\" PlayStream event.",
       "schema": {
         "$ref": "#/definitions/GetEntityTokenRequest"
       }
@@ -2617,10 +2611,6 @@
       "id": 1490,
       "name": "EvaluationModePlayerCountExceeded"
     },
-    "GetPlayersInSegmentRateLimitExceeded": {
-      "id": 1491,
-      "name": "GetPlayersInSegmentRateLimitExceeded"
-    },
     "CloudScriptFunctionNameSizeExceeded": {
       "id": 1492,
       "name": "CloudScriptFunctionNameSizeExceeded"
@@ -3653,10 +3643,6 @@
       "id": 10014,
       "name": "AnalyticsSegmentCountOverLimit"
     },
-    "GetPlayersInSegmentRetired": {
-      "id": 10015,
-      "name": "GetPlayersInSegmentRetired"
-    },
     "GetSegmentPlayerCountNotInFlight": {
       "id": 10016,
       "name": "GetSegmentPlayerCountNotInFlight"
@@ -3964,14 +3950,6 @@
     "AddonDoesntExist": {
       "id": 19009,
       "name": "AddonDoesntExist"
-    },
-    "CopilotDisabled": {
-      "id": 19100,
-      "name": "CopilotDisabled"
-    },
-    "CopilotInvalidRequest": {
-      "id": 19101,
-      "name": "CopilotInvalidRequest"
     },
     "TrueSkillUnauthorized": {
       "id": 20000,

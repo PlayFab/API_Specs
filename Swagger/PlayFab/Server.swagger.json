@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260512",
+    "version": "260526",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -760,7 +760,7 @@
         "tags": [
           "PlayStream"
         ],
-        "description": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as GetPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
+        "description": "Retrieves an array of player segment definitions. Results from this can be used in subsequent API calls such as ExportPlayersInSegment which requires a Segment ID. While segment names can change the ID for that segment will not change.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/server/playstream/getallsegments"
         },
@@ -784,7 +784,8 @@
         },
         "x-requestDetails": "Request has no paramaters.",
         "x-seeAlso": [
-          "Server/GetPlayersInSegment"
+          "Server/ExportPlayersInSegment",
+          "Server/GetSegmentExport"
         ],
         "x-ms-docs-errors": [
           "ProductDisabledForTitle"
@@ -2168,6 +2169,48 @@
           "ExportUnknownError",
           "InvalidSegment",
           "ProductDisabledForTitle"
+        ]
+      }
+    },
+    "/Server/GetSegmentPlayerCount": {
+      "post": {
+        "operationId": "GetSegmentPlayerCount",
+        "tags": [
+          "PlayStream"
+        ],
+        "description": "Returns the total number of players in a given segment.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/playstream/getsegmentplayercount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/GetSegmentPlayerCountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetSegmentPlayerCountResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "Request must contain a valid Segment ID.",
+        "x-seeAlso": [
+          "Server/GetAllSegments"
+        ],
+        "x-ms-docs-errors": [
+          "GetSegmentPlayerCountNotInFlight",
+          "GetSegmentPlayerCountRateLimitExceeded",
+          "InternalServerError",
+          "InvalidSegment",
+          "ProductDisabledForTitle",
+          "SegmentNotFound"
         ]
       }
     },
@@ -8437,7 +8480,6 @@
         "InsightsManagementGetOperationStatusInvalidParameter",
         "DuplicatePurchaseTransactionId",
         "EvaluationModePlayerCountExceeded",
-        "GetPlayersInSegmentRateLimitExceeded",
         "CloudScriptFunctionNameSizeExceeded",
         "PaidInsightsFeaturesNotEnabled",
         "CloudScriptAzureFunctionsQueueRequestError",
@@ -8696,7 +8738,6 @@
         "AsyncExportNotFound",
         "AsyncExportRateLimitExceeded",
         "AnalyticsSegmentCountOverLimit",
-        "GetPlayersInSegmentRetired",
         "GetSegmentPlayerCountNotInFlight",
         "GetSegmentPlayerCountRateLimitExceeded",
         "SnapshotNotFound",
@@ -8774,8 +8815,6 @@
         "PlayerCustomPropertiesPropertyDoesNotExist",
         "AddonAlreadyExists",
         "AddonDoesntExist",
-        "CopilotDisabled",
-        "CopilotInvalidRequest",
         "TrueSkillUnauthorized",
         "TrueSkillInvalidTitleId",
         "TrueSkillInvalidScenarioId",
@@ -11441,6 +11480,38 @@
             ]
           }
         }
+      }
+    },
+    "GetSegmentPlayerCountRequest": {
+      "description": "Request must contain a valid Segment ID.",
+      "type": "object",
+      "properties": {
+        "SegmentId": {
+          "description": "Unique identifier for the requested segment.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "SegmentId"
+      ],
+      "example": {
+        "SegmentId": "1337AA00"
+      }
+    },
+    "GetSegmentPlayerCountResult": {
+      "type": "object",
+      "properties": {
+        "ProfilesInSegment": {
+          "description": "Count of profiles matching this segment.",
+          "type": "number",
+          "x-actualtype": "int32"
+        }
+      },
+      "required": [
+        "ProfilesInSegment"
+      ],
+      "example": {
+        "ProfilesInSegment": 15
       }
     },
     "GetSegmentResult": {
@@ -17630,6 +17701,14 @@
         "$ref": "#/definitions/GetRandomResultTablesRequest"
       }
     },
+    "GetSegmentPlayerCountRequest": {
+      "name": "GetSegmentPlayerCountRequest",
+      "in": "body",
+      "description": "Request must contain a valid Segment ID.",
+      "schema": {
+        "$ref": "#/definitions/GetSegmentPlayerCountRequest"
+      }
+    },
     "GetServerCustomIDsFromPlayFabIDsRequest": {
       "name": "GetServerCustomIDsFromPlayFabIDsRequest",
       "in": "body",
@@ -20294,6 +20373,32 @@
                 ]
               }
             }
+          }
+        }
+      }
+    },
+    "GetSegmentPlayerCountResult": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/GetSegmentPlayerCountResult"
+          }
+        },
+        "example": {
+          "code": 200,
+          "status": "OK",
+          "data": {
+            "ProfilesInSegment": 15
           }
         }
       }
@@ -24008,10 +24113,6 @@
       "id": 1490,
       "name": "EvaluationModePlayerCountExceeded"
     },
-    "GetPlayersInSegmentRateLimitExceeded": {
-      "id": 1491,
-      "name": "GetPlayersInSegmentRateLimitExceeded"
-    },
     "CloudScriptFunctionNameSizeExceeded": {
       "id": 1492,
       "name": "CloudScriptFunctionNameSizeExceeded"
@@ -25044,10 +25145,6 @@
       "id": 10014,
       "name": "AnalyticsSegmentCountOverLimit"
     },
-    "GetPlayersInSegmentRetired": {
-      "id": 10015,
-      "name": "GetPlayersInSegmentRetired"
-    },
     "GetSegmentPlayerCountNotInFlight": {
       "id": 10016,
       "name": "GetSegmentPlayerCountNotInFlight"
@@ -25355,14 +25452,6 @@
     "AddonDoesntExist": {
       "id": 19009,
       "name": "AddonDoesntExist"
-    },
-    "CopilotDisabled": {
-      "id": 19100,
-      "name": "CopilotDisabled"
-    },
-    "CopilotInvalidRequest": {
-      "id": 19101,
-      "name": "CopilotInvalidRequest"
     },
     "TrueSkillUnauthorized": {
       "id": 20000,
