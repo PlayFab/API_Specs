@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260605",
+    "version": "260619",
     "title": "PlayFab Addon API",
     "description": "APIs for managing addons.",
     "termsOfService": "https://playfab.com/terms/",
@@ -24,6 +24,44 @@
     "application/json"
   ],
   "paths": {
+    "/Addon/ConfigurePSNEventStreams": {
+      "post": {
+        "operationId": "ConfigurePSNEventStreams",
+        "tags": [
+          "Addon"
+        ],
+        "description": "Configures PSN event streams for an existing PSN addon on a title, without requiring a full addon upsert.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/addon/addon/configurepsneventstreams"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/ConfigurePSNEventStreamsRequest"
+          }
+        ],
+        "security": [
+          {
+            "EntityToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ConfigurePSNEventStreamsResponse"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-ms-docs-errors": [
+          "AddonDoesntExist",
+          "CatalogBadRequest",
+          "CatalogFeatureDisabled",
+          "InvalidEntityType",
+          "InvalidParams",
+          "InvalidTitleId"
+        ]
+      }
+    },
     "/Addon/CreateOrUpdateApple": {
       "post": {
         "operationId": "CreateOrUpdateApple",
@@ -1166,6 +1204,40 @@
         "errorCode"
       ]
     },
+    "ConfigurePSNEventStreamsRequest": {
+      "type": "object",
+      "properties": {
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "Entity": {
+          "$ref": "#/definitions/EntityKey",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "type": "object",
+          "x-isclass": true
+        },
+        "TitleName": {
+          "description": "Title name obtained after setting a back server for PS5. Used for clawback event listeners.",
+          "type": "string"
+        }
+      },
+      "example": {
+        "BackOfficeClientID": "backOfficeId",
+        "BackOfficeClientSecret": "backOfficeSecret",
+        "EventStreamInformation": [
+          {
+            "StreamURL": "https://example.com/stream",
+            "EnableEventListener": true,
+            "TitleId": "NP-TITLE-001"
+          }
+        ]
+      }
+    },
+    "ConfigurePSNEventStreamsResponse": {
+      "type": "object",
+      "properties": {}
+    },
     "CreateOrUpdateAppleRequest": {
       "type": "object",
       "properties": {
@@ -2257,6 +2329,13 @@
     }
   },
   "parameters": {
+    "ConfigurePSNEventStreamsRequest": {
+      "name": "ConfigurePSNEventStreamsRequest",
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/ConfigurePSNEventStreamsRequest"
+      }
+    },
     "CreateOrUpdateAppleRequest": {
       "name": "CreateOrUpdateAppleRequest",
       "in": "body",
@@ -2473,6 +2552,25 @@
       "description": "This is the outer wrapper for all responses with errors",
       "schema": {
         "$ref": "#/definitions/ApiErrorWrapper"
+      }
+    },
+    "ConfigurePSNEventStreamsResponse": {
+      "description": "",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "The Http status code. If X-ReportErrorAsSuccess header is set to true, this will report the actual http error code."
+          },
+          "status": {
+            "type": "string",
+            "description": "The Http status code as a string."
+          },
+          "data": {
+            "$ref": "#/definitions/ConfigurePSNEventStreamsResponse"
+          }
+        }
       }
     },
     "CreateOrUpdateAppleResponse": {

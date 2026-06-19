@@ -6,6 +6,46 @@
     "APIs for managing addons."
   ],
   "datatypes": {
+    "ConfigurePSNEventStreamsRequest": {
+      "name": "ConfigurePSNEventStreamsRequest",
+      "className": "ConfigurePSNEventStreamsRequest",
+      "classNameSpace": "PlayFab.Addon.Models",
+      "assembly": "PlayFab.Addon.Models",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Entity",
+          "description": "The optional entity to perform this action on. Defaults to the currently logged in entity.",
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "TitleName",
+          "description": "Title name obtained after setting a back server for PS5. Used for clawback event listeners.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "ConfigurePSNEventStreamsResponse": {
+      "name": "ConfigurePSNEventStreamsResponse",
+      "className": "ConfigurePSNEventStreamsResponse",
+      "classNameSpace": "PlayFab.Addon.Models",
+      "assembly": "PlayFab.Addon.Models",
+      "isResult": true,
+      "properties": []
+    },
     "CreateOrUpdateAppleRequest": {
       "name": "CreateOrUpdateAppleRequest",
       "className": "CreateOrUpdateAppleRequest",
@@ -1622,6 +1662,7 @@
     {
       "name": "Addon",
       "methods": [
+        "ConfigurePSNEventStreams",
         "CreateOrUpdateApple",
         "CreateOrUpdateFacebook",
         "CreateOrUpdateFacebookInstantGames",
@@ -1656,6 +1697,26 @@
     }
   ],
   "calls": [
+    {
+      "name": "ConfigurePSNEventStreams",
+      "summary": "Configures PSN event streams for an existing PSN addon on a title, without requiring a full addon upsert.",
+      "subgroup": "Addon",
+      "url": "/Addon/ConfigurePSNEventStreams",
+      "auth": "EntityToken",
+      "method": "POST",
+      "request": "ConfigurePSNEventStreamsRequest",
+      "requestExample": "{\n  \"BackOfficeClientID\": \"backOfficeId\",\n  \"BackOfficeClientSecret\": \"backOfficeSecret\",\n  \"EventStreamInformation\": [\n    {\n      \"StreamURL\": \"https://example.com/stream\",\n      \"EnableEventListener\": true,\n      \"TitleId\": \"NP-TITLE-001\"\n    }\n  ]\n}",
+      "result": "ConfigurePSNEventStreamsResponse",
+      "resultExample": "",
+      "errors": [
+        "AddonDoesntExist",
+        "CatalogBadRequest",
+        "CatalogFeatureDisabled",
+        "InvalidEntityType",
+        "InvalidParams",
+        "InvalidTitleId"
+      ]
+    },
     {
       "name": "CreateOrUpdateApple",
       "summary": "Creates the Apple addon on a title, or updates it if it already exists.",
