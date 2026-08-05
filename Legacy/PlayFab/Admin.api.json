@@ -2688,6 +2688,62 @@
         }
       ]
     },
+    "CreateIPBanRequest": {
+      "name": "CreateIPBanRequest",
+      "className": "CreateIPBanRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Request to create an IP ban for a title.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Expires",
+          "description": "The UTC date and time when the IP ban expires. Leave this blank for a permanent ban. Must be later than the current time and no more than 100 years in the future.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "IPAddress",
+          "description": "The IP address to be banned.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "Reason",
+          "description": "The reason for the IP ban. Maximum 140 characters.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "CreateIPBanResult": {
+      "name": "CreateIPBanResult",
+      "className": "CreateIPBanResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Result of creating an IP ban.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IPBanData",
+          "description": "Information on the ban that was created",
+          "jsontype": "Object",
+          "actualtype": "IPBanInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "CreateOpenIdConnectionRequest": {
       "name": "CreateOpenIdConnectionRequest",
       "className": "CreateOpenIdConnectionRequest",
@@ -6676,6 +6732,12 @@
           "name": "IPAddressNotFound"
         },
         {
+          "name": "PSNNextGenNotConfiguredForTitle"
+        },
+        {
+          "name": "InvalidNintendoIssuer"
+        },
+        {
           "name": "MatchmakingEntityInvalid"
         },
         {
@@ -7807,6 +7869,34 @@
         }
       ]
     },
+    "GetAllIPBansRequest": {
+      "name": "GetAllIPBansRequest",
+      "className": "GetAllIPBansRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Request to retrieve all IP bans for a title.",
+      "isRequest": true,
+      "properties": []
+    },
+    "GetAllIPBansResult": {
+      "name": "GetAllIPBansResult",
+      "className": "GetAllIPBansResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Result containing all IP bans for a title.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IPBanData",
+          "description": "Information on all IP bans",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "IPBanInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "GetAllSegmentsRequest": {
       "name": "GetAllSegmentsRequest",
       "className": "GetAllSegmentsRequest",
@@ -8176,6 +8266,41 @@
           "jsontype": "Object",
           "actualtype": "EventSink",
           "isclass": true
+        }
+      ]
+    },
+    "GetIPBanRequest": {
+      "name": "GetIPBanRequest",
+      "className": "GetIPBanRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Request to retrieve IP bans matching a specific IP address.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "IPAddress",
+          "description": "The IP address of the ban to retrieve information on.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "GetIPBanResult": {
+      "name": "GetIPBanResult",
+      "className": "GetIPBanResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Result containing IP bans that match the requested IP address.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IPBanData",
+          "description": "Information on the ban",
+          "collection": "array",
+          "jsontype": "Object",
+          "actualtype": "IPBanInfo",
+          "isclass": true,
+          "optional": true
         }
       ]
     },
@@ -9908,6 +10033,56 @@
           "description": "Insights Performance Level to scale to.",
           "jsontype": "Number",
           "actualtype": "int32"
+        }
+      ]
+    },
+    "IPBanInfo": {
+      "name": "IPBanInfo",
+      "className": "IPBanInfo",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Contains information for an IP ban.",
+      "properties": [
+        {
+          "name": "Active",
+          "description": "The active state of this ban.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean"
+        },
+        {
+          "name": "BannedByDeveloperId",
+          "description": "PlayFab Developer ID of who issued the ban. Null if ban issued via Title Secret Key.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Created",
+          "description": "The time when this IP ban was applied.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "Expires",
+          "description": "The time when this ban expires. Permanent bans do not have expiration date.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "IPAddress",
+          "description": "The IP address on which the ban was applied.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Reason",
+          "description": "The reason why this IP ban was applied.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
         }
       ]
     },
@@ -12362,6 +12537,40 @@
       "assembly": "PlayFab.Admin.Models",
       "isResult": true,
       "properties": []
+    },
+    "RevokeIPBanRequest": {
+      "name": "RevokeIPBanRequest",
+      "className": "RevokeIPBanRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Request to revoke an existing IP ban.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "IPAddress",
+          "description": "The IP address of the ban to be revoked.",
+          "jsontype": "String",
+          "actualtype": "String"
+        }
+      ]
+    },
+    "RevokeIPBanResult": {
+      "name": "RevokeIPBanResult",
+      "className": "RevokeIPBanResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Result of revoking an IP ban.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IPBanData",
+          "description": "Information on the ban that was revoked",
+          "jsontype": "Object",
+          "actualtype": "IPBanInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
     },
     "RevokeItemError": {
       "name": "RevokeItemError",
@@ -15677,6 +15886,76 @@
         }
       ]
     },
+    "UpdateIPBanRequest": {
+      "name": "UpdateIPBanRequest",
+      "className": "UpdateIPBanRequest",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Request to update an existing IP ban.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "Active",
+          "description": "The updated active state for the IP ban. Null for no change.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "Expires",
+          "description": "The updated expiration date for the IP ban. Null for no change.",
+          "jsontype": "String",
+          "actualtype": "DateTime",
+          "optional": true
+        },
+        {
+          "name": "IPAddress",
+          "description": "The IP address of the ban to be updated.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "Permanent",
+          "description": "Whether to make this IP ban permanent. Set to true to make this IP ban permanent. This will not modify Active state.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "Reason",
+          "description": "The updated reason for the IP ban. Maximum 140 characters. Null for no change.",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
+    "UpdateIPBanResult": {
+      "name": "UpdateIPBanResult",
+      "className": "UpdateIPBanResult",
+      "classNameSpace": "PlayFab.Admin.Models",
+      "assembly": "PlayFab.Admin.Models",
+      "description": "Result of updating an IP ban.",
+      "isResult": true,
+      "properties": [
+        {
+          "name": "IPBanData",
+          "description": "Information on the ban that was created",
+          "jsontype": "Object",
+          "actualtype": "IPBanInfo",
+          "isclass": true,
+          "optional": true
+        }
+      ]
+    },
     "UpdateOpenIdConnectionRequest": {
       "name": "UpdateOpenIdConnectionRequest",
       "className": "UpdateOpenIdConnectionRequest",
@@ -17478,12 +17757,15 @@
       "name": "Account Management",
       "methods": [
         "BanUsers",
+        "CreateIPBan",
         "DeleteMasterPlayerAccount",
         "DeleteMasterPlayerEventData",
         "DeleteMembershipSubscription",
         "DeletePlayer",
         "DeleteTitle",
         "ExportMasterPlayerData",
+        "GetIPBansForIP",
+        "GetIPBansForTitle",
         "GetPlayedTitleList",
         "GetPlayerIdFromAuthToken",
         "GetPlayerProfile",
@@ -17493,9 +17775,11 @@
         "ResetUsers",
         "RevokeAllBansForUser",
         "RevokeBans",
+        "RevokeIPBan",
         "SendAccountRecoveryEmail",
         "SetMembershipOverride",
         "UpdateBans",
+        "UpdateIPBan",
         "UpdateUserTitleDisplayName"
       ]
     },
@@ -17900,6 +18184,7 @@
         "Admin/UpdateTask"
       ],
       "errors": [
+        "CatalogBadRequest",
         "CloudScriptAzureFunctionsArgumentSizeExceeded",
         "InvalidJSONContent",
         "InvalidParams",
@@ -17997,6 +18282,31 @@
         "ScheduledTaskCreateConflict",
         "ScheduledTaskNameConflict",
         "TitleNotOnUpdatedPricingPlan"
+      ]
+    },
+    {
+      "name": "CreateIPBan",
+      "summary": "Bans an IP address or CIDR range for a title.",
+      "requestDetails": "Creates an IP ban for a single IP address or a CIDR range. An IP address may be covered by multiple bans when it falls within one or more banned ranges. Specify Expires as a future UTC date and time for a temporary ban, or leave it null for a permanent ban. Expires cannot be more than 100 years in the future.",
+      "subgroup": "Account Management",
+      "url": "/Admin/CreateIPBan",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "CreateIPBanRequest",
+      "requestExample": "{\n  \"IPAddress\": \"192.168.1.1\",\n  \"Reason\": \"Suspected Bot Farm\",\n  \"Expires\": \"2024-06-08T00:00:00Z\"\n}",
+      "result": "CreateIPBanResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IPBanData\": {\n      \"IPAddress\": \"192.168.1.1\",\n      \"Created\": \"2024-06-01T00:00:00Z\",\n      \"Expires\": \"2024-06-08T00:00:00Z\",\n      \"Reason\": \"Suspected Bot Farm\",\n      \"Active\": true,\n      \"BannedByDeveloperId\": \"1234567890\"\n    }\n  }\n}",
+      "seeAlso": [
+        "Admin/GetIPBansForIP",
+        "Admin/GetIPBansForTitle",
+        "Admin/RevokeIPBan",
+        "Admin/UpdateIPBan"
+      ],
+      "errors": [
+        "ConcurrentEditError",
+        "InvalidParams",
+        "OverLimit",
+        "ValueAlreadyExists"
       ]
     },
     {
@@ -18652,6 +18962,47 @@
       ],
       "seeAlso": [
         "Admin/SetEventSink"
+      ]
+    },
+    {
+      "name": "GetIPBansForIP",
+      "summary": "Gets all IP bans that apply to a specific IP address.",
+      "requestDetails": "Returns every active or inactive IP ban that covers the supplied IP address, including bans defined as CIDR ranges that contain the address. A single IP address may match multiple bans.",
+      "subgroup": "Account Management",
+      "url": "/Admin/GetIPBansForIP",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetIPBanRequest",
+      "requestExample": "{\n  \"IPAddress\": \"192.168.1.1\"\n}",
+      "result": "GetIPBanResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IPBanData\": [\n      {\n        \"IPAddress\": \"192.168.1.1\",\n        \"Created\": \"2024-06-01T00:00:00Z\",\n        \"Expires\": \"2024-06-08T00:00:00Z\",\n        \"Reason\": \"Suspected Bot Farm\",\n        \"Active\": true,\n        \"BannedByDeveloperId\": \"1234567890\"\n      }\n    ]\n  }\n}",
+      "seeAlso": [
+        "Admin/CreateIPBan",
+        "Admin/GetIPBansForTitle",
+        "Admin/RevokeIPBan",
+        "Admin/UpdateIPBan"
+      ],
+      "errors": [
+        "InvalidParams"
+      ]
+    },
+    {
+      "name": "GetIPBansForTitle",
+      "summary": "Gets all IP bans for a title.",
+      "requestDetails": "Returns every IP ban configured for the title, including single IP address bans and CIDR range bans, regardless of whether they are active, inactive, or expired.",
+      "subgroup": "Account Management",
+      "url": "/Admin/GetIPBansForTitle",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "GetAllIPBansRequest",
+      "requestExample": "{}",
+      "result": "GetAllIPBansResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IPBanData\": [\n      {\n        \"IPAddress\": \"192.168.1.1\",\n        \"Created\": \"2024-06-01T00:00:00Z\",\n        \"Expires\": \"2024-06-08T00:00:00Z\",\n        \"Reason\": \"Suspected Bot Farm\",\n        \"Active\": true,\n        \"BannedByDeveloperId\": \"1234567890\"\n      }\n    ]\n  }\n}",
+      "seeAlso": [
+        "Admin/CreateIPBan",
+        "Admin/GetIPBansForIP",
+        "Admin/RevokeIPBan",
+        "Admin/UpdateIPBan"
       ]
     },
     {
@@ -19770,6 +20121,29 @@
       ]
     },
     {
+      "name": "RevokeIPBan",
+      "summary": "Revokes an active IP ban.",
+      "requestDetails": "Sets the active state of the IP ban to inactive. The ban record is retained for history and is still returned by lookups, but it no longer applies. The IP address string must match the stored (normalized) form.",
+      "subgroup": "Account Management",
+      "url": "/Admin/RevokeIPBan",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "RevokeIPBanRequest",
+      "requestExample": "{\n  \"IPAddress\": \"192.168.1.1\"\n}",
+      "result": "RevokeIPBanResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IPBanData\": {\n      \"IPAddress\": \"192.168.1.1\",\n      \"Created\": \"2024-06-01T00:00:00Z\",\n      \"Expires\": \"2024-06-08T00:00:00Z\",\n      \"Reason\": \"Suspected Bot Farm\",\n      \"Active\": false,\n      \"BannedByDeveloperId\": \"1234567890\"\n    }\n  }\n}",
+      "seeAlso": [
+        "Admin/CreateIPBan",
+        "Admin/GetIPBansForIP",
+        "Admin/GetIPBansForTitle",
+        "Admin/UpdateIPBan"
+      ],
+      "errors": [
+        "InvalidParams",
+        "IPAddressNotFound"
+      ]
+    },
+    {
       "name": "RunTask",
       "summary": "Run a task immediately regardless of its schedule.",
       "requestDetails": "The returned task instance ID can be used to query for task execution status.",
@@ -20116,6 +20490,29 @@
         "JavascriptException",
         "ProductDisabledForTitle",
         "TitleDeleted"
+      ]
+    },
+    {
+      "name": "UpdateIPBan",
+      "summary": "Updates an existing IP ban.",
+      "requestDetails": "Updates the mutable fields of an existing IP ban. Only the values that are set are changed. Set Permanent to true to clear the expiration, or supply Expires to change it. Set Active to false to revoke the ban.",
+      "subgroup": "Account Management",
+      "url": "/Admin/UpdateIPBan",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "UpdateIPBanRequest",
+      "requestExample": "{\n  \"IPAddress\": \"192.168.1.1\",\n  \"Reason\": \"Suspected Bot Farm\",\n  \"Expires\": \"2024-06-08T00:00:00Z\",\n  \"Permanent\": false,\n  \"Active\": true\n}",
+      "result": "UpdateIPBanResult",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"IPBanData\": {\n      \"IPAddress\": \"192.168.1.1\",\n      \"Created\": \"2024-06-01T00:00:00Z\",\n      \"Expires\": \"2024-06-08T00:00:00Z\",\n      \"Reason\": \"Suspected Bot Farm\",\n      \"Active\": true,\n      \"BannedByDeveloperId\": \"1234567890\"\n    }\n  }\n}",
+      "seeAlso": [
+        "Admin/CreateIPBan",
+        "Admin/GetIPBansForIP",
+        "Admin/GetIPBansForTitle",
+        "Admin/RevokeIPBan"
+      ],
+      "errors": [
+        "InvalidParams",
+        "IPAddressNotFound"
       ]
     },
     {
@@ -22905,6 +23302,14 @@
       "id": 1616,
       "name": "IPAddressNotFound"
     },
+    "PSNNextGenNotConfiguredForTitle": {
+      "id": 1617,
+      "name": "PSNNextGenNotConfiguredForTitle"
+    },
+    "InvalidNintendoIssuer": {
+      "id": 1618,
+      "name": "InvalidNintendoIssuer"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -24897,6 +25302,8 @@
     "AzureSubscriptionNotEligibleForLinking",
     "EntityIsNotAMember",
     "IPAddressNotFound",
+    "PSNNextGenNotConfiguredForTitle",
+    "InvalidNintendoIssuer",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",

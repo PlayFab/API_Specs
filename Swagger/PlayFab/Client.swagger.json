@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260703",
+    "version": "260805",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -556,6 +556,7 @@
           }
         },
         "x-ms-docs-errors": [
+          "DownstreamServiceUnavailable",
           "ItemNotFound",
           "ProductDisabledForTitle"
         ]
@@ -590,6 +591,7 @@
           }
         },
         "x-ms-docs-errors": [
+          "DownstreamServiceUnavailable",
           "ExpiredAuthToken",
           "FailedToGetEntitlements",
           "ProductDisabledForTitle",
@@ -3470,11 +3472,13 @@
         "x-ms-docs-errors": [
           "AccountAlreadyLinked",
           "AccountLinkedToABannedPlayer",
+          "InvalidParams",
           "InvalidPSNAuthCode",
           "InvalidPSNAuthCode",
           "InvalidPSNIssuerId",
           "LinkedAccountAlreadyClaimed",
-          "PSNInaccessible"
+          "PSNInaccessible",
+          "PSNNextGenNotConfiguredForTitle"
         ]
       }
     },
@@ -4387,11 +4391,13 @@
           "EncryptionKeyMissing",
           "EvaluationModePlayerCountExceeded",
           "FeatureNotConfiguredForTitle",
+          "InvalidParams",
           "InvalidPSNAuthCode",
           "InvalidPSNIssuerId",
           "PlayerSecretAlreadyConfigured",
           "PlayerSecretNotConfigured",
           "PSNInaccessible",
+          "PSNNextGenNotConfiguredForTitle",
           "RequestViewConstraintParamsNotAllowed"
         ]
       }
@@ -4747,6 +4753,7 @@
           "type": "string"
         },
         "x-ms-docs-errors": [
+          "DownstreamServiceUnavailable",
           "InvalidPSNAuthCode",
           "PSNInaccessible"
         ]
@@ -11109,6 +11116,10 @@
     "GetPlayFabIDsFromNintendoServiceAccountIdsRequest": {
       "type": "object",
       "properties": {
+        "Issuer": {
+          "description": "Nintendo NSA issuer URL identifying the environment. When provided, only accounts registered in that environment are returned. If null or empty, falls back to the default environment.",
+          "type": "string"
+        },
         "NintendoAccountIds": {
           "description": "Array of unique Nintendo Switch Account identifiers for which the title needs to get PlayFab identifiers. The array cannot exceed 25 in length.",
           "type": "array",
@@ -11274,6 +11285,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "SandboxId": {
+          "description": "Optional sandbox id. When provided, resolves players that logged in from that PlayStation :tm: Network sandbox.",
+          "type": "string"
         }
       },
       "required": [
@@ -11326,6 +11341,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "SandboxId": {
+          "description": "Optional sandbox id. When provided, resolves players that logged in from that PlayStation :tm: Network sandbox.",
+          "type": "string"
         }
       },
       "required": [
@@ -12776,6 +12795,10 @@
           "description": "Authentication code provided by the PlayStation :tm: Network.",
           "type": "string"
         },
+        "AuthVersion": {
+          "description": "Optional PlayStation :tm: Network auth version. Controls which PlayStation :tm: Network auth version is used. Accepted values are \"v2\" and \"v3\".",
+          "type": "string"
+        },
         "CustomTags": {
           "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
           "type": "object"
@@ -13830,6 +13853,10 @@
       "properties": {
         "AuthCode": {
           "description": "Auth code provided by the PlayStation :tm: Network OAuth provider.",
+          "type": "string"
+        },
+        "AuthVersion": {
+          "description": "Optional PlayStation :tm: Network auth version. Controls which PlayStation :tm: Network auth version is used. Accepted values are \"v2\" and \"v3\".",
           "type": "string"
         },
         "CreateAccount": {
@@ -25929,6 +25956,14 @@
     "IPAddressNotFound": {
       "id": 1616,
       "name": "IPAddressNotFound"
+    },
+    "PSNNextGenNotConfiguredForTitle": {
+      "id": 1617,
+      "name": "PSNNextGenNotConfiguredForTitle"
+    },
+    "InvalidNintendoIssuer": {
+      "id": 1618,
+      "name": "InvalidNintendoIssuer"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
