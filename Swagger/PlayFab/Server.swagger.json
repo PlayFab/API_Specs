@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260922",
+    "version": "261023",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -354,7 +354,7 @@
         "tags": [
           "Account Management"
         ],
-        "description": "Bans users by PlayFab ID with optional IP address for the provided game.",
+        "description": "Bans users by PlayFab ID for the provided game.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/banusers"
         },
@@ -376,7 +376,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+        "x-requestDetails": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
         "x-seeAlso": [
           "Server/GetUserBans",
           "Server/RevokeAllBansForUser",
@@ -384,6 +384,7 @@
           "Server/UpdateBans"
         ],
         "x-ms-docs-errors": [
+          "InvalidRequest",
           "UserisNotValid"
         ]
       }
@@ -3737,6 +3738,7 @@
           "InvalidSignature",
           "InvalidSignatureTime",
           "RequestViewConstraintParamsNotAllowed",
+          "SteamApplicationNotOwned",
           "SteamNotEnabledForTitle",
           "SteamUserNotFound"
         ]
@@ -5444,12 +5446,15 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+        "x-requestDetails": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
         "x-seeAlso": [
           "Server/BanUsers",
           "Server/GetUserBans",
           "Server/RevokeAllBansForUser",
           "Server/RevokeBans"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidRequest"
         ]
       }
     },
@@ -6559,10 +6564,6 @@
           "description": "The time when this ban expires. Permanent bans do not have expiration date.",
           "type": "string"
         },
-        "IPAddress": {
-          "description": "The IP address on which the ban was applied. May affect multiple players.",
-          "type": "string"
-        },
         "PlayFabId": {
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "type": "string"
@@ -6589,10 +6590,6 @@
           "type": "number",
           "x-actualtype": "uint32"
         },
-        "IPAddress": {
-          "description": "IP address to be banned. May affect multiple players.",
-          "type": "string"
-        },
         "PlayFabId": {
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "type": "string"
@@ -6613,7 +6610,7 @@
       ]
     },
     "BanUsersRequest": {
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "type": "object",
       "properties": {
         "Bans": {
@@ -6636,7 +6633,6 @@
         "Bans": [
           {
             "PlayFabId": "1679AF5CD04BD838",
-            "IPAddress": "192.168.1.1",
             "Reason": "You cheated!",
             "DurationInHours": 7
           },
@@ -6664,7 +6660,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -12053,7 +12048,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -14714,7 +14708,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -14767,7 +14760,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -16139,10 +16131,6 @@
           "description": "The updated expiration date for the ban. Null for no change.",
           "type": "string"
         },
-        "IPAddress": {
-          "description": "The updated IP address for the ban. Null for no change.",
-          "type": "string"
-        },
         "Permanent": {
           "description": "Whether to make this ban permanent. Set to true to make this ban permanent. This will not modify Active state.",
           "type": "boolean"
@@ -16163,7 +16151,7 @@
       ]
     },
     "UpdateBansRequest": {
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "type": "object",
       "properties": {
         "Bans": {
@@ -16210,7 +16198,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -17522,7 +17509,7 @@
     "BanUsersRequest": {
       "name": "BanUsersRequest",
       "in": "body",
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "schema": {
         "$ref": "#/definitions/BanUsersRequest"
       }
@@ -18462,7 +18449,7 @@
     "UpdateBansRequest": {
       "name": "UpdateBansRequest",
       "in": "body",
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "schema": {
         "$ref": "#/definitions/UpdateBansRequest"
       }
@@ -18717,7 +18704,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -20880,7 +20866,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -21639,7 +21624,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -21680,7 +21664,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -22131,7 +22114,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
