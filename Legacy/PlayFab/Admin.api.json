@@ -859,7 +859,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "The IP address on which the ban was applied. May affect multiple players.",
+          "description": "Deprecated. The IP address stored on this legacy player ban. Use GetIPBansForTitle to read title-level IP bans.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "GetIPBansForTitle"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -960,7 +966,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "IP address to be banned. May affect multiple players.",
+          "description": "Deprecated. IP address to associate with this player ban. Use CreateIPBan to create a title-level IP ban.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "CreateIPBan"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -993,7 +1005,7 @@
       "className": "BanUsersRequest",
       "classNameSpace": "PlayFab.Admin.Models",
       "assembly": "PlayFab.Admin.Models",
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use CreateIPBan to create a title-level IP ban. Returns information about the new bans.",
       "isRequest": true,
       "properties": [
         {
@@ -2642,7 +2654,7 @@
       "className": "CreateInsightsScheduledScalingTaskRequest",
       "classNameSpace": "PlayFab.Admin.Models",
       "assembly": "PlayFab.Admin.Models",
-      "description": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "description": "Insights scheduled scaling is no longer available.",
       "isRequest": true,
       "properties": [
         {
@@ -15706,7 +15718,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "The updated IP address for the ban. Null for no change.",
+          "description": "Deprecated. The updated IP address for an existing player-bound IP ban. Use UpdateIPBan to update a title-level IP ban. Null for no change.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "UpdateIPBan"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -15740,7 +15758,7 @@
       "className": "UpdateBansRequest",
       "classNameSpace": "PlayFab.Admin.Models",
       "assembly": "PlayFab.Admin.Models",
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use UpdateIPBan for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "isRequest": true,
       "properties": [
         {
@@ -18144,23 +18162,25 @@
     },
     {
       "name": "BanUsers",
-      "summary": "Bans users by PlayFab ID with optional IP address for the provided game.",
-      "requestDetails": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "summary": "Bans users by PlayFab ID for the provided game.",
+      "requestDetails": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use CreateIPBan to create a title-level IP ban. Returns information about the new bans.",
       "subgroup": "Account Management",
       "url": "/Admin/BanUsers",
       "auth": "SecretKey",
       "method": "POST",
       "request": "BanUsersRequest",
-      "requestExample": "{\n  \"Bans\": [\n    {\n      \"PlayFabId\": \"1679AF5CD04BD838\",\n      \"IPAddress\": \"192.168.1.1\",\n      \"Reason\": \"You cheated!\",\n      \"DurationInHours\": 7\n    },\n    {\n      \"PlayFabId\": \"2329AF5CD04BF513\",\n      \"Reason\": \"Caught you using speed hack!\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"Bans\": [\n    {\n      \"PlayFabId\": \"1679AF5CD04BD838\",\n      \"Reason\": \"You cheated!\",\n      \"DurationInHours\": 7\n    },\n    {\n      \"PlayFabId\": \"2329AF5CD04BF513\",\n      \"Reason\": \"Caught you using speed hack!\"\n    }\n  ]\n}",
       "result": "BanUsersResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
+        "Admin/CreateIPBan",
         "Admin/GetUserBans",
         "Admin/RevokeAllBansForUser",
         "Admin/RevokeBans",
         "Admin/UpdateBans"
       ],
       "errors": [
+        "InvalidRequest",
         "UserisNotValid"
       ]
     },
@@ -18278,8 +18298,8 @@
     },
     {
       "name": "CreateInsightsScheduledScalingTask",
-      "summary": "Create a Insights Scheduled Scaling task, which can scale Insights Performance Units on a schedule",
-      "requestDetails": "Task name is unique within a title. Using a task name that's already taken will cause a name conflict error. Too many create-task requests within a short time will cause a create conflict error.",
+      "summary": "This API is retired and no longer creates Insights Scheduled Scaling tasks.",
+      "requestDetails": "Insights scheduled scaling is no longer available.",
       "subgroup": "ScheduledTask",
       "url": "/Admin/CreateInsightsScheduledScalingTask",
       "auth": "SecretKey",
@@ -18296,12 +18316,7 @@
         "Admin/UpdateTask"
       ],
       "errors": [
-        "InvalidScheduledTaskName",
-        "InvalidTaskSchedule",
-        "ProductDisabledForTitle",
-        "ScheduledTaskCreateConflict",
-        "ScheduledTaskNameConflict",
-        "TitleNotOnUpdatedPricingPlan"
+        "InsightsV1Deprecated"
       ]
     },
     {
@@ -19540,7 +19555,7 @@
       "request": "GetUserBansRequest",
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "GetUserBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Admin/BanUsers",
         "Admin/RevokeAllBansForUser",
@@ -20070,7 +20085,7 @@
       "request": "RevokeAllBansForUserRequest",
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "RevokeAllBansForUserResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Admin/BanUsers",
         "Admin/GetUserBans",
@@ -20092,7 +20107,7 @@
       "request": "RevokeBansRequest",
       "requestExample": "{\n  \"BanIds\": [\n    \"E0B5FF89542D413C\",\n    \"EF43FF89542G1546\"\n  ]\n}",
       "result": "RevokeBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Admin/BanUsers",
         "Admin/GetUserBans",
@@ -20184,6 +20199,7 @@
         "Admin/UpdateTask"
       ],
       "errors": [
+        "InsightsV1Deprecated",
         "TaskNotFound"
       ]
     },
@@ -20456,7 +20472,7 @@
     {
       "name": "UpdateBans",
       "summary": "Updates information of a list of existing bans specified with Ban Ids.",
-      "requestDetails": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "requestDetails": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use UpdateIPBan for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "subgroup": "Account Management",
       "url": "/Admin/UpdateBans",
       "auth": "SecretKey",
@@ -20464,12 +20480,16 @@
       "request": "UpdateBansRequest",
       "requestExample": "{\n  \"Bans\": [\n    {\n      \"BanId\": \"E0B5FF89542D413C\",\n      \"Permanent\": true,\n      \"Active\": true\n    },\n    {\n      \"BanId\": \"EF43FF89542G1546\",\n      \"Reason\": \"Royal pardon\",\n      \"Expires\": \"2016-07-04T00:00:00Z\"\n    }\n  ]\n}",
       "result": "UpdateBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Admin/BanUsers",
         "Admin/GetUserBans",
         "Admin/RevokeAllBansForUser",
-        "Admin/RevokeBans"
+        "Admin/RevokeBans",
+        "Admin/UpdateIPBan"
+      ],
+      "errors": [
+        "InvalidRequest"
       ]
     },
     {
@@ -20732,6 +20752,7 @@
       ],
       "errors": [
         "CloudScriptAzureFunctionsArgumentSizeExceeded",
+        "InsightsV1Deprecated",
         "InvalidJSONContent",
         "InvalidParams",
         "InvalidScheduledTaskName",

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260922",
+    "version": "261030",
     "title": "PlayFab Client API",
     "description": "APIs which provide the full range of PlayFab features available to the client - authentication, account and data management, inventory, friends, matchmaking, reporting, and platform-specific functionality",
     "termsOfService": "https://playfab.com/terms/",
@@ -443,7 +443,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation.",
+        "x-requestDetails": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation. The order must belong to the authenticated title.",
         "x-responseDetails": "When the FailedByPaymentProvider error is returned, it's important to check the ProviderErrorCode, ProviderErrorMessage, and ProviderErrorDetails to understand the specific reason the payment was rejected, as in some rare cases, this may mean that the provider hasn't completed some operation required to finalize the purchase.",
         "x-seeAlso": [
           "Client/PayForPurchase",
@@ -522,6 +522,7 @@
           }
         },
         "x-ms-docs-errors": [
+          "InvalidXboxLiveToken",
           "ItemNotFound",
           "ProductDisabledForTitle"
         ]
@@ -2378,7 +2379,7 @@
         "tags": [
           "Player Item Management"
         ],
-        "description": "_NOTE: This is a Legacy Economy API, and is in bugfix-only mode. All new Economy features are being developed only for version 2._ Retrieves a purchase along with its current PlayFab status. Returns inventory items from the purchase that are still active.",
+        "description": "_NOTE: This is a Legacy Economy API, and is in bugfix-only mode. All new Economy features are being developed only for version 2._ Retrieves a purchase along with its current PlayFab status. Returns inventory items from the purchase that are still active. The order must belong to the authenticated title.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/client/player-item-management/getpurchase"
         },
@@ -4619,7 +4620,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory.",
+        "x-requestDetails": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory. The order must belong to the authenticated title.",
         "x-responseDetails": "For web-based payment providers, this operation returns the URL to which the user should be directed inorder to approve the purchase. Items added to the user inventory as a result of this operation will be marked as unconfirmed.",
         "x-seeAlso": [
           "Client/ConfirmPurchase",
@@ -7554,7 +7555,7 @@
       ]
     },
     "ConfirmPurchaseRequest": {
-      "description": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation.",
+      "description": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation. The order must belong to the authenticated title.",
       "type": "object",
       "properties": {
         "CustomTags": {
@@ -14295,7 +14296,7 @@
       }
     },
     "PayForPurchaseRequest": {
-      "description": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory.",
+      "description": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory. The order must belong to the authenticated title.",
       "type": "object",
       "properties": {
         "Currency": {
@@ -17968,7 +17969,7 @@
     "ConfirmPurchaseRequest": {
       "name": "ConfirmPurchaseRequest",
       "in": "body",
-      "description": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation.",
+      "description": "The final step in the purchasing process, this API finalizes the purchase with the payment provider, where applicable, adding virtual goods to the player inventory (including random drop table resolution and recursive addition of bundled items) and adjusting virtual currency balances for funds used or added. Note that this is a pull operation, and should be polled regularly when a purchase is in progress. Please note that the processing time for inventory grants and purchases increases fractionally the more items are in the inventory, and the more items are in the grant/purchase operation. The order must belong to the authenticated title.",
       "schema": {
         "$ref": "#/definitions/ConfirmPurchaseRequest"
       }
@@ -18740,7 +18741,7 @@
     "PayForPurchaseRequest": {
       "name": "PayForPurchaseRequest",
       "in": "body",
-      "description": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory.",
+      "description": "This is the second step in the purchasing process, initiating the purchase transaction with the payment provider (if applicable). For payment provider scenarios, the title should next present the user with the payment provider'sinterface for payment. Once the player has completed the payment with the provider, the title should call ConfirmPurchase tofinalize the process and add the appropriate items to the player inventory. The order must belong to the authenticated title.",
       "schema": {
         "$ref": "#/definitions/PayForPurchaseRequest"
       }
