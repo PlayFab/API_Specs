@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260922",
+    "version": "261119",
     "title": "PlayFab Server API",
     "description": "Provides functionality to allow external (developer-controlled) servers to interact with user inventories and data in a trusted manner, and to handle matchmaking and client connection orchestration",
     "termsOfService": "https://playfab.com/terms/",
@@ -354,7 +354,7 @@
         "tags": [
           "Account Management"
         ],
-        "description": "Bans users by PlayFab ID with optional IP address for the provided game.",
+        "description": "Bans users by PlayFab ID for the provided game.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/server/account-management/banusers"
         },
@@ -376,7 +376,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+        "x-requestDetails": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
         "x-seeAlso": [
           "Server/GetUserBans",
           "Server/RevokeAllBansForUser",
@@ -384,6 +384,7 @@
           "Server/UpdateBans"
         ],
         "x-ms-docs-errors": [
+          "InvalidRequest",
           "UserisNotValid"
         ]
       }
@@ -3618,6 +3619,51 @@
         ]
       }
     },
+    "/Server/LoginWithNintendoServiceAccount": {
+      "post": {
+        "operationId": "LoginWithNintendoServiceAccount",
+        "tags": [
+          "Authentication"
+        ],
+        "description": "Signs in the user with a Nintendo service account token from a trusted server, returning a session identifier.",
+        "externalDocs": {
+          "url": "https://docs.microsoft.com/rest/api/playfab/server/authentication/loginwithnintendoserviceaccount"
+        },
+        "parameters": [
+          {
+            "$ref": "#/parameters/LoginWithNintendoServiceAccountRequest"
+          }
+        ],
+        "security": [
+          {
+            "SecretKey": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ServerLoginResult"
+          },
+          "400": {
+            "$ref": "#/responses/ApiErrorWrapper"
+          }
+        },
+        "x-requestDetails": "If no PlayFab account is linked to the Nintendo service account, CreateAccount must be true to create one.",
+        "x-seeAlso": [
+          "Server/LinkNintendoServiceAccount",
+          "Server/UnlinkNintendoServiceAccount"
+        ],
+        "x-ms-docs-errors": [
+          "AccountNotFound",
+          "EncryptionKeyMissing",
+          "EvaluationModePlayerCountExceeded",
+          "InvalidParams",
+          "NintendoSwitchNotEnabledForTitle",
+          "PlayerSecretAlreadyConfigured",
+          "PlayerSecretNotConfigured",
+          "RequestViewConstraintParamsNotAllowed"
+        ]
+      }
+    },
     "/Server/LoginWithPSN": {
       "post": {
         "operationId": "LoginWithPSN",
@@ -3737,6 +3783,7 @@
           "InvalidSignature",
           "InvalidSignatureTime",
           "RequestViewConstraintParamsNotAllowed",
+          "SteamApplicationNotOwned",
           "SteamNotEnabledForTitle",
           "SteamUserNotFound"
         ]
@@ -5444,12 +5491,15 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+        "x-requestDetails": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
         "x-seeAlso": [
           "Server/BanUsers",
           "Server/GetUserBans",
           "Server/RevokeAllBansForUser",
           "Server/RevokeBans"
+        ],
+        "x-ms-docs-errors": [
+          "InvalidRequest"
         ]
       }
     },
@@ -6559,10 +6609,6 @@
           "description": "The time when this ban expires. Permanent bans do not have expiration date.",
           "type": "string"
         },
-        "IPAddress": {
-          "description": "The IP address on which the ban was applied. May affect multiple players.",
-          "type": "string"
-        },
         "PlayFabId": {
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "type": "string"
@@ -6589,10 +6635,6 @@
           "type": "number",
           "x-actualtype": "uint32"
         },
-        "IPAddress": {
-          "description": "IP address to be banned. May affect multiple players.",
-          "type": "string"
-        },
         "PlayFabId": {
           "description": "Unique PlayFab assigned ID of the user on whom the operation will be performed.",
           "type": "string"
@@ -6613,7 +6655,7 @@
       ]
     },
     "BanUsersRequest": {
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "type": "object",
       "properties": {
         "Bans": {
@@ -6636,7 +6678,6 @@
         "Bans": [
           {
             "PlayFabId": "1679AF5CD04BD838",
-            "IPAddress": "192.168.1.1",
             "Reason": "You cheated!",
             "DurationInHours": 7
           },
@@ -6664,7 +6705,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -8684,6 +8724,7 @@
         "IPAddressNotFound",
         "PSNNextGenNotConfiguredForTitle",
         "InvalidNintendoIssuer",
+        "NamespaceHasAutomation",
         "MatchmakingEntityInvalid",
         "MatchmakingPlayerAttributesInvalid",
         "MatchmakingQueueNotFound",
@@ -12053,7 +12094,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -13468,6 +13508,37 @@
         "CreateAccount": false
       }
     },
+    "LoginWithNintendoServiceAccountRequest": {
+      "description": "Signs in a player with a Nintendo service account token from a trusted server.",
+      "type": "object",
+      "properties": {
+        "CreateAccount": {
+          "description": "Automatically create a PlayFab account if one is not already linked to this Nintendo service account.",
+          "type": "boolean"
+        },
+        "CustomTags": {
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "type": "object"
+        },
+        "IdentityToken": {
+          "description": "The JSON Web token (JWT) returned by Nintendo after login.",
+          "type": "string"
+        },
+        "InfoRequestParameters": {
+          "$ref": "#/definitions/GetPlayerCombinedInfoRequestParams",
+          "description": "Flags for player information to include in the login response.",
+          "type": "object",
+          "x-isclass": true
+        }
+      },
+      "required": [
+        "IdentityToken"
+      ],
+      "example": {
+        "IdentityToken": "eyJraWQi...",
+        "CreateAccount": false
+      }
+    },
     "LoginWithPSNRequest": {
       "description": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
       "type": "object",
@@ -14714,7 +14785,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -14767,7 +14837,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -16139,10 +16208,6 @@
           "description": "The updated expiration date for the ban. Null for no change.",
           "type": "string"
         },
-        "IPAddress": {
-          "description": "The updated IP address for the ban. Null for no change.",
-          "type": "string"
-        },
         "Permanent": {
           "description": "Whether to make this ban permanent. Set to true to make this ban permanent. This will not modify Active state.",
           "type": "boolean"
@@ -16163,7 +16228,7 @@
       ]
     },
     "UpdateBansRequest": {
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "type": "object",
       "properties": {
         "Bans": {
@@ -16210,7 +16275,6 @@
           {
             "PlayFabId": "1679AF5CD04BD838",
             "BanId": "E0B5FF89542D413C",
-            "IPAddress": "192.111.11.1",
             "Created": "2016-08-13T05:04:03",
             "Reason": "You cheated!"
           },
@@ -17522,7 +17586,7 @@
     "BanUsersRequest": {
       "name": "BanUsersRequest",
       "in": "body",
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "schema": {
         "$ref": "#/definitions/BanUsersRequest"
       }
@@ -18112,6 +18176,14 @@
         "$ref": "#/definitions/LoginWithIOSDeviceIDRequest"
       }
     },
+    "LoginWithNintendoServiceAccountRequest": {
+      "name": "LoginWithNintendoServiceAccountRequest",
+      "in": "body",
+      "description": "Signs in a player with a Nintendo service account token from a trusted server.",
+      "schema": {
+        "$ref": "#/definitions/LoginWithNintendoServiceAccountRequest"
+      }
+    },
     "LoginWithPSNRequest": {
       "name": "LoginWithPSNRequest",
       "in": "body",
@@ -18462,7 +18534,7 @@
     "UpdateBansRequest": {
       "name": "UpdateBansRequest",
       "in": "body",
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "schema": {
         "$ref": "#/definitions/UpdateBansRequest"
       }
@@ -18717,7 +18789,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -20880,7 +20951,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -21639,7 +21709,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -21680,7 +21749,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -22131,7 +22199,6 @@
               {
                 "PlayFabId": "1679AF5CD04BD838",
                 "BanId": "E0B5FF89542D413C",
-                "IPAddress": "192.111.11.1",
                 "Created": "2016-08-13T05:04:03",
                 "Reason": "You cheated!"
               },
@@ -24814,6 +24881,10 @@
     "InvalidNintendoIssuer": {
       "id": 1618,
       "name": "InvalidNintendoIssuer"
+    },
+    "NamespaceHasAutomation": {
+      "id": 1619,
+      "name": "NamespaceHasAutomation"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,
