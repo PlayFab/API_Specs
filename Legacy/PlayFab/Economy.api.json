@@ -4230,7 +4230,7 @@
         },
         {
           "name": "ExpirationDate",
-          "description": "Only used for subscriptions. The date of when the item will expire in UTC.",
+          "description": "Only used for subscriptions. The effective expiration in UTC used for entitlement access. May include marketplace grace time.",
           "jsontype": "String",
           "actualtype": "DateTime",
           "optional": true
@@ -4622,6 +4622,17 @@
           "optional": true
         },
         {
+          "name": "PurchaseOverrides",
+          "description": "Details the overrides used in a purchase operation.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "Object",
+          "actualtype": "PurchaseOverridesInfo",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "StoreId",
           "description": "The id of the Store to purchase the item from.",
           "jsontype": "String",
@@ -4819,17 +4830,6 @@
           "name": "ItemsAmounts",
           "description": "Details the overrides of item amounts granted in a purchase operation.",
           "collection": "array",
-          "AnyInclusiveFlags": [
-            "Beta"
-          ],
-          "jsontype": "Object",
-          "actualtype": "PurchaseOverride",
-          "isclass": true,
-          "optional": true
-        },
-        {
-          "name": "PayoutAmount",
-          "description": "Details the payout information override used in a purchase operation.",
           "AnyInclusiveFlags": [
             "Beta"
           ],
@@ -6755,6 +6755,58 @@
           "optional": true
         },
         {
+          "name": "PayingCollectionId",
+          "description": "The collection id the items were purchased by or null if it was the current collection.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "PayingEntity",
+          "description": "The entity the items were purchased by or null if it was the current entity.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "PurchaseId",
+          "description": "The id for the purchased shared across the paying and receiving entity.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ReceivingCollectionId",
+          "description": "The collection id the items were purchased for or null if it was the current collection.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "ReceivingEntity",
+          "description": "The entity the items were purchased for or null if it was the current entity.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "Object",
+          "actualtype": "EntityKey",
+          "isclass": true,
+          "optional": true
+        },
+        {
           "name": "StoreFriendlyId",
           "description": "The friendly id of the Store the item was purchased from or null.",
           "jsontype": "String",
@@ -8614,7 +8666,7 @@
     },
     {
       "name": "ExecuteTransferOperations",
-      "summary": "Transfer a list of inventory items. A maximum list of 50 operations can be performed by a single request. When the response code is 202, one or more operations did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the GetInventoryOperationStatus API.",
+      "summary": "Transfer a list of inventory items. A maximum list of 50 operations can be performed by a single request. When the response code is 202, one or more operations did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the OperationToken to the GetInventoryOperationStatus API.",
       "requestDetails": "Transfer the specified list of inventory items of an entity's container Id to another entity's container Id.",
       "subgroup": "Inventory",
       "url": "/Inventory/ExecuteTransferOperations",
@@ -8806,7 +8858,7 @@
     },
     {
       "name": "GetInventoryOperationStatus",
-      "summary": "Get the status of an inventory operation using an OperationToken. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the this API.",
+      "summary": "Get the status of an inventory operation using an OperationToken. You can check on the operation status at anytime within 1 day of the request by passing the OperationToken to the this API.",
       "requestDetails": "Get the status of an Inventory Operation using an OperationToken.",
       "subgroup": "Inventory",
       "url": "/Inventory/GetInventoryOperationStatus",
@@ -9471,7 +9523,7 @@
     },
     {
       "name": "TransferInventoryItems",
-      "summary": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the TransactionToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
+      "summary": "Transfer inventory items. When transferring across collections, a 202 response indicates that the transfer did not complete within the timeframe of the request. You can identify the pending operations by looking for OperationStatus = 'InProgress'. You can check on the operation status at anytime within 1 day of the request by passing the OperationToken to the GetInventoryOperationStatus API. More information about item transfer scenarios can be found here: https://learn.microsoft.com/en-us/gaming/playfab/features/economy-v2/inventory/?tabs=inventory-game-manager#transfer-inventory-items",
       "requestDetails": "Transfer the specified inventory items of an entity's container Id to another entity's container Id.",
       "subgroup": "Inventory",
       "url": "/Inventory/TransferInventoryItems",
@@ -11999,6 +12051,10 @@
       "id": 1618,
       "name": "InvalidNintendoIssuer"
     },
+    "NamespaceHasAutomation": {
+      "id": 1619,
+      "name": "NamespaceHasAutomation"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -14001,6 +14057,7 @@
     "IPAddressNotFound",
     "PSNNextGenNotConfiguredForTitle",
     "InvalidNintendoIssuer",
+    "NamespaceHasAutomation",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",

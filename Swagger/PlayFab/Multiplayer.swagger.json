@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "260922",
+    "version": "261119",
     "title": "PlayFab Multiplayer API",
     "description": "API methods for managing multiplayer servers. API methods for managing parties. The lobby service helps players group together to play multiplayer games. It is often used as a rendezvous point for players to share connection information. The TrueSkill service helps titles to estimate a player's skill based on their match results. The player skill values from this service are commonly used by a matchmaking service to provide players with balanced matches.",
     "termsOfService": "https://playfab.com/terms/",
@@ -782,7 +782,7 @@
         "tags": [
           "Matchmaking"
         ],
-        "description": "Create a matchmaking ticket as a client.",
+        "description": "Create a player-style matchmaking ticket.",
         "externalDocs": {
           "url": "https://docs.microsoft.com/rest/api/playfab/multiplayer/matchmaking/creatematchmakingticket"
         },
@@ -804,7 +804,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+        "x-requestDetails": "A player creates their own ticket, or a title creates it on behalf of Creator.Entity, an existing title player account belonging to that title. The creator participates immediately; invited players join separately before matching starts. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
         "x-ms-docs-errors": [
           "MatchmakingAttributeInvalid",
           "MatchmakingBadRequest",
@@ -1125,7 +1125,7 @@
             "$ref": "#/responses/ApiErrorWrapper"
           }
         },
-        "x-requestDetails": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
+        "x-requestDetails": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching. A title may join on behalf of Member.Entity, an existing title player account belonging to that title. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
         "x-ms-docs-errors": [
           "MatchmakingAlreadyJoinedTicket",
           "MatchmakingAttributeInvalid",
@@ -5941,12 +5941,12 @@
       ]
     },
     "CreateMatchmakingTicketRequest": {
-      "description": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+      "description": "A player creates their own ticket, or a title creates it on behalf of Creator.Entity, an existing title player account belonging to that title. The creator participates immediately; invited players join separately before matching starts. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
       "type": "object",
       "properties": {
         "Creator": {
           "$ref": "#/definitions/MatchmakingPlayer",
-          "description": "The User who created this ticket.",
+          "description": "The player creating this ticket. Must match a player caller, or be an existing title_player_account belonging to a title caller.",
           "type": "object",
           "x-isclass": true
         },
@@ -8421,7 +8421,7 @@
       ]
     },
     "JoinMatchmakingTicketRequest": {
-      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
+      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching. A title may join on behalf of Member.Entity, an existing title player account belonging to that title. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
       "type": "object",
       "properties": {
         "CustomTags": {
@@ -8430,7 +8430,7 @@
         },
         "Member": {
           "$ref": "#/definitions/MatchmakingPlayer",
-          "description": "The User who wants to join the ticket. Their Id must be listed in PlayFabIdsToMatchWith.",
+          "description": "The player joining the ticket, whose entity must be listed in MembersToMatchWith. Must match a player caller, or be an existing title_player_account belonging to a title caller.",
           "type": "object",
           "x-isclass": true
         },
@@ -12550,7 +12550,7 @@
     "CreateMatchmakingTicketRequest": {
       "name": "CreateMatchmakingTicketRequest",
       "in": "body",
-      "description": "The client specifies the creator's attributes and optionally a list of other users to match with.",
+      "description": "A player creates their own ticket, or a title creates it on behalf of Creator.Entity, an existing title player account belonging to that title. The creator participates immediately; invited players join separately before matching starts. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
       "schema": {
         "$ref": "#/definitions/CreateMatchmakingTicketRequest"
       }
@@ -12862,7 +12862,7 @@
     "JoinMatchmakingTicketRequest": {
       "name": "JoinMatchmakingTicketRequest",
       "in": "body",
-      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching.",
+      "description": "Add the player to a matchmaking ticket and specify all of its matchmaking attributes. Players can join a ticket if and only if their EntityKeys are already listed in the ticket's Members list. The matchmaking service automatically starts matching the ticket against other matchmaking tickets once all players have joined the ticket. It is not possible to join a ticket once it has started matching. A title may join on behalf of Member.Entity, an existing title player account belonging to that title. The caller's profile read permissions apply. Titles are trusted to enforce bans for represented players; player-authenticated calls retain PlayFab ban checks.",
       "schema": {
         "$ref": "#/definitions/JoinMatchmakingTicketRequest"
       }
@@ -17706,6 +17706,10 @@
     "InvalidNintendoIssuer": {
       "id": 1618,
       "name": "InvalidNintendoIssuer"
+    },
+    "NamespaceHasAutomation": {
+      "id": 1619,
+      "name": "NamespaceHasAutomation"
     },
     "MatchmakingEntityInvalid": {
       "id": 2001,

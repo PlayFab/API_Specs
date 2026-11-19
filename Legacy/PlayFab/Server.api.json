@@ -459,7 +459,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "The IP address on which the ban was applied. May affect multiple players.",
+          "description": "Deprecated. The IP address stored on this legacy player ban. Use GetIPBansForTitle to read title-level IP bans.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "GetIPBansForTitle"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -516,7 +522,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "IP address to be banned. May affect multiple players.",
+          "description": "Deprecated. IP address to associate with this player ban. Use CreateIPBan to create a title-level IP ban.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "CreateIPBan"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -549,7 +561,7 @@
       "className": "BanUsersRequest",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
-      "description": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "description": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "isRequest": true,
       "properties": [
         {
@@ -5030,6 +5042,9 @@
         },
         {
           "name": "InvalidNintendoIssuer"
+        },
+        {
+          "name": "NamespaceHasAutomation"
         },
         {
           "name": "MatchmakingEntityInvalid"
@@ -10516,6 +10531,68 @@
         }
       ]
     },
+    "LoginWithNintendoServiceAccountRequest": {
+      "name": "LoginWithNintendoServiceAccountRequest",
+      "className": "LoginWithNintendoServiceAccountRequest",
+      "classNameSpace": "PlayFab.Server.Models",
+      "assembly": "PlayFab.Server.Models",
+      "description": "Signs in a player with a Nintendo service account token from a trusted server.",
+      "isRequest": true,
+      "properties": [
+        {
+          "name": "CreateAccount",
+          "description": "Automatically create a PlayFab account if one is not already linked to this Nintendo service account.",
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "CustomTags",
+          "description": "The optional custom tags associated with the request (e.g. build number, external trace identifiers, etc.).",
+          "collection": "map",
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        },
+        {
+          "name": "IdentityToken",
+          "description": "The JSON Web token (JWT) returned by Nintendo after login.",
+          "jsontype": "String",
+          "actualtype": "String"
+        },
+        {
+          "name": "InfoRequestParameters",
+          "description": "Flags for player information to include in the login response.",
+          "jsontype": "Object",
+          "actualtype": "GetPlayerCombinedInfoRequestParams",
+          "isclass": true,
+          "optional": true
+        },
+        {
+          "name": "LoginTitlePlayerAccountEntity",
+          "description": "Whether to return an entity token for the title player account.",
+          "deprecation": {
+            "ProposedAfter": "9/20/2018",
+            "DeprecatedAfter": "11/20/2018",
+            "ObsoleteAfter": "12/20/2018",
+            "ReplacedBy": null
+          },
+          "jsontype": "Boolean",
+          "actualtype": "Boolean",
+          "optional": true
+        },
+        {
+          "name": "OriginatingIP",
+          "description": "The player's IP address, supplied by the trusted server for ban enforcement and geo-location.",
+          "AnyInclusiveFlags": [
+            "Beta"
+          ],
+          "jsontype": "String",
+          "actualtype": "String",
+          "optional": true
+        }
+      ]
+    },
     "LoginWithPSNRequest": {
       "name": "LoginWithPSNRequest",
       "className": "LoginWithPSNRequest",
@@ -14460,7 +14537,13 @@
         },
         {
           "name": "IPAddress",
-          "description": "The updated IP address for the ban. Null for no change.",
+          "description": "Deprecated. The updated IP address for an existing player-bound IP ban. Use UpdateIPBan to update a title-level IP ban. Null for no change.",
+          "deprecation": {
+            "ProposedAfter": "10/1/2026",
+            "DeprecatedAfter": "10/1/2026",
+            "ObsoleteAfter": "10/1/2027",
+            "ReplacedBy": "UpdateIPBan"
+          },
           "jsontype": "String",
           "actualtype": "String",
           "optional": true
@@ -14494,7 +14577,7 @@
       "className": "UpdateBansRequest",
       "classNameSpace": "PlayFab.Server.Models",
       "assembly": "PlayFab.Server.Models",
-      "description": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "description": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "isRequest": true,
       "properties": [
         {
@@ -16244,6 +16327,7 @@
         "LoginWithBattleNet",
         "LoginWithCustomID",
         "LoginWithIOSDeviceID",
+        "LoginWithNintendoServiceAccount",
         "LoginWithPSN",
         "LoginWithServerCustomId",
         "LoginWithSteamId",
@@ -16582,16 +16666,16 @@
     },
     {
       "name": "BanUsers",
-      "summary": "Bans users by PlayFab ID with optional IP address for the provided game.",
-      "requestDetails": "The existence of each user will not be verified. When banning by IP, multiple players may be affected, so use this feature with caution. Returns information about the new bans.",
+      "summary": "Bans users by PlayFab ID for the provided game.",
+      "requestDetails": "The existence of each user will not be verified. Creating player-bound IP bans is deprecated; use the Admin CreateIPBan API to create a title-level IP ban. Returns information about the new bans.",
       "subgroup": "Account Management",
       "url": "/Server/BanUsers",
       "auth": "SecretKey",
       "method": "POST",
       "request": "BanUsersRequest",
-      "requestExample": "{\n  \"Bans\": [\n    {\n      \"PlayFabId\": \"1679AF5CD04BD838\",\n      \"IPAddress\": \"192.168.1.1\",\n      \"Reason\": \"You cheated!\",\n      \"DurationInHours\": 7\n    },\n    {\n      \"PlayFabId\": \"2329AF5CD04BF513\",\n      \"Reason\": \"Caught you using speed hack!\"\n    }\n  ]\n}",
+      "requestExample": "{\n  \"Bans\": [\n    {\n      \"PlayFabId\": \"1679AF5CD04BD838\",\n      \"Reason\": \"You cheated!\",\n      \"DurationInHours\": 7\n    },\n    {\n      \"PlayFabId\": \"2329AF5CD04BF513\",\n      \"Reason\": \"Caught you using speed hack!\"\n    }\n  ]\n}",
       "result": "BanUsersResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Server/GetUserBans",
         "Server/RevokeAllBansForUser",
@@ -16599,6 +16683,7 @@
         "Server/UpdateBans"
       ],
       "errors": [
+        "InvalidRequest",
         "UserisNotValid"
       ]
     },
@@ -17738,7 +17823,7 @@
       "request": "GetUserBansRequest",
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "GetUserBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Server/BanUsers",
         "Server/RevokeAllBansForUser",
@@ -18371,6 +18456,33 @@
       ]
     },
     {
+      "name": "LoginWithNintendoServiceAccount",
+      "summary": "Signs in the user with a Nintendo service account token from a trusted server, returning a session identifier.",
+      "requestDetails": "If no PlayFab account is linked to the Nintendo service account, CreateAccount must be true to create one.",
+      "subgroup": "Authentication",
+      "url": "/Server/LoginWithNintendoServiceAccount",
+      "auth": "SecretKey",
+      "method": "POST",
+      "request": "LoginWithNintendoServiceAccountRequest",
+      "requestExample": "{\n  \"IdentityToken\": \"eyJraWQi...\",\n  \"CreateAccount\": false\n}",
+      "result": "ServerLoginResult",
+      "resultExample": "",
+      "seeAlso": [
+        "Server/LinkNintendoServiceAccount",
+        "Server/UnlinkNintendoServiceAccount"
+      ],
+      "errors": [
+        "AccountNotFound",
+        "EncryptionKeyMissing",
+        "EvaluationModePlayerCountExceeded",
+        "InvalidParams",
+        "NintendoSwitchNotEnabledForTitle",
+        "PlayerSecretAlreadyConfigured",
+        "PlayerSecretNotConfigured",
+        "RequestViewConstraintParamsNotAllowed"
+      ]
+    },
+    {
       "name": "LoginWithPSN",
       "summary": "Signs the user in using a PlayStation :tm: Network authentication code, returning a session identifier that can subsequently be used for API calls which require an authenticated user",
       "requestDetails": "If this is the first time a user has signed in with the PlayStation :tm: Network account and CreateAccount is set to true, a new PlayFab account will be created and linked to the PlayStation :tm: Network account. In this case, no email or username will be associated with the PlayFab account. Otherwise, if no PlayFab account is linked to the PlayStation :tm: Network account, an error indicating this will be returned, so that the title can guide the user through creation of a PlayFab account.",
@@ -18432,6 +18544,7 @@
         "InvalidSignature",
         "InvalidSignatureTime",
         "RequestViewConstraintParamsNotAllowed",
+        "SteamApplicationNotOwned",
         "SteamNotEnabledForTitle",
         "SteamUserNotFound"
       ]
@@ -18798,7 +18911,7 @@
       "request": "RevokeAllBansForUserRequest",
       "requestExample": "{\n  \"PlayFabId\": \"1679AF5CD04BD838\"\n}",
       "result": "RevokeAllBansForUserResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Server/BanUsers",
         "Server/GetUserBans",
@@ -18820,7 +18933,7 @@
       "request": "RevokeBansRequest",
       "requestExample": "{\n  \"BanIds\": [\n    \"E0B5FF89542D413C\",\n    \"EF43FF89542G1546\"\n  ]\n}",
       "result": "RevokeBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": false\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Server/BanUsers",
         "Server/GetUserBans",
@@ -19468,7 +19581,7 @@
     {
       "name": "UpdateBans",
       "summary": "Updates information of a list of existing bans specified with Ban Ids.",
-      "requestDetails": "For each ban, only updates the values that are set. Leave any value to null for no change. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
+      "requestDetails": "For each ban, only updates the values that are set. Leave any value null for no change. An IP address can only be changed on a legacy player ban that already has one; use the Admin UpdateIPBan API for title-level IP bans. If a ban could not be found, the rest are still applied. Returns information about applied updates only.",
       "subgroup": "Account Management",
       "url": "/Server/UpdateBans",
       "auth": "SecretKey",
@@ -19476,12 +19589,15 @@
       "request": "UpdateBansRequest",
       "requestExample": "{\n  \"Bans\": [\n    {\n      \"BanId\": \"E0B5FF89542D413C\",\n      \"Permanent\": true,\n      \"Active\": true\n    },\n    {\n      \"BanId\": \"EF43FF89542G1546\",\n      \"Reason\": \"Royal pardon\",\n      \"Expires\": \"2016-07-04T00:00:00Z\"\n    }\n  ]\n}",
       "result": "UpdateBansResult",
-      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"IPAddress\": \"192.111.11.1\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
+      "resultExample": "{\n  \"code\": 200,\n  \"status\": \"OK\",\n  \"data\": {\n    \"BanData\": [\n      {\n        \"PlayFabId\": \"1679AF5CD04BD838\",\n        \"BanId\": \"E0B5FF89542D413C\",\n        \"Created\": \"2016-08-13T05:04:03Z\",\n        \"Reason\": \"You cheated!\",\n        \"Active\": false\n      },\n      {\n        \"PlayFabId\": \"2329AF5CD04BF513\",\n        \"BanId\": \"EF43FF89542G1546\",\n        \"Created\": \"2016-05-13T05:04:03Z\",\n        \"Expires\": \"2016-09-13T05:04:03Z\",\n        \"Reason\": \"You used speed hack!\",\n        \"Active\": true\n      }\n    ]\n  }\n}",
       "seeAlso": [
         "Server/BanUsers",
         "Server/GetUserBans",
         "Server/RevokeAllBansForUser",
         "Server/RevokeBans"
+      ],
+      "errors": [
+        "InvalidRequest"
       ]
     },
     {
@@ -22304,6 +22420,10 @@
       "id": 1618,
       "name": "InvalidNintendoIssuer"
     },
+    "NamespaceHasAutomation": {
+      "id": 1619,
+      "name": "NamespaceHasAutomation"
+    },
     "MatchmakingEntityInvalid": {
       "id": 2001,
       "name": "MatchmakingEntityInvalid"
@@ -24306,6 +24426,7 @@
     "IPAddressNotFound",
     "PSNNextGenNotConfiguredForTitle",
     "InvalidNintendoIssuer",
+    "NamespaceHasAutomation",
     "MatchmakingEntityInvalid",
     "MatchmakingPlayerAttributesInvalid",
     "MatchmakingQueueNotFound",
